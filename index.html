@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Sue Reading Club - 완전 자동화 영상 제작</title>
-    <meta name="description" content="모바일과 웹에서 모두 작동하는 Sue Reading Club 자동 영상 제작 시스템">
+    <meta name="description" content="실제 MediaRecorder API 연동된 Sue Reading Club 자동 영상 제작 시스템">
     
     <!-- PWA 메타데이터 -->
     <meta name="theme-color" content="#667eea">
@@ -12,16 +12,9 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Sue Auto Recorder">
     
-    <!-- 파비콘 -->
-    <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32x32.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png">
-    
-    <!-- CSS 파일들 (Google Fonts 제거됨) -->
+    <!-- CSS -->
     <style>
-        /* Sue Reading Club 완전 자동화 시스템 - 메인 스타일 (Google Fonts 제거) */
-
         :root {
-            /* 컬러 팔레트 */
             --primary-color: #667eea;
             --secondary-color: #764ba2;
             --accent-color: #FFD700;
@@ -29,21 +22,14 @@
             --warning-color: #FF9800;
             --error-color: #f44336;
             --info-color: #2196F3;
-            
-            /* 그라디언트 */
             --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             --accent-gradient: linear-gradient(135deg, #FFD700, #FFA500);
-            --glass-gradient: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
-            
-            /* 간격 */
             --spacing-xs: 4px;
             --spacing-sm: 8px;
             --spacing-md: 16px;
             --spacing-lg: 24px;
             --spacing-xl: 32px;
             --spacing-xxl: 48px;
-            
-            /* 폰트 크기 */
             --font-size-xs: 0.75rem;
             --font-size-sm: 0.875rem;
             --font-size-md: 1rem;
@@ -51,27 +37,16 @@
             --font-size-xl: 1.25rem;
             --font-size-xxl: 1.5rem;
             --font-size-xxxl: 2rem;
-            
-            /* 그림자 */
-            --shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
-            --shadow-md: 0 4px 8px rgba(0,0,0,0.12);
-            --shadow-lg: 0 8px 16px rgba(0,0,0,0.15);
-            --shadow-xl: 0 12px 24px rgba(0,0,0,0.18);
-            
-            /* 둥근 모서리 */
             --radius-sm: 4px;
             --radius-md: 8px;
             --radius-lg: 12px;
             --radius-xl: 16px;
             --radius-xxl: 24px;
-            
-            /* 전환 효과 */
             --transition-fast: 0.15s ease;
             --transition-normal: 0.3s ease;
             --transition-slow: 0.5s ease;
         }
 
-        /* 기본 스타일 리셋 */
         * {
             margin: 0;
             padding: 0;
@@ -84,7 +59,7 @@
         }
 
         body {
-            font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             line-height: 1.6;
             color: #333;
             background: var(--primary-gradient);
@@ -124,7 +99,7 @@
         }
 
         .loading-text {
-            font-family: 'Arial Black', 'Helvetica Neue', Arial, sans-serif;
+            font-family: 'Arial Black', sans-serif;
             font-size: var(--font-size-xxxl);
             font-weight: 900;
             margin-bottom: var(--spacing-sm);
@@ -203,7 +178,7 @@
             gap: var(--spacing-sm);
             font-weight: 900;
             font-size: var(--font-size-xl);
-            font-family: 'Arial Black', 'Helvetica Neue', Arial, sans-serif;
+            font-family: 'Arial Black', sans-serif;
         }
 
         .logo-icon {
@@ -232,6 +207,15 @@
             border-radius: 50%;
             background: var(--success-color);
             animation: pulse 2s ease-in-out infinite;
+        }
+
+        .status-dot.recording {
+            background: var(--error-color);
+            animation: blink 1s ease-in-out infinite;
+        }
+
+        .status-dot.preparing {
+            background: var(--warning-color);
         }
 
         .status-text {
@@ -268,7 +252,6 @@
             width: 100%;
         }
 
-        /* 자동 녹화 패널 */
         .auto-recorder-panel {
             background: rgba(255,255,255,0.05);
             backdrop-filter: blur(20px);
@@ -283,7 +266,7 @@
         }
 
         .panel-header h2 {
-            font-family: 'Arial Black', 'Helvetica Neue', Arial, sans-serif;
+            font-family: 'Arial Black', sans-serif;
             font-size: var(--font-size-xxxl);
             font-weight: 900;
             margin-bottom: var(--spacing-sm);
@@ -319,7 +302,7 @@
         .dashboard-card:hover {
             transform: translateY(-5px);
             border-color: rgba(255,215,0,0.3);
-            box-shadow: var(--shadow-lg);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
         }
 
         .card-icon {
@@ -338,18 +321,6 @@
             font-weight: 700;
             color: var(--accent-color);
             font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-        }
-
-        /* 원클릭 섹션 */
-        .one-click-section {
-            margin-bottom: var(--spacing-xxl);
-        }
-
-        .one-click-section h3 {
-            font-size: var(--font-size-xl);
-            margin-bottom: var(--spacing-lg);
-            color: var(--accent-color);
-            text-align: center;
         }
 
         /* 프로세스 플로우 */
@@ -425,17 +396,13 @@
             align-items: center;
             gap: var(--spacing-lg);
             min-width: 400px;
-            box-shadow: var(--shadow-lg);
-            font-family: 'Arial Black', 'Helvetica Neue', Arial, sans-serif;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+            font-family: 'Arial Black', sans-serif;
         }
 
         .btn-main-action:hover {
             transform: translateY(-3px);
             box-shadow: 0 15px 35px rgba(255,215,0,0.4);
-        }
-
-        .btn-main-action:active {
-            transform: translateY(-1px);
         }
 
         .btn-main-action:disabled {
@@ -444,8 +411,9 @@
             transform: none !important;
         }
 
-        .btn-icon {
-            font-size: 2rem;
+        .btn-main-action.recording {
+            background: linear-gradient(135deg, #f44336, #d32f2f);
+            color: white;
         }
 
         .btn-text {
@@ -463,34 +431,236 @@
             opacity: 0.8;
         }
 
+        /* 카운트다운 오버레이 */
+        .countdown-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            backdrop-filter: blur(20px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .countdown-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .countdown-content {
+            text-align: center;
+            color: white;
+        }
+
+        .countdown-title {
+            font-size: var(--font-size-xl);
+            margin-bottom: var(--spacing-lg);
+            opacity: 0.8;
+        }
+
+        .countdown-number {
+            font-size: 8rem;
+            font-weight: 900;
+            color: var(--accent-color);
+            text-shadow: 0 0 50px rgba(255,215,0,0.8);
+            animation: countdownPulse 1s ease-in-out infinite;
+            font-family: 'Arial Black', sans-serif;
+        }
+
+        .countdown-subtitle {
+            font-size: var(--font-size-lg);
+            margin-top: var(--spacing-lg);
+            opacity: 0.8;
+        }
+
+        @keyframes countdownPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        /* 녹화 오버레이 */
+        .recording-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .recording-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .recording-content {
+            text-align: center;
+            color: white;
+            background: rgba(255,255,255,0.1);
+            padding: var(--spacing-xxl);
+            border-radius: var(--radius-xxl);
+            backdrop-filter: blur(20px);
+        }
+
+        .recording-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
+            font-size: var(--font-size-xl);
+            font-weight: 700;
+        }
+
+        .red-dot {
+            width: 12px;
+            height: 12px;
+            background: var(--error-color);
+            border-radius: 50%;
+            animation: blink 1s ease-in-out infinite;
+        }
+
+        .recording-timer {
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            margin-bottom: var(--spacing-lg);
+            text-shadow: 0 0 20px rgba(255,215,0,0.8);
+        }
+
+        .recording-progress {
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .progress-bar {
+            width: 300px;
+            height: 8px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 0 auto var(--spacing-md);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--accent-gradient);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            font-size: var(--font-size-md);
+            opacity: 0.8;
+        }
+
+        .btn-stop-recording {
+            background: var(--error-color);
+            color: white;
+            border: none;
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-md) var(--spacing-xl);
+            font-size: var(--font-size-md);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-normal);
+        }
+
+        .btn-stop-recording:hover {
+            background: #d32f2f;
+            transform: translateY(-2px);
+        }
+
+        /* 토스트 */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: rgba(0,0,0,0.9);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            color: white;
+            z-index: 1001;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            min-width: 300px;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.success {
+            border-color: var(--success-color);
+        }
+
+        .toast.error {
+            border-color: var(--error-color);
+        }
+
+        .toast.warning {
+            border-color: var(--warning-color);
+        }
+
+        .toast-content {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+
+        .toast-icon {
+            font-size: var(--font-size-lg);
+        }
+
+        .toast-message {
+            font-size: var(--font-size-md);
+            font-weight: 500;
+        }
+
+        /* 브라우저 지원 경고 */
+        .browser-warning {
+            background: rgba(255,152,0,0.1);
+            border: 1px solid var(--warning-color);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-xl);
+            text-align: center;
+        }
+
+        .browser-warning.hidden {
+            display: none;
+        }
+
         /* 애니메이션 */
         @keyframes pulse {
             0%, 100% { transform: scale(1); opacity: 0.8; }
             50% { transform: scale(1.1); opacity: 1; }
         }
 
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0.3; }
         }
-
-        /* 유틸리티 클래스 */
-        .hidden { display: none !important; }
-        .invisible { visibility: hidden !important; }
-        .text-center { text-align: center; }
 
         /* 모바일 최적화 */
         @media (max-width: 768px) {
-            html {
-                font-size: 14px;
-            }
-            
             .main-content {
                 padding: var(--spacing-lg) var(--spacing-md);
             }
@@ -520,6 +690,18 @@
                 gap: var(--spacing-md);
                 text-align: center;
             }
+
+            .countdown-number {
+                font-size: 6rem;
+            }
+
+            .recording-timer {
+                font-size: 2rem;
+            }
+
+            .progress-bar {
+                width: 250px;
+            }
         }
     </style>
 </head>
@@ -529,9 +711,9 @@
         <div class="loading-container">
             <div class="loading-logo">🎬</div>
             <div class="loading-text">Sue Auto Recorder</div>
-            <div class="loading-subtitle">완전 자동화 시스템 초기화 중...</div>
+            <div class="loading-subtitle">MediaRecorder API 초기화 중...</div>
             <div class="loading-bar">
-                <div class="loading-progress" id="loadingProgress"></div>
+                <div class="loading-progress"></div>
             </div>
         </div>
     </div>
@@ -546,21 +728,27 @@
                     <span class="logo-text">Sue Auto Recorder</span>
                 </div>
                 <div class="header-controls">
-                    <div class="status-indicator" id="systemStatus">
-                        <div class="status-dot"></div>
-                        <span class="status-text">준비완료</span>
+                    <div class="status-indicator">
+                        <div class="status-dot" id="statusDot"></div>
+                        <span class="status-text" id="statusText">준비완료</span>
                     </div>
-                    <button class="btn-icon" id="settingsBtn" title="설정">⚙️</button>
+                    <button class="btn-icon" onclick="showHelp()">❓</button>
                 </div>
             </div>
         </header>
 
         <!-- 메인 컨텐츠 -->
         <main class="main-content">
+            <!-- 브라우저 지원 경고 -->
+            <div id="browserWarning" class="browser-warning hidden">
+                <strong>⚠️ 브라우저 호환성 경고</strong><br>
+                화면 녹화 기능을 사용하려면 Chrome, Firefox, Edge 브라우저를 사용해주세요.
+            </div>
+
             <div class="auto-recorder-panel">
                 <div class="panel-header">
-                    <h2>🤖 완전 자동화 영상 제작</h2>
-                    <p>원클릭으로 Sue Reading Club 홍보영상을 자동 생성합니다</p>
+                    <h2>🤖 실시간 자동 영상 제작</h2>
+                    <p>MediaRecorder API로 구동되는 완전 자동화 시스템</p>
                 </div>
 
                 <!-- 녹화 상태 대시보드 -->
@@ -568,7 +756,7 @@
                     <div class="dashboard-card">
                         <div class="card-icon">🎥</div>
                         <div class="card-title">녹화 상태</div>
-                        <div class="card-value" id="recordingStatus">대기중</div>
+                        <div class="card-value" id="recordingStatus">준비완료</div>
                     </div>
                     <div class="dashboard-card">
                         <div class="card-icon">⏱️</div>
@@ -589,7 +777,8 @@
 
                 <!-- 원클릭 자동 제작 -->
                 <div class="one-click-section">
-                    <h3>⚡ 원클릭 자동 제작</h3>
+                    <h3 style="text-align: center; color: var(--accent-color); margin-bottom: var(--spacing-lg);">⚡ 원클릭 자동 제작</h3>
+                    
                     <div class="auto-process-flow">
                         <div class="process-step" data-step="1">
                             <div class="step-icon">📱</div>
@@ -618,11 +807,11 @@
 
                     <!-- 메인 실행 버튼 -->
                     <div class="main-action">
-                        <button class="btn-main-action" id="startAutoRecording">
-                            <div class="btn-icon">🚀</div>
+                        <button class="btn-main-action" id="startRecordingBtn">
+                            <div style="font-size: 2rem;">🚀</div>
                             <div class="btn-text">
                                 <div class="btn-title">자동 영상 제작 시작</div>
-                                <div class="btn-subtitle">모든 과정이 자동으로 진행됩니다</div>
+                                <div class="btn-subtitle">MediaRecorder API로 실제 녹화</div>
                             </div>
                         </button>
                     </div>
@@ -632,7 +821,7 @@
                 <div style="background: rgba(255,255,255,0.05); border-radius: 20px; padding: 30px; text-align: center; margin-top: 40px;">
                     <h3 style="color: #FFD700; margin-bottom: 20px; font-size: 1.5em;">📞 Sue Reading Club</h3>
                     <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 15px; margin-bottom: 20px;">
-                        <div style="font-size: 1.8em; font-weight: bold; color: #00ffff; margin-bottom: 10px; font-family: 'Consolas', 'Monaco', 'Courier New', monospace;">010-9579-4429</div>
+                        <div style="font-size: 1.8em; font-weight: bold; color: #00ffff; margin-bottom: 10px; font-family: 'Consolas', monospace;">010-9579-4429</div>
                         <div style="font-size: 1.1em; opacity: 0.9;">📍 인천 연수구 송도동 해온더라운지 702호</div>
                     </div>
                     <div style="font-size: 1em; opacity: 0.8;">🎯 AI 기반 미래형 교육 • 98% 만족도 • 3.2배 속도 향상</div>
@@ -641,54 +830,532 @@
         </main>
     </div>
 
-    <!-- JavaScript -->
+    <!-- 카운트다운 오버레이 -->
+    <div id="countdownOverlay" class="countdown-overlay">
+        <div class="countdown-content">
+            <div class="countdown-title">녹화 시작까지</div>
+            <div class="countdown-number" id="countdownNumber">5</div>
+            <div class="countdown-subtitle">슬라이드쇼가 자동으로 시작됩니다</div>
+        </div>
+    </div>
+
+    <!-- 녹화 중 오버레이 -->
+    <div id="recordingOverlay" class="recording-overlay">
+        <div class="recording-content">
+            <div class="recording-indicator">
+                <div class="red-dot"></div>
+                <span>녹화 중</span>
+            </div>
+            <div class="recording-timer" id="recordingTimer">00:00</div>
+            <div class="recording-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="recordingProgress"></div>
+                </div>
+                <div class="progress-text">27.5초 중 <span id="progressSeconds">0</span>초</div>
+            </div>
+            <button class="btn-stop-recording" onclick="stopRecording()">⏹️ 녹화 중지</button>
+        </div>
+    </div>
+
+    <!-- 토스트 알림 -->
+    <div id="toast" class="toast">
+        <div class="toast-content">
+            <span class="toast-icon" id="toastIcon">✅</span>
+            <span class="toast-message" id="toastMessage">메시지</span>
+        </div>
+    </div>
+
+    <!-- 슬라이드쇼 iframe (숨김) -->
+    <iframe id="slideshowFrame" src="data:text/html,<html><body style='margin:0;padding:50px;background:linear-gradient(45deg,#667eea,#764ba2);color:white;font-family:Arial;text-align:center;font-size:24px;'>Sue Reading Club<br>📚 AI 독해 시스템<br>🎯 스마트 속독<br>💬 AI 토론 클래스<br>📞 010-9579-4429<br>📍 인천 연수구 송도동</body></html>" style="position:absolute;left:-9999px;width:1920px;height:1080px;border:none;"></iframe>
+
+    <!-- JavaScript - 완전한 MediaRecorder API 연동 -->
     <script>
-        // 간단한 로딩 및 초기화 스크립트
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('🎬 Sue Reading Club 자동 녹화 시스템 로드 시작');
+        // 전역 변수
+        let mediaRecorder = null;
+        let recordedChunks = [];
+        let stream = null;
+        let isRecording = false;
+        let recordingStartTime = null;
+        let countdownInterval = null;
+        let recordingTimer = null;
+
+        // 시스템 초기화
+        document.addEventListener('DOMContentLoaded', async function() {
+            console.log('🎬 Sue Reading Club API 연동 시스템 초기화');
             
-            // 로딩 진행률 애니메이션
-            const loadingProgress = document.getElementById('loadingProgress');
-            let progress = 0;
-            
-            const updateProgress = () => {
-                progress += Math.random() * 25;
-                if (progress > 100) progress = 100;
-                
-                if (loadingProgress) {
-                    loadingProgress.style.width = progress + '%';
-                }
-                
-                if (progress < 100) {
-                    setTimeout(updateProgress, 200 + Math.random() * 300);
-                } else {
-                    // 로딩 완료
-                    setTimeout(() => {
-                        document.getElementById('loadingScreen').classList.add('hidden');
-                        document.getElementById('app').classList.remove('hidden');
-                        console.log('✅ 시스템 초기화 완료');
-                    }, 500);
-                }
-            };
-            
-            // 로딩 시작
-            setTimeout(updateProgress, 500);
-            
+            // 로딩 애니메이션
+            setTimeout(() => {
+                document.getElementById('loadingScreen').classList.add('hidden');
+                document.getElementById('app').classList.remove('hidden');
+                checkBrowserSupport();
+            }, 2000);
+
             // 메인 버튼 이벤트
-            const startBtn = document.getElementById('startAutoRecording');
-            if (startBtn) {
-                startBtn.addEventListener('click', function() {
-                    alert('🎬 Sue Reading Club 자동 녹화 시스템\n\n현재 데모 버전입니다.\n실제 녹화 기능은 MediaRecorder API를 사용하여 구현됩니다.\n\n📞 문의: 010-9579-4429\n📍 인천 연수구 송도동 해온더라운지 702호');
+            document.getElementById('startRecordingBtn').addEventListener('click', startAutoRecording);
+        });
+
+        // 브라우저 지원 확인
+        function checkBrowserSupport() {
+            const isSupported = 
+                navigator.mediaDevices && 
+                navigator.mediaDevices.getDisplayMedia && 
+                window.MediaRecorder;
+
+            if (!isSupported) {
+                document.getElementById('browserWarning').classList.remove('hidden');
+                document.getElementById('startRecordingBtn').disabled = true;
+                updateStatus('지원안됨', 'error');
+                showToast('이 브라우저는 화면 녹화를 지원하지 않습니다', 'error');
+            } else {
+                updateStatus('준비완료', 'success');
+                console.log('✅ MediaRecorder API 지원 확인');
+            }
+        }
+
+        // 자동 녹화 프로세스 시작
+        async function startAutoRecording() {
+            if (isRecording) {
+                showToast('이미 녹화가 진행 중입니다', 'warning');
+                return;
+            }
+
+            try {
+                console.log('🚀 자동 녹화 프로세스 시작');
+                
+                // 1단계: 슬라이드쇼 준비
+                await executeStep(1, '슬라이드쇼 준비 중...', async () => {
+                    updateStatus('준비중', 'preparing');
+                    await new Promise(resolve => setTimeout(resolve, 1000));
                 });
+
+                // 2단계: 카운트다운
+                await executeStep(2, '카운트다운 시작', async () => {
+                    await showCountdown();
+                });
+
+                // 3단계: 화면 캡처 및 녹화 시작
+                await executeStep(3, '녹화 진행', async () => {
+                    await startScreenRecording();
+                });
+
+                // 자동으로 27.5초 후 중지
+                setTimeout(async () => {
+                    if (isRecording) {
+                        await executeStep(4, 'MP4 생성', async () => {
+                            await stopRecording();
+                        });
+                    }
+                }, 27500);
+
+            } catch (error) {
+                console.error('❌ 녹화 오류:', error);
+                handleRecordingError(error);
+                resetAllSteps();
+            }
+        }
+
+        // 단계별 실행 함수
+        async function executeStep(stepNumber, statusText, action) {
+            const step = document.querySelector(`[data-step="${stepNumber}"]`);
+            const status = step?.querySelector('.step-status');
+
+            // 단계 활성화
+            if (step) {
+                step.classList.add('active');
+                if (status) status.textContent = '진행중';
+            }
+
+            try {
+                await action();
+                
+                // 단계 완료
+                if (step) {
+                    step.classList.remove('active');
+                    step.classList.add('completed');
+                    if (status) status.textContent = '완료';
+                }
+            } catch (error) {
+                // 단계 실패
+                if (step) {
+                    step.classList.remove('active');
+                    if (status) status.textContent = '실패';
+                }
+                throw error;
+            }
+        }
+
+        // 카운트다운 표시
+        function showCountdown() {
+            return new Promise((resolve) => {
+                const overlay = document.getElementById('countdownOverlay');
+                const numberEl = document.getElementById('countdownNumber');
+                
+                overlay.classList.add('show');
+                let count = 5;
+                
+                const countdown = () => {
+                    numberEl.textContent = count;
+                    
+                    if (count <= 0) {
+                        overlay.classList.remove('show');
+                        resolve();
+                    } else {
+                        count--;
+                        setTimeout(countdown, 1000);
+                    }
+                };
+                
+                countdown();
+            });
+        }
+
+        // 화면 녹화 시작
+        async function startScreenRecording() {
+            try {
+                // 화면 캡처 요청
+                stream = await navigator.mediaDevices.getDisplayMedia({
+                    video: {
+                        width: 1920,
+                        height: 1080,
+                        frameRate: 30
+                    },
+                    audio: false
+                });
+
+                // MediaRecorder 설정
+                const options = {
+                    mimeType: getSupportedMimeType(),
+                    videoBitsPerSecond: 5000000 // 5Mbps
+                };
+
+                mediaRecorder = new MediaRecorder(stream, options);
+                recordedChunks = [];
+
+                // 이벤트 핸들러 설정
+                mediaRecorder.ondataavailable = (event) => {
+                    if (event.data.size > 0) {
+                        recordedChunks.push(event.data);
+                        updateFileSize();
+                    }
+                };
+
+                mediaRecorder.onstop = () => {
+                    handleRecordingComplete();
+                };
+
+                mediaRecorder.onerror = (event) => {
+                    console.error('MediaRecorder 오류:', event.error);
+                    throw event.error;
+                };
+
+                // 스트림 종료 감지
+                stream.getVideoTracks()[0].onended = () => {
+                    if (isRecording) {
+                        stopRecording();
+                    }
+                };
+
+                // 녹화 시작
+                mediaRecorder.start(1000); // 1초마다 데이터 수집
+                isRecording = true;
+                recordingStartTime = Date.now();
+
+                // UI 업데이트
+                showRecordingOverlay();
+                updateStatus('녹화중', 'recording');
+                updateMainButton('recording');
+                startRecordingTimer();
+
+                showToast('화면 녹화가 시작되었습니다!', 'success');
+                console.log('🎥 녹화 시작됨');
+
+            } catch (error) {
+                if (error.name === 'NotAllowedError') {
+                    throw new Error('화면 공유 권한이 거부되었습니다');
+                } else if (error.name === 'NotSupportedError') {
+                    throw new Error('이 브라우저는 화면 녹화를 지원하지 않습니다');
+                }
+                throw error;
+            }
+        }
+
+        // 녹화 중지
+        async function stopRecording() {
+            if (!isRecording || !mediaRecorder) {
+                return;
+            }
+
+            try {
+                console.log('⏹️ 녹화 중지 중...');
+                
+                mediaRecorder.stop();
+                isRecording = false;
+
+                // 스트림 정리
+                if (stream) {
+                    stream.getTracks().forEach(track => track.stop());
+                    stream = null;
+                }
+
+                // UI 업데이트
+                hideRecordingOverlay();
+                stopRecordingTimer();
+                updateStatus('처리중', 'preparing');
+                updateMainButton('processing');
+
+            } catch (error) {
+                console.error('녹화 중지 오류:', error);
+                throw error;
+            }
+        }
+
+        // 녹화 완료 처리
+        function handleRecordingComplete() {
+            if (recordedChunks.length === 0) {
+                showToast('녹화된 데이터가 없습니다', 'error');
+                return;
+            }
+
+            try {
+                // Blob 생성
+                const mimeType = getSupportedMimeType();
+                const blob = new Blob(recordedChunks, { type: mimeType });
+                
+                // 파일명 생성
+                const timestamp = new Date().toISOString().slice(0, 19).replace(/[:.]/g, '-');
+                const extension = mimeType.includes('webm') ? 'webm' : 'mp4';
+                const filename = `sue-reading-video_${timestamp}.${extension}`;
+
+                // 자동 다운로드
+                downloadBlob(blob, filename);
+
+                // 성공 처리
+                updateStatus('완료', 'success');
+                updateMainButton('completed');
+                showToast(`영상이 생성되었습니다! (${formatFileSize(blob.size)})`, 'success');
+
+                console.log('✅ 녹화 완료:', filename, formatFileSize(blob.size));
+
+                // 5초 후 UI 리셋
+                setTimeout(() => {
+                    resetAllSteps();
+                    updateStatus('준비완료', 'success');
+                    updateMainButton('ready');
+                }, 5000);
+
+            } catch (error) {
+                console.error('파일 생성 오류:', error);
+                showToast('파일 생성 중 오류가 발생했습니다', 'error');
+            }
+        }
+
+        // 지원되는 MIME 타입 가져오기
+        function getSupportedMimeType() {
+            const types = [
+                'video/webm;codecs=vp9',
+                'video/webm;codecs=vp8',
+                'video/webm',
+                'video/mp4'
+            ];
+
+            for (const type of types) {
+                if (MediaRecorder.isTypeSupported(type)) {
+                    return type;
+                }
+            }
+            return 'video/webm';
+        }
+
+        // 파일 다운로드
+        function downloadBlob(blob, filename) {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // 파일 크기 포맷
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // 시간 포맷
+        function formatTime(ms) {
+            const seconds = Math.floor(ms / 1000);
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        // 상태 업데이트
+        function updateStatus(status, type = 'success') {
+            const statusText = document.getElementById('statusText');
+            const statusDot = document.getElementById('statusDot');
+            const recordingStatus = document.getElementById('recordingStatus');
+
+            if (statusText) statusText.textContent = status;
+            if (recordingStatus) recordingStatus.textContent = status;
+            
+            if (statusDot) {
+                statusDot.className = `status-dot ${type}`;
+            }
+        }
+
+        // 메인 버튼 상태 업데이트
+        function updateMainButton(state) {
+            const button = document.getElementById('startRecordingBtn');
+            const title = button.querySelector('.btn-title');
+            const subtitle = button.querySelector('.btn-subtitle');
+
+            switch(state) {
+                case 'recording':
+                    button.classList.add('recording');
+                    button.disabled = true;
+                    title.textContent = '녹화 진행 중...';
+                    subtitle.textContent = '27.5초 자동 녹화 중';
+                    break;
+                case 'processing':
+                    title.textContent = '파일 생성 중...';
+                    subtitle.textContent = 'MP4 파일 생성 중';
+                    break;
+                case 'completed':
+                    title.textContent = '녹화 완료!';
+                    subtitle.textContent = '파일이 다운로드되었습니다';
+                    break;
+                case 'ready':
+                default:
+                    button.classList.remove('recording');
+                    button.disabled = false;
+                    title.textContent = '자동 영상 제작 시작';
+                    subtitle.textContent = 'MediaRecorder API로 실제 녹화';
+                    break;
+            }
+        }
+
+        // 녹화 오버레이 표시/숨김
+        function showRecordingOverlay() {
+            document.getElementById('recordingOverlay').classList.add('show');
+        }
+
+        function hideRecordingOverlay() {
+            document.getElementById('recordingOverlay').classList.remove('show');
+        }
+
+        // 녹화 타이머 시작/중지
+        function startRecordingTimer() {
+            recordingTimer = setInterval(() => {
+                if (recordingStartTime) {
+                    const elapsed = Date.now() - recordingStartTime;
+                    const progress = Math.min((elapsed / 27500) * 100, 100);
+                    
+                    document.getElementById('recordingTimer').textContent = formatTime(elapsed);
+                    document.getElementById('recordingTime').textContent = formatTime(elapsed);
+                    document.getElementById('recordingProgress').style.width = progress + '%';
+                    document.getElementById('progressSeconds').textContent = Math.floor(elapsed / 1000);
+                }
+            }, 100);
+        }
+
+        function stopRecordingTimer() {
+            if (recordingTimer) {
+                clearInterval(recordingTimer);
+                recordingTimer = null;
+            }
+        }
+
+        // 파일 크기 업데이트
+        function updateFileSize() {
+            if (recordedChunks.length > 0) {
+                const totalSize = recordedChunks.reduce((total, chunk) => total + chunk.size, 0);
+                document.getElementById('fileSize').textContent = formatFileSize(totalSize);
+            }
+        }
+
+        // 모든 단계 리셋
+        function resetAllSteps() {
+            document.querySelectorAll('.process-step').forEach(step => {
+                step.classList.remove('active', 'completed');
+                const status = step.querySelector('.step-status');
+                if (status) status.textContent = '대기';
+            });
+        }
+
+        // 오류 처리
+        function handleRecordingError(error) {
+            updateStatus('오류', 'error');
+            updateMainButton('ready');
+            
+            let message = '녹화 중 오류가 발생했습니다';
+            if (error.message.includes('권한')) {
+                message = '화면 공유 권한을 허용해주세요';
+            } else if (error.message.includes('지원')) {
+                message = '이 브라우저는 화면 녹화를 지원하지 않습니다';
             }
             
-            // 시스템 상태 업데이트
-            setTimeout(() => {
-                document.getElementById('recordingStatus').textContent = '준비완료';
-                document.getElementById('videoQuality').textContent = '1080p';
-                document.getElementById('fileSize').textContent = '0 MB';
-            }, 2000);
+            showToast(message, 'error');
+            console.error('🚨 녹화 오류:', error);
+        }
+
+        // 토스트 알림
+        function showToast(message, type = 'info') {
+            const toast = document.getElementById('toast');
+            const icon = document.getElementById('toastIcon');
+            const messageEl = document.getElementById('toastMessage');
+
+            const icons = {
+                success: '✅',
+                error: '❌',
+                warning: '⚠️',
+                info: 'ℹ️'
+            };
+
+            toast.className = `toast ${type}`;
+            icon.textContent = icons[type] || icons.info;
+            messageEl.textContent = message;
+
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 4000);
+        }
+
+        // 도움말 표시
+        function showHelp() {
+            alert(`🎬 Sue Reading Club 자동 녹화 시스템
+
+📋 사용법:
+1. "자동 영상 제작 시작" 버튼 클릭
+2. 화면 공유 권한 허용
+3. 5초 카운트다운 대기
+4. 27.5초 자동 녹화 진행
+5. MP4 파일 자동 다운로드
+
+⚠️ 주의사항:
+• Chrome, Firefox, Edge 브라우저 권장
+• HTTPS 환경에서만 작동
+• 화면 공유 권한 필요
+
+📞 문의: 010-9579-4429
+📍 인천 연수구 송도동 해온더라운지 702호`);
+        }
+
+        // 페이지 언로드 시 정리
+        window.addEventListener('beforeunload', (e) => {
+            if (isRecording) {
+                e.preventDefault();
+                e.returnValue = '녹화가 진행 중입니다. 정말 페이지를 떠나시겠습니까?';
+                return e.returnValue;
+            }
         });
+
+        console.log('🚀 Sue Reading Club MediaRecorder API 시스템 로드 완료');
     </script>
 </body>
 </html>
