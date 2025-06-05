@@ -1,0 +1,222 @@
+/* Sue Reading Club - 모바일 최적화 스타일 */
+
+/* 모바일 우선 반응형 디자인 */
+@media (max-width: 768px) {
+    html {
+        font-size: 14px;
+    }
+    
+    .main-content {
+        padding: var(--spacing-lg) var(--spacing-md);
+    }
+    
+    .header-content {
+        padding: 0 var(--spacing-md);
+        flex-wrap: wrap;
+    }
+    
+    .logo-text {
+        display: none;
+    }
+    
+    .header-controls {
+        gap: var(--spacing-sm);
+    }
+    
+    .status-indicator {
+        padding: var(--spacing-xs) var(--spacing-sm);
+    }
+    
+    .status-text {
+        display: none;
+    }
+    
+    /* 자동 녹화 패널 모바일 */
+    .auto-recorder-panel {
+        padding: var(--spacing-lg);
+    }
+    
+    .panel-header h2 {
+        font-size: var(--font-size-xxl);
+    }
+    
+    .panel-header p {
+        font-size: var(--font-size-md);
+    }
+    
+    /* 대시보드 카드 모바일 */
+    .recording-dashboard {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-md);
+    }
+    
+    .dashboard-card {
+        padding: var(--spacing-md);
+    }
+    
+    .card-icon {
+        font-size: 2rem;
+    }
+    
+    /* 프로세스 플로우 모바일 */
+    .auto-process-flow {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .process-step {
+        min-width: auto;
+        padding: var(--spacing-md);
+    }
+    
+    .process-arrow {
+        transform: rotate(90deg);
+        margin: var(--spacing-sm) 0;
+    }
+    
+    /* 메인 액션 버튼 모바일 */
+    .btn-main-action {
+        min-width: 100%;
+        padding: var(--spacing-lg) var(--spacing-xl);
+        flex-direction: column;
+        gap: var(--spacing-md);
+        text-align: center;
+    }
+    
+    .btn-icon {
+        font-size: 3rem;
+    }
+    
+    /* 설정 그리드 모바일 */
+    .settings-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+    }
+    
+    /* 폰 목업 모바일 */
+    .phone-mockup {
+        width: 250px;
+        height: 444px;
+        padding: 12px;
+    }
+    
+    .preview-controls {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    /* 카운트다운 모바일 */
+    .countdown-number {
+        font-size: 6rem;
+    }
+    
+    .recording-timer {
+        font-size: 2rem;
+    }
+    
+    .progress-bar {
+        width: 250px;
+    }
+    
+    /* 토스트 모바일 */
+    .toast {
+        bottom: 20px;
+        right: 20px;
+        left: 20px;
+        min-width: auto;
+    }
+}
+
+/* 작은 모바일 화면 */
+@media (max-width: 480px) {
+    .auto-recorder-panel {
+        padding: var(--spacing-md);
+    }
+    
+    .recording-dashboard {
+        grid-template-columns: 1fr;
+    }
+    
+    .phone-mockup {
+        width: 200px;
+        height: 355px;
+        padding: 10px;
+    }
+    
+    .countdown-number {
+        font-size: 4rem;
+    }
+    
+    .recording-timer {
+        font-size: 1.5rem;
+    }
+    
+    .progress-bar {
+        width: 200px;
+    }
+    
+    .btn-main-action .btn-icon {
+        font-size: 2.5rem;
+    }
+}
+
+/* 터치 최적화 */
+@media (hover: none) {
+    .btn:hover,
+    .dashboard-card:hover,
+    .btn-main-action:hover {
+        transform: none;
+    }
+    
+    .btn:active,
+    .dashboard-card:active,
+    .btn-main-action:active {
+        transform: scale(0.98);
+    }
+}
+
+/* PWA 스타일 */
+@media (display-mode: standalone) {
+    .header {
+        padding-top: calc(var(--spacing-md) + env(safe-area-inset-top));
+    }
+    
+    .main-content {
+        padding-bottom: calc(var(--spacing-xl) + env(safe-area-inset-bottom));
+    }
+}
+
+/* 가로 모드 조정 */
+@media (orientation: landscape) and (max-height: 600px) {
+    .phone-mockup {
+        width: 180px;
+        height: 320px;
+    }
+    
+    .countdown-number {
+        font-size: 3rem;
+    }
+    
+    .recording-timer {
+        font-size: 1.2rem;
+    }
+    
+    .panel-header {
+        margin-bottom: var(--spacing-lg);
+    }
+    
+    .auto-process-flow {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+    
+    .process-arrow {
+        transform: none;
+        margin: 0 var(--spacing-sm);
+    }
+}

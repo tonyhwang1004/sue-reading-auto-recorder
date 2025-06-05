@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sue Reading Club - 슬라이드쇼</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;600;700;900&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000;
+            overflow: hidden;
+            font-family: 'Noto Sans KR', sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .slideshow-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transform: scale(0.8) rotateY(45deg);
+            transition: all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            backface-visibility: hidden;
+            perspective: 1000px;
+        }
+
+        .slide.active {
+            opacity: 1;
+            transform: scale(1) rotateY(0deg);
+        }
+
+        /* 슬라이드 1: 인트로 */
+        .slide-1 {
+            background: linear-gradient(135deg, 
+                #667eea 0%, 
+                #764ba2 25%, 
+                #f093fb 50%, 
+                #f5576c 75%, 
+                #4facfe 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 8s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .hologram {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 10;
+        }
+
+        .hologram-text {
+            font-family: 'Orbitron', monospace;
+            font-size: 4em;
+            font-weight: 900;
+            background: linear-gradient(45deg, #00ffff, #ff00ff, #ffff00, #00ffff);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: hologramPulse 2s linear infinite, textGlow 1.5s ease-in-out infinite alternate;
+            text-shadow: 0 0 30px rgba(0, 255, 255, 0.8);
+            line-height: 1.1;
+            letter-spacing: 3px;
+        }
+
+        @keyframes hologramPulse {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 300% 50%; }
+        }
+
+        @keyframes textGlow {
+            from { text-shadow: 0 0 20px rgba(0, 255, 255, 0.8), 0 0 40px rgba(0, 255, 255, 0.4); }
+            to { text-shadow: 0 0 30px rgba(255, 0, 255, 0.8), 0 0 60px rgba(255, 0, 255, 0.4); }
+        }
+
+        .subtitle {
+            font-size: 1.5em;
+            margin-top: 30px;
+            color: rgba(255, 255, 255, 0.9);
+            animation: fadeInUp 2s ease 0.5s both;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        .floating-particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: rgba(0, 255, 255, 0.8);
+            border-radius: 50%;
+            animation: float 6s linear infinite;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.8);
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-10vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* 슬라이드 2: 로고 */
+        .slide-2 {
+            background: radial-gradient(circle, #000428 0%, #004e92 100%);
+        }
+
+        .logo-showcase {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 10;
+        }
+
+        .logo-icon {
+            font-size: 10em;
+            animation: logoZoom 2s ease-in-out;
+        }
+
+        @keyframes logoZoom {
+            0% { transform: scale(0) rotate(0deg); opacity: 0; }
+            50% { transform: scale(1.2) rotate(180deg); opacity: 0.8; }
+            100% { transform: scale(1) rotate(360deg); opacity: 1; }
+        }
+
+        .logo-text {
+            font-family: 'Orbitron', monospace;
+            font-size: 2.2em;
+            color: #00ffff;
+            margin-top: 30px;
+            animation: fadeInUp 1s ease 1s both;
+            text-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
+        }
+
+        /* 슬라이드 3: 프로그램 */
+        .slide-3 {
+            background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
+            position: relative;
+        }
+
+        .matrix-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            opacity: 0.3;
+        }
+
+        .matrix-column {
+            position: absolute;
+            top: -100%;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            color: #00ff00;
+            animation: matrixFall 8s linear infinite;
+            white-space: nowrap;
+        }
+
+        @keyframes matrixFall {
+            to {
+                transform: translateY(100vh);
+            }
+        }
+
+        .program-showcase {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 10;
+        }
+
+        .program-title {
+            font-size: 3em;
+            font-weight: 700;
+            color: #00ff00;
+            margin-bottom: 40px;
+            text-shadow: 0 0 20px rgba(0, 255, 0, 0.8);
+            animation: typewriter 2s steps(20) 1s both;
+            overflow: hidden;
+            white-space: nowrap;
+            border-right: 3px solid #00ff00;
+        }
+
+        @keyframes typewriter {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        .program-card {
+            background: rgba(0, 255, 0, 0.1);
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(0, 255, 0, 0.3);
+            border-radius: 20px;
+            padding: 30px;
+            transform: translateX(-100px);
+            opacity: 0;
+            animation: slideInLeft 0.8s ease 2.5s forwards;
+            margin-top: 30px;
+            max-width: 600px;
+        }
+
+        @keyframes slideInLeft {
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .card-title {
+            font-size: 1.6em;
+            font-weight: 600;
+            color: #00ffff;
+            margin-bottom: 15px;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.6);
+        }
+
+        .card-desc {
+            font-size: 1.1em;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.5;
+        }
+
+        /* 기타 슬라이드들 공통 스타일 */
+        .center-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 10;
+            width: 90%;
+            max-width: 800px;
+        }
+
+        .big-icon {
+            font-size: 5em;
+            margin-bottom: 30px;
+        }
+
+        .slide-title {
+            font-size: 2.8em;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .slide-desc {
+            font-size: 1.3em;
+            opacity: 0.9;
+            line-height: 1.5;
+        }
+
+        /* 애니메이션 효과들 */
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.05); }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes rotateIn {
+            0% { transform: rotateZ(-200deg); opacity: 0; }
+            100% { transform: rotateZ(0deg); opacity: 1; }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.1); opacity: 1; }
+        }
+
+        @keyframes flash {
+            0%, 50%, 100% { opacity: 1; }
+            25%, 75% { opacity: 0.6; }
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-15px); }
+            60% { transform: translateY(-8px); }
+        }
+
+        @keyframes neonFlicker {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+            75% { opacity: 0.9; }
+        }
+
+        /* 통계 그리드 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .stat-item {
+            background: rgba(17, 153, 142, 0.1);
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(17, 153, 142, 0.3);
+            border-radius: 25px;
+            padding: 30px 20px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-family: 'Orbitron', monospace;
+            font-size: 3em;
+            font-weight: 900;
+            color: #00ffff;
+            text-shadow: 0 0 25px rgba(0, 255, 255, 0.8);
+        }
+
+        .stat-label {
+            font-size: 1.1em;
+            color: rgba(255, 255, 255, 0.8);
+            margin-top: 10px;
+            font-weight: 600;
+        }
+
+        /* 연락처 스타일 */
+        .contact-showcase {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 10;
+        }
+
+        .contact-title {
+            font-size: 3em;
+            font-weight: 900;
+            color: #fff;
+            margin-bottom: 40px;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        .contact-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(30px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 30px;
+            padding: 40px;
+            margin: 30px 0;
+            max-width: 600px;
+        }
+
+        .phone-number {
+            font-family: 'Orbitron', monospace;
+            font-size: 2.5em;
+            font-weight: 700;
+            color: #ffff00;
+            margin-bottom: 20px;
+            text-shadow: 0 0 25px rgba(255, 255, 0, 0.8);
+            animation: neonFlicker 3s linear infinite;
+        }
+
+        .address {
+            font-size: 1.3em;
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.5;
+        }
+
+        /* 프로그레스 바 */
+        .progress-indicator {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #00ffff, #ff00ff);
+            width: 0%;
+            transition: width 2.5s linear;
+            z-index: 100;
+        }
+
+        .progress-indicator.active {
+            width: 100%;
+        }
+
+        /* 슬라이드 번호 */
+        .slide-number {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            font-family: 'Orbitron', monospace;
+            font-size: 1em;
+            color: rgba(255, 255, 255, 0.6);
+            background: rgba(0, 0, 0, 0.3);
+            padding: 8px 15px;
+            border-radius: 15px;
+            backdrop-filter: blur(15px);
+        }
+
+        /* 반응형 */
+        @media (max-width: 768px) {
+            .hologram-text { font-size: 2.5em; }
+            .subtitle { font-size: 1.2em; }
+            .logo-icon { font-size: 6em; }
+            .logo-text { font-size: 1.5em; }
+            .program-title { font-size: 2em; }
+            .card-title { font-size: 1.3em; }
+            .card-desc { font-size: 1em; }
+            .slide-title { font-size: 2em; }
+            .slide-desc { font-size: 1.1em; }
+            .big-icon { font-size: 3.5em; }
+            .contact-title { font-size: 2em; }
+            .phone-number { font-size: 1.8em; }
+            .address { font-size: 1.1em; }
+            .stats-grid { grid-template-columns: 1fr; gap: 20px; }
+            .stat-number { font-size: 2.5em; }
+        }
+    </style>
+</head>
+<body>
+    <div class="slideshow-container">
+        <div class="progress-indicator" id="progressIndicator"></div>
+        
+        <!-- 슬라이드 1: 홀로그램 인트로 -->
+        <div class="slide slide-1 active" data-slide="0">
+            <div class="floating-particles" id="particles"></div>
+            <div class="hologram">
+                <div class="hologram-text">Sue Reading<br>Club</div>
+                <div class="subtitle">AI 기반 미래형 교육</div>
+            </div>
+            <div class="slide-number">01/11</div>
+        </div>
+
+        <!-- 슬라이드 2: 로고 확대 -->
+        <div class="slide slide-2" data-slide="1">
+            <div class="logo-showcase">
+                <div class="logo-icon">📚</div>
+                <div class="logo-text">SUE READING CLUB</div>
+            </div>
+            <div class="slide-number">02/11</div>
+        </div>
+
+        <!-- 슬라이드 3: 매트릭스 프로그램 -->
+        <div class="slide slide-3" data-slide="2">
+            <div class="matrix-bg" id="matrixBg"></div>
+            <div class="program-showcase">
+                <div class="program-title">AI PROGRAMS</div>
+                <div class="program-card">
+                    <div class="card-title">🧠 AI 독해 시스템</div>
+                    <div class="card-desc">개인별 맞춤형 AI 분석으로<br>독해력을 혁신적으로 향상시킵니다</div>
+                </div>
+            </div>
+            <div class="slide-number">03/11</div>
+        </div>
+
+        <!-- 슬라이드 4: 스마트 속독 -->
+        <div class="slide" data-slide="3" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+            <div class="center-content">
+                <div class="big-icon" style="animation: bounceIn 1s ease;">🎯</div>
+                <div class="slide-title">스마트 속독</div>
+                <div class="slide-desc">과학적 훈련법으로<br>읽기 속도 3배 향상</div>
+            </div>
+            <div class="slide-number">04/11</div>
+        </div>
+
+        <!-- 슬라이드 5: AI 토론 클래스 -->
+        <div class="slide" data-slide="4" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+            <div class="center-content">
+                <div class="big-icon" style="animation: rotateIn 1s ease;">💬</div>
+                <div class="slide-title">AI 토론 클래스</div>
+                <div class="slide-desc">AI와 함께하는<br>실시간 토론 학습</div>
+            </div>
+            <div class="slide-number">05/11</div>
+        </div>
+
+        <!-- 슬라이드 6: AI 개별분석 -->
+        <div class="slide" data-slide="5" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+            <div class="center-content">
+                <div style="font-size: 6em; margin-bottom: 30px; animation: pulse 2s ease-in-out infinite;">🤖</div>
+                <div style="font-size: 3em; font-weight: 900; margin-bottom: 25px; text-shadow: 0 0 25px rgba(255,255,255,0.8);">AI 개별 분석</div>
+                <div style="font-size: 1.4em; line-height: 1.5;">학습자의 읽기 패턴을<br>실시간으로 분석하여<br>최적의 학습법 제공</div>
+            </div>
+            <div class="slide-number">06/11</div>
+        </div>
+
+        <!-- 슬라이드 7: 실시간 피드백 -->
+        <div class="slide" data-slide="6" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">
+            <div class="center-content" style="color: #333;">
+                <div style="font-size: 6em; margin-bottom: 30px; animation: flash 1.5s ease-in-out infinite;">⚡</div>
+                <div style="font-size: 3em; font-weight: 900; margin-bottom: 25px; color: #ff6b6b;">실시간 피드백</div>
+                <div style="font-size: 1.4em; line-height: 1.5; color: #666;">즉석에서 제공되는<br>정확한 피드백으로<br>빠른 실력 향상</div>
+            </div>
+            <div class="slide-number">07/11</div>
+        </div>
+
+        <!-- 슬라이드 8: 성과 통계 -->
+        <div class="slide" data-slide="7" style="background: linear-gradient(135deg, #0f0f0f 0%, #2d1b69 50%, #11998e 100%);">
+            <div class="center-content">
+                <div style="font-size: 2.8em; font-weight: 900; color: #11998e; margin-bottom: 50px; text-shadow: 0 0 30px rgba(17, 153, 142, 0.8);">성과 데이터</div>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-number">98%</div>
+                        <div class="stat-label">만족도</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">3.2x</div>
+                        <div class="stat-label">읽기속도 향상</div>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-number">08/11</div>
+        </div>
+
+        <!-- 슬라이드 9: 후기 -->
+        <div class="slide" data-slide="8" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+            <div class="center-content">
+                <div style="font-size: 4em; margin-bottom: 30px;">💬</div>
+                <div style="font-size: 2.2em; font-weight: 700; margin-bottom: 25px;">"우리 아이가 완전히 달라졌어요!"</div>
+                <div style="font-size: 1.3em; opacity: 0.9; line-height: 1.6; margin-bottom: 20px;">3개월 만에 읽기 속도가 3배나<br>빨라지고 이해력도 향상됐습니다</div>
+                <div style="font-size: 1em; opacity: 0.7;">- 김○○ 학부모님</div>
+            </div>
+            <div class="slide-number">09/11</div>
+        </div>
+
+        <!-- 슬라이드 10: 위치 정보 -->
+        <div class="slide" data-slide="9" style="background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);">
+            <div class="center-content">
+                <div style="font-size: 5em; margin-bottom: 30px; animation: bounceIn 1s ease;">📍</div>
+                <div style="font-size: 2.8em; font-weight: 700; margin-bottom: 30px;">찾아오시는 길</div>
+                <div style="background: rgba(255,255,255,0.1); padding: 30px; border-radius: 20px; backdrop-filter: blur(15px);">
+                    <div style="font-size: 1.5em; margin-bottom: 15px; color: #3498db;">인천 연수구 송도동</div>
+                    <div style="font-size: 1.2em; opacity: 0.8;">해온더라운지 702호</div>
+                    <div style="font-size: 1em; margin-top: 15px; opacity: 0.7;">송도국제도시 센트럴파크 인근</div>
+                </div>
+            </div>
+            <div class="slide-number">10/11</div>
+        </div>
+
+        <!-- 슬라이드 11: 연락처 -->
+        <div class="slide" data-slide="10" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+            <div class="contact-showcase">
+                <div class="contact-title">📞 상담 문의</div>
+                <div class="contact-card">
+                    <div class="phone-number">010-9579-4429</div>
+                    <div class="address">인천 연수구 송도동<br>해온더라운지 702호</div>
+                </div>
+            </div>
+            <div class="slide-number">11/11</div>
+        </div>
+    </div>
+
+    <script>
+        // 슬라이드쇼 제어 변수
+        let currentSlide = 0;
+        const totalSlides = 11;
+        let slideDuration = 2500; // 기본 2.5초
+        let autoplayInterval;
+        let isPlaying = true;
+
+        // URL 파라미터에서 설정 가져오기
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('duration')) {
+            slideDuration = parseInt(urlParams.get('duration'));
+        }
+        const autoStart = urlParams.get('autostart') !== 'false';
+
+        // 슬라이드 전환 함수
+        function goToSlide(index) {
+            // 이전 슬라이드 비활성화
+            document.querySelectorAll('.slide').forEach(slide => {
+                slide.classList.remove('active');
+            });
+
+            // 새 슬라이드 활성화
+            currentSlide = index;
+            const slideElement = document.querySelector(`[data-slide="${currentSlide}"]`);
+            if (slideElement) {
+                slideElement.classList.add('active');
+            }
+
+            // 프로그레스 바 업데이트
+            const progressBar = document.getElementById('progressIndicator');
+            progressBar.classList.remove('active');
+            setTimeout(() => {
+                progressBar.classList.add('active');
+            }, 100);
+
+            // 슬라이드별 특수 효과
+            triggerSlideEffects(currentSlide);
+
+            // 부모 창에 진행상황 알림
+            if (window.parent !== window) {
+                window.parent.postMessage({
+                    type: 'slideChanged',
+                    slide: currentSlide,
+                    total: totalSlides
+                }, '*');
+            }
+        }
+
+        // 다음 슬라이드
+        function nextSlide() {
+            const next = (currentSlide + 1) % totalSlides;
+            goToSlide(next);
+        }
+
+        // 슬라이드별 특수 효과
+        function triggerSlideEffects(slideIndex) {
+            switch(slideIndex) {
+                case 0:
+                    createParticles();
+                    break;
+                case 2:
+                    createMatrix();
+                    break;
+            }
+        }
+
+        // 파티클 효과 생성
+        function createParticles() {
+            const container = document.getElementById('particles');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            for(let i = 0; i < 80; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 6 + 's';
+                particle.style.animationDuration = (Math.random() * 3 + 3) + 's';
+                container.appendChild(particle);
+            }
+        }
+
+        // 매트릭스 효과 생성
+        function createMatrix() {
+            const container = document.getElementById('matrixBg');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            const characters = '01수리딩ABCDEFGHIJKLMNOPQRSTUVWXYZ독서클럽AI';
+            
+            for(let i = 0; i < 30; i++) {
+                const column = document.createElement('div');
+                column.className = 'matrix-column';
+                column.style.left = Math.random() * 100 + '%';
+                column.style.animationDelay = Math.random() * 8 + 's';
+                column.style.animationDuration = (Math.random() * 3 + 5) + 's';
+                
+                let text = '';
+                for(let j = 0; j < 25; j++) {
+                    text += characters.charAt(Math.floor(Math.random() * characters.length)) + '\n';
+                }
+                column.textContent = text;
+                
+                container.appendChild(column);
+            }
+        }
+
+        // 자동재생 시작
+        function startAutoplay() {
+            if (autoplayInterval) {
+                clearInterval(autoplayInterval);
+            }
+            autoplayInterval = setInterval(nextSlide, slideDuration);
+        }
+
+        // 자동재생 중지
+        function stopAutoplay() {
+            if (autoplayInterval) {
+                clearInterval(autoplayInterval);
+                autoplayInterval = null;
+            }
+        }
+
+        // 슬라이드쇼 시작
+        function startSlideshow() {
+            goToSlide(0);
+            startAutoplay();
+            isPlaying = true;
+            
+            // 부모 창에 시작 알림
+            if (window.parent !== window) {
+                window.parent.postMessage({
+                    type: 'slideshowStarted',
+                    duration: slideDuration * totalSlides
+                }, '*');
+            }
+        }
+
+        // 슬라이드쇼 중지
+        function pauseSlideshow() {
+            stopAutoplay();
+            isPlaying = false;
+        }
+
+        // 외부 메시지 수신
+        window.addEventListener('message', (event) => {
+            const { type, data } = event.data;
+            
+            switch(type) {
+                case 'start':
+                    startSlideshow();
+                    break;
+                case 'pause':
+                    pauseSlideshow();
+                    break;
+                case 'resume':
+                    if (!isPlaying) {
+                        startAutoplay();
+                        isPlaying = true;
+                    }
+                    break;
+                case 'reset':
+                    goToSlide(0);
+                    if (isPlaying) {
+                        stopAutoplay();
+                        startAutoplay();
+                    }
+                    break;
+                case 'setDuration':
+                    slideDuration = data.duration;
+                    if (isPlaying) {
+                        stopAutoplay();
+                        startAutoplay();
+                    }
+                    break;
+                case 'goToSlide':
+                    goToSlide(data.slide);
+                    break;
+            }
+        });
+
+        // 키보드 컨트롤
+        document.addEventListener('keydown', (e) => {
+            switch(e.key) {
+                case 'ArrowRight':
+                    nextSlide();
+                    if (isPlaying) {
+                        stopAutoplay();
+                        startAutoplay();
+                    }
+                    break;
+                case 'ArrowLeft':
+                    const prev = (currentSlide - 1 + totalSlides) % totalSlides;
+                    goToSlide(prev);
+                    if (isPlaying) {
+                        stopAutoplay();
+                        startAutoplay();
+                    }
+                    break;
+                case ' ':
+                    e.preventDefault();
+                    if (isPlaying) {
+                        pauseSlideshow();
+                    } else {
+                        startAutoplay();
+                        isPlaying = true;
+                    }
+                    break;
+                case 'Escape':
+                    pauseSlideshow();
+                    break;
+            }
+        });
+
+        // 클릭으로 다음 슬라이드
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('.slideshow-container')) {
+                nextSlide();
+                if (isPlaying) {
+                    stopAutoplay();
+                    startAutoplay();
+                }
+            }
+        });
+
+        // 초기화
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('🎬 Sue Reading Club 슬라이드쇼 로드 완료!');
+            
+            if (autoStart) {
+                startSlideshow();
+            } else {
+                goToSlide(0);
+            }
+        });
+
+        // 페이지 언로드 시 정리
+        window.addEventListener('beforeunload', () => {
+            stopAutoplay();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Sue Reading Club - 완전 자동화 영상 제작</title>
+    <meta name="description" content="모바일과 웹에서 모두 작동하는 Sue Reading Club 자동 영상 제작 시스템">
+    
+    <!-- PWA 메타데이터 -->
+    <meta name="theme-color" content="#667eea">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Sue Auto Recorder">
+    
+    <!-- CSS 파일들 -->
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/mobile.css">
+    <link rel="stylesheet" href="css/recorder.css">
+    
+    <!-- 구글 폰트 -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;600;700;900&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- 로딩 스크린 -->
+    <div id="loadingScreen" class="loading-screen">
+        <div class="loading-container">
+            <div class="loading-logo">🎬</div>
+            <div class="loading-text">Sue Auto Recorder</div>
+            <div class="loading-subtitle">완전 자동화 시스템 초기화 중...</div>
+            <div class="loading-bar">
+                <div class="loading-progress" id="loadingProgress"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 메인 앱 -->
+    <div id="app" class="app hidden">
+        <!-- 헤더 -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <span class="logo-icon">🎬</span>
+                    <span class="logo-text">Sue Auto Recorder</span>
+                </div>
+                <div class="header-controls">
+                    <div class="status-indicator" id="systemStatus">
+                        <div class="status-dot"></div>
+                        <span class="status-text">준비완료</span>
+                    </div>
+                    <button class="btn-icon" id="settingsBtn" title="설정">⚙️</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- 메인 컨텐츠 -->
+        <main class="main-content">
+            <!-- 자동 녹화 컨트롤 패널 -->
+            <div class="auto-recorder-panel">
+                <div class="panel-header">
+                    <h2>🤖 완전 자동화 영상 제작</h2>
+                    <p>원클릭으로 Sue Reading Club 홍보영상을 자동 생성합니다</p>
+                </div>
+
+                <!-- 녹화 상태 대시보드 -->
+                <div class="recording-dashboard">
+                    <div class="dashboard-card">
+                        <div class="card-icon">🎥</div>
+                        <div class="card-title">녹화 상태</div>
+                        <div class="card-value" id="recordingStatus">대기중</div>
+                    </div>
+                    <div class="dashboard-card">
+                        <div class="card-icon">⏱️</div>
+                        <div class="card-title">진행 시간</div>
+                        <div class="card-value" id="recordingTime">00:00</div>
+                    </div>
+                    <div class="dashboard-card">
+                        <div class="card-icon">📊</div>
+                        <div class="card-title">품질</div>
+                        <div class="card-value" id="videoQuality">1080p</div>
+                    </div>
+                    <div class="dashboard-card">
+                        <div class="card-icon">💾</div>
+                        <div class="card-title">파일 크기</div>
+                        <div class="card-value" id="fileSize">0 MB</div>
+                    </div>
+                </div>
+
+                <!-- 원클릭 자동 제작 -->
+                <div class="one-click-section">
+                    <h3>⚡ 원클릭 자동 제작</h3>
+                    <div class="auto-process-flow">
+                        <div class="process-step" data-step="1">
+                            <div class="step-icon">📱</div>
+                            <div class="step-title">슬라이드쇼 준비</div>
+                            <div class="step-status">대기</div>
+                        </div>
+                        <div class="process-arrow">→</div>
+                        <div class="process-step" data-step="2">
+                            <div class="step-icon">⏳</div>
+                            <div class="step-title">5초 카운트다운</div>
+                            <div class="step-status">대기</div>
+                        </div>
+                        <div class="process-arrow">→</div>
+                        <div class="process-step" data-step="3">
+                            <div class="step-icon">🎬</div>
+                            <div class="step-title">27.5초 자동 녹화</div>
+                            <div class="step-status">대기</div>
+                        </div>
+                        <div class="process-arrow">→</div>
+                        <div class="process-step" data-step="4">
+                            <div class="step-icon">💾</div>
+                            <div class="step-title">MP4 파일 생성</div>
+                            <div class="step-status">대기</div>
+                        </div>
+                    </div>
+
+                    <!-- 메인 실행 버튼 -->
+                    <div class="main-action">
+                        <button class="btn-main-action" id="startAutoRecording">
+                            <div class="btn-icon">🚀</div>
+                            <div class="btn-text">
+                                <div class="btn-title">자동 영상 제작 시작</div>
+                                <div class="btn-subtitle">모든 과정이 자동으로 진행됩니다</div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 고급 설정 -->
+                <div class="advanced-settings">
+                    <h3>🔧 고급 설정</h3>
+                    <div class="settings-grid">
+                        <div class="setting-item">
+                            <label>비디오 품질</label>
+                            <select id="videoQualitySelect">
+                                <option value="1080">1080p (권장)</option>
+                                <option value="720">720p</option>
+                                <option value="480">480p</option>
+                            </select>
+                        </div>
+                        <div class="setting-item">
+                            <label>프레임율</label>
+                            <select id="frameRateSelect">
+                                <option value="30" selected>30 FPS</option>
+                                <option value="60">60 FPS</option>
+                                <option value="24">24 FPS</option>
+                            </select>
+                        </div>
+                        <div class="setting-item">
+                            <label>슬라이드 속도</label>
+                            <select id="slideSpeedSelect">
+                                <option value="2000">빠름 (2초)</option>
+                                <option value="2500" selected>보통 (2.5초)</option>
+                                <option value="3000">느림 (3초)</option>
+                            </select>
+                        </div>
+                        <div class="setting-item">
+                            <label>자동 다운로드</label>
+                            <input type="checkbox" id="autoDownload" checked>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 슬라이드쇼 미리보기 -->
+                <div class="slideshow-preview-section">
+                    <h3>📱 슬라이드쇼 미리보기</h3>
+                    <div class="preview-container">
+                        <div class="phone-mockup" id="phoneMockup">
+                            <div class="phone-screen" id="slidePreview">
+                                <div class="preview-placeholder">
+                                    <div class="placeholder-icon">📱</div>
+                                    <div class="placeholder-text">슬라이드쇼 미리보기</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="preview-controls">
+                            <button class="btn" id="previewBtn">👀 미리보기</button>
+                            <button class="btn" id="fullscreenBtn">🔍 전체화면</button>
+                            <button class="btn" id="openSeparateBtn">📱 별도 창 열기</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 생성된 영상 목록 -->
+                <div class="generated-videos">
+                    <h3>📁 생성된 영상</h3>
+                    <div class="video-list" id="videoList">
+                        <div class="empty-state">
+                            <div class="empty-icon">🎬</div>
+                            <div class="empty-text">아직 생성된 영상이 없습니다</div>
+                            <div class="empty-subtitle">위의 자동 제작 버튼을 눌러 시작해보세요!</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- 카운트다운 오버레이 -->
+        <div id="countdownOverlay" class="countdown-overlay hidden">
+            <div class="countdown-content">
+                <div class="countdown-title">녹화 시작까지</div>
+                <div class="countdown-number" id="countdownNumber">5</div>
+                <div class="countdown-subtitle">슬라이드쇼가 자동으로 시작됩니다</div>
+            </div>
+        </div>
+
+        <!-- 녹화 중 오버레이 -->
+        <div id="recordingOverlay" class="recording-overlay hidden">
+            <div class="recording-content">
+                <div class="recording-indicator">
+                    <div class="red-dot"></div>
+                    <span>녹화 중</span>
+                </div>
+                <div class="recording-timer" id="recordingTimer">00:00</div>
+                <div class="recording-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="recordingProgress"></div>
+                    </div>
+                    <div class="progress-text">27.5초 중 <span id="progressSeconds">0</span>초</div>
+                </div>
+                <button class="btn-stop-recording" id="stopRecording">⏹️ 녹화 중지</button>
+            </div>
+        </div>
+
+        <!-- 토스트 알림 -->
+        <div id="toast" class="toast">
+            <div class="toast-content">
+                <span class="toast-icon"></span>
+                <span class="toast-message"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript 파일들 -->
+    <script src="js/config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/slideshow-controller.js"></script>
+    <script src="js/auto-recorder.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
