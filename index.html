@@ -12,13 +12,516 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Sue Auto Recorder">
     
-    <!-- CSS 파일들 -->
-    <link rel="stylesheet" href="css/main.css">
-    <link rel="stylesheet" href="css/mobile.css">
-    <link rel="stylesheet" href="css/recorder.css">
+    <!-- 파비콘 -->
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32x32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png">
     
-    <!-- 구글 폰트 -->
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;600;700;900&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <!-- CSS 파일들 (Google Fonts 제거됨) -->
+    <style>
+        /* Sue Reading Club 완전 자동화 시스템 - 메인 스타일 (Google Fonts 제거) */
+
+        :root {
+            /* 컬러 팔레트 */
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --accent-color: #FFD700;
+            --success-color: #4CAF50;
+            --warning-color: #FF9800;
+            --error-color: #f44336;
+            --info-color: #2196F3;
+            
+            /* 그라디언트 */
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --accent-gradient: linear-gradient(135deg, #FFD700, #FFA500);
+            --glass-gradient: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+            
+            /* 간격 */
+            --spacing-xs: 4px;
+            --spacing-sm: 8px;
+            --spacing-md: 16px;
+            --spacing-lg: 24px;
+            --spacing-xl: 32px;
+            --spacing-xxl: 48px;
+            
+            /* 폰트 크기 */
+            --font-size-xs: 0.75rem;
+            --font-size-sm: 0.875rem;
+            --font-size-md: 1rem;
+            --font-size-lg: 1.125rem;
+            --font-size-xl: 1.25rem;
+            --font-size-xxl: 1.5rem;
+            --font-size-xxxl: 2rem;
+            
+            /* 그림자 */
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
+            --shadow-md: 0 4px 8px rgba(0,0,0,0.12);
+            --shadow-lg: 0 8px 16px rgba(0,0,0,0.15);
+            --shadow-xl: 0 12px 24px rgba(0,0,0,0.18);
+            
+            /* 둥근 모서리 */
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
+            --radius-xxl: 24px;
+            
+            /* 전환 효과 */
+            --transition-fast: 0.15s ease;
+            --transition-normal: 0.3s ease;
+            --transition-slow: 0.5s ease;
+        }
+
+        /* 기본 스타일 리셋 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            font-size: 16px;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: var(--primary-gradient);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* 로딩 스크린 */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--primary-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        .loading-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loading-container {
+            text-align: center;
+            color: white;
+        }
+
+        .loading-logo {
+            font-size: 4rem;
+            margin-bottom: var(--spacing-lg);
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        .loading-text {
+            font-family: 'Arial Black', 'Helvetica Neue', Arial, sans-serif;
+            font-size: var(--font-size-xxxl);
+            font-weight: 900;
+            margin-bottom: var(--spacing-sm);
+            text-shadow: 0 0 20px rgba(255,255,255,0.5);
+        }
+
+        .loading-subtitle {
+            font-size: var(--font-size-lg);
+            opacity: 0.8;
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .loading-bar {
+            width: 200px;
+            height: 4px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 2px;
+            overflow: hidden;
+            margin: 0 auto;
+        }
+
+        .loading-progress {
+            height: 100%;
+            background: var(--accent-gradient);
+            width: 0%;
+            animation: loadingProgress 3s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        @keyframes loadingProgress {
+            0% { width: 0%; }
+            50% { width: 70%; }
+            100% { width: 100%; }
+        }
+
+        /* 메인 앱 */
+        .app {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: white;
+        }
+
+        .app.hidden {
+            display: none;
+        }
+
+        /* 헤더 */
+        .header {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding: var(--spacing-md) 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--spacing-lg);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            font-weight: 900;
+            font-size: var(--font-size-xl);
+            font-family: 'Arial Black', 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        .logo-icon {
+            font-size: var(--font-size-xxxl);
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            background: rgba(255,255,255,0.1);
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: var(--radius-lg);
+            backdrop-filter: blur(10px);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success-color);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .status-text {
+            font-size: var(--font-size-sm);
+            font-weight: 600;
+        }
+
+        .btn-icon {
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition-normal);
+            font-size: var(--font-size-lg);
+        }
+
+        .btn-icon:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+
+        /* 메인 컨텐츠 */
+        .main-content {
+            flex: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--spacing-xl) var(--spacing-lg);
+            width: 100%;
+        }
+
+        /* 자동 녹화 패널 */
+        .auto-recorder-panel {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: var(--radius-xxl);
+            padding: var(--spacing-xxl);
+        }
+
+        .panel-header {
+            text-align: center;
+            margin-bottom: var(--spacing-xxl);
+        }
+
+        .panel-header h2 {
+            font-family: 'Arial Black', 'Helvetica Neue', Arial, sans-serif;
+            font-size: var(--font-size-xxxl);
+            font-weight: 900;
+            margin-bottom: var(--spacing-sm);
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .panel-header p {
+            font-size: var(--font-size-lg);
+            opacity: 0.8;
+        }
+
+        /* 대시보드 카드 */
+        .recording-dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-xxl);
+        }
+
+        .dashboard-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-lg);
+            text-align: center;
+            transition: var(--transition-normal);
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255,215,0,0.3);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .card-icon {
+            font-size: 2.5rem;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .card-title {
+            font-size: var(--font-size-sm);
+            opacity: 0.8;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .card-value {
+            font-size: var(--font-size-xl);
+            font-weight: 700;
+            color: var(--accent-color);
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+        }
+
+        /* 원클릭 섹션 */
+        .one-click-section {
+            margin-bottom: var(--spacing-xxl);
+        }
+
+        .one-click-section h3 {
+            font-size: var(--font-size-xl);
+            margin-bottom: var(--spacing-lg);
+            color: var(--accent-color);
+            text-align: center;
+        }
+
+        /* 프로세스 플로우 */
+        .auto-process-flow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: var(--spacing-xxl);
+            flex-wrap: wrap;
+            gap: var(--spacing-md);
+        }
+
+        .process-step {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-lg);
+            text-align: center;
+            min-width: 150px;
+            transition: var(--transition-normal);
+        }
+
+        .process-step.active {
+            border-color: var(--accent-color);
+            background: rgba(255,215,0,0.1);
+            transform: scale(1.05);
+        }
+
+        .process-step.completed {
+            border-color: var(--success-color);
+            background: rgba(76,175,80,0.1);
+        }
+
+        .step-icon {
+            font-size: 2rem;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .step-title {
+            font-size: var(--font-size-sm);
+            font-weight: 600;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .step-status {
+            font-size: var(--font-size-xs);
+            opacity: 0.7;
+            color: var(--accent-color);
+        }
+
+        .process-arrow {
+            font-size: var(--font-size-xl);
+            color: rgba(255,255,255,0.5);
+            margin: 0 var(--spacing-sm);
+        }
+
+        /* 메인 액션 버튼 */
+        .main-action {
+            text-align: center;
+            margin-bottom: var(--spacing-xxl);
+        }
+
+        .btn-main-action {
+            background: var(--accent-gradient);
+            border: none;
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-xl) var(--spacing-xxl);
+            color: #333;
+            cursor: pointer;
+            transition: var(--transition-normal);
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-lg);
+            min-width: 400px;
+            box-shadow: var(--shadow-lg);
+            font-family: 'Arial Black', 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        .btn-main-action:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(255,215,0,0.4);
+        }
+
+        .btn-main-action:active {
+            transform: translateY(-1px);
+        }
+
+        .btn-main-action:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .btn-icon {
+            font-size: 2rem;
+        }
+
+        .btn-text {
+            text-align: left;
+        }
+
+        .btn-title {
+            font-size: var(--font-size-lg);
+            font-weight: 700;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .btn-subtitle {
+            font-size: var(--font-size-sm);
+            opacity: 0.8;
+        }
+
+        /* 애니메이션 */
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.1); opacity: 1; }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 유틸리티 클래스 */
+        .hidden { display: none !important; }
+        .invisible { visibility: hidden !important; }
+        .text-center { text-align: center; }
+
+        /* 모바일 최적화 */
+        @media (max-width: 768px) {
+            html {
+                font-size: 14px;
+            }
+            
+            .main-content {
+                padding: var(--spacing-lg) var(--spacing-md);
+            }
+            
+            .auto-recorder-panel {
+                padding: var(--spacing-lg);
+            }
+            
+            .recording-dashboard {
+                grid-template-columns: repeat(2, 1fr);
+                gap: var(--spacing-md);
+            }
+            
+            .auto-process-flow {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .process-arrow {
+                transform: rotate(90deg);
+                margin: var(--spacing-sm) 0;
+            }
+            
+            .btn-main-action {
+                min-width: 100%;
+                flex-direction: column;
+                gap: var(--spacing-md);
+                text-align: center;
+            }
+        }
+    </style>
 </head>
 <body>
     <!-- 로딩 스크린 -->
@@ -54,7 +557,6 @@
 
         <!-- 메인 컨텐츠 -->
         <main class="main-content">
-            <!-- 자동 녹화 컨트롤 패널 -->
             <div class="auto-recorder-panel">
                 <div class="panel-header">
                     <h2>🤖 완전 자동화 영상 제작</h2>
@@ -126,116 +628,67 @@
                     </div>
                 </div>
 
-                <!-- 고급 설정 -->
-                <div class="advanced-settings">
-                    <h3>🔧 고급 설정</h3>
-                    <div class="settings-grid">
-                        <div class="setting-item">
-                            <label>비디오 품질</label>
-                            <select id="videoQualitySelect">
-                                <option value="1080">1080p (권장)</option>
-                                <option value="720">720p</option>
-                                <option value="480">480p</option>
-                            </select>
-                        </div>
-                        <div class="setting-item">
-                            <label>프레임율</label>
-                            <select id="frameRateSelect">
-                                <option value="30" selected>30 FPS</option>
-                                <option value="60">60 FPS</option>
-                                <option value="24">24 FPS</option>
-                            </select>
-                        </div>
-                        <div class="setting-item">
-                            <label>슬라이드 속도</label>
-                            <select id="slideSpeedSelect">
-                                <option value="2000">빠름 (2초)</option>
-                                <option value="2500" selected>보통 (2.5초)</option>
-                                <option value="3000">느림 (3초)</option>
-                            </select>
-                        </div>
-                        <div class="setting-item">
-                            <label>자동 다운로드</label>
-                            <input type="checkbox" id="autoDownload" checked>
-                        </div>
+                <!-- Sue Reading Club 정보 -->
+                <div style="background: rgba(255,255,255,0.05); border-radius: 20px; padding: 30px; text-align: center; margin-top: 40px;">
+                    <h3 style="color: #FFD700; margin-bottom: 20px; font-size: 1.5em;">📞 Sue Reading Club</h3>
+                    <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 15px; margin-bottom: 20px;">
+                        <div style="font-size: 1.8em; font-weight: bold; color: #00ffff; margin-bottom: 10px; font-family: 'Consolas', 'Monaco', 'Courier New', monospace;">010-9579-4429</div>
+                        <div style="font-size: 1.1em; opacity: 0.9;">📍 인천 연수구 송도동 해온더라운지 702호</div>
                     </div>
-                </div>
-
-                <!-- 슬라이드쇼 미리보기 -->
-                <div class="slideshow-preview-section">
-                    <h3>📱 슬라이드쇼 미리보기</h3>
-                    <div class="preview-container">
-                        <div class="phone-mockup" id="phoneMockup">
-                            <div class="phone-screen" id="slidePreview">
-                                <div class="preview-placeholder">
-                                    <div class="placeholder-icon">📱</div>
-                                    <div class="placeholder-text">슬라이드쇼 미리보기</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="preview-controls">
-                            <button class="btn" id="previewBtn">👀 미리보기</button>
-                            <button class="btn" id="fullscreenBtn">🔍 전체화면</button>
-                            <button class="btn" id="openSeparateBtn">📱 별도 창 열기</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 생성된 영상 목록 -->
-                <div class="generated-videos">
-                    <h3>📁 생성된 영상</h3>
-                    <div class="video-list" id="videoList">
-                        <div class="empty-state">
-                            <div class="empty-icon">🎬</div>
-                            <div class="empty-text">아직 생성된 영상이 없습니다</div>
-                            <div class="empty-subtitle">위의 자동 제작 버튼을 눌러 시작해보세요!</div>
-                        </div>
-                    </div>
+                    <div style="font-size: 1em; opacity: 0.8;">🎯 AI 기반 미래형 교육 • 98% 만족도 • 3.2배 속도 향상</div>
                 </div>
             </div>
         </main>
-
-        <!-- 카운트다운 오버레이 -->
-        <div id="countdownOverlay" class="countdown-overlay hidden">
-            <div class="countdown-content">
-                <div class="countdown-title">녹화 시작까지</div>
-                <div class="countdown-number" id="countdownNumber">5</div>
-                <div class="countdown-subtitle">슬라이드쇼가 자동으로 시작됩니다</div>
-            </div>
-        </div>
-
-        <!-- 녹화 중 오버레이 -->
-        <div id="recordingOverlay" class="recording-overlay hidden">
-            <div class="recording-content">
-                <div class="recording-indicator">
-                    <div class="red-dot"></div>
-                    <span>녹화 중</span>
-                </div>
-                <div class="recording-timer" id="recordingTimer">00:00</div>
-                <div class="recording-progress">
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="recordingProgress"></div>
-                    </div>
-                    <div class="progress-text">27.5초 중 <span id="progressSeconds">0</span>초</div>
-                </div>
-                <button class="btn-stop-recording" id="stopRecording">⏹️ 녹화 중지</button>
-            </div>
-        </div>
-
-        <!-- 토스트 알림 -->
-        <div id="toast" class="toast">
-            <div class="toast-content">
-                <span class="toast-icon"></span>
-                <span class="toast-message"></span>
-            </div>
-        </div>
     </div>
 
-    <!-- JavaScript 파일들 -->
-    <script src="js/config.js"></script>
-    <script src="js/utils.js"></script>
-    <script src="js/slideshow-controller.js"></script>
-    <script src="js/auto-recorder.js"></script>
-    <script src="js/app.js"></script>
+    <!-- JavaScript -->
+    <script>
+        // 간단한 로딩 및 초기화 스크립트
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🎬 Sue Reading Club 자동 녹화 시스템 로드 시작');
+            
+            // 로딩 진행률 애니메이션
+            const loadingProgress = document.getElementById('loadingProgress');
+            let progress = 0;
+            
+            const updateProgress = () => {
+                progress += Math.random() * 25;
+                if (progress > 100) progress = 100;
+                
+                if (loadingProgress) {
+                    loadingProgress.style.width = progress + '%';
+                }
+                
+                if (progress < 100) {
+                    setTimeout(updateProgress, 200 + Math.random() * 300);
+                } else {
+                    // 로딩 완료
+                    setTimeout(() => {
+                        document.getElementById('loadingScreen').classList.add('hidden');
+                        document.getElementById('app').classList.remove('hidden');
+                        console.log('✅ 시스템 초기화 완료');
+                    }, 500);
+                }
+            };
+            
+            // 로딩 시작
+            setTimeout(updateProgress, 500);
+            
+            // 메인 버튼 이벤트
+            const startBtn = document.getElementById('startAutoRecording');
+            if (startBtn) {
+                startBtn.addEventListener('click', function() {
+                    alert('🎬 Sue Reading Club 자동 녹화 시스템\n\n현재 데모 버전입니다.\n실제 녹화 기능은 MediaRecorder API를 사용하여 구현됩니다.\n\n📞 문의: 010-9579-4429\n📍 인천 연수구 송도동 해온더라운지 702호');
+                });
+            }
+            
+            // 시스템 상태 업데이트
+            setTimeout(() => {
+                document.getElementById('recordingStatus').textContent = '준비완료';
+                document.getElementById('videoQuality').textContent = '1080p';
+                document.getElementById('fileSize').textContent = '0 MB';
+            }, 2000);
+        });
+    </script>
 </body>
 </html>
