@@ -650,9 +650,6 @@ Sue Reading Club은 AI 기반 영어교육 서비스입니다.
                 generateButton.disabled = false;
                 generateButton.textContent = '🤖 실제 GPT-4 AI로 슬라이드 생성 시작';
                 
-                // API 키 저장 (세션 스토리지)
-                sessionStorage.setItem('openai_api_key', apiKey);
-                
                 console.log('✅ OpenAI API 키 설정 완료');
             } else {
                 apiStatus.innerHTML = '❌ 올바른 API 키 형식이 아닙니다. sk-로 시작하는 키를 입력해주세요.';
@@ -934,17 +931,22 @@ Sue Reading Club은 AI 기반 영어교육 서비스입니다.
         function next() {
             document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
             current = (current + 1) % total;
-            if (document.querySelectorAll('.slide')[current]) {
-                document.querySelectorAll('.slide')[current].classList.add('active');
+            const nextSlide = document.querySelectorAll('.slide')[current];
+            if (nextSlide) {
+                nextSlide.classList.add('active');
             }
-            if (current === 0) return false;
-            return true;
+            return current !== 0;
         }
         
         function start() {
-            document.querySelectorAll('.slide')[0].classList.add('active');
+            const firstSlide = document.querySelectorAll('.slide')[0];
+            if (firstSlide) {
+                firstSlide.classList.add('active');
+            }
             const interval = setInterval(() => {
-                if (!next()) clearInterval(interval);
+                if (!next()) {
+                    clearInterval(interval);
+                }
             }, 2500);
         }
         
@@ -1002,7 +1004,7 @@ Sue Reading Club은 AI 기반 영어교육 서비스입니다.
             previewSection.classList.add('show');
         }
 
-        // 녹화 시작 (기존 코드와 동일)
+        // 녹화 시작
         async function startRecording() {
             if (!generatedSlideHTML) {
                 alert('먼저 AI 슬라이드를 생성해주세요!');
@@ -1041,14 +1043,18 @@ Sue Reading Club은 AI 기반 영어교육 서비스입니다.
                 mediaRecorder = new MediaRecorder(stream);
                 
                 mediaRecorder.ondataavailable = (event) => {
-                    if (event.data.size > 0) recordedChunks.push(event.data);
+                    if (event.data.size > 0) {
+                        recordedChunks.push(event.data);
+                    }
                 };
 
                 mediaRecorder.onstop = () => {
                     const blob = new Blob(recordedChunks, { type: 'video/webm' });
                     downloadVideo(blob);
                     stream.getTracks().forEach(track => track.stop());
-                    if (slideshowWindow) slideshowWindow.close();
+                    if (slideshowWindow) {
+                        slideshowWindow.close();
+                    }
                 };
 
                 // 카운트다운
@@ -1101,7 +1107,9 @@ Sue Reading Club은 AI 기반 영어교육 서비스입니다.
 
             } catch (error) {
                 document.getElementById('statusTitle').textContent = '❌ 오류: ' + error.message;
-                if (slideshowWindow) slideshowWindow.close();
+                if (slideshowWindow) {
+                    slideshowWindow.close();
+                }
             }
         }
 
@@ -1129,20 +1137,14 @@ Sue Reading Club은 AI 기반 영어교육 서비스입니다.
             try {
                 // 브라우저 호환성 검사
                 if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
-                    document.getElementById('generateButton').textContent = '⚠️ 브라우저가 지원되지 않습니다 (Chrome 권장)';
-                    document.getElementById('generateButton').disabled = true;
+                    const generateButton = document.getElementById('generateButton');
+                    generateButton.textContent = '⚠️ 브라우저가 지원되지 않습니다 (Chrome 권장)';
+                    generateButton.disabled = true;
                     return;
                 }
 
                 // 템플릿 선택 이벤트 등록
                 initTemplateSelection();
-                
-                // 저장된 API 키 복원
-                const savedApiKey = sessionStorage.getItem('openai_api_key');
-                if (savedApiKey) {
-                    document.getElementById('apiKeyInput').value = savedApiKey;
-                    setApiKey();
-                }
                 
                 console.log('🤖 실제 AI 슬라이드 생성기 로드 완료!');
                 console.log('🧠 OpenAI GPT-4 API 연동 준비');
