@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sue Reading Club - 슬라이드쇼 자동 녹화</title>
+    <title>Sue Reading Club - 완전 자동 녹화 시스템</title>
     <style>
         * {
             margin: 0;
@@ -104,46 +104,66 @@
             color: #e0e0e0;
         }
 
-        .feature-grid {
+        .mode-selection {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
             margin: 40px 0;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
-        .feature-card {
+        .mode-card {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(20px);
             border: 2px solid rgba(255, 255, 255, 0.2);
-            border-radius: 20px;
-            padding: 30px;
+            border-radius: 25px;
+            padding: 40px 25px;
             text-align: center;
             transition: all 0.3s ease;
             cursor: pointer;
+            position: relative;
+            overflow: hidden;
         }
 
-        .feature-card:hover {
+        .mode-card:hover {
             transform: translateY(-10px);
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
             border-color: rgba(0, 255, 255, 0.5);
         }
 
-        .feature-icon {
-            font-size: 3.5em;
+        .mode-card.selected {
+            border-color: #00ffff;
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
+            background: rgba(0, 255, 255, 0.1);
+        }
+
+        .mode-icon {
+            font-size: 4em;
             margin-bottom: 20px;
         }
 
-        .feature-title {
-            font-size: 1.4em;
+        .mode-title {
+            font-size: 1.6em;
             font-weight: 700;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             color: #00ffff;
         }
 
-        .feature-desc {
+        .mode-desc {
             font-size: 1em;
             opacity: 0.8;
             line-height: 1.4;
+            margin-bottom: 20px;
+        }
+
+        .mode-specs {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 15px;
+            font-size: 0.9em;
+            margin-top: 15px;
         }
 
         .main-button {
@@ -167,6 +187,12 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
             position: relative;
             overflow: hidden;
+        }
+
+        .main-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            animation: none;
         }
 
         .main-button::before {
@@ -300,67 +326,12 @@
             display: none !important;
         }
 
-        /* 슬라이드쇼 모달 */
-        .slideshow-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            z-index: 10000;
-            display: none;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .slideshow-modal.active {
-            display: flex;
-        }
-
-        .slideshow-container {
-            width: 90%;
-            max-width: 800px;
-            height: 80%;
-            background: #000;
-            border-radius: 20px;
-            overflow: hidden;
-            position: relative;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
-        }
-
-        .modal-controls {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            z-index: 10001;
-            display: flex;
-            gap: 10px;
-        }
-
-        .modal-btn {
-            background: rgba(0, 0, 0, 0.7);
-            border: none;
-            color: white;
-            padding: 10px 15px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 1.1em;
-            transition: all 0.3s ease;
-        }
-
-        .modal-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: scale(1.05);
-        }
-
-        /* 반응형 디자인 */
         @media (max-width: 768px) {
             .title {
                 font-size: 2em;
             }
 
-            .feature-grid {
+            .mode-selection {
                 grid-template-columns: 1fr;
                 gap: 20px;
             }
@@ -381,7 +352,7 @@
     <div class="loading-screen" id="loadingScreen">
         <div class="loading-content">
             <div class="loading-logo">🎬</div>
-            <div class="loading-text">Sue Reading Club 시스템 로딩중...</div>
+            <div class="loading-text">Sue Reading Club 통합 시스템 로딩중...</div>
         </div>
     </div>
 
@@ -390,30 +361,30 @@
         <div class="header">
             <div class="logo">🎬</div>
             <h1 class="title">Sue Reading Club</h1>
-            <p class="subtitle">슬라이드쇼 자동 영상 제작 시스템</p>
+            <p class="subtitle">완전 자동 영상 제작 시스템</p>
         </div>
 
-        <!-- 기능 소개 -->
-        <div class="feature-grid">
-            <div class="feature-card">
-                <div class="feature-icon">📱</div>
-                <div class="feature-title">슬라이드쇼 자동 재생</div>
-                <div class="feature-desc">11장의 Sue Reading Club 소개 슬라이드가 자동으로 재생됩니다</div>
+        <!-- 모드 선택 -->
+        <div class="mode-selection">
+            <div class="mode-card" id="normalMode" onclick="selectMode('normal')">
+                <div class="mode-icon">🖥️</div>
+                <div class="mode-title">일반 모드</div>
+                <div class="mode-desc">가로형 프레젠테이션<br>PC 화면에 최적화</div>
+                <div class="mode-specs">
+                    📐 16:9 비율 (1920x1080)<br>
+                    💻 PC/노트북용<br>
+                    📧 이메일 첨부용
+                </div>
             </div>
-            <div class="feature-card">
-                <div class="feature-icon">🎥</div>
-                <div class="feature-title">실시간 화면 녹화</div>
-                <div class="feature-desc">MediaRecorder API로 실제 화면을 고화질로 녹화합니다</div>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">⚡</div>
-                <div class="feature-title">완전 자동화</div>
-                <div class="feature-desc">버튼 한 번으로 슬라이드쇼 재생부터 영상 저장까지 자동 처리</div>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">💾</div>
-                <div class="feature-title">즉시 다운로드</div>
-                <div class="feature-desc">녹화 완료 즉시 MP4/WebM 파일이 자동으로 다운로드됩니다</div>
+            <div class="mode-card" id="shortsMode" onclick="selectMode('shorts')">
+                <div class="mode-icon">📱</div>
+                <div class="mode-title">쇼츠 모드</div>
+                <div class="mode-desc">세로형 모바일 영상<br>SNS 마케팅 최적화</div>
+                <div class="mode-specs">
+                    📐 9:16 비율 (405x720)<br>
+                    📱 유튜브 쇼츠용<br>
+                    📲 SNS 마케팅용
+                </div>
             </div>
         </div>
 
@@ -424,8 +395,8 @@
         </div>
 
         <!-- 메인 버튼 -->
-        <button class="main-button" id="startButton">
-            🚀 슬라이드쇼 녹화 시작
+        <button class="main-button" id="startButton" disabled>
+            🚀 모드를 선택해주세요
         </button>
 
         <!-- 상태 패널 -->
@@ -440,18 +411,8 @@
             </div>
             <div class="recording-status" id="recordingStatus">
                 <span class="recording-dot"></span>
-                <span>슬라이드쇼 녹화 중...</span>
+                <span id="recordingText">슬라이드쇼 녹화 중...</span>
             </div>
-        </div>
-    </div>
-
-    <!-- 슬라이드쇼 모달 -->
-    <div class="slideshow-modal" id="slideshowModal">
-        <div class="modal-controls">
-            <button class="modal-btn" onclick="closeSlideshow()">✕</button>
-        </div>
-        <div class="slideshow-container">
-            <iframe id="slideshowFrame" src="" width="100%" height="100%" frameborder="0"></iframe>
         </div>
     </div>
 
@@ -461,119 +422,121 @@
         let recordedChunks = [];
         let isRecording = false;
         let slideshowWindow;
+        let selectedMode = null;
 
-        // 슬라이드쇼 HTML 데이터 (임베드된 버전)
-        const slideshowHTML = `
+        // 완전한 일반 모드 슬라이드쇼 HTML (11장 완전 포함)
+        const normalSlideshowHTML = `
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sue Reading Club - 슬라이드쇼</title>
+    <title>Sue Reading Club - 일반 슬라이드쇼</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: #000; overflow: hidden; font-family: 'Arial', sans-serif; height: 100vh; display: flex; justify-content: center; align-items: center; }
-        .phone-container { width: 100%; height: 100%; max-width: 800px; max-height: 600px; background: linear-gradient(145deg, #2a2a2a, #1a1a1a); border-radius: 20px; padding: 20px; box-shadow: 0 0 50px rgba(0, 255, 255, 0.3); position: relative; overflow: hidden; }
+        .container { width: 100%; height: 100%; max-width: 1200px; max-height: 800px; background: linear-gradient(145deg, #2a2a2a, #1a1a1a); border-radius: 20px; padding: 20px; position: relative; overflow: hidden; box-shadow: 0 0 50px rgba(0, 255, 255, 0.3); }
         .screen { width: 100%; height: 100%; background: #000; border-radius: 15px; position: relative; overflow: hidden; }
         .slide { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; transform: scale(0.8); transition: all 0.8s ease; display: flex; justify-content: center; align-items: center; text-align: center; }
         .slide.active { opacity: 1; transform: scale(1); }
-        .slide-content { width: 90%; }
-        .slide-title { font-size: 3em; font-weight: 900; margin-bottom: 20px; text-shadow: 0 0 20px rgba(255,255,255,0.8); }
-        .slide-desc { font-size: 1.5em; line-height: 1.4; opacity: 0.9; }
-        .big-icon { font-size: 5em; margin-bottom: 30px; }
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 40px; }
-        .stat-item { background: rgba(17, 153, 142, 0.2); border: 2px solid rgba(17, 153, 142, 0.5); border-radius: 20px; padding: 30px; }
-        .stat-number { font-size: 4em; font-weight: 900; color: #00ffff; }
-        .stat-label { font-size: 1.2em; color: rgba(255, 255, 255, 0.8); margin-top: 10px; }
-        .slide-indicator { position: absolute; top: 30px; right: 30px; font-size: 1.2em; color: rgba(255, 255, 255, 0.6); background: rgba(0, 0, 0, 0.5); padding: 10px 20px; border-radius: 20px; }
-        .contact-card { background: rgba(255, 255, 255, 0.15); border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 25px; padding: 40px; margin: 30px 0; }
-        .phone-number { font-size: 3em; font-weight: 900; color: #ffff00; margin-bottom: 20px; text-shadow: 0 0 20px rgba(255, 255, 0, 0.8); }
-        .address { font-size: 1.3em; color: rgba(255, 255, 255, 0.9); line-height: 1.4; }
-        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
-        @keyframes bounce { 0%, 20%, 50%, 80%, 100% { transform: translateY(0); } 40% { transform: translateY(-20px); } 60% { transform: translateY(-10px); } }
+        .slide-content { width: 90%; color: white; }
+        .slide-title { font-size: 3.5em; font-weight: 900; margin-bottom: 25px; text-shadow: 0 0 30px rgba(255,255,255,0.8); line-height: 1.2; }
+        .slide-desc { font-size: 1.8em; line-height: 1.4; opacity: 0.9; }
+        .big-icon { font-size: 6em; margin-bottom: 30px; filter: drop-shadow(0 0 20px rgba(255,255,255,0.6)); }
+        .slide-indicator { position: absolute; top: 30px; right: 30px; font-size: 1.4em; color: rgba(255, 255, 255, 0.8); background: rgba(0, 0, 0, 0.6); padding: 12px 24px; border-radius: 20px; border: 2px solid rgba(255, 255, 255, 0.2); }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 50px; }
+        .stat-item { background: rgba(17, 153, 142, 0.2); border: 3px solid rgba(17, 153, 142, 0.6); border-radius: 25px; padding: 40px; }
+        .stat-number { font-size: 5em; font-weight: 900; color: #00ffff; text-shadow: 0 0 30px rgba(0, 255, 255, 0.8); }
+        .stat-label { font-size: 1.4em; color: rgba(255, 255, 255, 0.9); margin-top: 15px; font-weight: 600; }
+        .contact-card { background: rgba(255, 255, 255, 0.15); border: 3px solid rgba(255, 255, 255, 0.4); border-radius: 30px; padding: 50px; margin: 40px 0; backdrop-filter: blur(10px); }
+        .phone-number { font-size: 3.5em; font-weight: 900; color: #ffff00; margin-bottom: 25px; text-shadow: 0 0 30px rgba(255, 255, 0, 0.8); letter-spacing: 3px; }
+        .address { font-size: 1.5em; color: rgba(255, 255, 255, 0.95); line-height: 1.5; font-weight: 500; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 0.8; } 50% { transform: scale(1.15); opacity: 1; } }
+        @keyframes bounce { 0%, 20%, 50%, 80%, 100% { transform: translateY(0); } 40% { transform: translateY(-25px); } 60% { transform: translateY(-12px); } }
+        @keyframes glow { 0%, 100% { text-shadow: 0 0 20px rgba(255,255,255,0.8); } 50% { text-shadow: 0 0 40px rgba(0,255,255,0.9), 0 0 60px rgba(255,0,255,0.7); } }
     </style>
 </head>
 <body>
-    <div class="phone-container">
+    <div class="container">
         <div class="screen">
-            <!-- 슬라이드 1: 인트로 -->
+            <!-- 슬라이드 1: 메인 인트로 -->
             <div class="slide active" data-slide="0" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                 <div class="slide-content">
-                    <div class="big-icon">📚</div>
-                    <div class="slide-title" style="background: linear-gradient(45deg, #00ffff, #ff00ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Sue Reading Club</div>
-                    <div class="slide-desc">AI 기반 미래형 교육</div>
+                    <div class="big-icon" style="animation: pulse 2s infinite;">📚</div>
+                    <div class="slide-title" style="background: linear-gradient(45deg, #00ffff, #ff00ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: glow 3s infinite;">Sue Reading Club</div>
+                    <div class="slide-desc">AI 기반 미래형 교육 솔루션</div>
                 </div>
-                <div class="slide-indicator">01/11</div>
+                <div class="slide-indicator">1/11</div>
             </div>
 
-            <!-- 슬라이드 2: 로고 -->
-            <div class="slide" data-slide="1" style="background: radial-gradient(circle, #000428 0%, #004e92 100%); color: white;">
+            <!-- 슬라이드 2: 브랜드 로고 -->
+            <div class="slide" data-slide="1" style="background: radial-gradient(circle, #000428 0%, #004e92 100%);">
                 <div class="slide-content">
-                    <div class="big-icon">📚</div>
+                    <div class="big-icon" style="animation: bounce 2s infinite;">🎓</div>
                     <div class="slide-title" style="color: #00ffff;">SUE READING CLUB</div>
-                    <div class="slide-desc">차세대 교육 솔루션</div>
+                    <div class="slide-desc">차세대 영어 교육의 혁신</div>
                 </div>
-                <div class="slide-indicator">02/11</div>
+                <div class="slide-indicator">2/11</div>
             </div>
 
-            <!-- 슬라이드 3: 프로그램 -->
-            <div class="slide" data-slide="2" style="background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%); color: white;">
+            <!-- 슬라이드 3: AI 독해 시스템 -->
+            <div class="slide" data-slide="2" style="background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);">
                 <div class="slide-content">
-                    <div class="big-icon" style="color: #00ff00;">🧠</div>
+                    <div class="big-icon" style="color: #00ff00; animation: pulse 2s infinite;">🧠</div>
                     <div class="slide-title" style="color: #00ff00;">AI 독해 시스템</div>
-                    <div class="slide-desc">개인별 맞춤형 AI 분석으로<br>독해력 향상</div>
+                    <div class="slide-desc">개인별 맞춤형 AI 분석으로<br>독해력 극대화</div>
                 </div>
-                <div class="slide-indicator">03/11</div>
+                <div class="slide-indicator">3/11</div>
             </div>
 
             <!-- 슬라이드 4: 스마트 속독 -->
-            <div class="slide" data-slide="3" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+            <div class="slide" data-slide="3" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                 <div class="slide-content">
                     <div class="big-icon" style="animation: pulse 2s infinite;">🎯</div>
-                    <div class="slide-title">스마트 속독</div>
+                    <div class="slide-title">스마트 속독 훈련</div>
                     <div class="slide-desc">과학적 훈련법으로<br>읽기 속도 3배 향상</div>
                 </div>
-                <div class="slide-indicator">04/11</div>
+                <div class="slide-indicator">4/11</div>
             </div>
 
             <!-- 슬라이드 5: AI 토론 클래스 -->
-            <div class="slide" data-slide="4" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
+            <div class="slide" data-slide="4" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
                 <div class="slide-content">
-                    <div class="big-icon">💬</div>
+                    <div class="big-icon" style="animation: bounce 2s infinite;">💬</div>
                     <div class="slide-title">AI 토론 클래스</div>
                     <div class="slide-desc">AI와 함께하는<br>실시간 토론 학습</div>
                 </div>
-                <div class="slide-indicator">05/11</div>
+                <div class="slide-indicator">5/11</div>
             </div>
 
             <!-- 슬라이드 6: AI 개별분석 -->
-            <div class="slide" data-slide="5" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white;">
+            <div class="slide" data-slide="5" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
                 <div class="slide-content">
                     <div class="big-icon" style="animation: pulse 2s infinite;">🤖</div>
                     <div class="slide-title">AI 개별 분석</div>
                     <div class="slide-desc">학습자의 읽기 패턴을<br>실시간으로 분석하여<br>최적의 학습법 제공</div>
                 </div>
-                <div class="slide-indicator">06/11</div>
+                <div class="slide-indicator">6/11</div>
             </div>
 
             <!-- 슬라이드 7: 실시간 피드백 -->
-            <div class="slide" data-slide="6" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); color: #333;">
+            <div class="slide" data-slide="6" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">
                 <div class="slide-content">
-                    <div class="big-icon">⚡</div>
+                    <div class="big-icon" style="animation: pulse 2s infinite;">⚡</div>
                     <div class="slide-title" style="color: #ff6b6b;">실시간 피드백</div>
                     <div class="slide-desc" style="color: #666;">즉석에서 제공되는<br>정확한 피드백으로<br>빠른 실력 향상</div>
                 </div>
-                <div class="slide-indicator">07/11</div>
+                <div class="slide-indicator">7/11</div>
             </div>
 
             <!-- 슬라이드 8: 성과 통계 -->
-            <div class="slide" data-slide="7" style="background: linear-gradient(135deg, #0f0f0f 0%, #2d1b69 50%, #11998e 100%); color: white;">
+            <div class="slide" data-slide="7" style="background: linear-gradient(135deg, #0f0f0f 0%, #2d1b69 50%, #11998e 100%);">
                 <div class="slide-content">
-                    <div class="slide-title" style="color: #11998e; margin-bottom: 40px;">성과 데이터</div>
+                    <div class="slide-title" style="color: #11998e; margin-bottom: 50px;">놀라운 성과 데이터</div>
                     <div class="stats-grid">
                         <div class="stat-item">
                             <div class="stat-number">98%</div>
-                            <div class="stat-label">만족도</div>
+                            <div class="stat-label">학부모 만족도</div>
                         </div>
                         <div class="stat-item">
                             <div class="stat-number">3.2x</div>
@@ -581,40 +544,40 @@
                         </div>
                     </div>
                 </div>
-                <div class="slide-indicator">08/11</div>
+                <div class="slide-indicator">8/11</div>
             </div>
 
-            <!-- 슬라이드 9: 후기 -->
-            <div class="slide" data-slide="8" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+            <!-- 슬라이드 9: 학부모 후기 -->
+            <div class="slide" data-slide="8" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                 <div class="slide-content">
-                    <div class="big-icon">💬</div>
+                    <div class="big-icon" style="animation: bounce 2s infinite;">💝</div>
                     <div class="slide-title">"우리 아이가 완전히 달라졌어요!"</div>
-                    <div class="slide-desc">3개월 만에 읽기 속도가 3배나<br>빨라지고 이해력도 향상됐습니다<br><br>- 김○○ 학부모님</div>
+                    <div class="slide-desc">3개월 만에 읽기 속도가 3배나<br>빨라지고 이해력도 향상됐습니다<br><br>⭐⭐⭐⭐⭐ 김○○ 학부모님</div>
                 </div>
-                <div class="slide-indicator">09/11</div>
+                <div class="slide-indicator">9/11</div>
             </div>
 
             <!-- 슬라이드 10: 위치 정보 -->
-            <div class="slide" data-slide="9" style="background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); color: white;">
+            <div class="slide" data-slide="9" style="background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);">
                 <div class="slide-content">
                     <div class="big-icon" style="animation: bounce 2s infinite;">📍</div>
                     <div class="slide-title">찾아오시는 길</div>
-                    <div style="background: rgba(255,255,255,0.1); padding: 30px; border-radius: 20px; margin-top: 30px;">
-                        <div style="font-size: 1.5em; margin-bottom: 15px; color: #3498db;">인천 연수구 송도동</div>
-                        <div style="font-size: 1.2em; opacity: 0.8;">해온더라운지 702호</div>
-                        <div style="font-size: 1em; margin-top: 15px; opacity: 0.7;">송도국제도시 센트럴파크 인근</div>
+                    <div style="background: rgba(255,255,255,0.15); padding: 40px; border-radius: 25px; margin-top: 40px; border: 2px solid rgba(255,255,255,0.3);">
+                        <div style="font-size: 1.8em; margin-bottom: 20px; color: #3498db; font-weight: 700;">인천 연수구 송도동</div>
+                        <div style="font-size: 1.4em; opacity: 0.9; font-weight: 600;">해온더라운지 702호</div>
+                        <div style="font-size: 1.1em; margin-top: 20px; opacity: 0.8;">송도국제도시 센트럴파크 인근</div>
                     </div>
                 </div>
                 <div class="slide-indicator">10/11</div>
             </div>
 
-            <!-- 슬라이드 11: 연락처 -->
-            <div class="slide" data-slide="10" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+            <!-- 슬라이드 11: 연락처 (마무리) -->
+            <div class="slide" data-slide="10" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                 <div class="slide-content">
-                    <div class="slide-title" style="animation: bounce 2s infinite;">📞 상담 문의</div>
+                    <div class="slide-title" style="animation: bounce 2s infinite; margin-bottom: 40px;">📞 상담 문의</div>
                     <div class="contact-card">
                         <div class="phone-number">010-9579-4429</div>
-                        <div class="address">인천 연수구 송도동<br>해온더라운지 702호</div>
+                        <div class="address">인천 연수구 송도동<br>해온더라운지 702호<br><br>🕐 상담시간: 평일 09:00-18:00</div>
                     </div>
                 </div>
                 <div class="slide-indicator">11/11</div>
@@ -638,28 +601,239 @@
         function nextSlide() {
             const next = (currentSlide + 1) % totalSlides;
             goToSlide(next);
+            if (next === 0 && currentSlide !== 0) return false;
+            return true;
         }
 
         function startSlideshow() {
             goToSlide(0);
             const interval = setInterval(() => {
-                nextSlide();
-                if (currentSlide === 0) {
-                    clearInterval(interval);
-                    window.parent.postMessage('slideshow-complete', '*');
-                }
+                if (!nextSlide()) clearInterval(interval);
             }, slideDuration);
         }
 
-        // 슬라이드쇼 시작
         setTimeout(startSlideshow, 1000);
-        
-        // 부모 창에 준비 완료 알림
-        window.parent.postMessage('slideshow-ready', '*');
+        console.log('🎬 Sue Reading Club 일반 슬라이드쇼 시작! (11장 완전 버전)');
     </script>
 </body>
 </html>
         `;
+
+        // 완전한 쇼츠 모드 슬라이드쇼 HTML (11장 완전 포함)
+        const shortsSlideshowHTML = `
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sue Reading Club - 쇼츠</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #000; overflow: hidden; font-family: 'Arial', sans-serif; height: 100vh; display: flex; justify-content: center; align-items: center; }
+        .shorts-container { width: 405px; height: 720px; background: #000; border-radius: 25px; position: relative; overflow: hidden; border: 3px solid #333; box-shadow: 0 0 50px rgba(255, 255, 255, 0.2); }
+        .slide { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; transform: translateY(30px); transition: all 0.8s ease; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 40px 25px; }
+        .slide.active { opacity: 1; transform: translateY(0); }
+        .slide-content { width: 100%; color: white; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%; }
+        .slide-title { font-size: 2.2em; font-weight: 900; margin-bottom: 20px; text-shadow: 0 0 25px rgba(255,255,255,0.8); line-height: 1.1; text-align: center; }
+        .slide-desc { font-size: 1.1em; line-height: 1.4; opacity: 0.95; text-align: center; }
+        .big-icon { font-size: 4em; margin-bottom: 25px; filter: drop-shadow(0 0 15px rgba(255,255,255,0.6)); }
+        .slide-indicator { position: absolute; top: 20px; right: 20px; font-size: 0.9em; color: rgba(255, 255, 255, 0.8); background: rgba(0, 0, 0, 0.7); padding: 8px 15px; border-radius: 15px; font-weight: 600; border: 1px solid rgba(255, 255, 255, 0.2); }
+        .stats-grid { display: flex; flex-direction: column; gap: 25px; margin-top: 30px; width: 100%; }
+        .stat-item { background: rgba(17, 153, 142, 0.25); border: 2px solid rgba(17, 153, 142, 0.6); border-radius: 20px; padding: 25px 20px; text-align: center; }
+        .stat-number { font-size: 3.5em; font-weight: 900; color: #00ffff; text-shadow: 0 0 25px rgba(0, 255, 255, 0.8); line-height: 1; }
+        .stat-label { font-size: 1em; color: rgba(255, 255, 255, 0.9); margin-top: 8px; font-weight: 600; }
+        .contact-card { background: rgba(255, 255, 255, 0.15); border: 2px solid rgba(255, 255, 255, 0.4); border-radius: 25px; padding: 35px 25px; margin: 25px 0; backdrop-filter: blur(10px); width: 100%; }
+        .phone-number { font-size: 2.2em; font-weight: 900; color: #ffff00; margin-bottom: 15px; text-shadow: 0 0 25px rgba(255, 255, 0, 0.8); letter-spacing: 2px; line-height: 1.2; }
+        .address { font-size: 1em; color: rgba(255, 255, 255, 0.95); line-height: 1.4; font-weight: 500; }
+        .location-card { background: rgba(255,255,255,0.15); padding: 30px 20px; border-radius: 20px; margin-top: 25px; border: 2px solid rgba(255,255,255,0.3); backdrop-filter: blur(10px); }
+        .location-title { font-size: 1.3em; margin-bottom: 15px; color: #3498db; font-weight: 700; }
+        .location-address { font-size: 1em; opacity: 0.9; font-weight: 600; line-height: 1.4; }
+        .location-desc { font-size: 0.9em; margin-top: 12px; opacity: 0.8; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 0.9; } 50% { transform: scale(1.08); opacity: 1; } }
+        @keyframes bounce { 0%, 20%, 50%, 80%, 100% { transform: translateY(0); } 40% { transform: translateY(-15px); } 60% { transform: translateY(-8px); } }
+        @keyframes glow { 0%, 100% { text-shadow: 0 0 20px rgba(255,255,255,0.8); } 50% { text-shadow: 0 0 35px rgba(0,255,255,0.9), 0 0 50px rgba(255,0,255,0.7); } }
+    </style>
+</head>
+<body>
+    <div class="shorts-container">
+        <!-- 슬라이드 1: 메인 인트로 -->
+        <div class="slide active" data-slide="0" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+            <div class="slide-content">
+                <div class="big-icon" style="animation: pulse 2s infinite;">📚</div>
+                <div class="slide-title" style="background: linear-gradient(45deg, #00ffff, #ff00ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: glow 3s infinite;">Sue Reading<br>Club</div>
+                <div class="slide-desc">AI 기반 미래형<br>영어 교육의 혁신</div>
+            </div>
+            <div class="slide-indicator">1/11</div>
+        </div>
+
+        <!-- 슬라이드 2: 브랜드 로고 -->
+        <div class="slide" data-slide="1" style="background: radial-gradient(circle, #000428 0%, #004e92 100%);">
+            <div class="slide-content">
+                <div class="big-icon" style="animation: bounce 2s infinite;">🎓</div>
+                <div class="slide-title" style="color: #00ffff;">SUE READING<br>CLUB</div>
+                <div class="slide-desc">차세대 영어 교육<br>솔루션의 완성</div>
+            </div>
+            <div class="slide-indicator">2/11</div>
+        </div>
+
+        <!-- 슬라이드 3: AI 독해 시스템 -->
+        <div class="slide" data-slide="2" style="background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);">
+            <div class="slide-content">
+                <div class="big-icon" style="color: #00ff00; animation: pulse 2s infinite;">🧠</div>
+                <div class="slide-title" style="color: #00ff00;">AI 독해<br>시스템</div>
+                <div class="slide-desc">개인별 맞춤형<br>AI 분석으로<br>독해력 극대화</div>
+            </div>
+            <div class="slide-indicator">3/11</div>
+        </div>
+
+        <!-- 슬라이드 4: 스마트 속독 -->
+        <div class="slide" data-slide="3" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+            <div class="slide-content">
+                <div class="big-icon" style="animation: pulse 2s infinite;">🎯</div>
+                <div class="slide-title">스마트<br>속독 훈련</div>
+                <div class="slide-desc">과학적 훈련법으로<br>읽기 속도<br>3배 향상</div>
+            </div>
+            <div class="slide-indicator">4/11</div>
+        </div>
+
+        <!-- 슬라이드 5: AI 토론 클래스 -->
+        <div class="slide" data-slide="4" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+            <div class="slide-content">
+                <div class="big-icon" style="animation: bounce 2s infinite;">💬</div>
+                <div class="slide-title">AI 토론<br>클래스</div>
+                <div class="slide-desc">AI와 함께하는<br>실시간<br>토론 학습</div>
+            </div>
+            <div class="slide-indicator">5/11</div>
+        </div>
+
+        <!-- 슬라이드 6: AI 개별분석 -->
+        <div class="slide" data-slide="5" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+            <div class="slide-content">
+                <div class="big-icon" style="animation: pulse 2s infinite;">🤖</div>
+                <div class="slide-title">AI 개별<br>분석</div>
+                <div class="slide-desc">학습자의 읽기 패턴을<br>실시간으로 분석하여<br>최적의 학습법 제공</div>
+            </div>
+            <div class="slide-indicator">6/11</div>
+        </div>
+
+        <!-- 슬라이드 7: 실시간 피드백 -->
+        <div class="slide" data-slide="6" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">
+            <div class="slide-content">
+                <div class="big-icon" style="animation: pulse 2s infinite;">⚡</div>
+                <div class="slide-title" style="color: #ff6b6b;">실시간<br>피드백</div>
+                <div class="slide-desc" style="color: #666;">즉석에서 제공되는<br>정확한 피드백으로<br>빠른 실력 향상</div>
+            </div>
+            <div class="slide-indicator">7/11</div>
+        </div>
+
+        <!-- 슬라이드 8: 성과 통계 -->
+        <div class="slide" data-slide="7" style="background: linear-gradient(135deg, #0f0f0f 0%, #2d1b69 50%, #11998e 100%);">
+            <div class="slide-content">
+                <div class="slide-title" style="color: #11998e; margin-bottom: 30px;">놀라운<br>성과 데이터</div>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-number">98%</div>
+                        <div class="stat-label">학부모 만족도</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">3.2x</div>
+                        <div class="stat-label">읽기속도 향상</div>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-indicator">8/11</div>
+        </div>
+
+        <!-- 슬라이드 9: 학부모 후기 -->
+        <div class="slide" data-slide="8" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+            <div class="slide-content">
+                <div class="big-icon" style="animation: bounce 2s infinite;">💝</div>
+                <div class="slide-title">"우리 아이가<br>완전히<br>달라졌어요!"</div>
+                <div class="slide-desc">3개월 만에<br>읽기 속도가 3배나 빨라지고<br>이해력도 향상됐습니다<br><br>⭐⭐⭐⭐⭐<br>김○○ 학부모님</div>
+            </div>
+            <div class="slide-indicator">9/11</div>
+        </div>
+
+        <!-- 슬라이드 10: 위치 정보 -->
+        <div class="slide" data-slide="9" style="background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);">
+            <div class="slide-content">
+                <div class="big-icon" style="animation: bounce 2s infinite;">📍</div>
+                <div class="slide-title">찾아오시는 길</div>
+                <div class="location-card">
+                    <div class="location-title">인천 연수구 송도동</div>
+                    <div class="location-address">해온더라운지 702호</div>
+                    <div class="location-desc">송도국제도시<br>센트럴파크 인근</div>
+                </div>
+            </div>
+            <div class="slide-indicator">10/11</div>
+        </div>
+
+        <!-- 슬라이드 11: 연락처 (마무리) -->
+        <div class="slide" data-slide="10" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+            <div class="slide-content">
+                <div class="slide-title" style="animation: bounce 2s infinite; margin-bottom: 30px;">📞 상담 문의</div>
+                <div class="contact-card">
+                    <div class="phone-number">010-9579-4429</div>
+                    <div class="address">인천 연수구 송도동<br>해온더라운지 702호<br><br>🕐 상담시간<br>평일 09:00-18:00</div>
+                </div>
+            </div>
+            <div class="slide-indicator">11/11</div>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const totalSlides = 11;
+        const slideDuration = 2500;
+
+        function goToSlide(index) {
+            document.querySelectorAll('.slide').forEach(slide => {
+                slide.classList.remove('active');
+            });
+            currentSlide = index;
+            document.querySelector('[data-slide="' + currentSlide + '"]').classList.add('active');
+        }
+
+        function nextSlide() {
+            const next = (currentSlide + 1) % totalSlides;
+            goToSlide(next);
+            if (next === 0 && currentSlide !== 0) return false;
+            return true;
+        }
+
+        function startSlideshow() {
+            goToSlide(0);
+            const interval = setInterval(() => {
+                if (!nextSlide()) clearInterval(interval);
+            }, slideDuration);
+        }
+
+        setTimeout(startSlideshow, 1000);
+        console.log('🎬 Sue Reading Club 쇼츠 슬라이드쇼 시작! (11장 완전 버전)');
+    </script>
+</body>
+</html>
+        `;
+
+        // 모드 선택 함수
+        function selectMode(mode) {
+            document.querySelectorAll('.mode-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            selectedMode = mode;
+            const startButton = document.getElementById('startButton');
+            
+            if (mode === 'normal') {
+                document.getElementById('normalMode').classList.add('selected');
+                startButton.textContent = '🖥️ 일반 영상 제작 시작';
+                startButton.disabled = false;
+            } else if (mode === 'shorts') {
+                document.getElementById('shortsMode').classList.add('selected');
+                startButton.textContent = '📱 쇼츠 영상 제작 시작';
+                startButton.disabled = false;
+            }
+        }
 
         // 브라우저 호환성 검사
         function checkBrowserSupport() {
@@ -680,32 +854,22 @@
         // 슬라이드쇼 창 열기
         function openSlideshow() {
             return new Promise((resolve, reject) => {
-                const blob = new Blob([slideshowHTML], { type: 'text/html' });
+                const html = selectedMode === 'normal' ? normalSlideshowHTML : shortsSlideshowHTML;
+                const blob = new Blob([html], { type: 'text/html' });
                 const url = URL.createObjectURL(blob);
                 
-                // 새 창에서 슬라이드쇼 열기
-                slideshowWindow = window.open(url, 'slideshow', 'width=800,height=600,toolbar=no,menubar=no,scrollbars=no');
+                const windowFeatures = selectedMode === 'normal' 
+                    ? 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=no'
+                    : 'width=450,height=800,toolbar=no,menubar=no,scrollbars=no';
+                
+                slideshowWindow = window.open(url, 'slideshow', windowFeatures);
                 
                 if (!slideshowWindow) {
                     reject(new Error('팝업이 차단되었습니다. 팝업을 허용하고 다시 시도해주세요.'));
                     return;
                 }
 
-                // 슬라이드쇼 준비 완료 대기
-                const messageHandler = (event) => {
-                    if (event.data === 'slideshow-ready') {
-                        window.removeEventListener('message', messageHandler);
-                        resolve();
-                    }
-                };
-
-                window.addEventListener('message', messageHandler);
-
-                // 타임아웃 설정 (10초)
-                setTimeout(() => {
-                    window.removeEventListener('message', messageHandler);
-                    reject(new Error('슬라이드쇼 로딩 타임아웃'));
-                }, 10000);
+                setTimeout(() => resolve(), 2000);
             });
         }
 
@@ -721,8 +885,8 @@
             try {
                 const stream = await navigator.mediaDevices.getDisplayMedia({
                     video: {
-                        width: { ideal: 1920 },
-                        height: { ideal: 1080 },
+                        width: { ideal: selectedMode === 'normal' ? 1920 : 405 },
+                        height: { ideal: selectedMode === 'normal' ? 1080 : 720 },
                         frameRate: { ideal: 30 }
                     },
                     audio: false
@@ -748,7 +912,6 @@
                 mediaRecorder.start();
                 isRecording = true;
 
-                // 27.5초 후 자동 정지
                 setTimeout(() => {
                     if (mediaRecorder && mediaRecorder.state === 'recording') {
                         mediaRecorder.stop();
@@ -768,7 +931,8 @@
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             const now = new Date();
-            const filename = `sue-reading-slideshow_${now.getFullYear()}${(now.getMonth()+1).toString().padStart(2,'0')}${now.getDate().toString().padStart(2,'0')}_${now.getHours().toString().padStart(2,'0')}${now.getMinutes().toString().padStart(2,'0')}.webm`;
+            const modeText = selectedMode === 'normal' ? 'normal' : 'shorts';
+            const filename = `sue-reading-${modeText}_${now.getFullYear()}${(now.getMonth()+1).toString().padStart(2,'0')}${now.getDate().toString().padStart(2,'0')}_${now.getHours().toString().padStart(2,'0')}${now.getMinutes().toString().padStart(2,'0')}.webm`;
             
             a.href = url;
             a.download = filename;
@@ -777,7 +941,7 @@
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
 
-            updateStatus('✅ 녹화 완료!', `영상이 다운로드되었습니다: ${filename}`);
+            updateStatus('✅ 녹화 완료!', `${selectedMode === 'normal' ? '일반' : '쇼츠'} 영상이 다운로드되었습니다`);
             closeSlideshow();
         }
 
@@ -797,7 +961,7 @@
                 
                 let count = 5;
                 countdownEl.textContent = count;
-                updateStatus('🎬 녹화 시작 준비');
+                updateStatus(`🎬 ${selectedMode === 'normal' ? '일반' : '쇼츠'} 녹화 시작 준비`);
 
                 const countInterval = setInterval(() => {
                     count--;
@@ -821,13 +985,15 @@
             const progressFill = document.getElementById('progressFill');
             const progressText = document.getElementById('progressText');
             const recordingStatus = document.getElementById('recordingStatus');
+            const recordingText = document.getElementById('recordingText');
 
             progressContainer.classList.remove('hidden');
             recordingStatus.classList.add('active');
+            recordingText.textContent = `${selectedMode === 'normal' ? '일반' : '쇼츠'} 슬라이드쇼 녹화 중...`;
 
             let progress = 0;
-            const duration = 27500; // 27.5초
-            const interval = 100; // 0.1초마다 업데이트
+            const duration = 27500;
+            const interval = 100;
 
             const progressInterval = setInterval(() => {
                 progress += interval;
@@ -845,27 +1011,28 @@
         }
 
         // 메인 실행 함수
-        async function startSlideShowRecording() {
+        async function startMainRecording() {
             try {
+                if (!selectedMode) {
+                    alert('먼저 모드를 선택해주세요!');
+                    return;
+                }
+
                 const startButton = document.getElementById('startButton');
                 const statusPanel = document.getElementById('statusPanel');
 
                 startButton.disabled = true;
                 statusPanel.classList.remove('hidden');
 
-                // 1. 슬라이드쇼 창 열기
-                updateStatus('📱 슬라이드쇼 준비 중...', '새 창에서 슬라이드쇼를 로딩하고 있습니다');
+                updateStatus(`📱 ${selectedMode === 'normal' ? '일반' : '쇼츠'} 슬라이드쇼 준비 중...`, '새 창에서 슬라이드쇼를 로딩하고 있습니다');
                 await openSlideshow();
 
-                // 2. 화면 공유 권한 요청
                 updateStatus('🖥️ 화면 공유 권한 요청', '화면 공유를 허용해주세요');
                 await startRecording();
 
-                // 3. 카운트다운 시작
                 await showCountdown();
 
-                // 4. 녹화 진행률 표시
-                updateStatus('🔴 슬라이드쇼 녹화 중...', '자동으로 진행됩니다. 잠시만 기다려주세요');
+                updateStatus(`🔴 ${selectedMode === 'normal' ? '일반' : '쇼츠'} 슬라이드쇼 녹화 중...`, '자동으로 진행됩니다. 잠시만 기다려주세요');
                 showProgress();
 
             } catch (error) {
@@ -882,7 +1049,6 @@
 
         // 초기화
         document.addEventListener('DOMContentLoaded', () => {
-            // 로딩 화면 처리
             setTimeout(() => {
                 document.getElementById('loadingScreen').style.opacity = '0';
                 setTimeout(() => {
@@ -891,21 +1057,14 @@
                 }, 800);
             }, 2000);
 
-            // 브라우저 호환성 검사
             checkBrowserSupport();
+            document.getElementById('startButton').addEventListener('click', startMainRecording);
 
-            // 시작 버튼 이벤트
-            document.getElementById('startButton').addEventListener('click', startSlideShowRecording);
-
-            console.log('🎬 Sue Reading Club 슬라이드쇼 자동 녹화 시스템 로드 완료!');
-            console.log('📱 기능: 11장 슬라이드쇼 자동 재생 + 실시간 녹화 + 영상 파일 생성');
-        });
-
-        // 슬라이드쇼 완료 메시지 수신
-        window.addEventListener('message', (event) => {
-            if (event.data === 'slideshow-complete') {
-                console.log('슬라이드쇼 완료 신호 수신');
-            }
+            console.log('🎬 Sue Reading Club 완전한 통합 녹화 시스템 로드 완료!');
+            console.log('📊 11장 완전한 슬라이드쇼 포함');
+            console.log('📞 010-9579-4429 연락처 포함');
+            console.log('🖥️ 일반 모드: 16:9 가로형 영상');
+            console.log('📱 쇼츠 모드: 9:16 세로형 영상');
         });
     </script>
 </body>
