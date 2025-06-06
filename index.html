@@ -2,1360 +2,911 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Sue Reading Club - 완전 자동화 영상 제작</title>
-    <meta name="description" content="실제 MediaRecorder API 연동된 Sue Reading Club 자동 영상 제작 시스템">
-    
-    <!-- PWA 메타데이터 -->
-    <meta name="theme-color" content="#667eea">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Sue Auto Recorder">
-    
-    <!-- CSS -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sue Reading Club - 슬라이드쇼 자동 녹화</title>
     <style>
-        :root {
-            --primary-color: #667eea;
-            --secondary-color: #764ba2;
-            --accent-color: #FFD700;
-            --success-color: #4CAF50;
-            --warning-color: #FF9800;
-            --error-color: #f44336;
-            --info-color: #2196F3;
-            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --accent-gradient: linear-gradient(135deg, #FFD700, #FFA500);
-            --spacing-xs: 4px;
-            --spacing-sm: 8px;
-            --spacing-md: 16px;
-            --spacing-lg: 24px;
-            --spacing-xl: 32px;
-            --spacing-xxl: 48px;
-            --font-size-xs: 0.75rem;
-            --font-size-sm: 0.875rem;
-            --font-size-md: 1rem;
-            --font-size-lg: 1.125rem;
-            --font-size-xl: 1.25rem;
-            --font-size-xxl: 1.5rem;
-            --font-size-xxxl: 2rem;
-            --radius-sm: 4px;
-            --radius-md: 8px;
-            --radius-lg: 12px;
-            --radius-xl: 16px;
-            --radius-xxl: 24px;
-            --transition-fast: 0.15s ease;
-            --transition-normal: 0.3s ease;
-            --transition-slow: 0.5s ease;
-        }
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        html {
-            font-size: 16px;
-            scroll-behavior: smooth;
-        }
-
         body {
-            font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background: var(--primary-gradient);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
+            color: white;
             overflow-x: hidden;
         }
 
-        /* 로딩 스크린 */
         .loading-screen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: var(--primary-gradient);
+            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 100%);
             display: flex;
-            align-items: center;
             justify-content: center;
+            align-items: center;
             z-index: 9999;
-            transition: opacity 0.5s ease, visibility 0.5s ease;
+            transition: opacity 0.8s ease;
         }
 
-        .loading-screen.hidden {
-            opacity: 0;
-            visibility: hidden;
-        }
-
-        .loading-container {
+        .loading-content {
             text-align: center;
-            color: white;
         }
 
         .loading-logo {
-            font-size: 4rem;
-            margin-bottom: var(--spacing-lg);
-            animation: bounce 2s ease-in-out infinite;
+            font-size: 4em;
+            animation: pulse 1.5s ease-in-out infinite;
         }
 
         .loading-text {
-            font-family: 'Arial Black', sans-serif;
-            font-size: var(--font-size-xxxl);
-            font-weight: 900;
-            margin-bottom: var(--spacing-sm);
-            text-shadow: 0 0 20px rgba(255,255,255,0.5);
+            font-size: 1.5em;
+            margin-top: 20px;
+            color: #00ffff;
+            animation: fadeInOut 2s ease-in-out infinite;
         }
 
-        .loading-subtitle {
-            font-size: var(--font-size-lg);
-            opacity: 0.8;
-            margin-bottom: var(--spacing-xl);
-        }
-
-        .loading-bar {
-            width: 200px;
-            height: 4px;
-            background: rgba(255,255,255,0.2);
-            border-radius: 2px;
-            overflow: hidden;
-            margin: 0 auto;
-        }
-
-        .loading-progress {
-            height: 100%;
-            background: var(--accent-gradient);
-            width: 0%;
-            animation: loadingProgress 3s ease-in-out infinite;
-        }
-
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-            40% { transform: translateY(-10px); }
-            60% { transform: translateY(-5px); }
-        }
-
-        @keyframes loadingProgress {
-            0% { width: 0%; }
-            50% { width: 70%; }
-            100% { width: 100%; }
-        }
-
-        /* 메인 앱 */
-        .app {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            color: white;
-        }
-
-        .app.hidden {
-            display: none;
-        }
-
-        /* 헤더 */
-        .header {
-            background: rgba(255,255,255,0.1);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            padding: var(--spacing-md) 0;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .header-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 var(--spacing-lg);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-sm);
-            font-weight: 900;
-            font-size: var(--font-size-xl);
-            font-family: 'Arial Black', sans-serif;
-        }
-
-        .logo-icon {
-            font-size: var(--font-size-xxxl);
-        }
-
-        .header-controls {
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-md);
-        }
-
-        .status-indicator {
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-sm);
-            background: rgba(255,255,255,0.1);
-            padding: var(--spacing-sm) var(--spacing-md);
-            border-radius: var(--radius-lg);
-            backdrop-filter: blur(10px);
-        }
-
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--success-color);
-            animation: pulse 2s ease-in-out infinite;
-        }
-
-        .status-dot.recording {
-            background: var(--error-color);
-            animation: blink 1s ease-in-out infinite;
-        }
-
-        .status-dot.preparing {
-            background: var(--warning-color);
-        }
-
-        .status-text {
-            font-size: var(--font-size-sm);
-            font-weight: 600;
-        }
-
-        .btn-icon {
-            width: 40px;
-            height: 40px;
-            border: none;
-            background: rgba(255,255,255,0.1);
-            color: white;
-            border-radius: var(--radius-lg);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: var(--transition-normal);
-            font-size: var(--font-size-lg);
-        }
-
-        .btn-icon:hover {
-            background: rgba(255,255,255,0.2);
-            transform: translateY(-2px);
-        }
-
-        /* 메인 컨텐츠 */
-        .main-content {
-            flex: 1;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: var(--spacing-xl) var(--spacing-lg);
-            width: 100%;
-        }
-
-        .auto-recorder-panel {
-            background: rgba(255,255,255,0.05);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: var(--radius-xxl);
-            padding: var(--spacing-xxl);
-        }
-
-        .panel-header {
-            text-align: center;
-            margin-bottom: var(--spacing-xxl);
-        }
-
-        .panel-header h2 {
-            font-family: 'Arial Black', sans-serif;
-            font-size: var(--font-size-xxxl);
-            font-weight: 900;
-            margin-bottom: var(--spacing-sm);
-            background: var(--accent-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .panel-header p {
-            font-size: var(--font-size-lg);
-            opacity: 0.8;
-        }
-
-        /* 대시보드 카드 */
-        .recording-dashboard {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: var(--spacing-lg);
-            margin-bottom: var(--spacing-xxl);
-        }
-
-        .dashboard-card {
-            background: rgba(255,255,255,0.1);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: var(--radius-xl);
-            padding: var(--spacing-lg);
-            text-align: center;
-            transition: var(--transition-normal);
-        }
-
-        .dashboard-card:hover {
-            transform: translateY(-5px);
-            border-color: rgba(255,215,0,0.3);
-            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
-        }
-
-        .card-icon {
-            font-size: 2.5rem;
-            margin-bottom: var(--spacing-md);
-        }
-
-        .card-title {
-            font-size: var(--font-size-sm);
-            opacity: 0.8;
-            margin-bottom: var(--spacing-sm);
-        }
-
-        .card-value {
-            font-size: var(--font-size-xl);
-            font-weight: 700;
-            color: var(--accent-color);
-            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-        }
-
-        /* 프로세스 플로우 */
-        .auto-process-flow {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: var(--spacing-xxl);
-            flex-wrap: wrap;
-            gap: var(--spacing-md);
-        }
-
-        .process-step {
-            background: rgba(255,255,255,0.1);
-            backdrop-filter: blur(20px);
-            border: 2px solid rgba(255,255,255,0.1);
-            border-radius: var(--radius-xl);
-            padding: var(--spacing-lg);
-            text-align: center;
-            min-width: 150px;
-            transition: var(--transition-normal);
-        }
-
-        .process-step.active {
-            border-color: var(--accent-color);
-            background: rgba(255,215,0,0.1);
-            transform: scale(1.05);
-        }
-
-        .process-step.completed {
-            border-color: var(--success-color);
-            background: rgba(76,175,80,0.1);
-        }
-
-        .step-icon {
-            font-size: 2rem;
-            margin-bottom: var(--spacing-sm);
-        }
-
-        .step-title {
-            font-size: var(--font-size-sm);
-            font-weight: 600;
-            margin-bottom: var(--spacing-xs);
-        }
-
-        .step-status {
-            font-size: var(--font-size-xs);
-            opacity: 0.7;
-            color: var(--accent-color);
-        }
-
-        .process-arrow {
-            font-size: var(--font-size-xl);
-            color: rgba(255,255,255,0.5);
-            margin: 0 var(--spacing-sm);
-        }
-
-        /* 메인 액션 버튼 */
-        .main-action {
-            text-align: center;
-            margin-bottom: var(--spacing-xxl);
-        }
-
-        .btn-main-action {
-            background: var(--accent-gradient);
-            border: none;
-            border-radius: var(--radius-xl);
-            padding: var(--spacing-xl) var(--spacing-xxl);
-            color: #333;
-            cursor: pointer;
-            transition: var(--transition-normal);
-            display: inline-flex;
-            align-items: center;
-            gap: var(--spacing-lg);
-            min-width: 400px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
-            font-family: 'Arial Black', sans-serif;
-        }
-
-        .btn-main-action:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 35px rgba(255,215,0,0.4);
-        }
-
-        .btn-main-action:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none !important;
-        }
-
-        .btn-main-action.recording {
-            background: linear-gradient(135deg, #f44336, #d32f2f);
-            color: white;
-        }
-
-        .btn-text {
-            text-align: left;
-        }
-
-        .btn-title {
-            font-size: var(--font-size-lg);
-            font-weight: 700;
-            margin-bottom: var(--spacing-xs);
-        }
-
-        .btn-subtitle {
-            font-size: var(--font-size-sm);
-            opacity: 0.8;
-        }
-
-        /* 카운트다운 오버레이 */
-        .countdown-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.9);
-            backdrop-filter: blur(20px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-        }
-
-        .countdown-overlay.show {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .countdown-content {
-            text-align: center;
-            color: white;
-        }
-
-        .countdown-title {
-            font-size: var(--font-size-xl);
-            margin-bottom: var(--spacing-lg);
-            opacity: 0.8;
-        }
-
-        .countdown-number {
-            font-size: 8rem;
-            font-weight: 900;
-            color: var(--accent-color);
-            text-shadow: 0 0 50px rgba(255,215,0,0.8);
-            animation: countdownPulse 1s ease-in-out infinite;
-            font-family: 'Arial Black', sans-serif;
-        }
-
-        .countdown-subtitle {
-            font-size: var(--font-size-lg);
-            margin-top: var(--spacing-lg);
-            opacity: 0.8;
-        }
-
-        @keyframes countdownPulse {
+        @keyframes pulse {
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.1); }
         }
 
-        /* 녹화 오버레이 */
-        .recording-overlay {
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        .main-app {
+            opacity: 0;
+            transition: opacity 0.8s ease;
+            padding: 20px;
+        }
+
+        .main-app.visible {
+            opacity: 1;
+        }
+
+        .header {
+            text-align: center;
+            padding: 40px 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 20px;
+            margin-bottom: 40px;
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        .title {
+            font-size: 2.5em;
+            font-weight: 900;
+            margin-bottom: 15px;
+            background: linear-gradient(45deg, #00ffff, #ff00ff, #ffff00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientFlow 3s ease-in-out infinite;
+        }
+
+        @keyframes gradientFlow {
+            0%, 100% { filter: hue-rotate(0deg); }
+            50% { filter: hue-rotate(180deg); }
+        }
+
+        .subtitle {
+            font-size: 1.3em;
+            opacity: 0.9;
+            color: #e0e0e0;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin: 40px 0;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border-color: rgba(0, 255, 255, 0.5);
+        }
+
+        .feature-icon {
+            font-size: 3.5em;
+            margin-bottom: 20px;
+        }
+
+        .feature-title {
+            font-size: 1.4em;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #00ffff;
+        }
+
+        .feature-desc {
+            font-size: 1em;
+            opacity: 0.8;
+            line-height: 1.4;
+        }
+
+        .main-button {
+            display: block;
+            width: 100%;
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 25px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57);
+            background-size: 300% 300%;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.8em;
+            font-weight: 900;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            animation: gradientShift 4s ease infinite;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .main-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .main-button:hover::before {
+            left: 100%;
+        }
+
+        .main-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .status-panel {
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(15px);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 30px 0;
+            text-align: center;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .status-title {
+            font-size: 1.5em;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: #00ffff;
+        }
+
+        .countdown {
+            font-size: 4em;
+            font-weight: 900;
+            margin: 20px 0;
+            color: #ff6b6b;
+            text-shadow: 0 0 20px rgba(255, 107, 107, 0.8);
+            animation: pulse 1s ease-in-out infinite;
+        }
+
+        .progress-container {
+            margin: 25px 0;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ffff, #ff00ff);
+            width: 0%;
+            transition: width 0.3s ease;
+            border-radius: 6px;
+        }
+
+        .progress-text {
+            font-size: 1.1em;
+            font-weight: 600;
+        }
+
+        .recording-status {
+            display: none;
+            background: rgba(255, 0, 0, 0.2);
+            border: 2px solid rgba(255, 0, 0, 0.5);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .recording-status.active {
+            display: block;
+            animation: recordingPulse 1s ease-in-out infinite;
+        }
+
+        @keyframes recordingPulse {
+            0%, 100% { border-color: rgba(255, 0, 0, 0.5); }
+            50% { border-color: rgba(255, 0, 0, 1); }
+        }
+
+        .recording-dot {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            background: #ff0000;
+            border-radius: 50%;
+            margin-right: 10px;
+            animation: blink 1s ease-in-out infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .browser-warning {
+            display: none;
+            background: rgba(255, 165, 0, 0.2);
+            border: 2px solid rgba(255, 165, 0, 0.5);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .browser-warning.show {
+            display: block;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* 슬라이드쇼 모달 */
+        .slideshow-modal {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(10px);
-            display: flex;
-            align-items: center;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 10000;
+            display: none;
             justify-content: center;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
+            align-items: center;
+        }
+
+        .slideshow-modal.active {
+            display: flex;
+        }
+
+        .slideshow-container {
+            width: 90%;
+            max-width: 800px;
+            height: 80%;
+            background: #000;
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+        }
+
+        .modal-controls {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 10001;
+            display: flex;
+            gap: 10px;
+        }
+
+        .modal-btn {
+            background: rgba(0, 0, 0, 0.7);
+            border: none;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.1em;
             transition: all 0.3s ease;
         }
 
-        .recording-overlay.show {
-            opacity: 1;
-            visibility: visible;
+        .modal-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
         }
 
-        .recording-content {
-            text-align: center;
-            color: white;
-            background: rgba(255,255,255,0.1);
-            padding: var(--spacing-xxl);
-            border-radius: var(--radius-xxl);
-            backdrop-filter: blur(20px);
-        }
-
-        .recording-indicator {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: var(--spacing-md);
-            margin-bottom: var(--spacing-lg);
-            font-size: var(--font-size-xl);
-            font-weight: 700;
-        }
-
-        .red-dot {
-            width: 12px;
-            height: 12px;
-            background: var(--error-color);
-            border-radius: 50%;
-            animation: blink 1s ease-in-out infinite;
-        }
-
-        .recording-timer {
-            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-            font-size: 3rem;
-            font-weight: 700;
-            color: var(--accent-color);
-            margin-bottom: var(--spacing-lg);
-            text-shadow: 0 0 20px rgba(255,215,0,0.8);
-        }
-
-        .recording-progress {
-            margin-bottom: var(--spacing-xl);
-        }
-
-        .progress-bar {
-            width: 300px;
-            height: 8px;
-            background: rgba(255,255,255,0.2);
-            border-radius: 4px;
-            overflow: hidden;
-            margin: 0 auto var(--spacing-md);
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: var(--accent-gradient);
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-
-        .progress-text {
-            font-size: var(--font-size-md);
-            opacity: 0.8;
-        }
-
-        .btn-stop-recording {
-            background: var(--error-color);
-            color: white;
-            border: none;
-            border-radius: var(--radius-lg);
-            padding: var(--spacing-md) var(--spacing-xl);
-            font-size: var(--font-size-md);
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition-normal);
-        }
-
-        .btn-stop-recording:hover {
-            background: #d32f2f;
-            transform: translateY(-2px);
-        }
-
-        /* 토스트 */
-        .toast {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background: rgba(0,0,0,0.9);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: var(--radius-lg);
-            padding: var(--spacing-lg);
-            color: white;
-            z-index: 1001;
-            transform: translateX(400px);
-            transition: transform 0.3s ease;
-            min-width: 300px;
-        }
-
-        .toast.show {
-            transform: translateX(0);
-        }
-
-        .toast.success {
-            border-color: var(--success-color);
-        }
-
-        .toast.error {
-            border-color: var(--error-color);
-        }
-
-        .toast.warning {
-            border-color: var(--warning-color);
-        }
-
-        .toast-content {
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-md);
-        }
-
-        .toast-icon {
-            font-size: var(--font-size-lg);
-        }
-
-        .toast-message {
-            font-size: var(--font-size-md);
-            font-weight: 500;
-        }
-
-        /* 브라우저 지원 경고 */
-        .browser-warning {
-            background: rgba(255,152,0,0.1);
-            border: 1px solid var(--warning-color);
-            border-radius: var(--radius-lg);
-            padding: var(--spacing-lg);
-            margin-bottom: var(--spacing-xl);
-            text-align: center;
-        }
-
-        .browser-warning.hidden {
-            display: none;
-        }
-
-        /* 애니메이션 */
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 0.8; }
-            50% { transform: scale(1.1); opacity: 1; }
-        }
-
-        @keyframes blink {
-            0%, 50% { opacity: 1; }
-            51%, 100% { opacity: 0.3; }
-        }
-
-        /* 모바일 최적화 */
+        /* 반응형 디자인 */
         @media (max-width: 768px) {
-            .main-content {
-                padding: var(--spacing-lg) var(--spacing-md);
-            }
-            
-            .auto-recorder-panel {
-                padding: var(--spacing-lg);
-            }
-            
-            .recording-dashboard {
-                grid-template-columns: repeat(2, 1fr);
-                gap: var(--spacing-md);
-            }
-            
-            .auto-process-flow {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            
-            .process-arrow {
-                transform: rotate(90deg);
-                margin: var(--spacing-sm) 0;
-            }
-            
-            .btn-main-action {
-                min-width: 100%;
-                flex-direction: column;
-                gap: var(--spacing-md);
-                text-align: center;
+            .title {
+                font-size: 2em;
             }
 
-            .countdown-number {
-                font-size: 6rem;
+            .feature-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
             }
 
-            .recording-timer {
-                font-size: 2rem;
+            .main-button {
+                font-size: 1.4em;
+                padding: 20px;
             }
 
-            .progress-bar {
-                width: 250px;
+            .countdown {
+                font-size: 3em;
             }
         }
     </style>
 </head>
 <body>
-    <!-- 로딩 스크린 -->
-    <div id="loadingScreen" class="loading-screen">
-        <div class="loading-container">
+    <!-- 로딩 화면 -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-content">
             <div class="loading-logo">🎬</div>
-            <div class="loading-text">Sue Auto Recorder</div>
-            <div class="loading-subtitle">MediaRecorder API 초기화 중...</div>
-            <div class="loading-bar">
-                <div class="loading-progress"></div>
-            </div>
+            <div class="loading-text">Sue Reading Club 시스템 로딩중...</div>
         </div>
     </div>
 
     <!-- 메인 앱 -->
-    <div id="app" class="app hidden">
-        <!-- 헤더 -->
-        <header class="header">
-            <div class="header-content">
-                <div class="logo">
-                    <span class="logo-icon">🎬</span>
-                    <span class="logo-text">Sue Auto Recorder</span>
-                </div>
-                <div class="header-controls">
-                    <div class="status-indicator">
-                        <div class="status-dot" id="statusDot"></div>
-                        <span class="status-text" id="statusText">준비완료</span>
-                    </div>
-                    <button class="btn-icon" onclick="showHelp()">❓</button>
-                </div>
-            </div>
-        </header>
-
-        <!-- 메인 컨텐츠 -->
-        <main class="main-content">
-            <!-- 브라우저 지원 경고 -->
-            <div id="browserWarning" class="browser-warning hidden">
-                <strong>⚠️ 브라우저 호환성 경고</strong><br>
-                화면 녹화 기능을 사용하려면 Chrome, Firefox, Edge 브라우저를 사용해주세요.
-            </div>
-
-            <div class="auto-recorder-panel">
-                <div class="panel-header">
-                    <h2>🤖 실시간 자동 영상 제작</h2>
-                    <p>MediaRecorder API로 구동되는 완전 자동화 시스템</p>
-                </div>
-
-                <!-- 녹화 상태 대시보드 -->
-                <div class="recording-dashboard">
-                    <div class="dashboard-card">
-                        <div class="card-icon">🎥</div>
-                        <div class="card-title">녹화 상태</div>
-                        <div class="card-value" id="recordingStatus">준비완료</div>
-                    </div>
-                    <div class="dashboard-card">
-                        <div class="card-icon">⏱️</div>
-                        <div class="card-title">진행 시간</div>
-                        <div class="card-value" id="recordingTime">00:00</div>
-                    </div>
-                    <div class="dashboard-card">
-                        <div class="card-icon">📊</div>
-                        <div class="card-title">품질</div>
-                        <div class="card-value" id="videoQuality">1080p</div>
-                    </div>
-                    <div class="dashboard-card">
-                        <div class="card-icon">💾</div>
-                        <div class="card-title">파일 크기</div>
-                        <div class="card-value" id="fileSize">0 MB</div>
-                    </div>
-                </div>
-
-                <!-- 원클릭 자동 제작 -->
-                <div class="one-click-section">
-                    <h3 style="text-align: center; color: var(--accent-color); margin-bottom: var(--spacing-lg);">⚡ 원클릭 자동 제작</h3>
-                    
-                    <div class="auto-process-flow">
-                        <div class="process-step" data-step="1">
-                            <div class="step-icon">📱</div>
-                            <div class="step-title">슬라이드쇼 준비</div>
-                            <div class="step-status">대기</div>
-                        </div>
-                        <div class="process-arrow">→</div>
-                        <div class="process-step" data-step="2">
-                            <div class="step-icon">⏳</div>
-                            <div class="step-title">5초 카운트다운</div>
-                            <div class="step-status">대기</div>
-                        </div>
-                        <div class="process-arrow">→</div>
-                        <div class="process-step" data-step="3">
-                            <div class="step-icon">🎬</div>
-                            <div class="step-title">27.5초 자동 녹화</div>
-                            <div class="step-status">대기</div>
-                        </div>
-                        <div class="process-arrow">→</div>
-                        <div class="process-step" data-step="4">
-                            <div class="step-icon">💾</div>
-                            <div class="step-title">MP4 파일 생성</div>
-                            <div class="step-status">대기</div>
-                        </div>
-                    </div>
-
-                    <!-- 메인 실행 버튼 -->
-                    <div class="main-action">
-                        <button class="btn-main-action" id="startRecordingBtn">
-                            <div style="font-size: 2rem;">🚀</div>
-                            <div class="btn-text">
-                                <div class="btn-title">자동 영상 제작 시작</div>
-                                <div class="btn-subtitle">MediaRecorder API로 실제 녹화</div>
-                            </div>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Sue Reading Club 정보 -->
-                <div style="background: rgba(255,255,255,0.05); border-radius: 20px; padding: 30px; text-align: center; margin-top: 40px;">
-                    <h3 style="color: #FFD700; margin-bottom: 20px; font-size: 1.5em;">📞 Sue Reading Club</h3>
-                    <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 15px; margin-bottom: 20px;">
-                        <div style="font-size: 1.8em; font-weight: bold; color: #00ffff; margin-bottom: 10px; font-family: 'Consolas', monospace;">010-9579-4429</div>
-                        <div style="font-size: 1.1em; opacity: 0.9;">📍 인천 연수구 송도동 해온더라운지 702호</div>
-                    </div>
-                    <div style="font-size: 1em; opacity: 0.8;">🎯 AI 기반 미래형 교육 • 98% 만족도 • 3.2배 속도 향상</div>
-                </div>
-            </div>
-        </main>
-    </div>
-
-    <!-- 카운트다운 오버레이 -->
-    <div id="countdownOverlay" class="countdown-overlay">
-        <div class="countdown-content">
-            <div class="countdown-title">녹화 시작까지</div>
-            <div class="countdown-number" id="countdownNumber">5</div>
-            <div class="countdown-subtitle">슬라이드쇼가 자동으로 시작됩니다</div>
+    <div class="main-app" id="mainApp">
+        <div class="header">
+            <div class="logo">🎬</div>
+            <h1 class="title">Sue Reading Club</h1>
+            <p class="subtitle">슬라이드쇼 자동 영상 제작 시스템</p>
         </div>
-    </div>
 
-    <!-- 녹화 중 오버레이 -->
-    <div id="recordingOverlay" class="recording-overlay">
-        <div class="recording-content">
-            <div class="recording-indicator">
-                <div class="red-dot"></div>
-                <span>녹화 중</span>
+        <!-- 기능 소개 -->
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="feature-icon">📱</div>
+                <div class="feature-title">슬라이드쇼 자동 재생</div>
+                <div class="feature-desc">11장의 Sue Reading Club 소개 슬라이드가 자동으로 재생됩니다</div>
             </div>
-            <div class="recording-timer" id="recordingTimer">00:00</div>
-            <div class="recording-progress">
+            <div class="feature-card">
+                <div class="feature-icon">🎥</div>
+                <div class="feature-title">실시간 화면 녹화</div>
+                <div class="feature-desc">MediaRecorder API로 실제 화면을 고화질로 녹화합니다</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <div class="feature-title">완전 자동화</div>
+                <div class="feature-desc">버튼 한 번으로 슬라이드쇼 재생부터 영상 저장까지 자동 처리</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">💾</div>
+                <div class="feature-title">즉시 다운로드</div>
+                <div class="feature-desc">녹화 완료 즉시 MP4/WebM 파일이 자동으로 다운로드됩니다</div>
+            </div>
+        </div>
+
+        <!-- 브라우저 경고 -->
+        <div class="browser-warning" id="browserWarning">
+            <h3>⚠️ 브라우저 호환성 경고</h3>
+            <p>최적의 경험을 위해 Chrome 또는 Firefox 브라우저를 사용해주세요.</p>
+        </div>
+
+        <!-- 메인 버튼 -->
+        <button class="main-button" id="startButton">
+            🚀 슬라이드쇼 녹화 시작
+        </button>
+
+        <!-- 상태 패널 -->
+        <div class="status-panel hidden" id="statusPanel">
+            <div class="status-title" id="statusTitle">준비 중...</div>
+            <div class="countdown hidden" id="countdown">5</div>
+            <div class="progress-container hidden" id="progressContainer">
                 <div class="progress-bar">
-                    <div class="progress-fill" id="recordingProgress"></div>
+                    <div class="progress-fill" id="progressFill"></div>
                 </div>
-                <div class="progress-text">27.5초 중 <span id="progressSeconds">0</span>초</div>
+                <div class="progress-text" id="progressText">0% 완료</div>
             </div>
-            <button class="btn-stop-recording" onclick="stopRecording()">⏹️ 녹화 중지</button>
+            <div class="recording-status" id="recordingStatus">
+                <span class="recording-dot"></span>
+                <span>슬라이드쇼 녹화 중...</span>
+            </div>
         </div>
     </div>
 
-    <!-- 토스트 알림 -->
-    <div id="toast" class="toast">
-        <div class="toast-content">
-            <span class="toast-icon" id="toastIcon">✅</span>
-            <span class="toast-message" id="toastMessage">메시지</span>
+    <!-- 슬라이드쇼 모달 -->
+    <div class="slideshow-modal" id="slideshowModal">
+        <div class="modal-controls">
+            <button class="modal-btn" onclick="closeSlideshow()">✕</button>
+        </div>
+        <div class="slideshow-container">
+            <iframe id="slideshowFrame" src="" width="100%" height="100%" frameborder="0"></iframe>
         </div>
     </div>
 
-    <!-- 슬라이드쇼 iframe (숨김) -->
-    <iframe id="slideshowFrame" src="data:text/html,<html><body style='margin:0;padding:50px;background:linear-gradient(45deg,#667eea,#764ba2);color:white;font-family:Arial;text-align:center;font-size:24px;'>Sue Reading Club<br>📚 AI 독해 시스템<br>🎯 스마트 속독<br>💬 AI 토론 클래스<br>📞 010-9579-4429<br>📍 인천 연수구 송도동</body></html>" style="position:absolute;left:-9999px;width:1920px;height:1080px;border:none;"></iframe>
-
-    <!-- JavaScript - 완전한 MediaRecorder API 연동 -->
     <script>
         // 전역 변수
-        let mediaRecorder = null;
+        let mediaRecorder;
         let recordedChunks = [];
-        let stream = null;
         let isRecording = false;
-        let recordingStartTime = null;
-        let countdownInterval = null;
-        let recordingTimer = null;
+        let slideshowWindow;
 
-        // 시스템 초기화
-        document.addEventListener('DOMContentLoaded', async function() {
-            console.log('🎬 Sue Reading Club API 연동 시스템 초기화');
-            
-            // 로딩 애니메이션
-            setTimeout(() => {
-                document.getElementById('loadingScreen').classList.add('hidden');
-                document.getElementById('app').classList.remove('hidden');
-                checkBrowserSupport();
-            }, 2000);
+        // 슬라이드쇼 HTML 데이터 (임베드된 버전)
+        const slideshowHTML = `
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sue Reading Club - 슬라이드쇼</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #000; overflow: hidden; font-family: 'Arial', sans-serif; height: 100vh; display: flex; justify-content: center; align-items: center; }
+        .phone-container { width: 100%; height: 100%; max-width: 800px; max-height: 600px; background: linear-gradient(145deg, #2a2a2a, #1a1a1a); border-radius: 20px; padding: 20px; box-shadow: 0 0 50px rgba(0, 255, 255, 0.3); position: relative; overflow: hidden; }
+        .screen { width: 100%; height: 100%; background: #000; border-radius: 15px; position: relative; overflow: hidden; }
+        .slide { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; transform: scale(0.8); transition: all 0.8s ease; display: flex; justify-content: center; align-items: center; text-align: center; }
+        .slide.active { opacity: 1; transform: scale(1); }
+        .slide-content { width: 90%; }
+        .slide-title { font-size: 3em; font-weight: 900; margin-bottom: 20px; text-shadow: 0 0 20px rgba(255,255,255,0.8); }
+        .slide-desc { font-size: 1.5em; line-height: 1.4; opacity: 0.9; }
+        .big-icon { font-size: 5em; margin-bottom: 30px; }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 40px; }
+        .stat-item { background: rgba(17, 153, 142, 0.2); border: 2px solid rgba(17, 153, 142, 0.5); border-radius: 20px; padding: 30px; }
+        .stat-number { font-size: 4em; font-weight: 900; color: #00ffff; }
+        .stat-label { font-size: 1.2em; color: rgba(255, 255, 255, 0.8); margin-top: 10px; }
+        .slide-indicator { position: absolute; top: 30px; right: 30px; font-size: 1.2em; color: rgba(255, 255, 255, 0.6); background: rgba(0, 0, 0, 0.5); padding: 10px 20px; border-radius: 20px; }
+        .contact-card { background: rgba(255, 255, 255, 0.15); border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 25px; padding: 40px; margin: 30px 0; }
+        .phone-number { font-size: 3em; font-weight: 900; color: #ffff00; margin-bottom: 20px; text-shadow: 0 0 20px rgba(255, 255, 0, 0.8); }
+        .address { font-size: 1.3em; color: rgba(255, 255, 255, 0.9); line-height: 1.4; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+        @keyframes bounce { 0%, 20%, 50%, 80%, 100% { transform: translateY(0); } 40% { transform: translateY(-20px); } 60% { transform: translateY(-10px); } }
+    </style>
+</head>
+<body>
+    <div class="phone-container">
+        <div class="screen">
+            <!-- 슬라이드 1: 인트로 -->
+            <div class="slide active" data-slide="0" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <div class="slide-content">
+                    <div class="big-icon">📚</div>
+                    <div class="slide-title" style="background: linear-gradient(45deg, #00ffff, #ff00ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Sue Reading Club</div>
+                    <div class="slide-desc">AI 기반 미래형 교육</div>
+                </div>
+                <div class="slide-indicator">01/11</div>
+            </div>
 
-            // 메인 버튼 이벤트
-            document.getElementById('startRecordingBtn').addEventListener('click', startAutoRecording);
-        });
+            <!-- 슬라이드 2: 로고 -->
+            <div class="slide" data-slide="1" style="background: radial-gradient(circle, #000428 0%, #004e92 100%); color: white;">
+                <div class="slide-content">
+                    <div class="big-icon">📚</div>
+                    <div class="slide-title" style="color: #00ffff;">SUE READING CLUB</div>
+                    <div class="slide-desc">차세대 교육 솔루션</div>
+                </div>
+                <div class="slide-indicator">02/11</div>
+            </div>
 
-        // 브라우저 지원 확인
+            <!-- 슬라이드 3: 프로그램 -->
+            <div class="slide" data-slide="2" style="background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%); color: white;">
+                <div class="slide-content">
+                    <div class="big-icon" style="color: #00ff00;">🧠</div>
+                    <div class="slide-title" style="color: #00ff00;">AI 독해 시스템</div>
+                    <div class="slide-desc">개인별 맞춤형 AI 분석으로<br>독해력 향상</div>
+                </div>
+                <div class="slide-indicator">03/11</div>
+            </div>
+
+            <!-- 슬라이드 4: 스마트 속독 -->
+            <div class="slide" data-slide="3" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                <div class="slide-content">
+                    <div class="big-icon" style="animation: pulse 2s infinite;">🎯</div>
+                    <div class="slide-title">스마트 속독</div>
+                    <div class="slide-desc">과학적 훈련법으로<br>읽기 속도 3배 향상</div>
+                </div>
+                <div class="slide-indicator">04/11</div>
+            </div>
+
+            <!-- 슬라이드 5: AI 토론 클래스 -->
+            <div class="slide" data-slide="4" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
+                <div class="slide-content">
+                    <div class="big-icon">💬</div>
+                    <div class="slide-title">AI 토론 클래스</div>
+                    <div class="slide-desc">AI와 함께하는<br>실시간 토론 학습</div>
+                </div>
+                <div class="slide-indicator">05/11</div>
+            </div>
+
+            <!-- 슬라이드 6: AI 개별분석 -->
+            <div class="slide" data-slide="5" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white;">
+                <div class="slide-content">
+                    <div class="big-icon" style="animation: pulse 2s infinite;">🤖</div>
+                    <div class="slide-title">AI 개별 분석</div>
+                    <div class="slide-desc">학습자의 읽기 패턴을<br>실시간으로 분석하여<br>최적의 학습법 제공</div>
+                </div>
+                <div class="slide-indicator">06/11</div>
+            </div>
+
+            <!-- 슬라이드 7: 실시간 피드백 -->
+            <div class="slide" data-slide="6" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); color: #333;">
+                <div class="slide-content">
+                    <div class="big-icon">⚡</div>
+                    <div class="slide-title" style="color: #ff6b6b;">실시간 피드백</div>
+                    <div class="slide-desc" style="color: #666;">즉석에서 제공되는<br>정확한 피드백으로<br>빠른 실력 향상</div>
+                </div>
+                <div class="slide-indicator">07/11</div>
+            </div>
+
+            <!-- 슬라이드 8: 성과 통계 -->
+            <div class="slide" data-slide="7" style="background: linear-gradient(135deg, #0f0f0f 0%, #2d1b69 50%, #11998e 100%); color: white;">
+                <div class="slide-content">
+                    <div class="slide-title" style="color: #11998e; margin-bottom: 40px;">성과 데이터</div>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-number">98%</div>
+                            <div class="stat-label">만족도</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">3.2x</div>
+                            <div class="stat-label">읽기속도 향상</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="slide-indicator">08/11</div>
+            </div>
+
+            <!-- 슬라이드 9: 후기 -->
+            <div class="slide" data-slide="8" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                <div class="slide-content">
+                    <div class="big-icon">💬</div>
+                    <div class="slide-title">"우리 아이가 완전히 달라졌어요!"</div>
+                    <div class="slide-desc">3개월 만에 읽기 속도가 3배나<br>빨라지고 이해력도 향상됐습니다<br><br>- 김○○ 학부모님</div>
+                </div>
+                <div class="slide-indicator">09/11</div>
+            </div>
+
+            <!-- 슬라이드 10: 위치 정보 -->
+            <div class="slide" data-slide="9" style="background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); color: white;">
+                <div class="slide-content">
+                    <div class="big-icon" style="animation: bounce 2s infinite;">📍</div>
+                    <div class="slide-title">찾아오시는 길</div>
+                    <div style="background: rgba(255,255,255,0.1); padding: 30px; border-radius: 20px; margin-top: 30px;">
+                        <div style="font-size: 1.5em; margin-bottom: 15px; color: #3498db;">인천 연수구 송도동</div>
+                        <div style="font-size: 1.2em; opacity: 0.8;">해온더라운지 702호</div>
+                        <div style="font-size: 1em; margin-top: 15px; opacity: 0.7;">송도국제도시 센트럴파크 인근</div>
+                    </div>
+                </div>
+                <div class="slide-indicator">10/11</div>
+            </div>
+
+            <!-- 슬라이드 11: 연락처 -->
+            <div class="slide" data-slide="10" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                <div class="slide-content">
+                    <div class="slide-title" style="animation: bounce 2s infinite;">📞 상담 문의</div>
+                    <div class="contact-card">
+                        <div class="phone-number">010-9579-4429</div>
+                        <div class="address">인천 연수구 송도동<br>해온더라운지 702호</div>
+                    </div>
+                </div>
+                <div class="slide-indicator">11/11</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const totalSlides = 11;
+        const slideDuration = 2500;
+
+        function goToSlide(index) {
+            document.querySelectorAll('.slide').forEach(slide => {
+                slide.classList.remove('active');
+            });
+            currentSlide = index;
+            document.querySelector('[data-slide="' + currentSlide + '"]').classList.add('active');
+        }
+
+        function nextSlide() {
+            const next = (currentSlide + 1) % totalSlides;
+            goToSlide(next);
+        }
+
+        function startSlideshow() {
+            goToSlide(0);
+            const interval = setInterval(() => {
+                nextSlide();
+                if (currentSlide === 0) {
+                    clearInterval(interval);
+                    window.parent.postMessage('slideshow-complete', '*');
+                }
+            }, slideDuration);
+        }
+
+        // 슬라이드쇼 시작
+        setTimeout(startSlideshow, 1000);
+        
+        // 부모 창에 준비 완료 알림
+        window.parent.postMessage('slideshow-ready', '*');
+    </script>
+</body>
+</html>
+        `;
+
+        // 브라우저 호환성 검사
         function checkBrowserSupport() {
-            const isSupported = 
-                navigator.mediaDevices && 
-                navigator.mediaDevices.getDisplayMedia && 
-                window.MediaRecorder;
+            const isSupported = !!(
+                navigator.mediaDevices &&
+                navigator.mediaDevices.getDisplayMedia &&
+                window.MediaRecorder
+            );
 
             if (!isSupported) {
-                document.getElementById('browserWarning').classList.remove('hidden');
-                document.getElementById('startRecordingBtn').disabled = true;
-                updateStatus('지원안됨', 'error');
-                showToast('이 브라우저는 화면 녹화를 지원하지 않습니다', 'error');
-            } else {
-                updateStatus('준비완료', 'success');
-                console.log('✅ MediaRecorder API 지원 확인');
+                document.getElementById('browserWarning').classList.add('show');
+                document.getElementById('startButton').disabled = true;
+                return false;
             }
+            return true;
         }
 
-        // 자동 녹화 프로세스 시작
-        async function startAutoRecording() {
-            if (isRecording) {
-                showToast('이미 녹화가 진행 중입니다', 'warning');
-                return;
-            }
-
-            try {
-                console.log('🚀 자동 녹화 프로세스 시작');
+        // 슬라이드쇼 창 열기
+        function openSlideshow() {
+            return new Promise((resolve, reject) => {
+                const blob = new Blob([slideshowHTML], { type: 'text/html' });
+                const url = URL.createObjectURL(blob);
                 
-                // 1단계: 슬라이드쇼 준비
-                await executeStep(1, '슬라이드쇼 준비 중...', async () => {
-                    updateStatus('준비중', 'preparing');
-                    await new Promise(resolve => setTimeout(resolve, 1000));
-                });
-
-                // 2단계: 카운트다운
-                await executeStep(2, '카운트다운 시작', async () => {
-                    await showCountdown();
-                });
-
-                // 3단계: 화면 캡처 및 녹화 시작
-                await executeStep(3, '녹화 진행', async () => {
-                    await startScreenRecording();
-                });
-
-                // 자동으로 27.5초 후 중지
-                setTimeout(async () => {
-                    if (isRecording) {
-                        await executeStep(4, 'MP4 생성', async () => {
-                            await stopRecording();
-                        });
-                    }
-                }, 27500);
-
-            } catch (error) {
-                console.error('❌ 녹화 오류:', error);
-                handleRecordingError(error);
-                resetAllSteps();
-            }
-        }
-
-        // 단계별 실행 함수
-        async function executeStep(stepNumber, statusText, action) {
-            const step = document.querySelector(`[data-step="${stepNumber}"]`);
-            const status = step?.querySelector('.step-status');
-
-            // 단계 활성화
-            if (step) {
-                step.classList.add('active');
-                if (status) status.textContent = '진행중';
-            }
-
-            try {
-                await action();
+                // 새 창에서 슬라이드쇼 열기
+                slideshowWindow = window.open(url, 'slideshow', 'width=800,height=600,toolbar=no,menubar=no,scrollbars=no');
                 
-                // 단계 완료
-                if (step) {
-                    step.classList.remove('active');
-                    step.classList.add('completed');
-                    if (status) status.textContent = '완료';
+                if (!slideshowWindow) {
+                    reject(new Error('팝업이 차단되었습니다. 팝업을 허용하고 다시 시도해주세요.'));
+                    return;
                 }
-            } catch (error) {
-                // 단계 실패
-                if (step) {
-                    step.classList.remove('active');
-                    if (status) status.textContent = '실패';
-                }
-                throw error;
-            }
-        }
 
-        // 카운트다운 표시
-        function showCountdown() {
-            return new Promise((resolve) => {
-                const overlay = document.getElementById('countdownOverlay');
-                const numberEl = document.getElementById('countdownNumber');
-                
-                overlay.classList.add('show');
-                let count = 5;
-                
-                const countdown = () => {
-                    numberEl.textContent = count;
-                    
-                    if (count <= 0) {
-                        overlay.classList.remove('show');
+                // 슬라이드쇼 준비 완료 대기
+                const messageHandler = (event) => {
+                    if (event.data === 'slideshow-ready') {
+                        window.removeEventListener('message', messageHandler);
                         resolve();
-                    } else {
-                        count--;
-                        setTimeout(countdown, 1000);
                     }
                 };
-                
-                countdown();
+
+                window.addEventListener('message', messageHandler);
+
+                // 타임아웃 설정 (10초)
+                setTimeout(() => {
+                    window.removeEventListener('message', messageHandler);
+                    reject(new Error('슬라이드쇼 로딩 타임아웃'));
+                }, 10000);
             });
         }
 
+        // 슬라이드쇼 닫기
+        function closeSlideshow() {
+            if (slideshowWindow && !slideshowWindow.closed) {
+                slideshowWindow.close();
+            }
+        }
+
         // 화면 녹화 시작
-        async function startScreenRecording() {
+        async function startRecording() {
             try {
-                // 화면 캡처 요청
-                stream = await navigator.mediaDevices.getDisplayMedia({
+                const stream = await navigator.mediaDevices.getDisplayMedia({
                     video: {
-                        width: 1920,
-                        height: 1080,
-                        frameRate: 30
+                        width: { ideal: 1920 },
+                        height: { ideal: 1080 },
+                        frameRate: { ideal: 30 }
                     },
                     audio: false
                 });
 
-                // MediaRecorder 설정
-                const options = {
-                    mimeType: getSupportedMimeType(),
-                    videoBitsPerSecond: 5000000 // 5Mbps
-                };
-
-                mediaRecorder = new MediaRecorder(stream, options);
                 recordedChunks = [];
+                mediaRecorder = new MediaRecorder(stream, {
+                    mimeType: 'video/webm;codecs=vp9'
+                });
 
-                // 이벤트 핸들러 설정
                 mediaRecorder.ondataavailable = (event) => {
                     if (event.data.size > 0) {
                         recordedChunks.push(event.data);
-                        updateFileSize();
                     }
                 };
 
                 mediaRecorder.onstop = () => {
-                    handleRecordingComplete();
-                };
-
-                mediaRecorder.onerror = (event) => {
-                    console.error('MediaRecorder 오류:', event.error);
-                    throw event.error;
-                };
-
-                // 스트림 종료 감지
-                stream.getVideoTracks()[0].onended = () => {
-                    if (isRecording) {
-                        stopRecording();
-                    }
-                };
-
-                // 녹화 시작
-                mediaRecorder.start(1000); // 1초마다 데이터 수집
-                isRecording = true;
-                recordingStartTime = Date.now();
-
-                // UI 업데이트
-                showRecordingOverlay();
-                updateStatus('녹화중', 'recording');
-                updateMainButton('recording');
-                startRecordingTimer();
-
-                showToast('화면 녹화가 시작되었습니다!', 'success');
-                console.log('🎥 녹화 시작됨');
-
-            } catch (error) {
-                if (error.name === 'NotAllowedError') {
-                    throw new Error('화면 공유 권한이 거부되었습니다');
-                } else if (error.name === 'NotSupportedError') {
-                    throw new Error('이 브라우저는 화면 녹화를 지원하지 않습니다');
-                }
-                throw error;
-            }
-        }
-
-        // 녹화 중지
-        async function stopRecording() {
-            if (!isRecording || !mediaRecorder) {
-                return;
-            }
-
-            try {
-                console.log('⏹️ 녹화 중지 중...');
-                
-                mediaRecorder.stop();
-                isRecording = false;
-
-                // 스트림 정리
-                if (stream) {
+                    const blob = new Blob(recordedChunks, { type: 'video/webm' });
+                    downloadVideo(blob);
                     stream.getTracks().forEach(track => track.stop());
-                    stream = null;
-                }
+                };
 
-                // UI 업데이트
-                hideRecordingOverlay();
-                stopRecordingTimer();
-                updateStatus('처리중', 'preparing');
-                updateMainButton('processing');
+                mediaRecorder.start();
+                isRecording = true;
 
+                // 27.5초 후 자동 정지
+                setTimeout(() => {
+                    if (mediaRecorder && mediaRecorder.state === 'recording') {
+                        mediaRecorder.stop();
+                        isRecording = false;
+                    }
+                }, 27500);
+
+                return true;
             } catch (error) {
-                console.error('녹화 중지 오류:', error);
+                console.error('녹화 시작 실패:', error);
                 throw error;
             }
         }
 
-        // 녹화 완료 처리
-        function handleRecordingComplete() {
-            if (recordedChunks.length === 0) {
-                showToast('녹화된 데이터가 없습니다', 'error');
-                return;
-            }
-
-            try {
-                // Blob 생성
-                const mimeType = getSupportedMimeType();
-                const blob = new Blob(recordedChunks, { type: mimeType });
-                
-                // 파일명 생성
-                const timestamp = new Date().toISOString().slice(0, 19).replace(/[:.]/g, '-');
-                const extension = mimeType.includes('webm') ? 'webm' : 'mp4';
-                const filename = `sue-reading-video_${timestamp}.${extension}`;
-
-                // 자동 다운로드
-                downloadBlob(blob, filename);
-
-                // 성공 처리
-                updateStatus('완료', 'success');
-                updateMainButton('completed');
-                showToast(`영상이 생성되었습니다! (${formatFileSize(blob.size)})`, 'success');
-
-                console.log('✅ 녹화 완료:', filename, formatFileSize(blob.size));
-
-                // 5초 후 UI 리셋
-                setTimeout(() => {
-                    resetAllSteps();
-                    updateStatus('준비완료', 'success');
-                    updateMainButton('ready');
-                }, 5000);
-
-            } catch (error) {
-                console.error('파일 생성 오류:', error);
-                showToast('파일 생성 중 오류가 발생했습니다', 'error');
-            }
-        }
-
-        // 지원되는 MIME 타입 가져오기
-        function getSupportedMimeType() {
-            const types = [
-                'video/webm;codecs=vp9',
-                'video/webm;codecs=vp8',
-                'video/webm',
-                'video/mp4'
-            ];
-
-            for (const type of types) {
-                if (MediaRecorder.isTypeSupported(type)) {
-                    return type;
-                }
-            }
-            return 'video/webm';
-        }
-
-        // 파일 다운로드
-        function downloadBlob(blob, filename) {
+        // 영상 다운로드
+        function downloadVideo(blob) {
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
-            a.style.display = 'none';
+            const now = new Date();
+            const filename = `sue-reading-slideshow_${now.getFullYear()}${(now.getMonth()+1).toString().padStart(2,'0')}${now.getDate().toString().padStart(2,'0')}_${now.getHours().toString().padStart(2,'0')}${now.getMinutes().toString().padStart(2,'0')}.webm`;
+            
             a.href = url;
             a.download = filename;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
-        }
 
-        // 파일 크기 포맷
-        function formatFileSize(bytes) {
-            if (bytes === 0) return '0 Bytes';
-            const k = 1024;
-            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-        }
-
-        // 시간 포맷
-        function formatTime(ms) {
-            const seconds = Math.floor(ms / 1000);
-            const mins = Math.floor(seconds / 60);
-            const secs = seconds % 60;
-            return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            updateStatus('✅ 녹화 완료!', `영상이 다운로드되었습니다: ${filename}`);
+            closeSlideshow();
         }
 
         // 상태 업데이트
-        function updateStatus(status, type = 'success') {
-            const statusText = document.getElementById('statusText');
-            const statusDot = document.getElementById('statusDot');
-            const recordingStatus = document.getElementById('recordingStatus');
-
-            if (statusText) statusText.textContent = status;
-            if (recordingStatus) recordingStatus.textContent = status;
-            
-            if (statusDot) {
-                statusDot.className = `status-dot ${type}`;
+        function updateStatus(title, description = '') {
+            document.getElementById('statusTitle').textContent = title;
+            if (description) {
+                document.getElementById('statusTitle').innerHTML = title + '<br><small style="font-size: 0.8em; opacity: 0.7;">' + description + '</small>';
             }
         }
 
-        // 메인 버튼 상태 업데이트
-        function updateMainButton(state) {
-            const button = document.getElementById('startRecordingBtn');
-            const title = button.querySelector('.btn-title');
-            const subtitle = button.querySelector('.btn-subtitle');
+        // 카운트다운 표시
+        function showCountdown() {
+            return new Promise((resolve) => {
+                const countdownEl = document.getElementById('countdown');
+                countdownEl.classList.remove('hidden');
+                
+                let count = 5;
+                countdownEl.textContent = count;
+                updateStatus('🎬 녹화 시작 준비');
 
-            switch(state) {
-                case 'recording':
-                    button.classList.add('recording');
-                    button.disabled = true;
-                    title.textContent = '녹화 진행 중...';
-                    subtitle.textContent = '27.5초 자동 녹화 중';
-                    break;
-                case 'processing':
-                    title.textContent = '파일 생성 중...';
-                    subtitle.textContent = 'MP4 파일 생성 중';
-                    break;
-                case 'completed':
-                    title.textContent = '녹화 완료!';
-                    subtitle.textContent = '파일이 다운로드되었습니다';
-                    break;
-                case 'ready':
-                default:
-                    button.classList.remove('recording');
-                    button.disabled = false;
-                    title.textContent = '자동 영상 제작 시작';
-                    subtitle.textContent = 'MediaRecorder API로 실제 녹화';
-                    break;
-            }
-        }
-
-        // 녹화 오버레이 표시/숨김
-        function showRecordingOverlay() {
-            document.getElementById('recordingOverlay').classList.add('show');
-        }
-
-        function hideRecordingOverlay() {
-            document.getElementById('recordingOverlay').classList.remove('show');
-        }
-
-        // 녹화 타이머 시작/중지
-        function startRecordingTimer() {
-            recordingTimer = setInterval(() => {
-                if (recordingStartTime) {
-                    const elapsed = Date.now() - recordingStartTime;
-                    const progress = Math.min((elapsed / 27500) * 100, 100);
-                    
-                    document.getElementById('recordingTimer').textContent = formatTime(elapsed);
-                    document.getElementById('recordingTime').textContent = formatTime(elapsed);
-                    document.getElementById('recordingProgress').style.width = progress + '%';
-                    document.getElementById('progressSeconds').textContent = Math.floor(elapsed / 1000);
-                }
-            }, 100);
-        }
-
-        function stopRecordingTimer() {
-            if (recordingTimer) {
-                clearInterval(recordingTimer);
-                recordingTimer = null;
-            }
-        }
-
-        // 파일 크기 업데이트
-        function updateFileSize() {
-            if (recordedChunks.length > 0) {
-                const totalSize = recordedChunks.reduce((total, chunk) => total + chunk.size, 0);
-                document.getElementById('fileSize').textContent = formatFileSize(totalSize);
-            }
-        }
-
-        // 모든 단계 리셋
-        function resetAllSteps() {
-            document.querySelectorAll('.process-step').forEach(step => {
-                step.classList.remove('active', 'completed');
-                const status = step.querySelector('.step-status');
-                if (status) status.textContent = '대기';
+                const countInterval = setInterval(() => {
+                    count--;
+                    if (count > 0) {
+                        countdownEl.textContent = count;
+                    } else {
+                        countdownEl.textContent = '시작!';
+                        clearInterval(countInterval);
+                        setTimeout(() => {
+                            countdownEl.classList.add('hidden');
+                            resolve();
+                        }, 1000);
+                    }
+                }, 1000);
             });
         }
 
-        // 오류 처리
-        function handleRecordingError(error) {
-            updateStatus('오류', 'error');
-            updateMainButton('ready');
-            
-            let message = '녹화 중 오류가 발생했습니다';
-            if (error.message.includes('권한')) {
-                message = '화면 공유 권한을 허용해주세요';
-            } else if (error.message.includes('지원')) {
-                message = '이 브라우저는 화면 녹화를 지원하지 않습니다';
+        // 진행률 표시
+        function showProgress() {
+            const progressContainer = document.getElementById('progressContainer');
+            const progressFill = document.getElementById('progressFill');
+            const progressText = document.getElementById('progressText');
+            const recordingStatus = document.getElementById('recordingStatus');
+
+            progressContainer.classList.remove('hidden');
+            recordingStatus.classList.add('active');
+
+            let progress = 0;
+            const duration = 27500; // 27.5초
+            const interval = 100; // 0.1초마다 업데이트
+
+            const progressInterval = setInterval(() => {
+                progress += interval;
+                const percentage = Math.min((progress / duration) * 100, 100);
+                
+                progressFill.style.width = percentage + '%';
+                progressText.textContent = Math.round(percentage) + '% 완료';
+
+                if (progress >= duration) {
+                    clearInterval(progressInterval);
+                    recordingStatus.classList.remove('active');
+                    updateStatus('🎬 녹화 완료 처리 중...', '영상 파일을 생성하고 있습니다');
+                }
+            }, interval);
+        }
+
+        // 메인 실행 함수
+        async function startSlideShowRecording() {
+            try {
+                const startButton = document.getElementById('startButton');
+                const statusPanel = document.getElementById('statusPanel');
+
+                startButton.disabled = true;
+                statusPanel.classList.remove('hidden');
+
+                // 1. 슬라이드쇼 창 열기
+                updateStatus('📱 슬라이드쇼 준비 중...', '새 창에서 슬라이드쇼를 로딩하고 있습니다');
+                await openSlideshow();
+
+                // 2. 화면 공유 권한 요청
+                updateStatus('🖥️ 화면 공유 권한 요청', '화면 공유를 허용해주세요');
+                await startRecording();
+
+                // 3. 카운트다운 시작
+                await showCountdown();
+
+                // 4. 녹화 진행률 표시
+                updateStatus('🔴 슬라이드쇼 녹화 중...', '자동으로 진행됩니다. 잠시만 기다려주세요');
+                showProgress();
+
+            } catch (error) {
+                console.error('오류 발생:', error);
+                updateStatus('❌ 오류 발생', error.message);
+                closeSlideshow();
+                
+                setTimeout(() => {
+                    document.getElementById('startButton').disabled = false;
+                    document.getElementById('statusPanel').classList.add('hidden');
+                }, 3000);
             }
-            
-            showToast(message, 'error');
-            console.error('🚨 녹화 오류:', error);
         }
 
-        // 토스트 알림
-        function showToast(message, type = 'info') {
-            const toast = document.getElementById('toast');
-            const icon = document.getElementById('toastIcon');
-            const messageEl = document.getElementById('toastMessage');
+        // 초기화
+        document.addEventListener('DOMContentLoaded', () => {
+            // 로딩 화면 처리
+            setTimeout(() => {
+                document.getElementById('loadingScreen').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('loadingScreen').style.display = 'none';
+                    document.getElementById('mainApp').classList.add('visible');
+                }, 800);
+            }, 2000);
 
-            const icons = {
-                success: '✅',
-                error: '❌',
-                warning: '⚠️',
-                info: 'ℹ️'
-            };
+            // 브라우저 호환성 검사
+            checkBrowserSupport();
 
-            toast.className = `toast ${type}`;
-            icon.textContent = icons[type] || icons.info;
-            messageEl.textContent = message;
+            // 시작 버튼 이벤트
+            document.getElementById('startButton').addEventListener('click', startSlideShowRecording);
 
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 4000);
-        }
-
-        // 도움말 표시
-        function showHelp() {
-            alert(`🎬 Sue Reading Club 자동 녹화 시스템
-
-📋 사용법:
-1. "자동 영상 제작 시작" 버튼 클릭
-2. 화면 공유 권한 허용
-3. 5초 카운트다운 대기
-4. 27.5초 자동 녹화 진행
-5. MP4 파일 자동 다운로드
-
-⚠️ 주의사항:
-• Chrome, Firefox, Edge 브라우저 권장
-• HTTPS 환경에서만 작동
-• 화면 공유 권한 필요
-
-📞 문의: 010-9579-4429
-📍 인천 연수구 송도동 해온더라운지 702호`);
-        }
-
-        // 페이지 언로드 시 정리
-        window.addEventListener('beforeunload', (e) => {
-            if (isRecording) {
-                e.preventDefault();
-                e.returnValue = '녹화가 진행 중입니다. 정말 페이지를 떠나시겠습니까?';
-                return e.returnValue;
-            }
+            console.log('🎬 Sue Reading Club 슬라이드쇼 자동 녹화 시스템 로드 완료!');
+            console.log('📱 기능: 11장 슬라이드쇼 자동 재생 + 실시간 녹화 + 영상 파일 생성');
         });
 
-        console.log('🚀 Sue Reading Club MediaRecorder API 시스템 로드 완료');
+        // 슬라이드쇼 완료 메시지 수신
+        window.addEventListener('message', (event) => {
+            if (event.data === 'slideshow-complete') {
+                console.log('슬라이드쇼 완료 신호 수신');
+            }
+        });
     </script>
 </body>
 </html>
