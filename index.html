@@ -1439,6 +1439,217 @@
             const _0x7d8f = String.fromCharCode(118,97,114,32,95,48,120,97,53,98,51,61,123,97,112,105,75,101,121,58,39,39,44,116,101,109,112,108,97,116,101,58,39,98,117,115,105,110,101,115,115,39,44,115,108,105,100,101,115,58,110,117,108,108,44,103,101,110,101,114,97,116,101,100,73,109,97,103,101,58,110,117,108,108,44,99,117,114,114,101,110,116,83,108,105,100,101,73,110,100,101,120,58,48,44,115,108,105,100,101,73,110,116,101,114,118,97,108,58,110,117,108,108,44,115,101,108,101,99,116,101,100,73,109,97,103,101,83,105,122,101,58,39,49,48,50,52,120,49,48,50,52,39,44,115,101,108,101,99,116,101,100,73,109,97,103,101,67,111,115,116,58,39,36,48,46,48,52,48,39,125,59);
             eval(_0x7d8f);
 
+            // 단순화된 이벤트 핸들러 (디버깅용)
+            function setupSimpleHandlers() {
+                console.log('이벤트 핸들러 설정 시작');
+                
+                // API 키 설정
+                const setApiBtn = document.getElementById('setApiBtn');
+                console.log('API 설정 버튼 찾기:', !!setApiBtn);
+                
+                if (setApiBtn) {
+                    setApiBtn.onclick = function() {
+                        console.log('API 설정 버튼 클릭됨');
+                        
+                        const input = document.getElementById('apiInput');
+                        const key = input?.value?.trim();
+                        const statusEl = document.getElementById('apiStatus');
+                        
+                        console.log('입력된 키 길이:', key?.length);
+                        
+                        if (!key) {
+                            if (statusEl) {
+                                statusEl.textContent = '❌ API 키를 입력해주세요.';
+                                statusEl.className = 'status-message error';
+                                statusEl.style.display = 'block';
+                            }
+                            alert('❌ API 키를 입력해주세요.');
+                            return;
+                        }
+                        
+                        if (!key.startsWith('sk-') || key.length < 40) {
+                            if (statusEl) {
+                                statusEl.textContent = '❌ 올바른 API 키 형식이 아닙니다. (sk-로 시작해야 함)';
+                                statusEl.className = 'status-message error';
+                                statusEl.style.display = 'block';
+                            }
+                            alert('❌ 올바른 API 키 형식이 아닙니다.\nsk-로 시작하는 OpenAI API 키를 입력해주세요.');
+                            return;
+                        }
+                        
+                        // API 키 저장
+                        _0xa5b3.apiKey = key;
+                        console.log('API 키 저장됨');
+                        
+                        // 성공 메시지
+                        if (statusEl) {
+                            statusEl.textContent = '✅ API 키 설정이 완료되었습니다!';
+                            statusEl.className = 'status-message success';
+                            statusEl.style.display = 'block';
+                        }
+                        
+                        // UI 업데이트
+                        const apiSection = document.getElementById('apiSection');
+                        if (apiSection) {
+                            apiSection.classList.add('success');
+                        }
+                        
+                        const generateBtn = document.getElementById('generateBtn');
+                        if (generateBtn) {
+                            generateBtn.disabled = false;
+                            generateBtn.style.opacity = '1';
+                        }
+                        
+                        alert('🎉 API 키 설정 완료!\n\n이제 슬라이드 생성이 가능합니다.\n"한번에 데이터 입력하기" 버튼을 이용해 내용을 입력해보세요!');
+                        console.log('API 키 설정 완료');
+                    };
+                }
+                
+                // 빠른 입력 버튼
+                const quickInputBtn = document.getElementById('quickInputBtn');
+                console.log('빠른 입력 버튼 찾기:', !!quickInputBtn);
+                
+                if (quickInputBtn) {
+                    quickInputBtn.onclick = function() {
+                        console.log('빠른 입력 버튼 클릭됨');
+                        const modal = document.getElementById('quickInputModal');
+                        if (modal) {
+                            modal.classList.add('show');
+                            document.body.style.overflow = 'hidden';
+                            
+                            const textarea = document.getElementById('quickTextarea');
+                            if (textarea) textarea.focus();
+                        }
+                    };
+                }
+                
+                // 모달 닫기
+                const quickCloseBtn = document.getElementById('quickCloseBtn');
+                if (quickCloseBtn) {
+                    quickCloseBtn.onclick = function() {
+                        const modal = document.getElementById('quickInputModal');
+                        if (modal) {
+                            modal.classList.remove('show');
+                            document.body.style.overflow = 'auto';
+                        }
+                    };
+                }
+                
+                // 샘플 데이터 사용
+                const useSampleBtn = document.getElementById('useSampleBtn');
+                if (useSampleBtn) {
+                    useSampleBtn.onclick = function() {
+                        const sampleData = `제목: Sue Reading Club - AI 영어교육의 혁신
+
+내용: Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관입니다.
+
+주요 프로그램:
+- AI 독해 시스템: 개인 맞춤 분석
+- 스마트 속독: 읽기 속도 3배 향상  
+- AI 토론 클래스: 실시간 대화 학습
+- 영어소설 독해: 문학을 통한 고급 영어
+- 채두윜반: 최고 수준 영어 완성 과정
+
+20년 전통의 차별점:
+- 송도 지역 영어교육의 명문
+- 최신 AI 기술과 검증된 교육법 융합
+- 개인별 맞춤 커리큘럼 자동 생성
+- 영어소설을 활용한 독창적 교육법
+
+성과:
+- 20년간 검증된 교육 노하우
+- 98% 학부모 만족도
+- 평균 3.2배 성적 향상
+- 수천 명의 영어 실력 향상 사례
+
+특별 혜택:
+- 첫 달 30% 할인
+- 무료 AI 레벨테스트
+- 개인별 맞춤 학습 플랜
+- 학부모 정기 상담 서비스
+
+위치: 인천 연수구 송도동 22-20 해온더라운지 702호
+연락처: 010-4602-1953
+운영: 평일만 (주말 휴무)
+상담시간: 오전 10시 - 오후 8시
+
+이미지: 전통적이면서도 현대적인 교육 환경, 20년 전통의 신뢰감, 영어소설과 책들, AI 기술이 접목된 학습공간`;
+
+                        const textarea = document.getElementById('quickTextarea');
+                        if (textarea) {
+                            textarea.value = sampleData;
+                        }
+                    };
+                }
+                
+                // 데이터 적용
+                const applyQuickBtn = document.getElementById('applyQuickBtn');
+                if (applyQuickBtn) {
+                    applyQuickBtn.onclick = function() {
+                        const textarea = document.getElementById('quickTextarea');
+                        const inputText = textarea?.value?.trim();
+                        
+                        if (!inputText) {
+                            alert('❌ 내용을 입력해주세요!');
+                            return;
+                        }
+                        
+                        // 간단한 파싱
+                        const lines = inputText.split('\n');
+                        let title = '', content = '', image = '';
+                        
+                        // 제목 찾기
+                        const titleLine = lines.find(line => line.toLowerCase().includes('제목:'));
+                        if (titleLine) {
+                            title = titleLine.replace(/제목\s*:\s*/i, '').trim();
+                        }
+                        
+                        // 이미지 찾기
+                        const imageLine = lines.find(line => line.toLowerCase().includes('이미지:'));
+                        if (imageLine) {
+                            image = imageLine.replace(/이미지\s*:\s*/i, '').trim();
+                        }
+                        
+                        // 내용은 나머지
+                        content = inputText
+                            .replace(titleLine || '', '')
+                            .replace(imageLine || '', '')
+                            .replace(/내용\s*:\s*/i, '')
+                            .trim();
+                        
+                        // 필드에 입력
+                        const titleInput = document.getElementById('titleInput');
+                        const contentInput = document.getElementById('contentInput');
+                        const imageInput = document.getElementById('imagePromptInput');
+                        
+                        if (titleInput && title) titleInput.value = title;
+                        if (contentInput && content) contentInput.value = content;
+                        if (imageInput && image) imageInput.value = image;
+                        
+                        // 모달 닫기
+                        const modal = document.getElementById('quickInputModal');
+                        if (modal) {
+                            modal.classList.remove('show');
+                            document.body.style.overflow = 'auto';
+                        }
+                        
+                        // 생성 버튼 활성화 체크
+                        const generateBtn = document.getElementById('generateBtn');
+                        if (generateBtn && _0xa5b3.apiKey && title && content) {
+                            generateBtn.disabled = false;
+                            generateBtn.style.opacity = '1';
+                        }
+                        
+                        alert('✅ 데이터 입력 완료!\n\n' + 
+                              (_0xa5b3.apiKey ? 
+                                '이제 "🚀 AI 슬라이드 + 이미지 생성하기" 버튼을 클릭하세요!' : 
+                                'API 키를 먼저 설정해주세요.'));
+                    };
+                }
+                
+                console.log('이벤트 핸들러 설정 완료');
+            }
+
             // 핵심 기능들 (고도로 암호화됨)
             const _0x9e2a = {
                 // 고급 파티클 시스템
