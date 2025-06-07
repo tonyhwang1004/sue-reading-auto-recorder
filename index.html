@@ -1010,15 +1010,125 @@
             box-shadow: 0 20px 40px rgba(255, 215, 0, 0.6);
         }
 
-        /* 프린트 스타일 */
-        @media print {
-            body {
-                background: white;
-                color: black;
+        /* 빠른 입력 모달 스타일 */
+        .quick-input-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            backdrop-filter: blur(10px);
+        }
+
+        .quick-input-modal.show {
+            display: flex;
+        }
+
+        .quick-input-content {
+            background: rgba(255, 255, 255, 0.15);
+            border: 3px solid rgba(255, 255, 255, 0.4);
+            border-radius: 25px;
+            padding: clamp(30px, 6vw, 50px);
+            backdrop-filter: blur(25px);
+            max-width: min(95%, 800px);
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .quick-input-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .quick-input-header h3 {
+            font-size: clamp(1.5em, 4vw, 2.2em);
+            color: #feca57;
+            margin: 0;
+            text-shadow: 0 0 20px rgba(254, 202, 87, 0.5);
+        }
+
+        .quick-close-btn {
+            background: rgba(255, 107, 107, 0.2);
+            border: 2px solid rgba(255, 107, 107, 0.5);
+            border-radius: 50%;
+            color: #ff6b6b;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .quick-close-btn:hover {
+            background: rgba(255, 107, 107, 0.4);
+            transform: scale(1.1);
+        }
+
+        .quick-format-example {
+            background: rgba(78, 205, 196, 0.1);
+            border: 2px solid rgba(78, 205, 196, 0.3);
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-size: clamp(0.9em, 2vw, 1em);
+            line-height: 1.6;
+        }
+
+        .quick-input-textarea {
+            width: 100%;
+            min-height: 300px;
+            background: rgba(255, 255, 255, 0.12);
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 18px;
+            color: white;
+            font-size: clamp(1em, 2.2vw, 1.2em);
+            padding: 20px;
+            font-family: inherit;
+            line-height: 1.6;
+            resize: vertical;
+            transition: all 0.3s ease;
+        }
+
+        .quick-input-textarea:focus {
+            outline: none;
+            border-color: #4ecdc4;
+            box-shadow: 0 0 30px rgba(78, 205, 196, 0.4);
+            transform: scale(1.01);
+        }
+
+        .quick-input-textarea::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+            line-height: 1.6;
+        }
+
+        .quick-input-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+        }
+
+        @media (max-width: 768px) {
+            .quick-input-buttons {
+                justify-content: center;
             }
             
-            .particles, .progress-modal {
-                display: none !important;
+            .quick-input-buttons .btn {
+                flex: 1;
+                min-width: 140px;
             }
         }
     </style>
@@ -1058,19 +1168,50 @@
             </div>
         </div>
 
-        <!-- 빠른 생성 섹션 추가 -->
+        <!-- 빠른 생성 섹션 수정 -->
         <div class="section quick-generate-section">
             <h2 class="section-title">⚡ 빠른 영상 생성</h2>
             <p style="text-align: center; margin-bottom: 30px; font-size: clamp(1em, 2.2vw, 1.2em); opacity: 0.9;">
-                미리 준비된 Sue Reading Club 데이터로 즉시 영상을 생성하세요!
+                한 번에 모든 데이터를 입력해서 즉시 영상을 생성하세요!
             </p>
             <div style="text-align: center;">
-                <button class="btn btn-primary quick-fill-btn" id="quickFillBtn">
-                    🎬 Sue Reading Club 데이터 자동 입력
+                <button class="btn btn-primary quick-fill-btn" id="quickInputBtn">
+                    🎬 한번에 데이터 입력하기
                 </button>
                 <p style="margin-top: 15px; opacity: 0.8; font-size: clamp(0.9em, 2vw, 1em);">
-                    API 키만 설정하고 이 버튼을 누르면 바로 영상 생성이 시작됩니다!
+                    제목, 내용, 이미지 설명을 한 번에 붙여넣기로 입력할 수 있습니다!
                 </p>
+            </div>
+        </div>
+
+        <!-- 빠른 입력 모달 -->
+        <div class="quick-input-modal" id="quickInputModal">
+            <div class="quick-input-content">
+                <div class="quick-input-header">
+                    <h3>🚀 빠른 데이터 입력</h3>
+                    <button class="quick-close-btn" id="quickCloseBtn">✕</button>
+                </div>
+                <div class="quick-input-body">
+                    <p style="margin-bottom: 20px; opacity: 0.9;">
+                        아래 형식에 맞춰 내용을 붙여넣기 하세요:
+                    </p>
+                    <div class="quick-format-example">
+                        <strong>예시 형식:</strong><br>
+                        제목: Sue Reading Club - AI 영어교육의 혁신<br>
+                        내용: Sue Reading Club은 송도의 20년 전통...<br>
+                        이미지: 전통적이면서도 현대적인 교육 환경...
+                    </div>
+                    <textarea class="quick-input-textarea" id="quickTextarea" 
+                              placeholder="제목: 여기에 제목을 입력하세요
+내용: 여기에 상세 내용을 입력하세요
+이미지: 여기에 이미지 설명을 입력하세요 (선택사항)
+
+또는 전체 내용을 한 번에 붙여넣기 하시면 자동으로 분석합니다."></textarea>
+                    <div class="quick-input-buttons">
+                        <button class="btn btn-secondary" id="useSampleBtn">📋 샘플 데이터 사용</button>
+                        <button class="btn btn-primary" id="applyQuickBtn">✅ 적용하기</button>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -1525,7 +1666,7 @@
                     ]`;
                 },
 
-                // 입력 검증 함수 추가
+                // 입력 검증 함수
                 validateInputs: function() {
                     const title = document.getElementById('titleInput')?.value?.trim();
                     const content = document.getElementById('contentInput')?.value?.trim();
@@ -1543,6 +1684,17 @@
                         }
                     }
                 },
+
+                // ESC 키 핸들링
+                handleKeyboard: function(e) {
+                    if (e.key === 'Escape') {
+                        const quickModal = document.getElementById('quickInputModal');
+                        if (quickModal?.classList.contains('show')) {
+                            quickModal.classList.remove('show');
+                            document.body.style.overflow = 'auto';
+                        }
+                    }
+                }
             };
 
             // 이벤트 핸들러 (암호화)
@@ -1681,15 +1833,52 @@ JSON 형태로 반환해주세요.`;
                         });
                     }
 
-                    // 빠른 데이터 입력 버튼
-                    const quickFillBtn = document.getElementById('quickFillBtn');
-                    if (quickFillBtn) {
-                        quickFillBtn.addEventListener('click', () => {
-                            console.log('빠른 데이터 입력 시작');
-                            
-                            const sueData = {
-                                title: "Sue Reading Club - AI 영어교육의 혁신",
-                                content: `Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관입니다.
+                    // 빠른 입력 모달 버튼
+                    const quickInputBtn = document.getElementById('quickInputBtn');
+                    const quickInputModal = document.getElementById('quickInputModal');
+                    const quickCloseBtn = document.getElementById('quickCloseBtn');
+                    const quickTextarea = document.getElementById('quickTextarea');
+                    const useSampleBtn = document.getElementById('useSampleBtn');
+                    const applyQuickBtn = document.getElementById('applyQuickBtn');
+
+                    // 빠른 입력 모달 열기
+                    if (quickInputBtn) {
+                        quickInputBtn.addEventListener('click', () => {
+                            console.log('빠른 입력 모달 열기');
+                            if (quickInputModal) {
+                                quickInputModal.classList.add('show');
+                                document.body.style.overflow = 'hidden';
+                                if (quickTextarea) quickTextarea.focus();
+                            }
+                        });
+                    }
+
+                    // 빠른 입력 모달 닫기
+                    if (quickCloseBtn) {
+                        quickCloseBtn.addEventListener('click', () => {
+                            if (quickInputModal) {
+                                quickInputModal.classList.remove('show');
+                                document.body.style.overflow = 'auto';
+                            }
+                        });
+                    }
+
+                    // 모달 배경 클릭으로 닫기
+                    if (quickInputModal) {
+                        quickInputModal.addEventListener('click', (e) => {
+                            if (e.target === quickInputModal) {
+                                quickInputModal.classList.remove('show');
+                                document.body.style.overflow = 'auto';
+                            }
+                        });
+                    }
+
+                    // 샘플 데이터 사용
+                    if (useSampleBtn) {
+                        useSampleBtn.addEventListener('click', () => {
+                            const sampleData = `제목: Sue Reading Club - AI 영어교육의 혁신
+
+내용: Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관입니다.
 
 주요 프로그램:
 - AI 독해 시스템: 개인 맞춤 분석
@@ -1719,45 +1908,67 @@ JSON 형태로 반환해주세요.`;
 위치: 인천 연수구 송도동 22-20 해온더라운지 702호
 연락처: 010-4602-1953
 운영: 평일만 (주말 휴무)
-상담시간: 오전 10시 - 오후 8시`,
-                                imagePrompt: "전통적이면서도 현대적인 교육 환경, 20년 전통의 신뢰감, 영어소설과 책들, AI 기술이 접목된 학습공간"
-                            };
+상담시간: 오전 10시 - 오후 8시
 
-                            // 필드 자동 입력
+이미지: 전통적이면서도 현대적인 교육 환경, 20년 전통의 신뢰감, 영어소설과 책들, AI 기술이 접목된 학습공간`;
+
+                            if (quickTextarea) {
+                                quickTextarea.value = sampleData;
+                                console.log('샘플 데이터 로드됨');
+                            }
+                        });
+                    }
+
+                    // 데이터 적용하기
+                    if (applyQuickBtn) {
+                        applyQuickBtn.addEventListener('click', () => {
+                            const inputText = quickTextarea?.value?.trim();
+                            
+                            if (!inputText) {
+                                alert('❌ 내용을 입력해주세요!');
+                                return;
+                            }
+
+                            console.log('빠른 입력 데이터 처리 시작');
+                            
+                            // 텍스트 파싱
+                            const parsedData = this.parseQuickInput(inputText);
+                            
+                            // 각 필드에 데이터 입력
                             const titleInput = document.getElementById('titleInput');
                             const contentInput = document.getElementById('contentInput');
                             const imageInput = document.getElementById('imagePromptInput');
                             
-                            if (titleInput) {
-                                titleInput.value = sueData.title;
-                                console.log('제목 입력 완료');
+                            if (titleInput && parsedData.title) {
+                                titleInput.value = parsedData.title;
+                                console.log('제목 입력 완료:', parsedData.title);
                             }
                             
-                            if (contentInput) {
-                                contentInput.value = sueData.content;
+                            if (contentInput && parsedData.content) {
+                                contentInput.value = parsedData.content;
                                 console.log('내용 입력 완료');
                             }
                             
-                            if (imageInput) {
-                                imageInput.value = sueData.imagePrompt;
-                                console.log('이미지 프롬프트 입력 완료');
+                            if (imageInput && parsedData.image) {
+                                imageInput.value = parsedData.image;
+                                console.log('이미지 프롬프트 입력 완료:', parsedData.image);
                             }
-                            
-                            // 성공 메시지 표시
-                            _0x9e2a.updateStatus('apiStatus', '✅ Sue Reading Club 데이터가 자동 입력되었습니다!', 'success');
                             
                             // 입력 검증 실행
                             this.validateInputs();
                             
-                            // 버튼 상태 확인
-                            const generateBtn = document.getElementById('generateBtn');
-                            if (generateBtn) {
-                                console.log('생성 버튼 상태:', generateBtn.disabled ? '비활성' : '활성');
+                            // 모달 닫기
+                            if (quickInputModal) {
+                                quickInputModal.classList.remove('show');
+                                document.body.style.overflow = 'auto';
                             }
+                            
+                            // 성공 메시지
+                            _0x9e2a.updateStatus('apiStatus', '✅ 데이터가 성공적으로 입력되었습니다!', 'success');
                             
                             // 안내 메시지
                             setTimeout(() => {
-                                if (_0xa5b3.apiKey && !generateBtn?.disabled) {
+                                if (_0xa5b3.apiKey) {
                                     alert('✅ 데이터 입력 완료!\n\n이제 "🚀 AI 슬라이드 + 이미지 생성하기" 버튼을 클릭하세요!');
                                 } else {
                                     alert('⚠️ API 키를 먼저 설정해주세요!\n\n위의 "🔑 OpenAI API 키 설정" 섹션에서 API 키를 입력하고 "API 키 설정" 버튼을 클릭하세요.');
@@ -1774,6 +1985,9 @@ JSON 형태로 반환해주세요.`;
                             _0xa5b3.template = card.dataset.template || 'business';
                         });
                     });
+
+                    // 키보드 단축키
+                    document.addEventListener('keydown', this.handleKeyboard.bind(this));
                 },
 
                 showResult: function() {
