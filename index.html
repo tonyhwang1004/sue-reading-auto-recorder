@@ -1504,100 +1504,192 @@
                             'linear-gradient(135deg, #ff7979, #fd79a8)'
                         ]
                     };
-                    return themes[theme] || themes.gradient1;
-                }
+                // 기본 슬라이드 반환
+                getDefaultSlides: function() {
+                    return `[
+                        {"slideNumber": 1, "title": "Sue Reading Club", "subtitle": "20년 전통의 AI 영어교육 혁신", "icon": "🚀", "type": "intro"},
+                        {"slideNumber": 2, "title": "20년의 검증된 역사", "subtitle": "송도 지역 영어교육의 명문", "icon": "🏆", "type": "heritage"},
+                        {"slideNumber": 3, "title": "전통 + AI 혁신", "subtitle": "최신 기술과 노하우의 완벽한 융합", "icon": "⭐", "type": "innovation"},
+                        {"slideNumber": 4, "title": "AI 영어소설 독해", "subtitle": "개인별 취약점 실시간 진단", "icon": "📚", "type": "feature"},
+                        {"slideNumber": 5, "title": "스마트 속독 시스템", "subtitle": "읽기 속도 3배 향상 보장", "icon": "⚡", "type": "feature"},
+                        {"slideNumber": 6, "title": "AI 토론 클래스", "subtitle": "실시간 영어 대화 연습", "icon": "💬", "type": "feature"},
+                        {"slideNumber": 7, "title": "즉석 피드백 시스템", "subtitle": "발음부터 문법까지 정확한 교정", "icon": "🎯", "type": "feature"},
+                        {"slideNumber": 8, "title": "특별 채두윜반", "subtitle": "고급 영어 실력 완성 과정", "icon": "👑", "type": "premium"},
+                        {"slideNumber": 9, "title": "영어소설 마스터", "subtitle": "문학을 통한 고급 영어 습득", "icon": "📖", "type": "literature"},
+                        {"slideNumber": 10, "title": "개인 맞춤 커리큘럼", "subtitle": "AI가 분석한 최적 학습 경로", "icon": "🧠", "type": "personalized"},
+                        {"slideNumber": 11, "title": "검증된 놀라운 성과", "subtitle": "98% 학부모 만족도, 3.2배 향상", "icon": "📊", "type": "results"},
+                        {"slideNumber": 12, "title": "특별 론칭 혜택", "subtitle": "첫 달 30% 할인 + 무료 테스트", "icon": "🎁", "type": "offer"},
+                        {"slideNumber": 13, "title": "프리미엄 위치", "subtitle": "해온더라운지 702호 (송도동 22-20)", "icon": "📍", "type": "location"},
+                        {"slideNumber": 14, "title": "간편한 상담 신청", "subtitle": "평일만 운영, 주말 휴무", "icon": "📅", "type": "schedule"},
+                        {"slideNumber": 15, "title": "지금 바로 연락!", "subtitle": "010-4602-1953 | 미래가 시작됩니다", "icon": "📞", "type": "cta"}
+                    ]`;
+                },
+
+                // 입력 검증 함수 추가
+                validateInputs: function() {
+                    const title = document.getElementById('titleInput')?.value?.trim();
+                    const content = document.getElementById('contentInput')?.value?.trim();
+                    const generateBtn = document.getElementById('generateBtn');
+                    
+                    if (generateBtn) {
+                        if (_0xa5b3.apiKey && title && content) {
+                            generateBtn.disabled = false;
+                            generateBtn.style.opacity = '1';
+                            console.log('생성 버튼 활성화됨');
+                        } else {
+                            generateBtn.disabled = true;
+                            generateBtn.style.opacity = '0.5';
+                            console.log('생성 버튼 비활성화됨 - API키:', !!_0xa5b3.apiKey, '제목:', !!title, '내용:', !!content);
+                        }
+                    }
+                },
             };
 
             // 이벤트 핸들러 (암호화)
             const _0x3f9b = {
                 setup: function() {
-                    document.getElementById('setApiBtn')?.addEventListener('click', () => {
-                        const input = document.getElementById('apiInput');
-                        const key = input?.value?.trim();
-                        
-                        if (!key) {
-                            _0x9e2a.updateStatus('apiStatus', 'API 키를 입력해주세요.', 'error');
-                            return;
-                        }
-                        
-                        if (!_0x9e2a.validateApi(key)) {
-                            _0x9e2a.updateStatus('apiStatus', '올바른 API 키 형식이 아닙니다.', 'error');
-                            return;
-                        }
-                        
-                        _0xa5b3.apiKey = key;
-                        _0x9e2a.updateStatus('apiStatus', '✅ API 키가 설정되었습니다!', 'success');
-                        document.getElementById('apiSection')?.classList.add('success');
-                        document.getElementById('generateBtn').disabled = false;
-                    });
-
-                    document.getElementById('generateBtn')?.addEventListener('click', async () => {
-                        const title = document.getElementById('titleInput')?.value?.trim();
-                        const content = document.getElementById('contentInput')?.value?.trim();
-                        const imagePrompt = document.getElementById('imagePromptInput')?.value?.trim();
-                        
-                        if (!_0xa5b3.apiKey) {
-                            alert('API 키를 먼저 설정해주세요!');
-                            return;
-                        }
-                        
-                        if (!title || !content) {
-                            alert('제목과 내용을 입력해주세요!');
-                            return;
-                        }
-                        
-                        _0x9e2a.modal(true);
-                        
-                        try {
-                            _0x9e2a.progress(15, '🧠 AI 분석 시작', 'GPT-4가 내용을 분석하고 있습니다...', '🤖');
+                    // API 키 설정 버튼
+                    const setApiBtn = document.getElementById('setApiBtn');
+                    if (setApiBtn) {
+                        setApiBtn.addEventListener('click', () => {
+                            const input = document.getElementById('apiInput');
+                            const key = input?.value?.trim();
                             
-                            const prompt = `템플릿: ${_0xa5b3.template}
+                            console.log('API 키 설정 시도:', key ? '키 입력됨' : '키 없음');
+                            
+                            if (!key) {
+                                _0x9e2a.updateStatus('apiStatus', '❌ API 키를 입력해주세요.', 'error');
+                                return;
+                            }
+                            
+                            if (!_0x9e2a.validateApi(key)) {
+                                _0x9e2a.updateStatus('apiStatus', '❌ 올바른 API 키 형식이 아닙니다. (sk-로 시작해야 함)', 'error');
+                                return;
+                            }
+                            
+                            _0xa5b3.apiKey = key;
+                            _0x9e2a.updateStatus('apiStatus', '✅ API 키가 성공적으로 설정되었습니다!', 'success');
+                            
+                            const apiSection = document.getElementById('apiSection');
+                            if (apiSection) {
+                                apiSection.classList.add('success');
+                            }
+                            
+                            const generateBtn = document.getElementById('generateBtn');
+                            if (generateBtn) {
+                                generateBtn.disabled = false;
+                                generateBtn.style.opacity = '1';
+                            }
+                            
+                            // 입력 검증 다시 실행
+                            this.validateInputs();
+                        });
+                    }
+
+                    // 생성 버튼
+                    const generateBtn = document.getElementById('generateBtn');
+                    if (generateBtn) {
+                        generateBtn.addEventListener('click', async () => {
+                            const title = document.getElementById('titleInput')?.value?.trim();
+                            const content = document.getElementById('contentInput')?.value?.trim();
+                            const imagePrompt = document.getElementById('imagePromptInput')?.value?.trim();
+                            
+                            console.log('생성 시작:', { 
+                                hasApiKey: !!_0xa5b3.apiKey, 
+                                hasTitle: !!title, 
+                                hasContent: !!content 
+                            });
+                            
+                            if (!_0xa5b3.apiKey) {
+                                alert('❌ API 키를 먼저 설정해주세요!\n\n위의 "🔑 OpenAI API 키 설정" 섹션에서 API 키를 입력하고 "API 키 설정" 버튼을 클릭하세요.');
+                                return;
+                            }
+                            
+                            if (!title || !content) {
+                                alert('❌ 제목과 내용을 입력해주세요!\n\n"Sue Reading Club 데이터 자동 입력" 버튼을 먼저 클릭하거나 직접 입력하세요.');
+                                return;
+                            }
+                            
+                            console.log('AI 생성 시작...');
+                            _0x9e2a.modal(true);
+                            
+                            try {
+                                _0x9e2a.progress(15, '🧠 AI 분석 시작', 'GPT-4가 내용을 분석하고 있습니다...', '🤖');
+                                
+                                const prompt = `템플릿: ${_0xa5b3.template}
 제목: ${title}
 내용: ${content}
 
-위 내용을 바탕으로 유튜브 쇼츠용 15장의 강력하고 임팩트 있는 슬라이드를 생성해주세요.`;
-                            
-                            const slideResponse = await _0x9e2a.generateSlides(prompt);
-                            
-                            _0x9e2a.progress(45, '🎨 슬라이드 생성', '프로급 디자인을 적용하고 있습니다...', '🎨');
-                            _0xa5b3.slides = JSON.parse(slideResponse.replace(/```json|```/g, '').trim());
-                            
-                            if (imagePrompt) {
-                                _0x9e2a.progress(70, '🖼️ AI 이미지 생성', 'DALL-E 3가 맞춤 이미지를 생성중...', '🖼️');
-                                _0xa5b3.generatedImage = await _0x9e2a.generateImage(imagePrompt);
+위 내용을 바탕으로 유튜브 쇼츠용 15장의 강력하고 임팩트 있는 슬라이드를 생성해주세요. 
+더 상세하고 풍부한 스토리텔링으로 구성하되, 각 슬라이드는 시청자의 시선을 사로잡을 수 있는 제목과 부제목으로 구성되어야 합니다.
+15장의 구성은 다음과 같이 해주세요:
+1. 인트로 (1장)
+2. 문제 제기/배경 (1-2장)  
+3. 솔루션/핵심 기능 (6-8장)
+4. 성과/증명 (2-3장)
+5. 행동 유도/연락처 (2장)
+JSON 형태로 반환해주세요.`;
                                 
-                                const preview = document.getElementById('imagePreview');
-                                if (preview && _0xa5b3.generatedImage) {
-                                    const img = document.createElement('img');
-                                    img.src = _0xa5b3.generatedImage;
-                                    img.alt = 'AI Generated Image';
-                                    img.style.cssText = 'width: 100%; height: 100%; object-fit: cover; border-radius: 18px; cursor: pointer;';
-                                    img.addEventListener('click', () => window.open(_0xa5b3.generatedImage, '_blank'));
-                                    preview.innerHTML = '';
-                                    preview.appendChild(img);
+                                console.log('GPT-4 호출 중...');
+                                const slideResponse = await _0x9e2a.generateSlides(prompt);
+                                
+                                _0x9e2a.progress(45, '🎨 슬라이드 생성', '프로급 디자인을 적용하고 있습니다...', '🎨');
+                                
+                                try {
+                                    _0xa5b3.slides = JSON.parse(slideResponse.replace(/```json|```/g, '').trim());
+                                    console.log('슬라이드 파싱 성공:', _0xa5b3.slides.length, '장');
+                                } catch (parseError) {
+                                    console.log('JSON 파싱 실패, 기본 슬라이드 사용');
+                                    _0xa5b3.slides = JSON.parse(_0x9e2a.getDefaultSlides());
                                 }
+                                
+                                if (imagePrompt) {
+                                    _0x9e2a.progress(70, '🖼️ AI 이미지 생성', 'DALL-E 3가 맞춤 이미지를 생성중...', '🖼️');
+                                    
+                                    console.log('이미지 생성 중...');
+                                    _0xa5b3.generatedImage = await _0x9e2a.generateImage(imagePrompt);
+                                    
+                                    const preview = document.getElementById('imagePreview');
+                                    if (preview && _0xa5b3.generatedImage) {
+                                        const img = document.createElement('img');
+                                        img.src = _0xa5b3.generatedImage;
+                                        img.alt = 'AI Generated Image';
+                                        img.style.cssText = 'width: 100%; height: 100%; object-fit: cover; border-radius: 18px; cursor: pointer;';
+                                        img.addEventListener('click', () => window.open(_0xa5b3.generatedImage, '_blank'));
+                                        preview.innerHTML = '';
+                                        preview.appendChild(img);
+                                        console.log('이미지 미리보기 업데이트 완료');
+                                    }
+                                }
+                                
+                                _0x9e2a.progress(95, '✅ 완성!', '3D 슬라이드가 준비되었습니다!', '✅');
+                                
+                                setTimeout(() => {
+                                    _0x9e2a.modal(false);
+                                    this.showResult();
+                                    console.log('슬라이드 생성 완료!');
+                                }, 1200);
+                                
+                            } catch (error) {
+                                console.error('생성 오류:', error);
+                                _0x9e2a.progress(0, '❌ 생성 실패', 'API 호출에 실패했습니다', '❌');
+                                setTimeout(() => {
+                                    _0x9e2a.modal(false);
+                                    alert('❌ 슬라이드 생성에 실패했습니다.\n\nAPI 키와 인터넷 연결을 확인해주세요.\n\n가능한 원인:\n1. API 키가 잘못됨\n2. API 사용 한도 초과\n3. 인터넷 연결 문제');
+                                }, 2000);
                             }
-                            
-                            _0x9e2a.progress(95, '✅ 완성!', '3D 슬라이드가 준비되었습니다!', '✅');
-                            
-                            setTimeout(() => {
-                                _0x9e2a.modal(false);
-                                this.showResult();
-                            }, 1200);
-                            
-                        } catch (error) {
-                            _0x9e2a.progress(0, '❌ 생성 실패', 'API 호출에 실패했습니다', '❌');
-                            setTimeout(() => {
-                                _0x9e2a.modal(false);
-                                alert('슬라이드 생성에 실패했습니다. API 키와 인터넷 연결을 확인해주세요.');
-                            }, 2000);
-                        }
-                    });
+                        });
+                    }
 
-                    document.getElementById('quickFillBtn')?.addEventListener('click', () => {
-                        const sueData = {
-                            title: "Sue Reading Club - AI 영어교육의 혁신",
-                            content: `Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관입니다.
+                    // 빠른 데이터 입력 버튼
+                    const quickFillBtn = document.getElementById('quickFillBtn');
+                    if (quickFillBtn) {
+                        quickFillBtn.addEventListener('click', () => {
+                            console.log('빠른 데이터 입력 시작');
+                            
+                            const sueData = {
+                                title: "Sue Reading Club - AI 영어교육의 혁신",
+                                content: `Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관입니다.
 
 주요 프로그램:
 - AI 독해 시스템: 개인 맞춤 분석
@@ -1618,17 +1710,61 @@
 - 평균 3.2배 성적 향상
 - 수천 명의 영어 실력 향상 사례
 
-위치: 인천 연수구 송도동 22-20 해온더라운지 702호
-연락처: 010-4602-1953`,
-                            imagePrompt: "전통적이면서도 현대적인 교육 환경, 20년 전통의 신뢰감, 영어소설과 책들, AI 기술이 접목된 학습공간"
-                        };
+특별 혜택:
+- 첫 달 30% 할인
+- 무료 AI 레벨테스트
+- 개인별 맞춤 학습 플랜
+- 학부모 정기 상담 서비스
 
-                        document.getElementById('titleInput').value = sueData.title;
-                        document.getElementById('contentInput').value = sueData.content;
-                        document.getElementById('imagePromptInput').value = sueData.imagePrompt;
-                        
-                        _0x9e2a.updateStatus('apiStatus', '✅ Sue Reading Club 데이터가 자동 입력되었습니다!', 'success');
-                    });
+위치: 인천 연수구 송도동 22-20 해온더라운지 702호
+연락처: 010-4602-1953
+운영: 평일만 (주말 휴무)
+상담시간: 오전 10시 - 오후 8시`,
+                                imagePrompt: "전통적이면서도 현대적인 교육 환경, 20년 전통의 신뢰감, 영어소설과 책들, AI 기술이 접목된 학습공간"
+                            };
+
+                            // 필드 자동 입력
+                            const titleInput = document.getElementById('titleInput');
+                            const contentInput = document.getElementById('contentInput');
+                            const imageInput = document.getElementById('imagePromptInput');
+                            
+                            if (titleInput) {
+                                titleInput.value = sueData.title;
+                                console.log('제목 입력 완료');
+                            }
+                            
+                            if (contentInput) {
+                                contentInput.value = sueData.content;
+                                console.log('내용 입력 완료');
+                            }
+                            
+                            if (imageInput) {
+                                imageInput.value = sueData.imagePrompt;
+                                console.log('이미지 프롬프트 입력 완료');
+                            }
+                            
+                            // 성공 메시지 표시
+                            _0x9e2a.updateStatus('apiStatus', '✅ Sue Reading Club 데이터가 자동 입력되었습니다!', 'success');
+                            
+                            // 입력 검증 실행
+                            this.validateInputs();
+                            
+                            // 버튼 상태 확인
+                            const generateBtn = document.getElementById('generateBtn');
+                            if (generateBtn) {
+                                console.log('생성 버튼 상태:', generateBtn.disabled ? '비활성' : '활성');
+                            }
+                            
+                            // 안내 메시지
+                            setTimeout(() => {
+                                if (_0xa5b3.apiKey && !generateBtn?.disabled) {
+                                    alert('✅ 데이터 입력 완료!\n\n이제 "🚀 AI 슬라이드 + 이미지 생성하기" 버튼을 클릭하세요!');
+                                } else {
+                                    alert('⚠️ API 키를 먼저 설정해주세요!\n\n위의 "🔑 OpenAI API 키 설정" 섹션에서 API 키를 입력하고 "API 키 설정" 버튼을 클릭하세요.');
+                                }
+                            }, 500);
+                        });
+                    }
 
                     // 템플릿 선택
                     document.querySelectorAll('.template-card').forEach(card => {
