@@ -845,32 +845,43 @@
             color: #feca57;
         }
 
-        /* 상태 메시지 */
+        /* 상태 메시지 개선 */
         .status-message {
             margin-top: clamp(15px, 3vw, 25px);
-            padding: clamp(12px, 2.5vw, 18px);
-            border-radius: 10px;
+            padding: clamp(15px, 3vw, 20px);
+            border-radius: 15px;
             font-weight: 600;
             display: none;
-            font-size: clamp(0.9em, 2vw, 1.1em);
-            animation: statusFade 0.5s ease;
+            font-size: clamp(1em, 2.2vw, 1.2em);
+            animation: statusSlideIn 0.5s ease;
+            text-align: center;
+            border: 2px solid transparent;
+            backdrop-filter: blur(10px);
         }
 
-        @keyframes statusFade {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        @keyframes statusSlideIn {
+            from { 
+                opacity: 0; 
+                transform: translateY(-10px) scale(0.95); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0) scale(1); 
+            }
         }
 
         .status-message.success {
-            background: rgba(0, 255, 0, 0.2);
+            background: rgba(0, 255, 100, 0.2);
             color: #00ff88;
-            border: 1px solid rgba(0, 255, 0, 0.3);
+            border-color: rgba(0, 255, 100, 0.4);
+            box-shadow: 0 0 20px rgba(0, 255, 100, 0.3);
         }
 
         .status-message.error {
-            background: rgba(255, 0, 0, 0.2);
+            background: rgba(255, 107, 107, 0.2);
             color: #ff6b6b;
-            border: 1px solid rgba(255, 0, 0, 0.3);
+            border-color: rgba(255, 107, 107, 0.4);
+            box-shadow: 0 0 20px rgba(255, 107, 107, 0.3);
         }
 
         .result-section {
@@ -1454,7 +1465,7 @@
                     return key && key.startsWith('sk-') && key.length > 40;
                 },
 
-                // 상태 업데이트
+                // 상태 업데이트 (개선된 버전)
                 updateStatus: function(id, msg, type) {
                     const el = document.getElementById(id);
                     if (!el) return;
@@ -1463,9 +1474,17 @@
                     el.className = `status-message ${type}`;
                     el.style.display = 'block';
                     
+                    // 성공 메시지는 5초 후 자동 숨김
                     if (type === 'success') {
-                        setTimeout(() => el.style.display = 'none', 3000);
+                        setTimeout(() => {
+                            if (el.classList.contains('success')) {
+                                el.style.display = 'none';
+                            }
+                        }, 5000);
                     }
+                    
+                    // 에러 메시지는 계속 표시
+                    console.log('상태 메시지 업데이트:', type, msg);
                 },
 
                 // 모달 컨트롤
@@ -1720,8 +1739,11 @@
                             }
                             
                             _0xa5b3.apiKey = key;
-                            _0x9e2a.updateStatus('apiStatus', '✅ API 키가 성공적으로 설정되었습니다!', 'success');
                             
+                            // 즉시 성공 메시지 표시
+                            _0x9e2a.updateStatus('apiStatus', '✅ API 키 설정이 완료되었습니다!', 'success');
+                            
+                            // UI 업데이트
                             const apiSection = document.getElementById('apiSection');
                             if (apiSection) {
                                 apiSection.classList.add('success');
@@ -1735,6 +1757,13 @@
                             
                             // 입력 검증 다시 실행
                             this.validateInputs();
+                            
+                            // 추가 알림 메시지
+                            setTimeout(() => {
+                                alert('🎉 API 키 설정 완료!\n\n이제 슬라이드 생성이 가능합니다.\n"한번에 데이터 입력하기" 버튼을 이용해 내용을 입력해보세요!');
+                            }, 300);
+                            
+                            console.log('API 키 설정 완료');
                         });
                     }
 
