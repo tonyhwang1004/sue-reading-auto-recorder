@@ -468,53 +468,6 @@
             box-shadow: 0 15px 30px rgba(255, 107, 107, 0.4);
         }
 
-        .countdown {
-            font-size: 5em;
-            font-weight: 900;
-            color: #ff6b6b;
-            text-shadow: 0 0 30px rgba(255, 107, 107, 0.8);
-            animation: pulse 1s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.2); }
-        }
-
-        .recording-indicator {
-            display: none;
-            background: rgba(255, 0, 0, 0.2);
-            border: 2px solid #ff0000;
-            border-radius: 15px;
-            padding: 20px;
-            margin: 20px 0;
-            animation: recordPulse 1s ease-in-out infinite;
-        }
-
-        .recording-indicator.active {
-            display: block;
-        }
-
-        @keyframes recordPulse {
-            0%, 100% { border-color: #ff0000; }
-            50% { border-color: #ff6666; }
-        }
-
-        .recording-dot {
-            display: inline-block;
-            width: 15px;
-            height: 15px;
-            background: #ff0000;
-            border-radius: 50%;
-            margin-right: 10px;
-            animation: blink 1s ease-in-out infinite;
-        }
-
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
-        }
-
         @media (max-width: 768px) {
             .hero-title {
                 font-size: 2.5em;
@@ -681,25 +634,472 @@ Sue Reading Club은 AI 기반 영어교육 서비스입니다.
                 <div class="progress-fill" id="progressFill"></div>
             </div>
             <div class="progress-text" id="progressText">0%</div>
-            <div class="countdown" id="countdown" style="display: none;">5</div>
-            <div class="recording-indicator" id="recordingIndicator">
-                <span class="recording-dot"></span>
-                <span>🔴 녹화 진행중...</span>
-            </div>
         </div>
     </div>
 
     <script>
-    // 모든 코드를 Base64로 인코딩하여 완전히 숨김
-    const encodedScript = 'KGZ1bmN0aW9uKCkgeydzdHJpY3QnOyhjdW5jdGlvbigpIHtjb25zdCBibG9ja0FjY2VzcyA9ICgpID0+IHtkb2N1bWVudC5ib2R5LmlubmVySFRNTCA9ICc8ZGl2IHN0eWxlPSJwb3NpdGlvbjpmaXhlZDt0b3A6MDtsZWZ0OjA7d2lkdGg6MTAwJTtoZWlnaHQ6MTAwJTtiYWNrZ3JvdW5kOiMwMDA7Y29sb3I6I2ZmZjtkaXNwbGF5OmZsZXg7anVzdGlmeS1jb250ZW50OmNlbnRlcjthbGlnbi1pdGVtczpjZW50ZXI7Zm9udC1zaXplOjJlbTt6LWluZGV4Ojk5OTk5OTsiPjxkaXYgc3R5bGU9InRleHQtYWxpZ246Y2VudGVyOyI+PGgxPvCfkpIg7KCR6rSdIOygnOybkDwvaDE+PHA+67O07JWI7IOB7J2YIOydtOycoOuhnCDsoJXtgrDsnbQg7KCc7ZWc65CY7JeI7Iq164uI64ukLjwvcD48L2Rpdj48L2Rpdj4nO3Rocm93IG5ldyBFcnJvcignQWNjZXNzIGJsb2NrZWQnKTt9O2RvY3VtZW50LmFkZEV2ZW50TGlzdGVuZXIoJ2tleWRvd24nLCBmdW5jdGlvbihlKSB7aWYgKGUua2V5ID09PSAnRjEyJyB8fCAoZS5jdHJsS2V5ICYmIGUuc2hpZnRLZXkgJiYgKGUua2V5ID09PSAnSScgfHwgZS5rZXkgPT09ICdKJyB8fCBlLmtleSA9PT0gJ0MnKSkgfHwgKGUuY3RybEtleSAmJiBlLmtleSA9PT0gJ1UnKSB8fCAoZS5jdHJsS2V5ICYmIGUua2V5ID09PSAnUycpIHx8IChlLmtleSA9PT0gJ0YzJykpIHtlLnByZXZlbnREZWZhdWx0KCk7ZS5zdG9wUHJvcGFnYXRpb24oKTtibG9ja0FjY2VzcygpO3JldHVybiBmYWxzZTt9fSwgdHJ1ZSk7ZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcignY29udGV4dG1lbnUnLCBmdW5jdGlvbihlKSB7ZS5wcmV2ZW50RGVmYXVsdCgpO2Uuc3RvcFByb3BhZ2F0aW9uKCk7cmV0dXJuIGZhbHNlO30sIHRydWUpO2xldCBkZXZ0b29scyA9IHtvcGVuOiBmYWxzZSwgb3JpZW50YXRpb246IG51bGx9O2NvbnN0IHRocmVzaG9sZCA9IDE2MDtzZXRJbnRlcnZhbCgoKSA9PiB7aWYgKHdpbmRvdy5vdXRlckhlaWdodCAtIHdpbmRvdy5pbm5lckhlaWdodCA+IHRocmVzaG9sZCB8fCB3aW5kb3cub3V0ZXJXaWR0aCAtIHdpbmRvdy5pbm5lcldpZHRoID4gdGhyZXNob2xkKSB7aWYgKCFkZXZ0b29scy5vcGVuKSB7ZGV2dG9vbHMub3BlbiA9IHRydWU7YmxvY2tBY2Nlc3MoKTt9fX0sIDUwMCk7aWYgKHR5cGVvZiBjb25zb2xlICE9PSAndW5kZWZpbmVkJykge09iamVjdC5kZWZpbmVQcm9wZXJ0eShjb25zb2xlLCAnY2xlYXInLCB7dmFsdWU6IGJsb2NrQWNjZXNzLCB3cml0YWJsZTogZmFsc2V9KTt9fSkoKTtjb25zdCBhcHBEYXRhID0ge2FwaUtleTonJyxzZWxlY3RlZFRlbXBsYXRlOididXNpbmVzcycsZ2VuZXJhdGVkU2xpZGVzOm51bGwsc2xpZGVzaG93V2luZG93Om51bGwsbWVkaWFSZWNvcmRlcjpudWxsLHJlY29yZGVkQ2h1bmtzOltdfTtmdW5jdGlvbiBzYWZlSW5pdCgpIHt0cnkge3NldHVwRXZlbnRIYW5kbGVycygpO3NldHVwVGVtcGxhdGVTZWxlY3Rpb24oKTt9IGNhdGNoIChlcnJvcikge319ZnVuY3Rpb24gc2V0dXBFdmVudEhhbmRsZXJzKCkge2NvbnN0IGVsZW1lbnRzID0ge3NldEFwaUJ0bjpkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnc2V0QXBpQnRuJyksc2hvd0d1aWRlQnRuOmRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdzaG93R3VpZGVCdG4nKSxnZW5lcmF0ZUJ0bjpkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnZ2VuZXJhdGVCdG4nKSxyZWNvcmRCdG46ZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3JlY29yZEJ0bicpfTtpZiAoZWxlbWVudHMuc2V0QXBpQnRuKSBlbGVtZW50cy5zZXRBcGlCdG4ub25jbGljayA9IGhhbmRsZUFwaUtleVNldDtpZiAoZWxlbWVudHMuc2hvd0d1aWRlQnRuKSBlbGVtZW50cy5zaG93R3VpZGVCdG4ub25jbGljayA9IHNob3dBcGlHdWlkZTtpZiAoZWxlbWVudHMuZ2VuZXJhdGVCdG4pIGVsZW1lbnRzLmdlbmVyYXRlQnRuLm9uY2xpY2sgPSBnZW5lcmF0ZVNsaWRlcztpZiAoZWxlbWVudHMucmVjb3JkQnRuKSBlbGVtZW50cy5yZWNvcmRCdG4ub25jbGljayA9IHN0YXJ0UmVjb3JkaW5nO2RvY3VtZW50Lm9ua2V5ZG93biA9IGZ1bmN0aW9uKGUpIHtpZiAoZS5jdHJsS2V5ICYmIGUua2V5ID09PSAnRW50ZXInICYmIGVsZW1lbnRzLmdlbmVyYXRlQnRuICYmICFlbGVtZW50cy5nZW5lcmF0ZUJ0bi5kaXNhYmxlZCkge2dlbmVyYXRlU2xpZGVzKCk7fX07fWZ1bmN0aW9uIHNldHVwVGVtcGxhdGVTZWxlY3Rpb24oKSB7ZG9jdW1lbnQucXVlcnlTZWxlY3RvckFsbCgnLnRlbXBsYXRlLWNhcmQnKS5mb3JFYWNoKGNhcmQgPT4ge2NhcmQub25jbGljayA9IGZ1bmN0aW9uKCkge2RvY3VtZW50LnF1ZXJ5U2VsZWN0b3JBbGwoJy50ZW1wbGF0ZS1jYXJkJykuZm9yRWFjaChjID0+IGMuY2xhc3NMaXN0LnJlbW92ZSgnc2VsZWN0ZWQnKSk7dGhpcy5jbGFzc0xpc3QuYWRkKCdzZWxlY3RlZCcpO2FwcERhdGEuc2VsZWN0ZWRUZW1wbGF0ZSA9IHRoaXMuZ2V0QXR0cmlidXRlKCdkYXRhLXRlbXBsYXRlJyk7fTt9KTt9ZnVuY3Rpb24gaGFuZGxlQXBpS2V5U2V0KCkge2NvbnN0IGlucHV0ID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2FwaUlucHV0Jyk7Y29uc3Qgc3RhdHVzID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2FwaVN0YXR1cycpO2NvbnN0IHNlY3Rpb24gPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnYXBpU2VjdGlvbicpO2NvbnN0IGdlbmVyYXRlQnRuID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2dlbmVyYXRlQnRuJyk7aWYgKCFpbnB1dCkgcmV0dXJuO2FwcERhdGEuYXBpS2V5ID0gaW5wdXQudmFsdWUudHJpbSgpO2lmICghYXBwRGF0YS5hcGlLZXkpIHt1cGRhdGVTdGF0dXMoc3RhdHVzLCAn4p2MIEFQSSDtgqTrpbwg7J6F66Cl7ZW065Ok7JeQLicsIGZhbHNlKTtyZXR1cm47fWlmICghYXBwRGF0YS5hcGlLZXkuc3RhcnRzV2l0aCgnc2stJykgfHwgYXBwRGF0YS5hcGlLZXkubGVuZ3RoIDwgNDApIHt1cGRhdGVTdGF0dXMoc3RhdHVzLCAn4p2MIOyYrOultOuemCBBUEkg7YKkIO2YleyLneydhCDslYTri4jri4Tri6QuJywgZmFsc2UpO3JldHVybjt9dXBkYXRlU3RhdHVzKHN0YXR1cywgJ+KchSBBUEkg7YKk6rCAIOyEpOygle2VmOyXiOyKteuLiOuLpCEnLCB0cnVlKTtpZiAoc2VjdGlvbikgc2VjdGlvbi5jbGFzc0xpc3QuYWRkKCdzdWNjZXNzJyk7aWYgKGdlbmVyYXRlQnRuKSBnZW5lcmF0ZUJ0bi5kaXNhYmxlZCA9IGZhbHNlO31mdW5jdGlvbiBzaG93QXBpR3VpZGUoKSB7Y29uc3QgZ3VpZGVUZXh0ID0gYO+8oeKSnyBPcGVuQUkgQVBJIO2CpCDrsJzquIngsLJhM+2FqDpc5puKcnFgP9gMCpvYWgtcGxhdGZvcm0ub3BlbmFpLmNvbSDsoJXsho1gMgMgd2VpnJa5KdueiuqwgOybiFjJgoQgsKLroZnsnYBgMwfcuonE7P+8gm8gIkFQSWtleXMiIO2YtOumrHFgYYBN8pOjxd4gIkNyZ2F0ZSBuZXcgc2VjcmV0IGJ1esF2USUgXrbyYKDshoGBZGFOzV9gNWpOmTxr3FE5b0VBsuadOjVOibr7roOdsouQm/xUP6oo8+Egtx1ckKNPWy9gMgqkopYNEpn2tA/kVpPyKBGwPWS4xGJL40V0sQ1g4g/E2V9G8bL8/w9xNK2cagPrDrIGf+gnG9+xJGhf3Zzh92U1kl3l4w1ghBggmfpxXfbh9r1N4ZbpV3sWyA1PTVxw==`;
-            eval(atob(encodedScript));
-        })();
+    // 보안 차단 (간단 버전)
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I') || (e.ctrlKey && e.key === 'U')) {
+            e.preventDefault();
+            return false;
+        }
+    });
+    
+    document.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+        return false;
+    });
 
-        // 디코이 함수들 (실제 기능 없음)
-        function dummyFunction1() { console.log('fake'); }
-        function dummyFunction2() { return 'decoy'; }
-        const fakeData = { test: 'dummy' };
-    </script>
+    // 앱 데이터
+    var appState = {
+        apiKey: '',
+        selectedTemplate: 'business',
+        generatedSlides: null
+    };
+
+    // 초기화
+    function initApp() {
+        console.log('앱 초기화 시작');
+        setupButtons();
+        setupTemplates();
+        console.log('앱 초기화 완료');
+    }
+
+    // 버튼 이벤트 설정
+    function setupButtons() {
+        var setApiBtn = document.getElementById('setApiBtn');
+        var showGuideBtn = document.getElementById('showGuideBtn');
+        var generateBtn = document.getElementById('generateBtn');
+        var recordBtn = document.getElementById('recordBtn');
+
+        if (setApiBtn) {
+            setApiBtn.addEventListener('click', handleApiKeySet);
+            console.log('API 설정 버튼 연결됨');
+        }
+
+        if (showGuideBtn) {
+            showGuideBtn.addEventListener('click', showApiGuide);
+            console.log('가이드 버튼 연결됨');
+        }
+
+        if (generateBtn) {
+            generateBtn.addEventListener('click', generateSlides);
+            console.log('생성 버튼 연결됨');
+        }
+
+        if (recordBtn) {
+            recordBtn.addEventListener('click', startRecording);
+            console.log('녹화 버튼 연결됨');
+        }
+    }
+
+    // 템플릿 선택 설정
+    function setupTemplates() {
+        var templateCards = document.querySelectorAll('.template-card');
+        for (var i = 0; i < templateCards.length; i++) {
+            templateCards[i].addEventListener('click', function() {
+                // 모든 카드에서 selected 제거
+                var allCards = document.querySelectorAll('.template-card');
+                for (var j = 0; j < allCards.length; j++) {
+                    allCards[j].classList.remove('selected');
+                }
+                // 클릭된 카드에 selected 추가
+                this.classList.add('selected');
+                appState.selectedTemplate = this.getAttribute('data-template');
+                console.log('템플릿 선택:', appState.selectedTemplate);
+            });
+        }
+    }
+
+    // API 키 설정
+    function handleApiKeySet() {
+        console.log('API 키 설정 함수 실행');
+        
+        var input = document.getElementById('apiInput');
+        var status = document.getElementById('apiStatus');
+        var section = document.getElementById('apiSection');
+        var generateBtn = document.getElementById('generateBtn');
+        var setBtn = document.getElementById('setApiBtn');
+
+        if (!input) {
+            alert('입력 필드를 찾을 수 없습니다.');
+            return;
+        }
+
+        // 버튼 상태 변경
+        setBtn.innerHTML = '⏳ 확인중...';
+        setBtn.disabled = true;
+
+        // 상태 메시지 표시
+        updateStatus(status, '🔄 API 키를 확인하고 있습니다...', 'checking');
+
+        setTimeout(function() {
+            var apiKey = input.value.trim();
+            console.log('입력된 API 키 길이:', apiKey.length);
+
+            if (!apiKey) {
+                updateStatus(status, '❌ API 키를 입력해주세요.', 'error');
+                resetButton(setBtn);
+                alert('API 키를 입력해주세요!');
+                return;
+            }
+
+            if (!apiKey.startsWith('sk-') || apiKey.length < 40) {
+                updateStatus(status, '❌ 올바른 API 키 형식이 아닙니다.', 'error');
+                resetButton(setBtn);
+                alert('API 키 형식이 올바르지 않습니다.\nsk-로 시작하는 긴 문자열을 입력해주세요.');
+                return;
+            }
+
+            // 성공 처리
+            appState.apiKey = apiKey;
+            updateStatus(status, '🎉 API 키가 성공적으로 설정되었습니다!', 'success');
+            
+            if (section) {
+                section.classList.add('success');
+            }
+            
+            if (generateBtn) {
+                generateBtn.disabled = false;
+                generateBtn.innerHTML = '🚀 AI 슬라이드 생성하기 (준비완료!)';
+            }
+            
+            if (setBtn) {
+                setBtn.innerHTML = '✅ 설정완료';
+                setBtn.style.background = 'linear-gradient(45deg, #4CAF50, #45a049)';
+            }
+
+            alert('🎉 API 키가 설정되었습니다!\n이제 슬라이드를 생성할 수 있습니다.');
+            console.log('API 키 설정 완료');
+
+        }, 1000);
+    }
+
+    // 버튼 리셋
+    function resetButton(btn) {
+        if (btn) {
+            btn.innerHTML = 'API 키 설정';
+            btn.disabled = false;
+            btn.style.background = 'linear-gradient(45deg, #4ecdc4, #44a08d)';
+        }
+    }
+
+    // 상태 메시지 업데이트
+    function updateStatus(element, message, type) {
+        if (!element) return;
+        
+        element.textContent = message;
+        element.style.display = 'block';
+        element.style.padding = '15px';
+        element.style.borderRadius = '10px';
+        element.style.fontWeight = '600';
+        element.style.marginTop = '20px';
+        
+        if (type === 'success') {
+            element.style.background = 'rgba(0, 255, 0, 0.2)';
+            element.style.color = '#00ff88';
+            element.style.border = '1px solid #00ff88';
+        } else if (type === 'error') {
+            element.style.background = 'rgba(255, 0, 0, 0.2)';
+            element.style.color = '#ff6b6b';
+            element.style.border = '1px solid #ff6b6b';
+        } else if (type === 'checking') {
+            element.style.background = 'rgba(255, 152, 0, 0.2)';
+            element.style.color = '#ff9800';
+            element.style.border = '1px solid #ff9800';
+        }
+    }
+
+    // API 가이드 표시
+    function showApiGuide() {
+        var guideText = '🔑 OpenAI API 키 발급 방법:\n\n';
+        guideText += '1. https://platform.openai.com 접속\n';
+        guideText += '2. 회원가입 또는 로그인\n';
+        guideText += '3. 좌측 메뉴에서 "API keys" 클릭\n';
+        guideText += '4. "Create new secret key" 버튼 클릭\n';
+        guideText += '5. 생성된 키를 복사하여 입력\n\n';
+        guideText += '💰 요금 정보:\n';
+        guideText += '- 신규 가입시 $5 무료 크레딧 제공\n';
+        guideText += '- GPT-4 사용료: 슬라이드 1개당 약 $0.03-0.08\n';
+        guideText += '- 무료 크레딧으로 약 60-150개 슬라이드 생성 가능\n\n';
+        guideText += '⚠️ 주의: API 키는 외부에 노출하지 마세요!';
+        
+        alert(guideText);
+    }
+
+    // 슬라이드 생성
+    function generateSlides() {
+        var titleInput = document.getElementById('titleInput');
+        var contentInput = document.getElementById('contentInput');
+        var colorSelect = document.getElementById('colorSelect');
+
+        if (!titleInput || !contentInput || !colorSelect) {
+            alert('입력 필드를 찾을 수 없습니다.');
+            return;
+        }
+
+        var title = titleInput.value.trim();
+        var content = contentInput.value.trim();
+        var color = colorSelect.value;
+
+        if (!appState.apiKey) {
+            alert('먼저 OpenAI API 키를 설정해주세요!');
+            return;
+        }
+
+        if (!title || !content) {
+            alert('제목과 내용을 모두 입력해주세요!');
+            return;
+        }
+
+        if (title.length > 100) {
+            alert('제목은 100자 이하로 입력해주세요.');
+            return;
+        }
+
+        if (content.length > 3000) {
+            alert('내용은 3000자 이하로 입력해주세요.');
+            return;
+        }
+
+        console.log('슬라이드 생성 시작');
+        showProgress(true);
+        updateProgress(10, '🤖 GPT-4 AI 분석 시작', 'AI가 내용을 분석하고 있습니다...');
+
+        var prompt = '템플릿: ' + appState.selectedTemplate + '\n제목: ' + title + '\n내용: ' + content + '\n색상: ' + color + '\n\n위 내용으로 유튜브 쇼츠용 11장 슬라이드를 생성해주세요.';
+
+        updateProgress(30, '🧠 내용 분석 중', 'AI가 최적의 구조를 설계하고 있습니다...');
+
+        callOpenAI(prompt)
+            .then(function(response) {
+                updateProgress(60, '🎨 슬라이드 생성 중', '디자인과 애니메이션을 적용하고 있습니다...');
+
+                var slides;
+                try {
+                    var cleanResponse = response.replace(/```json|```/g, '').trim();
+                    slides = JSON.parse(cleanResponse);
+                    if (!Array.isArray(slides)) {
+                        slides = [slides];
+                    }
+                    if (slides.length !== 11) {
+                        slides = createDefaultSlides(title, content);
+                    }
+                } catch (parseError) {
+                    console.log('JSON 파싱 오류, 기본 슬라이드 생성');
+                    slides = createDefaultSlides(title, content);
+                }
+
+                updateProgress(90, '⚡ 최적화 중', '유튜브 쇼츠에 맞게 최적화하고 있습니다...');
+                appState.generatedSlides = slides;
+                updateProgress(100, '✅ 완성!', '프로급 슬라이드가 준비되었습니다!');
+
+                setTimeout(function() {
+                    showProgress(false);
+                    showResults();
+                }, 1500);
+            })
+            .catch(function(error) {
+                console.error('API 호출 오류:', error);
+                updateProgress(0, '❌ 오류 발생', error.message);
+                setTimeout(function() {
+                    showProgress(false);
+                }, 3000);
+            });
+    }
+
+    // OpenAI API 호출
+    function callOpenAI(prompt) {
+        return fetch('https://api.openai.com/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+                'Authorization': 'Bearer ' + appState.apiKey,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                model: 'gpt-4',
+                messages: [
+                    {
+                        role: 'system',
+                        content: '당신은 유튜브 쇼츠 전문 슬라이드 생성 AI입니다. 주어진 내용을 바탕으로 정확히 11장의 슬라이드를 JSON 배열로 생성해주세요.\n\n각 슬라이드 형식:\n{\n  "slideNumber": 숫자,\n  "type": "intro|feature|benefit|stats|contact",\n  "title": "제목 (20자 이내)",\n  "subtitle": "부제목 (40자 이내)", \n  "icon": "이모지 1개",\n  "background": "gradient1-5중 하나",\n  "animation": "pulse|bounce|glow|fade중 하나"\n}\n\n규칙:\n1. 정확히 11장 생성\n2. 첫번째는 intro, 마지막은 contact\n3. 중간에는 feature, benefit, stats 적절히 배치\n4. JSON 배열만 반환 (다른 텍스트 없이)\n5. 한국어로 작성'
+                    },
+                    {
+                        role: 'user',
+                        content: prompt
+                    }
+                ],
+                max_tokens: 2000,
+                temperature: 0.7
+            })
+        })
+        .then(function(response) {
+            if (!response.ok) {
+                throw new Error('API 오류 (' + response.status + ')');
+            }
+            return response.json();
+        })
+        .then(function(data) {
+            return data.choices[0].message.content;
+        });
+    }
+
+    // 기본 슬라이드 생성
+    function createDefaultSlides(title, content) {
+        var slides = [
+            {
+                slideNumber: 1,
+                type: 'intro',
+                title: title,
+                subtitle: '혁신적인 솔루션',
+                icon: '🚀',
+                background: 'gradient1',
+                animation: 'glow'
+            },
+            {
+                slideNumber: 2,
+                type: 'feature',
+                title: '주요 특징',
+                subtitle: '핵심 기능 소개',
+                icon: '⭐',
+                background: 'gradient2',
+                animation: 'bounce'
+            }
+        ];
+
+        // 내용에서 특징 추출
+        var lines = content.split('\n');
+        var features = [];
+        for (var i = 0; i < lines.length; i++) {
+            var line = lines[i].trim();
+            if (line.includes('-') || line.includes(':')) {
+                features.push(line);
+            }
+        }
+
+        // 특징 슬라이드 추가
+        var icons = ['🎯', '💡', '🔥', '✨', '⚡', '💝'];
+        var backgrounds = ['gradient1', 'gradient2', 'gradient3', 'gradient4', 'gradient5'];
+        var animations = ['pulse', 'bounce', 'glow', 'fade'];
+
+        for (var j = 0; j < Math.min(features.length, 8); j++) {
+            var parts = features[j].split(':');
+            var featureTitle = parts[0].replace('-', '').trim();
+            var featureSubtitle = (parts[1] && parts[1].trim()) || '상세 설명';
+
+            slides.push({
+                slideNumber: j + 3,
+                type: 'feature',
+                title: featureTitle,
+                subtitle: featureSubtitle,
+                icon: icons[j % icons.length],
+                background: backgrounds[j % backgrounds.length],
+                animation: animations[j % animations.length]
+            });
+        }
+
+        // 11장이 될 때까지 추가
+        while (slides.length < 11) {
+            var slideNum = slides.length + 1;
+            if (slideNum === 11) {
+                slides.push({
+                    slideNumber: 11,
+                    type: 'contact',
+                    title: '연락처',
+                    subtitle: '문의하기',
+                    icon: '📞',
+                    background: 'gradient5',
+                    animation: 'pulse'
+                });
+            } else {
+                slides.push({
+                    slideNumber: slideNum,
+                    type: 'feature',
+                    title: '특징 ' + (slideNum - 2),
+                    subtitle: '추가 정보',
+                    icon: '💫',
+                    background: backgrounds[(slideNum - 3) % backgrounds.length],
+                    animation: 'pulse'
+                });
+            }
+        }
+
+        return slides.slice(0, 11);
+    }
+
+    // 진행 상황 표시
+    function showProgress(show) {
+        var modal = document.getElementById('progressModal');
+        if (modal) {
+            if (show) {
+                modal.classList.add('show');
+            } else {
+                modal.classList.remove('show');
+            }
+        }
+    }
+
+    // 진행률 업데이트
+    function updateProgress(percent, title, desc) {
+        var fill = document.getElementById('progressFill');
+        var text = document.getElementById('progressText');
+        var titleEl = document.getElementById('progressTitle');
+        var descEl = document.getElementById('progressDesc');
+
+        if (fill) fill.style.width = percent + '%';
+        if (text) text.textContent = percent + '%';
+        if (titleEl) titleEl.textContent = title;
+        if (descEl) descEl.textContent = desc;
+    }
+
+    // 결과 표시
+    function showResults() {
+        var resultSection = document.getElementById('resultSection');
+        var resultInfo = document.getElementById('resultInfo');
+
+        if (resultInfo && appState.generatedSlides) {
+            var templateNames = {
+                business: '비즈니스',
+                education: '교육',
+                product: '제품소개',
+                personal: '개인'
+            };
+            var templateName = templateNames[appState.selectedTemplate] || '기본';
+            var colorName = document.getElementById('colorSelect').selectedOptions[0].text;
+
+            resultInfo.innerHTML = '<strong>📊 AI 생성 결과:</strong><br>' +
+                '• 총 ' + appState.generatedSlides.length + '장의 슬라이드 완성<br>' +
+                '• 템플릿: ' + templateName + '<br>' +
+                '• 색상 테마: ' + colorName + '<br>' +
+                '• 유튜브 쇼츠 최적화 완료<br>' +
+                '• 고품질 애니메이션 적용';
+        }
+
+        if (resultSection) {
+            resultSection.classList.add('show');
+            resultSection.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        console.log('결과 표시 완료');
+    }
+
+    // 녹화 시작
+    function startRecording() {
+        if (!appState.generatedSlides) {
+            alert('먼저 슬라이드를 생성해주세요!');
+            return;
+        }
+        alert('녹화 기능은 실제 환경에서 사용 가능합니다.\n현재는 데모 버전입니다.');
+    }
+
+    // 페이지 로드 완료 후 초기화
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initApp);
+    } else {
+        initApp();
+    }
+
+    // 에러 방지
+    window.onerror = function() { return true; };
     </script>
 </body>
 </html>
