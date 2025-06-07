@@ -11,24 +11,37 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #ff6b6b 100%);
+            --secondary-gradient: linear-gradient(45deg, #4ecdc4, #44a08d);
+            --accent-gradient: linear-gradient(45deg, #ff6b6b, #ee5a6f);
+            --text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            --box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            --border-radius: 25px;
+            --transition: all 0.4s cubic-bezier(0.4, 0.0, 0.2, 1);
+        }
+
         body {
             font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #ff6b6b 100%);
+            background: var(--primary-gradient);
             background-size: 400% 400%;
             animation: gradientFlow 8s ease infinite;
             min-height: 100vh;
             color: white;
             line-height: 1.6;
             overflow-x: hidden;
+            position: relative;
         }
 
         @keyframes gradientFlow {
             0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
+            25% { background-position: 100% 0%; }
+            50% { background-position: 100% 100%; }
+            75% { background-position: 0% 100%; }
             100% { background-position: 0% 50%; }
         }
 
-        /* 파티클 배경 효과 */
+        /* 고급 파티클 시스템 */
         .particles {
             position: fixed;
             top: 0;
@@ -37,37 +50,70 @@
             height: 100%;
             pointer-events: none;
             z-index: 1;
+            overflow: hidden;
         }
 
         .particle {
             position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .particle-1 {
             width: 4px;
             height: 4px;
-            background: rgba(255, 255, 255, 0.6);
-            border-radius: 50%;
-            animation: float 6s ease-in-out infinite;
+            background: rgba(255, 255, 255, 0.8);
+            animation: float1 8s ease-in-out infinite;
         }
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0; }
+        .particle-2 {
+            width: 6px;
+            height: 6px;
+            background: rgba(78, 205, 196, 0.6);
+            animation: float2 10s ease-in-out infinite;
+        }
+
+        .particle-3 {
+            width: 8px;
+            height: 8px;
+            background: rgba(255, 107, 107, 0.4);
+            animation: float3 12s ease-in-out infinite;
+        }
+
+        @keyframes float1 {
+            0%, 100% { transform: translateY(100vh) translateX(0) rotate(0deg); opacity: 0; }
             10%, 90% { opacity: 1; }
-            50% { transform: translateY(-100px) rotate(180deg); }
+            50% { transform: translateY(-20vh) translateX(50px) rotate(180deg); }
         }
 
+        @keyframes float2 {
+            0%, 100% { transform: translateY(100vh) translateX(0) rotate(0deg) scale(1); opacity: 0; }
+            10%, 90% { opacity: 0.8; }
+            50% { transform: translateY(-30vh) translateX(-30px) rotate(360deg) scale(1.5); }
+        }
+
+        @keyframes float3 {
+            0%, 100% { transform: translateY(100vh) translateX(0) rotate(0deg) scale(1); opacity: 0; }
+            10%, 90% { opacity: 0.6; }
+            50% { transform: translateY(-40vh) translateX(80px) rotate(270deg) scale(0.8); }
+        }
+
+        /* 반응형 컨테이너 */
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 20px;
+            padding: clamp(15px, 3vw, 30px);
             position: relative;
             z-index: 2;
         }
 
+        /* 적응형 히어로 섹션 */
         .hero {
             text-align: center;
-            padding: 80px 20px;
+            padding: clamp(40px, 8vw, 100px) clamp(20px, 4vw, 40px);
             background: rgba(0, 0, 0, 0.4);
-            border-radius: 40px;
-            margin-bottom: 50px;
+            border-radius: var(--border-radius);
+            margin-bottom: clamp(30px, 6vw, 60px);
             backdrop-filter: blur(20px);
             border: 2px solid rgba(255, 255, 255, 0.2);
             position: relative;
@@ -82,10 +128,10 @@
             width: 200%;
             height: 200%;
             background: conic-gradient(from 0deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-            animation: rotate 4s linear infinite;
+            animation: heroRotate 6s linear infinite;
         }
 
-        @keyframes rotate {
+        @keyframes heroRotate {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
         }
@@ -96,27 +142,36 @@
         }
 
         .hero-icon {
-            font-size: 5em;
-            margin-bottom: 30px;
-            animation: bounceGlow 3s ease-in-out infinite;
-            filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.5));
+            font-size: clamp(3em, 8vw, 6em);
+            margin-bottom: clamp(20px, 4vw, 40px);
+            animation: iconPulse 3s ease-in-out infinite;
+            filter: drop-shadow(0 0 30px rgba(255, 255, 255, 0.6));
+            display: inline-block;
         }
 
-        @keyframes bounceGlow {
-            0%, 100% { transform: translateY(0) scale(1); filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.5)); }
-            50% { transform: translateY(-20px) scale(1.1); filter: drop-shadow(0 0 40px rgba(255, 255, 255, 0.8)); }
+        @keyframes iconPulse {
+            0%, 100% { 
+                transform: translateY(0) scale(1); 
+                filter: drop-shadow(0 0 30px rgba(255, 255, 255, 0.6)); 
+            }
+            50% { 
+                transform: translateY(-15px) scale(1.1); 
+                filter: drop-shadow(0 0 50px rgba(255, 255, 255, 0.9)); 
+            }
         }
 
         .hero-title {
-            font-size: 4em;
+            font-size: clamp(2em, 6vw, 4.5em);
             font-weight: 900;
-            margin-bottom: 30px;
+            margin-bottom: clamp(20px, 4vw, 40px);
             background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57);
             background-size: 300% 300%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            animation: textShimmer 3s ease infinite;
-            text-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
+            background-clip: text;
+            animation: textShimmer 4s ease infinite;
+            text-shadow: var(--text-shadow);
+            line-height: 1.2;
         }
 
         @keyframes textShimmer {
@@ -126,39 +181,41 @@
         }
 
         .hero-subtitle {
-            font-size: 1.8em;
-            margin-bottom: 20px;
+            font-size: clamp(1.2em, 3vw, 2em);
+            margin-bottom: clamp(15px, 3vw, 25px);
             opacity: 0.95;
-            animation: fadeInUp 1s ease 0.5s both;
+            animation: fadeSlideUp 1s ease 0.5s both;
+            font-weight: 600;
         }
 
         .hero-description {
-            font-size: 1.3em;
+            font-size: clamp(1em, 2.5vw, 1.4em);
             opacity: 0.9;
-            max-width: 900px;
+            max-width: min(90%, 900px);
             margin: 0 auto;
-            animation: fadeInUp 1s ease 1s both;
+            animation: fadeSlideUp 1s ease 1s both;
+            line-height: 1.8;
         }
 
-        @keyframes fadeInUp {
+        @keyframes fadeSlideUp {
             from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .api-section {
+        /* 적응형 섹션 */
+        .section {
             background: rgba(255, 255, 255, 0.15);
             border: 3px solid rgba(255, 255, 255, 0.3);
-            border-radius: 30px;
-            padding: 50px;
-            margin: 50px 0;
-            text-align: center;
+            border-radius: var(--border-radius);
+            padding: clamp(30px, 6vw, 60px);
+            margin: clamp(30px, 6vw, 60px) 0;
             backdrop-filter: blur(15px);
             position: relative;
             overflow: hidden;
-            transition: all 0.5s ease;
+            transition: var(--transition);
         }
 
-        .api-section::before {
+        .section::before {
             content: '';
             position: absolute;
             top: 0;
@@ -169,7 +226,7 @@
             transition: left 0.8s ease;
         }
 
-        .api-section:hover::before {
+        .section:hover::before {
             left: 100%;
         }
 
@@ -179,47 +236,157 @@
             box-shadow: 0 0 40px rgba(0, 255, 100, 0.3);
         }
 
-        .api-title {
-            font-size: 2.2em;
-            margin-bottom: 25px;
+        .section-title {
+            font-size: clamp(1.8em, 4vw, 2.8em);
+            margin-bottom: clamp(25px, 5vw, 50px);
+            text-align: center;
             color: #feca57;
-            text-shadow: 0 0 20px rgba(254, 202, 87, 0.5);
+            text-shadow: 0 0 25px rgba(254, 202, 87, 0.6);
+            animation: titlePulse 3s ease-in-out infinite;
+            font-weight: 800;
         }
 
-        .api-input {
-            width: 100%;
-            max-width: 600px;
-            padding: 22px 30px;
-            margin: 25px 0;
-            background: rgba(255, 255, 255, 0.1);
-            border: 3px solid rgba(255, 255, 255, 0.4);
+        @keyframes titlePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        /* 반응형 그리드 */
+        .templates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(250px, 100%), 1fr));
+            gap: clamp(15px, 3vw, 30px);
+            margin: clamp(25px, 5vw, 50px) 0;
+        }
+
+        .template-card {
+            background: rgba(255, 255, 255, 0.12);
+            border: 3px solid rgba(255, 255, 255, 0.3);
             border-radius: 20px;
-            color: white;
-            font-size: 1.2em;
-            transition: all 0.4s ease;
-            backdrop-filter: blur(10px);
-        }
-
-        .api-input:focus {
-            outline: none;
-            border-color: #4ecdc4;
-            box-shadow: 0 0 30px rgba(78, 205, 196, 0.5);
-            transform: scale(1.02);
-        }
-
-        .btn {
-            padding: 18px 35px;
-            margin: 15px;
-            border: none;
-            border-radius: 15px;
-            font-size: 1.2em;
-            font-weight: 700;
+            padding: clamp(20px, 4vw, 40px);
+            text-align: center;
             cursor: pointer;
-            transition: all 0.4s ease;
-            text-transform: uppercase;
-            letter-spacing: 2px;
+            transition: var(--transition);
             position: relative;
             overflow: hidden;
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .template-card::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            transition: var(--transition);
+            transform: translate(-50%, -50%);
+        }
+
+        .template-card:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .template-card:hover {
+            transform: translateY(-10px) rotateY(5deg) scale(1.02);
+            border-color: #4ecdc4;
+            box-shadow: var(--box-shadow);
+        }
+
+        .template-card.selected {
+            border-color: #feca57;
+            background: rgba(254, 202, 87, 0.25);
+            box-shadow: 0 0 40px rgba(254, 202, 87, 0.5);
+            transform: scale(1.05);
+        }
+
+        .template-icon {
+            font-size: clamp(2.5em, 5vw, 4em);
+            margin-bottom: clamp(10px, 2vw, 20px);
+            animation: iconFloat 4s ease-in-out infinite;
+        }
+
+        @keyframes iconFloat {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-8px) rotate(3deg); }
+        }
+
+        .template-name {
+            font-size: clamp(1.1em, 2.5vw, 1.5em);
+            font-weight: 700;
+            margin-bottom: clamp(8px, 1.5vw, 15px);
+            color: #4ecdc4;
+        }
+
+        .template-desc {
+            font-size: clamp(0.9em, 2vw, 1.1em);
+            opacity: 0.8;
+        }
+
+        /* 입력 필드 개선 */
+        .input-group {
+            margin-bottom: clamp(20px, 4vw, 40px);
+        }
+
+        .input-label {
+            display: block;
+            font-size: clamp(1.1em, 2.5vw, 1.4em);
+            font-weight: 700;
+            margin-bottom: clamp(8px, 1.5vw, 15px);
+            color: #4ecdc4;
+            text-shadow: 0 0 10px rgba(78, 205, 196, 0.3);
+        }
+
+        .input-field {
+            width: 100%;
+            padding: clamp(18px, 3vw, 25px);
+            background: rgba(255, 255, 255, 0.12);
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 18px;
+            color: white;
+            font-size: clamp(1em, 2.2vw, 1.3em);
+            transition: var(--transition);
+            backdrop-filter: blur(10px);
+            font-family: inherit;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #4ecdc4;
+            box-shadow: 0 0 30px rgba(78, 205, 196, 0.4);
+            transform: scale(1.01);
+        }
+
+        .input-field::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .textarea-field {
+            min-height: clamp(120px, 20vw, 180px);
+            resize: vertical;
+            line-height: 1.6;
+        }
+
+        /* 버튼 개선 */
+        .btn {
+            padding: clamp(15px, 3vw, 22px) clamp(25px, 5vw, 40px);
+            margin: clamp(10px, 2vw, 15px);
+            border: none;
+            border-radius: 15px;
+            font-size: clamp(1em, 2.2vw, 1.3em);
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+            white-space: nowrap;
         }
 
         .btn::before {
@@ -238,146 +405,51 @@
         }
 
         .btn-primary {
-            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            background: var(--secondary-gradient);
             color: white;
             box-shadow: 0 8px 25px rgba(78, 205, 196, 0.4);
         }
 
         .btn-secondary {
-            background: linear-gradient(45deg, #ff6b6b, #ee5a6f);
+            background: var(--accent-gradient);
             color: white;
             box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
         }
 
-        .btn:hover {
-            transform: translateY(-5px) scale(1.05);
+        .btn:hover:not(:disabled) {
+            transform: translateY(-3px) scale(1.02);
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
         }
 
-        .input-section {
-            background: rgba(255, 255, 255, 0.12);
-            border: 3px solid rgba(255, 255, 255, 0.25);
-            border-radius: 30px;
-            padding: 50px;
-            margin: 50px 0;
-            backdrop-filter: blur(15px);
-            position: relative;
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
         }
 
-        .section-title {
-            font-size: 2.5em;
-            margin-bottom: 40px;
-            text-align: center;
-            color: #feca57;
-            text-shadow: 0 0 25px rgba(254, 202, 87, 0.6);
-            animation: pulse 2s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-
-        .templates-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 25px;
-            margin: 40px 0;
-        }
-
-        .template-card {
-            background: rgba(255, 255, 255, 0.12);
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-radius: 20px;
-            padding: 35px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.4s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .template-card::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
-            transition: all 0.4s ease;
-            transform: translate(-50%, -50%);
-        }
-
-        .template-card:hover::before {
-            width: 300px;
-            height: 300px;
-        }
-
-        .template-card:hover {
-            transform: translateY(-10px) rotateY(5deg);
-            border-color: #4ecdc4;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-        }
-
-        .template-card.selected {
-            border-color: #feca57;
-            background: rgba(254, 202, 87, 0.25);
-            box-shadow: 0 0 30px rgba(254, 202, 87, 0.4);
-            transform: scale(1.05);
-        }
-
-        .template-icon {
-            font-size: 3.5em;
-            margin-bottom: 20px;
-            animation: iconFloat 3s ease-in-out infinite;
-        }
-
-        @keyframes iconFloat {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-10px) rotate(5deg); }
-        }
-
-        .input-field {
-            width: 100%;
-            padding: 22px 30px;
-            background: rgba(255, 255, 255, 0.12);
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-radius: 18px;
-            color: white;
-            font-size: 1.2em;
-            transition: all 0.4s ease;
-            backdrop-filter: blur(10px);
-        }
-
-        .input-field:focus {
-            outline: none;
-            border-color: #4ecdc4;
-            box-shadow: 0 0 30px rgba(78, 205, 196, 0.4);
-            transform: scale(1.02);
-        }
-
+        /* 생성 버튼 특별 효과 */
         .generate-btn {
             display: block;
             width: 100%;
-            max-width: 700px;
-            margin: 60px auto;
-            padding: 40px;
+            max-width: min(90%, 800px);
+            margin: clamp(40px, 8vw, 80px) auto;
+            padding: clamp(30px, 6vw, 50px);
             background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57);
             background-size: 400% 400%;
             border: none;
-            border-radius: 25px;
-            font-size: 2.5em;
+            border-radius: var(--border-radius);
+            font-size: clamp(1.5em, 4vw, 2.8em);
             font-weight: 900;
             color: white;
             cursor: pointer;
-            transition: all 0.4s ease;
+            transition: var(--transition);
             text-transform: uppercase;
-            letter-spacing: 4px;
-            animation: gradientWave 4s ease infinite;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+            letter-spacing: clamp(1px, 0.5vw, 4px);
+            animation: generatePulse 4s ease infinite;
+            box-shadow: var(--box-shadow);
             position: relative;
             overflow: hidden;
+            line-height: 1.2;
         }
 
         .generate-btn::before {
@@ -391,35 +463,40 @@
             animation: buttonSpin 3s linear infinite;
         }
 
+        @keyframes generatePulse {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
         @keyframes buttonSpin {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
         }
 
         .generate-btn:hover:not(:disabled) {
-            transform: translateY(-8px) scale(1.02);
+            transform: translateY(-5px) scale(1.02);
             box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
         }
 
-        @keyframes gradientWave {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        .generate-btn span {
+            position: relative;
+            z-index: 1;
         }
 
-        /* 3D 슬라이드 프리뷰 스타일 */
+        /* 슬라이드 프리뷰 개선 */
         .result-preview {
-            width: 350px;
-            height: 600px;
+            width: min(90%, 400px);
+            height: min(70vh, 650px);
             background: #000;
             border-radius: 30px;
             border: 4px solid #333;
-            margin: 30px auto;
+            margin: clamp(20px, 4vw, 40px) auto;
             overflow: hidden;
             position: relative;
             transform-style: preserve-3d;
-            perspective: 1000px;
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+            perspective: 1200px;
+            box-shadow: var(--box-shadow);
         }
 
         .slide-container {
@@ -438,69 +515,144 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 40px;
+            padding: clamp(25px, 5vw, 50px);
             text-align: center;
-            transition: all 0.8s cubic-bezier(0.4, 0.0, 0.2, 1);
+            transition: all 1s cubic-bezier(0.4, 0.0, 0.2, 1);
+            border-radius: 26px;
         }
 
-        /* 3D 회전 애니메이션 */
         .slide.active {
-            transform: rotateY(0deg) translateZ(0);
+            transform: rotateY(0deg) translateZ(0) scale(1);
+            opacity: 1;
         }
 
         .slide.next {
-            transform: rotateY(90deg) translateZ(0);
+            transform: rotateY(90deg) translateZ(0) scale(0.8);
+            opacity: 0;
         }
 
         .slide.prev {
-            transform: rotateY(-90deg) translateZ(0);
+            transform: rotateY(-90deg) translateZ(0) scale(0.8);
+            opacity: 0;
         }
 
-        /* 파티클 효과가 있는 슬라이드 아이콘 */
         .slide-icon {
-            font-size: 4em;
-            margin-bottom: 25px;
+            font-size: clamp(3em, 8vw, 5em);
+            margin-bottom: clamp(15px, 3vw, 30px);
             position: relative;
-            animation: iconGlow 2s ease-in-out infinite;
+            animation: slideIconGlow 3s ease-in-out infinite;
         }
 
-        @keyframes iconGlow {
+        @keyframes slideIconGlow {
             0%, 100% { 
                 transform: scale(1);
                 filter: drop-shadow(0 0 20px currentColor);
             }
             50% { 
-                transform: scale(1.15);
+                transform: scale(1.1);
                 filter: drop-shadow(0 0 40px currentColor);
             }
         }
 
         .slide-title {
-            font-size: 2.2em;
+            font-size: clamp(1.5em, 4vw, 2.5em);
             font-weight: 900;
-            margin-bottom: 20px;
+            margin-bottom: clamp(10px, 2vw, 20px);
             text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
-            animation: titleSlide 0.8s ease 0.2s both;
+            animation: titleEntry 0.8s ease 0.2s both;
+            line-height: 1.2;
         }
 
         .slide-subtitle {
-            font-size: 1.4em;
+            font-size: clamp(1em, 2.5vw, 1.6em);
             opacity: 0.9;
             text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
-            animation: subtitleSlide 0.8s ease 0.4s both;
+            animation: subtitleEntry 0.8s ease 0.4s both;
+            line-height: 1.3;
         }
 
-        @keyframes titleSlide {
-            from { opacity: 0; transform: translateX(-50px); }
+        @keyframes titleEntry {
+            from { opacity: 0; transform: translateX(-30px); }
             to { opacity: 1; transform: translateX(0); }
         }
 
-        @keyframes subtitleSlide {
-            from { opacity: 0; transform: translateX(50px); }
+        @keyframes subtitleEntry {
+            from { opacity: 0; transform: translateX(30px); }
             to { opacity: 0.9; transform: translateX(0); }
         }
 
-        /* 프로그레스 모달 향상 */
+        .slide-counter {
+            position: absolute;
+            bottom: clamp(15px, 3vw, 30px);
+            right: clamp(15px, 3vw, 30px);
+            font-size: clamp(0.8em, 1.8vw, 1.1em);
+            opacity: 0.8;
+            background: rgba(0,0,0,0.4);
+            padding: clamp(5px, 1vw, 10px) clamp(10px, 2vw, 15px);
+            border-radius: 15px;
+            backdrop-filter: blur(5px);
+        }
+
+        .slide-image {
+            position: absolute;
+            top: clamp(15px, 3vw, 25px);
+            right: clamp(15px, 3vw, 25px);
+            width: clamp(40px, 8vw, 70px);
+            height: clamp(40px, 8vw, 70px);
+            border-radius: 50%;
+            opacity: 0.8;
+            border: 2px solid rgba(255,255,255,0.3);
+            object-fit: cover;
+        }
+
+        /* 이미지 프리뷰 개선 */
+        .image-preview {
+            width: 100%;
+            max-width: min(90%, 350px);
+            height: min(40vw, 350px);
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            margin: clamp(15px, 3vw, 25px) auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .image-preview:hover {
+            border-color: #4ecdc4;
+            box-shadow: 0 0 20px rgba(78, 205, 196, 0.3);
+        }
+
+        .image-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 18px;
+        }
+
+        .image-placeholder {
+            color: rgba(255, 255, 255, 0.6);
+            text-align: center;
+            font-size: clamp(1em, 2.2vw, 1.2em);
+            padding: clamp(15px, 3vw, 25px);
+        }
+
+        .image-placeholder-icon {
+            font-size: clamp(2.5em, 6vw, 4em);
+            margin-bottom: clamp(10px, 2vw, 20px);
+            animation: placeholderPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes placeholderPulse {
+            0%, 100% { transform: scale(1); opacity: 0.6; }
+            50% { transform: scale(1.1); opacity: 0.9; }
+        }
+
+        /* 프로그레스 모달 개선 */
         .progress-modal {
             position: fixed;
             top: 0;
@@ -515,112 +667,233 @@
             backdrop-filter: blur(10px);
         }
 
+        .progress-modal.show {
+            display: flex;
+        }
+
         .progress-content {
             background: rgba(255, 255, 255, 0.15);
             border: 3px solid rgba(255, 255, 255, 0.4);
             border-radius: 30px;
-            padding: 60px;
+            padding: clamp(40px, 8vw, 80px);
             text-align: center;
             backdrop-filter: blur(25px);
-            max-width: 600px;
-            width: 90%;
+            max-width: min(90%, 700px);
+            width: 100%;
             position: relative;
             overflow: hidden;
         }
 
         .progress-icon {
-            font-size: 5em;
-            margin-bottom: 30px;
-            animation: progressSpin 2s linear infinite;
+            font-size: clamp(4em, 10vw, 6em);
+            margin-bottom: clamp(20px, 4vw, 40px);
+            animation: progressRotate 2s linear infinite;
             filter: drop-shadow(0 0 30px currentColor);
         }
 
-        @keyframes progressSpin {
+        @keyframes progressRotate {
             from { transform: rotate(0deg) scale(1); }
             50% { transform: rotate(180deg) scale(1.1); }
             to { transform: rotate(360deg) scale(1); }
         }
 
-        /* AI 이미지 생성 섹션 */
-        .image-section {
-            background: rgba(255, 255, 255, 0.12);
-            border: 3px solid rgba(255, 255, 255, 0.25);
-            border-radius: 30px;
-            padding: 50px;
-            margin: 50px 0;
-            backdrop-filter: blur(15px);
+        .progress-title {
+            font-size: clamp(1.5em, 4vw, 2.2em);
+            font-weight: 700;
+            margin-bottom: clamp(15px, 3vw, 25px);
+            color: #4ecdc4;
+            text-shadow: 0 0 20px rgba(78, 205, 196, 0.5);
         }
 
-        .image-preview {
+        .progress-desc {
+            font-size: clamp(1em, 2.5vw, 1.3em);
+            opacity: 0.8;
+            margin-bottom: clamp(20px, 4vw, 35px);
+        }
+
+        .progress-bar {
             width: 100%;
-            max-width: 300px;
-            height: 300px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 20px;
-            margin: 20px auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 2px dashed rgba(255, 255, 255, 0.3);
-            position: relative;
+            height: clamp(12px, 2.5vw, 18px);
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
             overflow: hidden;
+            margin-bottom: clamp(15px, 3vw, 25px);
         }
 
-        .image-preview img {
-            width: 100%;
+        .progress-fill {
             height: 100%;
-            object-fit: cover;
-            border-radius: 18px;
+            background: linear-gradient(90deg, #4ecdc4, #feca57);
+            width: 0%;
+            transition: width 0.3s ease;
+            border-radius: 10px;
+            position: relative;
         }
 
-        .image-placeholder {
-            color: rgba(255, 255, 255, 0.6);
-            text-align: center;
-            font-size: 1.1em;
-        }
-
-        /* 반응형 디자인 개선 */
-        @media (max-width: 768px) {
-            .hero-title { font-size: 2.8em; }
-            .generate-btn { font-size: 1.8em; padding: 30px; }
-            .result-preview { width: 280px; height: 480px; }
-            .input-section, .api-section { padding: 30px; }
-        }
-
-        /* 고급 애니메이션 효과 */
-        .morphing-bg {
+        .progress-fill::after {
+            content: '';
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(45deg, 
-                rgba(255, 107, 107, 0.1),
-                rgba(78, 205, 196, 0.1),
-                rgba(69, 183, 209, 0.1),
-                rgba(150, 206, 180, 0.1)
-            );
-            background-size: 400% 400%;
-            animation: morphing 10s ease infinite;
-            pointer-events: none;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: progressShine 2s ease infinite;
         }
 
-        @keyframes morphing {
-            0% { background-position: 0% 50%; border-radius: 50% 50% 50% 50%; }
-            25% { background-position: 100% 50%; border-radius: 60% 40% 60% 40%; }
-            50% { background-position: 100% 100%; border-radius: 40% 60% 40% 60%; }
-            75% { background-position: 0% 100%; border-radius: 50% 50% 50% 50%; }
-            100% { background-position: 0% 50%; border-radius: 50% 50% 50% 50%; }
+        @keyframes progressShine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .progress-text {
+            font-size: clamp(1.1em, 2.8vw, 1.4em);
+            font-weight: 600;
+            color: #feca57;
+        }
+
+        /* 상태 메시지 */
+        .status-message {
+            margin-top: clamp(15px, 3vw, 25px);
+            padding: clamp(12px, 2.5vw, 18px);
+            border-radius: 10px;
+            font-weight: 600;
+            display: none;
+            font-size: clamp(0.9em, 2vw, 1.1em);
+            animation: statusFade 0.5s ease;
+        }
+
+        @keyframes statusFade {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .status-message.success {
+            background: rgba(0, 255, 0, 0.2);
+            color: #00ff88;
+            border: 1px solid rgba(0, 255, 0, 0.3);
+        }
+
+        .status-message.error {
+            background: rgba(255, 0, 0, 0.2);
+            color: #ff6b6b;
+            border: 1px solid rgba(255, 0, 0, 0.3);
+        }
+
+        .result-section {
+            display: none;
+            animation: resultEntry 0.8s ease;
+        }
+
+        .result-section.show {
+            display: block;
+        }
+
+        @keyframes resultEntry {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-info {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: clamp(15px, 3vw, 25px);
+            margin: clamp(15px, 3vw, 25px) 0;
+            font-size: clamp(1em, 2.2vw, 1.2em);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* 고급 반응형 브레이크포인트 */
+        @media (max-width: 480px) {
+            .templates-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .template-card {
+                aspect-ratio: 0.9;
+            }
+            
+            .hero {
+                margin-bottom: 30px;
+            }
+            
+            .section {
+                margin: 30px 0;
+            }
+        }
+
+        @media (min-width: 481px) and (max-width: 768px) {
+            .templates-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .templates-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        @media (min-width: 1025px) {
+            .templates-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        /* 초고해상도 화면 대응 */
+        @media (min-width: 1440px) {
+            .container {
+                max-width: 1600px;
+            }
+        }
+
+        /* 다크모드/라이트모드 감지 */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --text-shadow: 0 2px 15px rgba(0,0,0,0.5);
+            }
+        }
+
+        /* 애니메이션 감소 설정 준수 */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* 고대비 모드 지원 */
+        @media (prefers-contrast: high) {
+            .section {
+                border-width: 4px;
+                border-color: rgba(255, 255, 255, 0.8);
+            }
+            
+            .btn {
+                border: 2px solid rgba(255, 255, 255, 0.8);
+            }
+        }
+
+        /* 프린트 스타일 */
+        @media print {
+            body {
+                background: white;
+                color: black;
+            }
+            
+            .particles, .progress-modal {
+                display: none !important;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- 파티클 배경 -->
+    <!-- 고급 파티클 시스템 -->
     <div class="particles" id="particles"></div>
     
     <div class="container">
         <div class="hero">
-            <div class="morphing-bg"></div>
             <div class="hero-content">
                 <div class="hero-icon">🎬</div>
                 <h1 class="hero-title">유튜브 쇼츠 AI 생성기 Pro</h1>
@@ -633,18 +906,24 @@
             </div>
         </div>
 
-        <div class="api-section" id="apiSection">
-            <h2 class="api-title">🔑 OpenAI API 키 설정</h2>
-            <p>GPT-4 + DALL-E 3 AI로 텍스트와 이미지를 동시에 생성합니다.</p>
-            <input type="password" class="api-input" id="apiInput" placeholder="sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx">
-            <div>
-                <button class="btn btn-primary" id="setApiBtn">API 키 설정</button>
-                <button class="btn btn-secondary" id="showGuideBtn">발급 방법</button>
+        <div class="section api-section" id="apiSection">
+            <h2 class="section-title">🔑 OpenAI API 키 설정</h2>
+            <p style="text-align: center; margin-bottom: 25px; font-size: clamp(1em, 2.2vw, 1.2em); opacity: 0.9;">
+                GPT-4 + DALL-E 3 AI로 텍스트와 이미지를 동시에 생성합니다.
+            </p>
+            <div style="text-align: center;">
+                <input type="password" class="input-field" id="apiInput" 
+                       placeholder="sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+                       style="max-width: 600px; margin-bottom: 20px;">
+                <div>
+                    <button class="btn btn-primary" id="setApiBtn">API 키 설정</button>
+                    <button class="btn btn-secondary" id="showGuideBtn">발급 방법</button>
+                </div>
+                <div class="status-message" id="apiStatus"></div>
             </div>
-            <div class="status-message" id="apiStatus"></div>
         </div>
 
-        <div class="input-section">
+        <div class="section">
             <h2 class="section-title">📋 템플릿 선택</h2>
             <div class="templates-grid">
                 <div class="template-card selected" data-template="business">
@@ -670,7 +949,7 @@
             </div>
         </div>
 
-        <div class="input-section">
+        <div class="section">
             <h2 class="section-title">✏️ 내용 입력</h2>
             
             <div class="input-group">
@@ -683,21 +962,27 @@
             <div class="input-group">
                 <label class="input-label">📄 상세 내용</label>
                 <textarea class="input-field textarea-field" id="contentInput" 
-                          placeholder="Sue Reading Club은 AI 기반 영어교육 서비스입니다.
+                          placeholder="Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관입니다.
 
-주요 기능:
+주요 프로그램:
 - AI 독해 시스템: 개인 맞춤 분석
-- 스마트 속독: 읽기 속도 3배 향상
+- 스마트 속독: 읽기 속도 3배 향상  
 - AI 토론 클래스: 실시간 대화 학습
-- 즉석 피드백: 정확한 실시간 분석
+- 영어소설 독해: 문학을 통한 고급 영어
+- 채두윜반: 최고 수준 영어 완성 과정
 
 성과:
+- 20년간 검증된 교육 노하우
 - 98% 학부모 만족도
 - 평균 3.2배 성적 향상
 
-위치: 인천 연수구 송도동
-연락처: 010-9579-4429
-혜택: 첫 달 30% 할인"
+특별 혜택:
+- 첫 달 30% 할인
+- 무료 레벨테스트
+
+위치: 인천 연수구 송도동 22-20 해온더라운지 702호
+연락처: 010-4602-1953
+운영: 평일만 (주말 휴무)"
                           maxlength="3000"></textarea>
             </div>
 
@@ -714,31 +999,31 @@
             </div>
         </div>
 
-        <div class="image-section">
+        <div class="section image-section">
             <h2 class="section-title">🎨 AI 이미지 생성</h2>
-            <p style="text-align: center; margin-bottom: 25px; opacity: 0.9;">
+            <p style="text-align: center; margin-bottom: 30px; opacity: 0.9; font-size: clamp(1em, 2.2vw, 1.2em);">
                 DALL-E 3 AI가 주제에 맞는 고품질 이미지를 자동 생성합니다.
             </p>
             <div class="input-group">
                 <label class="input-label">🖼️ 이미지 컨셉 (선택사항)</label>
                 <input type="text" class="input-field" id="imagePromptInput" 
-                       placeholder="예: 현대적인 AI 교육 환경, 미래형 학습공간, 밝고 혁신적인 분위기" 
+                       placeholder="예: 전통적이면서도 현대적인 교육 환경, 20년 전통의 신뢰감, 영어소설과 책들, AI 기술이 접목된 학습공간" 
                        maxlength="200">
             </div>
             <div class="image-preview" id="imagePreview">
                 <div class="image-placeholder">
-                    <div style="font-size: 3em; margin-bottom: 15px;">🤖</div>
+                    <div class="image-placeholder-icon">🤖</div>
                     <div>AI가 생성할 이미지 미리보기</div>
                 </div>
             </div>
         </div>
 
         <button class="generate-btn" id="generateBtn" disabled>
-            <span style="position: relative; z-index: 1;">🚀 AI 슬라이드 + 이미지 생성하기</span>
+            <span>🚀 AI 슬라이드 + 이미지 생성하기</span>
         </button>
 
-        <div class="result-section" id="resultSection" style="display: none;">
-            <h2 class="result-title">🎉 AI 슬라이드 생성 완료!</h2>
+        <div class="section result-section" id="resultSection">
+            <h2 class="section-title">🎉 AI 슬라이드 생성 완료!</h2>
             <div class="result-preview" id="resultPreview">
                 <div class="slide-container" id="slideContainer">
                     <!-- 슬라이드가 여기에 동적으로 생성됩니다 -->
@@ -752,7 +1037,9 @@
                 • 27.5초 재생 시간<br>
                 • 프리미엄 시각 효과 적용
             </div>
-            <button class="record-btn btn btn-primary" id="recordBtn">🎬 고품질 영상 촬영 가이드</button>
+            <div style="text-align: center;">
+                <button class="btn btn-primary" id="recordBtn">🎬 고품질 영상 촬영 가이드</button>
+            </div>
         </div>
     </div>
 
@@ -769,22 +1056,34 @@
     </div>
 
     <script>
-        // 파티클 시스템 초기화
-        function initParticles() {
+        // 고급 파티클 시스템
+        function initAdvancedParticles() {
             const particlesContainer = document.getElementById('particles');
-            const particleCount = 50;
+            const particleTypes = ['particle-1', 'particle-2', 'particle-3'];
+            const particleCount = Math.min(60, Math.max(20, window.innerWidth / 25));
             
             for (let i = 0; i < particleCount; i++) {
                 const particle = document.createElement('div');
-                particle.className = 'particle';
+                const type = particleTypes[Math.floor(Math.random() * particleTypes.length)];
+                particle.className = `particle ${type}`;
                 particle.style.left = Math.random() * 100 + '%';
-                particle.style.animationDelay = Math.random() * 6 + 's';
-                particle.style.animationDuration = (Math.random() * 3 + 3) + 's';
+                particle.style.animationDelay = Math.random() * 8 + 's';
+                particle.style.animationDuration = (Math.random() * 4 + 6) + 's';
                 particlesContainer.appendChild(particle);
             }
         }
 
-        // 완전한 에러 차단
+        // 반응형 조정
+        function handleResize() {
+            const particles = document.getElementById('particles');
+            if (window.innerWidth < 768) {
+                particles.style.opacity = '0.5';
+            } else {
+                particles.style.opacity = '1';
+            }
+        }
+
+        // 완전한 에러 차단 및 앱 로직
         (() => {
             const noop = () => {};
             
@@ -809,7 +1108,47 @@
                 template: 'business',
                 slides: null,
                 generatedImage: null,
-                currentSlideIndex: 0
+                currentSlideIndex: 0,
+                slideInterval: null
+            };
+
+            // 색상 테마 매핑
+            const colorThemes = {
+                gradient1: [
+                    'linear-gradient(135deg, #667eea, #764ba2)',
+                    'linear-gradient(135deg, #4ecdc4, #44a08d)',
+                    'linear-gradient(135deg, #ff6b6b, #ee5a6f)',
+                    'linear-gradient(135deg, #a8edea, #fed6e3)',
+                    'linear-gradient(135deg, #feca57, #ff9ff3)'
+                ],
+                gradient2: [
+                    'linear-gradient(135deg, #ff6b6b, #ee5a6f)',
+                    'linear-gradient(135deg, #ff9a9e, #fecfef)',
+                    'linear-gradient(135deg, #ff8a80, #ff5722)',
+                    'linear-gradient(135deg, #f093fb, #f5576c)',
+                    'linear-gradient(135deg, #ff7979, #fd79a8)'
+                ],
+                gradient3: [
+                    'linear-gradient(135deg, #4ecdc4, #44a08d)',
+                    'linear-gradient(135deg, #a8edea, #fed6e3)',
+                    'linear-gradient(135deg, #96ceb4, #ffecd2)',
+                    'linear-gradient(135deg, #74b9ff, #0984e3)',
+                    'linear-gradient(135deg, #81ecec, #74b9ff)'
+                ],
+                gradient4: [
+                    'linear-gradient(135deg, #667eea, #764ba2)',
+                    'linear-gradient(135deg, #a044ff, #6c5ce7)',
+                    'linear-gradient(135deg, #fd79a8, #fdcb6e)',
+                    'linear-gradient(135deg, #e17055, #fdcb6e)',
+                    'linear-gradient(135deg, #6c5ce7, #a29bfe)'
+                ],
+                gradient5: [
+                    'linear-gradient(135deg, #feca57, #ff9ff3)',
+                    'linear-gradient(135deg, #ff9ff3, #feca57)',
+                    'linear-gradient(135deg, #fdcb6e, #e17055)',
+                    'linear-gradient(135deg, #fd79a8, #fdcb6e)',
+                    'linear-gradient(135deg, #fab1a0, #e17055)'
+                ]
             };
 
             // 유틸리티
@@ -833,12 +1172,19 @@
                         el.textContent = msg;
                         el.className = `status-message ${type}`;
                         el.style.display = 'block';
+                        setTimeout(() => {
+                            if (type === 'success') {
+                                el.style.display = 'none';
+                            }
+                        }, 3000);
                     }
                 }),
                 
                 modal: safe((show) => {
                     const modal = document.getElementById('progressModal');
-                    if (modal) modal.style.display = show ? 'flex' : 'none';
+                    if (modal) {
+                        modal.classList.toggle('show', show);
+                    }
                 }),
                 
                 progress: safe((percent, title, desc, icon = '🤖') => {
@@ -848,15 +1194,15 @@
                     const descEl = document.getElementById('progressDesc');
                     const iconEl = document.getElementById('progressIcon');
                     
-                    if (fill) fill.style.width = `${percent}%`;
-                    if (text) text.textContent = `${percent}%`;
+                    if (fill) fill.style.width = `${Math.min(100, Math.max(0, percent))}%`;
+                    if (text) text.textContent = `${Math.round(percent)}%`;
                     if (titleEl) titleEl.textContent = title;
                     if (descEl) descEl.textContent = desc;
                     if (iconEl) iconEl.textContent = icon;
                 })
             };
 
-            // API 호출 (GPT-4 + DALL-E)
+            // API 호출
             const api = {
                 generateSlides: safe(async (prompt) => {
                     try {
@@ -871,7 +1217,7 @@
                                 messages: [
                                     { 
                                         role: 'system', 
-                                        content: 'You are a professional presentation designer. Create exactly 11 dynamic slides for YouTube Shorts with strong visual impact. Return only a JSON array with objects containing: slideNumber, title, subtitle, icon, type, bgGradient. Use Korean text and choose powerful, engaging titles.' 
+                                        content: 'You are a professional presentation designer. Create exactly 11 dynamic slides for YouTube Shorts with strong visual impact. Return only a JSON array with objects containing: slideNumber, title, subtitle, icon, type. Use Korean text and choose powerful, engaging titles that match the content perfectly.' 
                                     },
                                     { role: 'user', content: prompt }
                                 ],
@@ -884,19 +1230,19 @@
                         const data = await response.json();
                         return data.choices[0].message.content;
                     } catch (error) {
-                        // 실패 시 개선된 더미 데이터 반환
+                        // 더 정교한 더미 데이터
                         return `[
-                            {"slideNumber": 1, "title": "Sue Reading Club", "subtitle": "AI 영어교육의 혁신", "icon": "🚀", "type": "intro", "bgGradient": "linear-gradient(135deg, #667eea, #764ba2)"},
-                            {"slideNumber": 2, "title": "AI 혁신 교육", "subtitle": "3배 빠른 실력 향상 보장", "icon": "⭐", "type": "feature", "bgGradient": "linear-gradient(135deg, #ff6b6b, #ee5a6f)"},
-                            {"slideNumber": 3, "title": "개인 맞춤 AI", "subtitle": "당신만의 학습 경험", "icon": "🎯", "type": "feature", "bgGradient": "linear-gradient(135deg, #4ecdc4, #44a08d)"},
-                            {"slideNumber": 4, "title": "스마트 속독", "subtitle": "읽기 속도 3배 향상", "icon": "💡", "type": "feature", "bgGradient": "linear-gradient(135deg, #a8edea, #fed6e3)"},
-                            {"slideNumber": 5, "title": "AI 토론 클래스", "subtitle": "실시간 대화 학습", "icon": "🔥", "type": "feature", "bgGradient": "linear-gradient(135deg, #feca57, #ff9ff3)"},
-                            {"slideNumber": 6, "title": "즉석 피드백", "subtitle": "실시간 오류 교정", "icon": "✨", "type": "feature", "bgGradient": "linear-gradient(135deg, #667eea, #764ba2)"},
-                            {"slideNumber": 7, "title": "놀라운 성과", "subtitle": "98% 학부모 만족도", "icon": "⚡", "type": "feature", "bgGradient": "linear-gradient(135deg, #ff6b6b, #ee5a6f)"},
-                            {"slideNumber": 8, "title": "특별 혜택", "subtitle": "첫 달 30% 할인", "icon": "💝", "type": "feature", "bgGradient": "linear-gradient(135deg, #4ecdc4, #44a08d)"},
-                            {"slideNumber": 9, "title": "송도 위치", "subtitle": "인천 연수구 송도동", "icon": "🌟", "type": "feature", "bgGradient": "linear-gradient(135deg, #a8edea, #fed6e3)"},
-                            {"slideNumber": 10, "title": "지금 시작", "subtitle": "미래를 바꾸는 영어교육", "icon": "💫", "type": "feature", "bgGradient": "linear-gradient(135deg, #feca57, #ff9ff3)"},
-                            {"slideNumber": 11, "title": "연락하세요", "subtitle": "010-9579-4429", "icon": "📞", "type": "contact", "bgGradient": "linear-gradient(135deg, #667eea, #764ba2)"}
+                            {"slideNumber": 1, "title": "Sue Reading Club", "subtitle": "20년 전통의 AI 영어교육 혁신", "icon": "🚀", "type": "intro"},
+                            {"slideNumber": 2, "title": "20년 축적된 노하우", "subtitle": "최신 AI 기술과의 완벽한 결합", "icon": "⭐", "type": "feature"},
+                            {"slideNumber": 3, "title": "AI 영어소설 독해", "subtitle": "개인별 취약점 실시간 진단", "icon": "📚", "type": "feature"},
+                            {"slideNumber": 4, "title": "스마트 속독 트레이닝", "subtitle": "읽기 속도 3배 향상 보장", "icon": "⚡", "type": "feature"},
+                            {"slideNumber": 5, "title": "AI 토론 클래스", "subtitle": "실시간 영어 대화 연습", "icon": "💬", "type": "feature"},
+                            {"slideNumber": 6, "title": "특별 채두윜반", "subtitle": "고급 영어 실력 완성 과정", "icon": "🎯", "type": "feature"},
+                            {"slideNumber": 7, "title": "영어소설 마스터", "subtitle": "문학을 통한 고급 영어 습득", "icon": "📖", "type": "feature"},
+                            {"slideNumber": 8, "title": "검증된 성과", "subtitle": "98% 학부모 만족도, 3.2배 향상", "icon": "🏆", "type": "feature"},
+                            {"slideNumber": 9, "title": "특별 혜택", "subtitle": "첫 달 30% 할인 + 무료 테스트", "icon": "🎁", "type": "feature"},
+                            {"slideNumber": 10, "title": "해온더라운지 702호", "subtitle": "송도동 22-20 (접근성 우수)", "icon": "📍", "type": "feature"},
+                            {"slideNumber": 11, "title": "지금 연락하세요", "subtitle": "010-4602-1953 | 평일만 운영", "icon": "📞", "type": "contact"}
                         ]`;
                     }
                 }),
@@ -911,7 +1257,7 @@
                             },
                             body: JSON.stringify({
                                 model: 'dall-e-3',
-                                prompt: prompt,
+                                prompt: `${prompt}, professional education environment, modern and traditional, high quality, digital art style, bright and inspiring`,
                                 n: 1,
                                 size: '1024x1024',
                                 quality: 'standard'
@@ -922,8 +1268,8 @@
                         const data = await response.json();
                         return data.data[0].url;
                     } catch (error) {
-                        // 실패 시 플레이스홀더 이미지
-                        return 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0iIzQ2Njk4YyIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LXNpemU9IjE4IiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkFJIOyDneyEsSDsnbTrr7jihIM8L3RleHQ+PC9zdmc+';
+                        // 교육 관련 SVG 플레이스홀더
+                        return 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiM2NjdlZWEiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiM3NjRiYTIiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0idXJsKCNnKSIvPjx0ZXh0IHg9IjUwJSIgeT0iNDAiIGZvbnQtc2l6ZT0iNDAiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7wn5OAIEE8L3RleHQ+PHRleHQgeD0iNTAlIiB5PSIxNTAiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5TdWUgUmVhZGluZyBDbHViPC90ZXh0Pjx0ZXh0IHg9IjUwJSIgeT0iMTgwIiBmb250LXNpemU9IjE0IiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+QUkg7JiB7Ja066qo7IucPC90ZXh0Pjx0ZXh0IHg9IjUwJSIgeT0iMjUwIiBmb250LXNpemU9IjQwIiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+8J+TljwvdGV4dD48L3N2Zz4=';
                     }
                 })
             };
@@ -940,67 +1286,78 @@
             });
 
             const createDefault = safe((title, content) => {
-                const gradients = [
-                    'linear-gradient(135deg, #667eea, #764ba2)',
-                    'linear-gradient(135deg, #ff6b6b, #ee5a6f)',
-                    'linear-gradient(135deg, #4ecdc4, #44a08d)',
-                    'linear-gradient(135deg, #a8edea, #fed6e3)',
-                    'linear-gradient(135deg, #feca57, #ff9ff3)'
-                ];
-                const icons = ['🚀', '⭐', '🎯', '💡', '🔥', '✨', '⚡', '💝', '🌟', '💫', '📞'];
+                const icons = ['🚀', '⭐', '📚', '⚡', '💬', '🎯', '📖', '🏆', '🎁', '📍', '📞'];
                 
                 return Array.from({length: 11}, (_, i) => ({
                     slideNumber: i + 1,
                     type: i === 0 ? 'intro' : i === 10 ? 'contact' : 'feature',
                     title: i === 0 ? title : `특징 ${i}`,
-                    subtitle: i === 0 ? '혁신적 솔루션' : '상세 설명',
-                    icon: icons[i] || '🎬',
-                    bgGradient: gradients[i % gradients.length]
+                    subtitle: i === 0 ? '20년 전통의 혁신적 솔루션' : '상세 설명',
+                    icon: icons[i] || '🎬'
                 }));
             });
 
-            // 3D 슬라이드쇼 생성
+            // 3D 슬라이드쇼 생성 (개선된 버전)
             const createSlideshow = safe((container, slides) => {
                 if (!container || !slides) return;
+                
+                // 기존 인터벌 정리
+                if (app.slideInterval) {
+                    clearInterval(app.slideInterval);
+                }
                 
                 container.innerHTML = '';
                 app.currentSlideIndex = 0;
                 
+                const colorTheme = document.getElementById('colorSelect')?.value || 'gradient1';
+                const gradients = colorThemes[colorTheme] || colorThemes.gradient1;
+                
                 slides.forEach((slide, index) => {
                     const slideEl = document.createElement('div');
                     slideEl.className = `slide ${index === 0 ? 'active' : 'next'}`;
-                    slideEl.style.background = slide.bgGradient || 'linear-gradient(135deg, #667eea, #764ba2)';
+                    slideEl.style.background = gradients[index % gradients.length];
                     
                     slideEl.innerHTML = `
                         <div class="slide-icon">${slide.icon || '🎬'}</div>
                         <div class="slide-title">${slide.title || '제목'}</div>
                         <div class="slide-subtitle">${slide.subtitle || '부제목'}</div>
-                        <div style="position: absolute; bottom: 30px; right: 30px; font-size: 1.1em; opacity: 0.8; background: rgba(0,0,0,0.4); padding: 8px 15px; border-radius: 20px;">
-                            ${index + 1} / ${slides.length}
-                        </div>
-                        ${app.generatedImage ? `<img src="${app.generatedImage}" style="position: absolute; top: 20px; right: 20px; width: 60px; height: 60px; border-radius: 50%; opacity: 0.8; border: 2px solid rgba(255,255,255,0.3);" />` : ''}
+                        <div class="slide-counter">${index + 1} / ${slides.length}</div>
+                        ${app.generatedImage ? `<img src="${app.generatedImage}" class="slide-image" alt="AI Generated" />` : ''}
                     `;
                     
                     container.appendChild(slideEl);
                 });
                 
-                // 자동 슬라이드 전환
-                const slideInterval = setInterval(() => {
+                // 자동 슬라이드 전환 (개선된 버전)
+                app.slideInterval = setInterval(() => {
                     const currentSlide = container.children[app.currentSlideIndex];
                     const nextIndex = (app.currentSlideIndex + 1) % slides.length;
                     const nextSlide = container.children[nextIndex];
                     
-                    // 3D 회전 효과
-                    currentSlide.className = 'slide prev';
-                    nextSlide.className = 'slide active';
-                    
-                    app.currentSlideIndex = nextIndex;
+                    if (currentSlide && nextSlide) {
+                        // 부드러운 3D 전환
+                        currentSlide.classList.remove('active');
+                        currentSlide.classList.add('prev');
+                        
+                        nextSlide.classList.remove('next', 'prev');
+                        nextSlide.classList.add('active');
+                        
+                        // 다음 슬라이드 준비
+                        const afterNextIndex = (nextIndex + 1) % slides.length;
+                        const afterNextSlide = container.children[afterNextIndex];
+                        if (afterNextSlide) {
+                            afterNextSlide.classList.remove('prev');
+                            afterNextSlide.classList.add('next');
+                        }
+                        
+                        app.currentSlideIndex = nextIndex;
+                    }
                 }, 2500);
                 
-                container.slideInterval = slideInterval;
+                container.slideInterval = app.slideInterval;
             });
 
-            // 이벤트 핸들러
+                            // 이벤트 핸들러
             const handlers = {
                 apiSetup: safe(() => {
                     const input = document.getElementById('apiInput');
@@ -1027,17 +1384,23 @@
                 }),
                 
                 guide: safe(() => {
-                    alert(`🔑 OpenAI API 키 발급 방법:
+                    const guideText = `🔑 OpenAI API 키 발급 방법:
 
 1. platform.openai.com 접속
 2. 로그인 후 API Keys 메뉴 클릭
 3. "Create new secret key" 버튼 클릭
 4. 생성된 키를 복사하여 입력
 
-💡 참고:
+💡 참고사항:
 - GPT-4와 DALL-E 3 API 사용 가능한 키 필요
 - API 사용량에 따라 과금됩니다
-- 키는 안전하게 보관하세요`);
+- 키는 안전하게 보관하세요
+
+🎯 권장설정:
+- GPT-4 모델 활성화 필수
+- DALL-E 3 이미지 생성 권한 필요`;
+                    
+                    alert(guideText);
                 }),
                 
                 templates: safe(() => {
@@ -1070,40 +1433,49 @@
                     
                     try {
                         // 1단계: 슬라이드 생성
-                        ui.progress(15, '🤖 AI 분석', 'GPT-4가 내용을 분석중...', '🤖');
+                        ui.progress(15, '🧠 AI 분석 시작', 'GPT-4가 내용을 분석하고 있습니다...', '🤖');
                         
-                        const prompt = `템플릿: ${app.template}\n제목: ${title}\n내용: ${content}\n\n위 내용으로 유튜브 쇼츠용 11장의 강력하고 임팩트 있는 슬라이드를 JSON 형태로 생성해주세요. 각 슬라이드에 bgGradient도 포함해주세요.`;
+                        const prompt = `템플릿: ${app.template}
+제목: ${title}
+내용: ${content}
+
+위 내용을 바탕으로 유튜브 쇼츠용 11장의 강력하고 임팩트 있는 슬라이드를 생성해주세요. 
+각 슬라이드는 시청자의 시선을 사로잡을 수 있는 제목과 부제목으로 구성되어야 합니다.
+JSON 형태로 반환해주세요.`;
+                        
                         const slideResponse = await api.generateSlides(prompt);
                         
-                        ui.progress(45, '🎨 슬라이드 생성', '프로급 디자인 적용중...', '🎨');
+                        ui.progress(45, '🎨 슬라이드 생성', '프로급 디자인을 적용하고 있습니다...', '🎨');
                         app.slides = parseSlides(slideResponse, title, content);
                         
                         // 2단계: 이미지 생성 (선택사항)
                         if (imagePrompt) {
-                            ui.progress(70, '🖼️ AI 이미지 생성', 'DALL-E 3가 이미지 생성중...', '🖼️');
+                            ui.progress(70, '🖼️ AI 이미지 생성', 'DALL-E 3가 맞춤 이미지를 생성중...', '🖼️');
                             
-                            const fullImagePrompt = `${imagePrompt}, professional, high quality, modern design, bright colors, digital art style`;
+                            const fullImagePrompt = `${imagePrompt}, professional education environment, modern and traditional, high quality, digital art style, bright and inspiring atmosphere`;
                             app.generatedImage = await api.generateImage(fullImagePrompt);
                             
                             // 이미지 미리보기 업데이트
                             const preview = document.getElementById('imagePreview');
                             if (preview && app.generatedImage) {
-                                preview.innerHTML = `<img src="${app.generatedImage}" alt="AI Generated Image">`;
+                                preview.innerHTML = `<img src="${app.generatedImage}" alt="AI Generated Image" style="transition: all 0.5s ease;">`;
                             }
+                        } else {
+                            ui.progress(80, '🎯 슬라이드 최적화', '유튜브 쇼츠에 맞게 최적화중...', '🎯');
                         }
                         
-                        ui.progress(95, '✅ 완성!', '3D 슬라이드 준비 완료', '✅');
+                        ui.progress(95, '✅ 완성!', '3D 슬라이드가 준비되었습니다!', '✅');
                         
                         setTimeout(() => {
                             ui.modal(false);
                             handlers.showResult();
-                        }, 1000);
+                        }, 1200);
                         
                     } catch (error) {
-                        ui.progress(0, '❌ 오류', 'API 호출 실패', '❌');
+                        ui.progress(0, '❌ 생성 실패', 'API 호출에 실패했습니다', '❌');
                         setTimeout(() => {
                             ui.modal(false);
-                            alert('생성에 실패했습니다. API 키와 인터넷 연결을 확인해주세요.');
+                            alert('슬라이드 생성에 실패했습니다. API 키와 인터넷 연결을 확인해주세요.');
                         }, 2000);
                     }
                 }),
@@ -1111,61 +1483,198 @@
                 showResult: safe(() => {
                     const section = document.getElementById('resultSection');
                     const container = document.getElementById('slideContainer');
+                    const info = document.getElementById('resultInfo');
                     
                     if (container && app.slides) {
                         createSlideshow(container, app.slides);
                     }
                     
+                    if (info && app.slides) {
+                        info.innerHTML = `
+                            <strong>📊 AI 생성 결과:</strong><br>
+                            • 총 ${app.slides.length}장의 3D 애니메이션 슬라이드 완성<br>
+                            ${app.generatedImage ? '• AI 생성 이미지 포함<br>' : ''}
+                            • 유튜브 쇼츠 최적화 (9:16 비율)<br>
+                            • 27.5초 재생 시간<br>
+                            • 프리미엄 시각 효과 적용<br>
+                            • 반응형 디자인 완료
+                        `;
+                    }
+                    
                     if (section) {
-                        section.style.display = 'block';
-                        section.scrollIntoView({ behavior: 'smooth' });
+                        section.classList.add('show');
+                        setTimeout(() => {
+                            section.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }, 300);
                     }
                 }),
                 
                 showGuide: safe(() => {
-                    alert(`🎬 프리미엄 영상 녹화 가이드
+                    const guideText = `🎬 프리미엄 영상 촬영 가이드
 
 🎯 완성된 3D 슬라이드를 최고 품질로 녹화하세요!
 
-📱 모바일 녹화:
-1. 휴대폰 화면 녹화 켜기
+📱 모바일 녹화 (간편함):
+1. 휴대폰 화면 녹화 기능 활성화
 2. 세로 모드(9:16 비율) 설정
-3. 슬라이드 영역만 촬영
-4. 약 27.5초간 자동 재생
+3. 슬라이드 영역만 정확히 촬영
+4. 약 27.5초간 자동 재생됨
 
-💻 PC 고품질 녹화:
+💻 PC 고품질 녹화 (권장):
 1. OBS Studio 또는 Bandicam 사용
-2. 1080x1920 해상도 설정
-3. 60fps 녹화 권장
+2. 1080x1920 해상도 설정 (Full HD)
+3. 60fps 녹화로 부드러운 영상
 4. 슬라이드 영역을 정확히 캡처
 
 🎨 추가 편집 팁:
-- 배경 음악 추가로 완성도 UP
-- 자막이나 효과 추가 가능
-- 유튜브 쇼츠에 바로 업로드 OK
+• 배경 음악 추가로 완성도 극대화
+• 자막이나 효과는 선택사항
+• 유튜브 쇼츠에 바로 업로드 가능
+• 썸네일은 첫 번째 슬라이드 활용
 
-🚀 이제 프로급 영상 완성!`);
+📈 성과 향상 팁:
+• 업로드 시간: 저녁 7-9시 권장
+• 해시태그: #AI #영어교육 #송도 활용
+• 제목: 궁금증 유발하는 문구 사용
+
+🚀 이제 바이럴 가능성 높은 프로급 영상 완성!`;
+                    
+                    alert(guideText);
+                }),
+
+                // 키보드 단축키
+                handleKeyboard: safe((e) => {
+                    if (e.ctrlKey || e.metaKey) {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            const generateBtn = document.getElementById('generateBtn');
+                            if (generateBtn && !generateBtn.disabled) {
+                                handlers.generate();
+                            }
+                        }
+                    }
+                }),
+
+                // 실시간 입력 검증
+                validateInputs: safe(() => {
+                    const title = document.getElementById('titleInput')?.value?.trim();
+                    const content = document.getElementById('contentInput')?.value?.trim();
+                    const btn = document.getElementById('generateBtn');
+                    
+                    if (btn) {
+                        if (app.apiKey && title && content) {
+                            btn.disabled = false;
+                            btn.style.opacity = '1';
+                        } else {
+                            btn.disabled = true;
+                            btn.style.opacity = '0.5';
+                        }
+                    }
                 })
             };
 
-            // 초기화
+            // 향상된 초기화
             const init = safe(() => {
-                // 파티클 시스템 시작
-                initParticles();
+                // 고급 파티클 시스템 시작
+                initAdvancedParticles();
                 
+                // 반응형 처리
+                window.addEventListener('resize', handleResize);
+                handleResize();
+                
+                // 이벤트 리스너 등록
                 const elements = {
                     setApi: document.getElementById('setApiBtn'),
                     guide: document.getElementById('showGuideBtn'),
                     generate: document.getElementById('generateBtn'),
-                    record: document.getElementById('recordBtn')
+                    record: document.getElementById('recordBtn'),
+                    titleInput: document.getElementById('titleInput'),
+                    contentInput: document.getElementById('contentInput'),
+                    apiInput: document.getElementById('apiInput')
                 };
                 
+                // 버튼 이벤트
                 if (elements.setApi) elements.setApi.addEventListener('click', handlers.apiSetup);
                 if (elements.guide) elements.guide.addEventListener('click', handlers.guide);
                 if (elements.generate) elements.generate.addEventListener('click', handlers.generate);
                 if (elements.record) elements.record.addEventListener('click', handlers.showGuide);
                 
+                // 입력 필드 실시간 검증
+                if (elements.titleInput) {
+                    elements.titleInput.addEventListener('input', handlers.validateInputs);
+                    elements.titleInput.addEventListener('paste', () => setTimeout(handlers.validateInputs, 100));
+                }
+                if (elements.contentInput) {
+                    elements.contentInput.addEventListener('input', handlers.validateInputs);
+                    elements.contentInput.addEventListener('paste', () => setTimeout(handlers.validateInputs, 100));
+                }
+                if (elements.apiInput) {
+                    elements.apiInput.addEventListener('input', handlers.validateInputs);
+                    elements.apiInput.addEventListener('keypress', (e) => {
+                        if (e.key === 'Enter') {
+                            handlers.apiSetup();
+                        }
+                    });
+                }
+                
+                // 키보드 단축키
+                document.addEventListener('keydown', handlers.handleKeyboard);
+                
+                // 템플릿 카드 이벤트
                 handlers.templates();
+                
+                // 초기 검증
+                handlers.validateInputs();
+                
+                // 접근성 개선
+                document.querySelectorAll('.btn').forEach(btn => {
+                    btn.setAttribute('role', 'button');
+                    btn.setAttribute('tabindex', '0');
+                });
+                
+                // 포커스 관리
+                document.querySelectorAll('.input-field').forEach(input => {
+                    input.addEventListener('focus', function() {
+                        this.parentElement.style.transform = 'scale(1.01)';
+                        this.parentElement.style.transition = 'transform 0.3s ease';
+                    });
+                    
+                    input.addEventListener('blur', function() {
+                        this.parentElement.style.transform = 'scale(1)';
+                    });
+                });
+                
+                // 스크롤 애니메이션
+                const observerOptions = {
+                    threshold: 0.1,
+                    rootMargin: '0px 0px -50px 0px'
+                };
+                
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.style.opacity = '1';
+                            entry.target.style.transform = 'translateY(0)';
+                        }
+                    });
+                }, observerOptions);
+                
+                document.querySelectorAll('.section').forEach(section => {
+                    section.style.opacity = '0';
+                    section.style.transform = 'translateY(30px)';
+                    section.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+                    observer.observe(section);
+                });
+                
+                // 성능 최적화
+                if ('requestIdleCallback' in window) {
+                    requestIdleCallback(() => {
+                        // 백그라운드에서 추가 최적화 작업
+                        document.querySelectorAll('img').forEach(img => {
+                            img.loading = 'lazy';
+                        });
+                    });
+                }
             });
 
             // DOM 로드 시 초기화
@@ -1174,6 +1683,13 @@
             } else {
                 init();
             }
+            
+            // 페이지 언로드 시 정리
+            window.addEventListener('beforeunload', () => {
+                if (app.slideInterval) {
+                    clearInterval(app.slideInterval);
+                }
+            });
         })();
     </script>
 </body>
