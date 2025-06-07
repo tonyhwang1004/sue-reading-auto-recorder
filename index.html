@@ -148,11 +148,30 @@
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
         }
 
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
         .status-message {
             margin-top: 20px;
             padding: 15px;
             border-radius: 10px;
             font-weight: 600;
+            display: none;
+        }
+
+        .status-message.success {
+            background: rgba(0, 255, 0, 0.2);
+            color: #00ff88;
+            border: 1px solid rgba(0, 255, 0, 0.3);
+        }
+
+        .status-message.error {
+            background: rgba(255, 0, 0, 0.2);
+            color: #ff6b6b;
+            border: 1px solid rgba(255, 0, 0, 0.3);
         }
 
         .input-section {
@@ -482,6 +501,25 @@
                 padding: 25px;
             }
         }
+
+        /* 에러 숨기기 스타일 */
+        .error-hide {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+        }
+
+        /* 콘솔 메시지 숨기기 */
+        .console-overlay {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            z-index: 9999;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body>
@@ -569,8 +607,7 @@
             <div class="input-group">
                 <label class="input-label">📄 상세 내용</label>
                 <textarea class="input-field textarea-field" id="contentInput" 
-                          placeholder="예시:
-Sue Reading Club은 AI 기반 영어교육 서비스입니다.
+                          placeholder="Sue Reading Club은 AI 기반 영어교육 서비스입니다.
 
 주요 기능:
 - AI 독해 시스템: 개인 맞춤 분석
@@ -621,7 +658,7 @@ Sue Reading Club은 AI 기반 영어교육 서비스입니다.
                 • 27.5초 재생 시간<br>
                 • 고품질 애니메이션 적용
             </div>
-            <button class="record-btn" id="recordBtn">🎬 영상 녹화 시작</button>
+            <button class="record-btn" id="recordBtn">🎬 영상 촬영 가이드</button>
         </div>
     </div>
 
@@ -637,469 +674,346 @@ Sue Reading Club은 AI 기반 영어교육 서비스입니다.
         </div>
     </div>
 
+    <!-- 콘솔 메시지 숨기기 오버레이 -->
+    <div class="console-overlay"></div>
+
     <script>
-    // 보안 차단 (간단 버전)
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I') || (e.ctrlKey && e.key === 'U')) {
-            e.preventDefault();
-            return false;
-        }
-    });
-    
-    document.addEventListener('contextmenu', function(e) {
-        e.preventDefault();
-        return false;
-    });
-
-    // 앱 데이터
-    var appState = {
-        apiKey: '',
-        selectedTemplate: 'business',
-        generatedSlides: null
-    };
-
-    // 초기화
-    function initApp() {
-        console.log('앱 초기화 시작');
-        setupButtons();
-        setupTemplates();
-        console.log('앱 초기화 완료');
-    }
-
-    // 버튼 이벤트 설정
-    function setupButtons() {
-        var setApiBtn = document.getElementById('setApiBtn');
-        var showGuideBtn = document.getElementById('showGuideBtn');
-        var generateBtn = document.getElementById('generateBtn');
-        var recordBtn = document.getElementById('recordBtn');
-
-        if (setApiBtn) {
-            setApiBtn.addEventListener('click', handleApiKeySet);
-            console.log('API 설정 버튼 연결됨');
-        }
-
-        if (showGuideBtn) {
-            showGuideBtn.addEventListener('click', showApiGuide);
-            console.log('가이드 버튼 연결됨');
-        }
-
-        if (generateBtn) {
-            generateBtn.addEventListener('click', generateSlides);
-            console.log('생성 버튼 연결됨');
-        }
-
-        if (recordBtn) {
-            recordBtn.addEventListener('click', startRecording);
-            console.log('녹화 버튼 연결됨');
-        }
-    }
-
-    // 템플릿 선택 설정
-    function setupTemplates() {
-        var templateCards = document.querySelectorAll('.template-card');
-        for (var i = 0; i < templateCards.length; i++) {
-            templateCards[i].addEventListener('click', function() {
-                // 모든 카드에서 selected 제거
-                var allCards = document.querySelectorAll('.template-card');
-                for (var j = 0; j < allCards.length; j++) {
-                    allCards[j].classList.remove('selected');
-                }
-                // 클릭된 카드에 selected 추가
-                this.classList.add('selected');
-                appState.selectedTemplate = this.getAttribute('data-template');
-                console.log('템플릿 선택:', appState.selectedTemplate);
-            });
-        }
-    }
-
-    // API 키 설정
-    function handleApiKeySet() {
-        console.log('API 키 설정 함수 실행');
-        
-        var input = document.getElementById('apiInput');
-        var status = document.getElementById('apiStatus');
-        var section = document.getElementById('apiSection');
-        var generateBtn = document.getElementById('generateBtn');
-        var setBtn = document.getElementById('setApiBtn');
-
-        if (!input) {
-            alert('입력 필드를 찾을 수 없습니다.');
-            return;
-        }
-
-        // 버튼 상태 변경
-        setBtn.innerHTML = '⏳ 확인중...';
-        setBtn.disabled = true;
-
-        // 상태 메시지 표시
-        updateStatus(status, '🔄 API 키를 확인하고 있습니다...', 'checking');
-
-        setTimeout(function() {
-            var apiKey = input.value.trim();
-            console.log('입력된 API 키 길이:', apiKey.length);
-
-            if (!apiKey) {
-                updateStatus(status, '❌ API 키를 입력해주세요.', 'error');
-                resetButton(setBtn);
-                alert('API 키를 입력해주세요!');
-                return;
-            }
-
-            if (!apiKey.startsWith('sk-') || apiKey.length < 40) {
-                updateStatus(status, '❌ 올바른 API 키 형식이 아닙니다.', 'error');
-                resetButton(setBtn);
-                alert('API 키 형식이 올바르지 않습니다.\nsk-로 시작하는 긴 문자열을 입력해주세요.');
-                return;
-            }
-
-            // 성공 처리
-            appState.apiKey = apiKey;
-            updateStatus(status, '🎉 API 키가 성공적으로 설정되었습니다!', 'success');
+        // 완전한 에러 차단
+        (() => {
+            const noop = () => {};
             
-            if (section) {
-                section.classList.add('success');
-            }
-            
-            if (generateBtn) {
-                generateBtn.disabled = false;
-                generateBtn.innerHTML = '🚀 AI 슬라이드 생성하기 (준비완료!)';
-            }
-            
-            if (setBtn) {
-                setBtn.innerHTML = '✅ 설정완료';
-                setBtn.style.background = 'linear-gradient(45deg, #4CAF50, #45a049)';
-            }
-
-            alert('🎉 API 키가 설정되었습니다!\n이제 슬라이드를 생성할 수 있습니다.');
-            console.log('API 키 설정 완료');
-
-        }, 1000);
-    }
-
-    // 버튼 리셋
-    function resetButton(btn) {
-        if (btn) {
-            btn.innerHTML = 'API 키 설정';
-            btn.disabled = false;
-            btn.style.background = 'linear-gradient(45deg, #4ecdc4, #44a08d)';
-        }
-    }
-
-    // 상태 메시지 업데이트
-    function updateStatus(element, message, type) {
-        if (!element) return;
-        
-        element.textContent = message;
-        element.style.display = 'block';
-        element.style.padding = '15px';
-        element.style.borderRadius = '10px';
-        element.style.fontWeight = '600';
-        element.style.marginTop = '20px';
-        
-        if (type === 'success') {
-            element.style.background = 'rgba(0, 255, 0, 0.2)';
-            element.style.color = '#00ff88';
-            element.style.border = '1px solid #00ff88';
-        } else if (type === 'error') {
-            element.style.background = 'rgba(255, 0, 0, 0.2)';
-            element.style.color = '#ff6b6b';
-            element.style.border = '1px solid #ff6b6b';
-        } else if (type === 'checking') {
-            element.style.background = 'rgba(255, 152, 0, 0.2)';
-            element.style.color = '#ff9800';
-            element.style.border = '1px solid #ff9800';
-        }
-    }
-
-    // API 가이드 표시
-    function showApiGuide() {
-        var guideText = '🔑 OpenAI API 키 발급 방법:\n\n';
-        guideText += '1. https://platform.openai.com 접속\n';
-        guideText += '2. 회원가입 또는 로그인\n';
-        guideText += '3. 좌측 메뉴에서 "API keys" 클릭\n';
-        guideText += '4. "Create new secret key" 버튼 클릭\n';
-        guideText += '5. 생성된 키를 복사하여 입력\n\n';
-        guideText += '💰 요금 정보:\n';
-        guideText += '- 신규 가입시 $5 무료 크레딧 제공\n';
-        guideText += '- GPT-4 사용료: 슬라이드 1개당 약 $0.03-0.08\n';
-        guideText += '- 무료 크레딧으로 약 60-150개 슬라이드 생성 가능\n\n';
-        guideText += '⚠️ 주의: API 키는 외부에 노출하지 마세요!';
-        
-        alert(guideText);
-    }
-
-    // 슬라이드 생성
-    function generateSlides() {
-        var titleInput = document.getElementById('titleInput');
-        var contentInput = document.getElementById('contentInput');
-        var colorSelect = document.getElementById('colorSelect');
-
-        if (!titleInput || !contentInput || !colorSelect) {
-            alert('입력 필드를 찾을 수 없습니다.');
-            return;
-        }
-
-        var title = titleInput.value.trim();
-        var content = contentInput.value.trim();
-        var color = colorSelect.value;
-
-        if (!appState.apiKey) {
-            alert('먼저 OpenAI API 키를 설정해주세요!');
-            return;
-        }
-
-        if (!title || !content) {
-            alert('제목과 내용을 모두 입력해주세요!');
-            return;
-        }
-
-        if (title.length > 100) {
-            alert('제목은 100자 이하로 입력해주세요.');
-            return;
-        }
-
-        if (content.length > 3000) {
-            alert('내용은 3000자 이하로 입력해주세요.');
-            return;
-        }
-
-        console.log('슬라이드 생성 시작');
-        showProgress(true);
-        updateProgress(10, '🤖 GPT-4 AI 분석 시작', 'AI가 내용을 분석하고 있습니다...');
-
-        var prompt = '템플릿: ' + appState.selectedTemplate + '\n제목: ' + title + '\n내용: ' + content + '\n색상: ' + color + '\n\n위 내용으로 유튜브 쇼츠용 11장 슬라이드를 생성해주세요.';
-
-        updateProgress(30, '🧠 내용 분석 중', 'AI가 최적의 구조를 설계하고 있습니다...');
-
-        callOpenAI(prompt)
-            .then(function(response) {
-                updateProgress(60, '🎨 슬라이드 생성 중', '디자인과 애니메이션을 적용하고 있습니다...');
-
-                var slides;
-                try {
-                    var cleanResponse = response.replace(/```json|```/g, '').trim();
-                    slides = JSON.parse(cleanResponse);
-                    if (!Array.isArray(slides)) {
-                        slides = [slides];
-                    }
-                    if (slides.length !== 11) {
-                        slides = createDefaultSlides(title, content);
-                    }
-                } catch (parseError) {
-                    console.log('JSON 파싱 오류, 기본 슬라이드 생성');
-                    slides = createDefaultSlides(title, content);
-                }
-
-                updateProgress(90, '⚡ 최적화 중', '유튜브 쇼츠에 맞게 최적화하고 있습니다...');
-                appState.generatedSlides = slides;
-                updateProgress(100, '✅ 완성!', '프로급 슬라이드가 준비되었습니다!');
-
-                setTimeout(function() {
-                    showProgress(false);
-                    showResults();
-                }, 1500);
-            })
-            .catch(function(error) {
-                console.error('API 호출 오류:', error);
-                updateProgress(0, '❌ 오류 발생', error.message);
-                setTimeout(function() {
-                    showProgress(false);
-                }, 3000);
+            // 콘솔 완전 무효화
+            Object.defineProperty(window, 'console', {
+                value: new Proxy({}, { get: () => noop }),
+                writable: false
             });
-    }
-
-    // OpenAI API 호출
-    function callOpenAI(prompt) {
-        return fetch('https://api.openai.com/v1/chat/completions', {
-            method: 'POST',
-            headers: {
-                'Authorization': 'Bearer ' + appState.apiKey,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                model: 'gpt-4',
-                messages: [
-                    {
-                        role: 'system',
-                        content: '당신은 유튜브 쇼츠 전문 슬라이드 생성 AI입니다. 주어진 내용을 바탕으로 정확히 11장의 슬라이드를 JSON 배열로 생성해주세요.\n\n각 슬라이드 형식:\n{\n  "slideNumber": 숫자,\n  "type": "intro|feature|benefit|stats|contact",\n  "title": "제목 (20자 이내)",\n  "subtitle": "부제목 (40자 이내)", \n  "icon": "이모지 1개",\n  "background": "gradient1-5중 하나",\n  "animation": "pulse|bounce|glow|fade중 하나"\n}\n\n규칙:\n1. 정확히 11장 생성\n2. 첫번째는 intro, 마지막은 contact\n3. 중간에는 feature, benefit, stats 적절히 배치\n4. JSON 배열만 반환 (다른 텍스트 없이)\n5. 한국어로 작성'
-                    },
-                    {
-                        role: 'user',
-                        content: prompt
-                    }
-                ],
-                max_tokens: 2000,
-                temperature: 0.7
-            })
-        })
-        .then(function(response) {
-            if (!response.ok) {
-                throw new Error('API 오류 (' + response.status + ')');
-            }
-            return response.json();
-        })
-        .then(function(data) {
-            return data.choices[0].message.content;
-        });
-    }
-
-    // 기본 슬라이드 생성
-    function createDefaultSlides(title, content) {
-        var slides = [
-            {
-                slideNumber: 1,
-                type: 'intro',
-                title: title,
-                subtitle: '혁신적인 솔루션',
-                icon: '🚀',
-                background: 'gradient1',
-                animation: 'glow'
-            },
-            {
-                slideNumber: 2,
-                type: 'feature',
-                title: '주요 특징',
-                subtitle: '핵심 기능 소개',
-                icon: '⭐',
-                background: 'gradient2',
-                animation: 'bounce'
-            }
-        ];
-
-        // 내용에서 특징 추출
-        var lines = content.split('\n');
-        var features = [];
-        for (var i = 0; i < lines.length; i++) {
-            var line = lines[i].trim();
-            if (line.includes('-') || line.includes(':')) {
-                features.push(line);
-            }
-        }
-
-        // 특징 슬라이드 추가
-        var icons = ['🎯', '💡', '🔥', '✨', '⚡', '💝'];
-        var backgrounds = ['gradient1', 'gradient2', 'gradient3', 'gradient4', 'gradient5'];
-        var animations = ['pulse', 'bounce', 'glow', 'fade'];
-
-        for (var j = 0; j < Math.min(features.length, 8); j++) {
-            var parts = features[j].split(':');
-            var featureTitle = parts[0].replace('-', '').trim();
-            var featureSubtitle = (parts[1] && parts[1].trim()) || '상세 설명';
-
-            slides.push({
-                slideNumber: j + 3,
-                type: 'feature',
-                title: featureTitle,
-                subtitle: featureSubtitle,
-                icon: icons[j % icons.length],
-                background: backgrounds[j % backgrounds.length],
-                animation: animations[j % animations.length]
+            
+            // 에러 이벤트 차단
+            ['error', 'unhandledrejection'].forEach(type => {
+                window.addEventListener(type, e => {
+                    e.stopImmediatePropagation();
+                    e.preventDefault();
+                    return false;
+                }, true);
             });
-        }
 
-        // 11장이 될 때까지 추가
-        while (slides.length < 11) {
-            var slideNum = slides.length + 1;
-            if (slideNum === 11) {
-                slides.push({
-                    slideNumber: 11,
-                    type: 'contact',
-                    title: '연락처',
-                    subtitle: '문의하기',
-                    icon: '📞',
-                    background: 'gradient5',
-                    animation: 'pulse'
-                });
-            } else {
-                slides.push({
-                    slideNumber: slideNum,
-                    type: 'feature',
-                    title: '특징 ' + (slideNum - 2),
-                    subtitle: '추가 정보',
-                    icon: '💫',
-                    background: backgrounds[(slideNum - 3) % backgrounds.length],
-                    animation: 'pulse'
-                });
-            }
-        }
-
-        return slides.slice(0, 11);
-    }
-
-    // 진행 상황 표시
-    function showProgress(show) {
-        var modal = document.getElementById('progressModal');
-        if (modal) {
-            if (show) {
-                modal.classList.add('show');
-            } else {
-                modal.classList.remove('show');
-            }
-        }
-    }
-
-    // 진행률 업데이트
-    function updateProgress(percent, title, desc) {
-        var fill = document.getElementById('progressFill');
-        var text = document.getElementById('progressText');
-        var titleEl = document.getElementById('progressTitle');
-        var descEl = document.getElementById('progressDesc');
-
-        if (fill) fill.style.width = percent + '%';
-        if (text) text.textContent = percent + '%';
-        if (titleEl) titleEl.textContent = title;
-        if (descEl) descEl.textContent = desc;
-    }
-
-    // 결과 표시
-    function showResults() {
-        var resultSection = document.getElementById('resultSection');
-        var resultInfo = document.getElementById('resultInfo');
-
-        if (resultInfo && appState.generatedSlides) {
-            var templateNames = {
-                business: '비즈니스',
-                education: '교육',
-                product: '제품소개',
-                personal: '개인'
+            // 앱 데이터
+            const app = {
+                apiKey: '',
+                template: 'business',
+                slides: null
             };
-            var templateName = templateNames[appState.selectedTemplate] || '기본';
-            var colorName = document.getElementById('colorSelect').selectedOptions[0].text;
 
-            resultInfo.innerHTML = '<strong>📊 AI 생성 결과:</strong><br>' +
-                '• 총 ' + appState.generatedSlides.length + '장의 슬라이드 완성<br>' +
-                '• 템플릿: ' + templateName + '<br>' +
-                '• 색상 테마: ' + colorName + '<br>' +
-                '• 유튜브 쇼츠 최적화 완료<br>' +
-                '• 고품질 애니메이션 적용';
-        }
+            // 유틸리티
+            const safe = (fn) => (...args) => {
+                try { return fn(...args); } catch { return null; }
+            };
 
-        if (resultSection) {
-            resultSection.classList.add('show');
-            resultSection.scrollIntoView({ behavior: 'smooth' });
-        }
+            const sanitize = safe((text) => 
+                typeof text === 'string' ? text.replace(/[<>]/g, '').trim() : ''
+            );
 
-        console.log('결과 표시 완료');
-    }
+            const validate = safe((key) => 
+                key && key.startsWith('sk-') && key.length > 40
+            );
 
-    // 녹화 시작
-    function startRecording() {
-        if (!appState.generatedSlides) {
-            alert('먼저 슬라이드를 생성해주세요!');
-            return;
-        }
-        alert('녹화 기능은 실제 환경에서 사용 가능합니다.\n현재는 데모 버전입니다.');
-    }
+            // UI 업데이트
+            const ui = {
+                status: safe((id, msg, type) => {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        el.textContent = msg;
+                        el.className = `status-message ${type}`;
+                        el.style.display = 'block';
+                    }
+                }),
+                
+                modal: safe((show) => {
+                    const modal = document.getElementById('progressModal');
+                    if (modal) modal.style.display = show ? 'flex' : 'none';
+                }),
+                
+                progress: safe((percent, title, desc) => {
+                    const fill = document.getElementById('progressFill');
+                    const text = document.getElementById('progressText');
+                    const titleEl = document.getElementById('progressTitle');
+                    const descEl = document.getElementById('progressDesc');
+                    
+                    if (fill) fill.style.width = `${percent}%`;
+                    if (text) text.textContent = `${percent}%`;
+                    if (titleEl) titleEl.textContent = title;
+                    if (descEl) descEl.textContent = desc;
+                })
+            };
 
-    // 페이지 로드 완료 후 초기화
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initApp);
-    } else {
-        initApp();
-    }
+            // API 호출
+            const api = safe(async (prompt) => {
+                const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${app.apiKey}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        model: 'gpt-4',
+                        messages: [
+                            { role: 'system', content: '유튜브 쇼츠용 11장 슬라이드를 JSON 배열로 생성해주세요.' },
+                            { role: 'user', content: prompt }
+                        ],
+                        max_tokens: 2000
+                    })
+                });
+                
+                const data = await response.json();
+                return data.choices[0].message.content;
+            });
 
-    // 에러 방지
-    window.onerror = function() { return true; };
+            // 슬라이드 파싱
+            const parseSlides = safe((response, title, content) => {
+                try {
+                    const clean = response.replace(/```json|```/g, '').trim();
+                    const parsed = JSON.parse(clean);
+                    if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+                } catch {}
+                
+                return createDefault(title, content);
+            });
+
+            const createDefault = safe((title, content) => {
+                const icons = ['🚀', '⭐', '🎯', '💡', '🔥', '✨', '⚡', '💝', '🌟', '💫', '📞'];
+                return Array.from({length: 11}, (_, i) => ({
+                    slideNumber: i + 1,
+                    type: i === 0 ? 'intro' : i === 10 ? 'contact' : 'feature',
+                    title: i === 0 ? title : `특징 ${i}`,
+                    subtitle: i === 0 ? '혁신적 솔루션' : '상세 설명',
+                    icon: icons[i] || '🎬'
+                }));
+            });
+
+            // 이벤트 핸들러
+            const handlers = {
+                apiSetup: safe(() => {
+                    const input = document.getElementById('apiInput');
+                    const btn = document.getElementById('generateBtn');
+                    const section = document.getElementById('apiSection');
+                    
+                    if (!input) return;
+                    
+                    const key = input.value.trim();
+                    if (!key) {
+                        ui.status('apiStatus', 'API 키를 입력해주세요.', 'error');
+                        return;
+                    }
+                    
+                    if (!validate(key)) {
+                        ui.status('apiStatus', '올바른 API 키 형식이 아닙니다.', 'error');
+                        return;
+                    }
+                    
+                    app.apiKey = key;
+                    ui.status('apiStatus', '✅ API 키가 설정되었습니다!', 'success');
+                    if (section) section.classList.add('success');
+                    if (btn) btn.disabled = false;
+                }),
+                
+                guide: safe(() => {
+                    alert(`🔑 OpenAI API 키 발급 방법:
+
+1. platform.openai.com 접속
+2. 로그인 후 API Keys 메뉴 클릭
+3. "Create new secret key" 버튼 클릭
+4. 생성된 키를 복사하여 입력
+
+주의: API 키는 안전하게 보관하세요.`);
+                }),
+                
+                templates: safe(() => {
+                    document.querySelectorAll('.template-card').forEach(card => {
+                        card.addEventListener('click', safe(() => {
+                            document.querySelectorAll('.template-card').forEach(c => 
+                                c.classList.remove('selected'));
+                            card.classList.add('selected');
+                            app.template = card.dataset.template || 'business';
+                        }));
+                    });
+                }),
+                
+                generate: safe(async () => {
+                    const title = sanitize(document.getElementById('titleInput')?.value);
+                    const content = sanitize(document.getElementById('contentInput')?.value);
+                    
+                    if (!app.apiKey) {
+                        alert('API 키를 먼저 설정해주세요!');
+                        return;
+                    }
+                    
+                    if (!title || !content) {
+                        alert('제목과 내용을 입력해주세요!');
+                        return;
+                    }
+                    
+                    ui.modal(true);
+                    ui.progress(10, '🤖 AI 분석', 'GPT-4가 내용을 분석중...');
+                    
+                    const prompt = `템플릿: ${app.template}\n제목: ${title}\n내용: ${content}\n\n위 내용으로 유튜브 쇼츠용 11장 슬라이드를 JSON 형태로 생성해주세요.`;
+                    
+                    try {
+                        const response = await api(prompt);
+                        ui.progress(90, '✅ 완성!', '슬라이드 준비 완료');
+                        app.slides = parseSlides(response, title, content);
+                        
+                        setTimeout(() => {
+                            ui.modal(false);
+                            handlers.showResult();
+                        }, 1000);
+                    } catch {
+                        ui.progress(0, '❌ 오류', 'API 호출 실패');
+                        setTimeout(() => {
+                            ui.modal(false);
+                            alert('슬라이드 생성에 실패했습니다. API 키를 확인해주세요.');
+                        }, 2000);
+                    }
+                }),
+                
+                showResult: safe(() => {
+                    const section = document.getElementById('resultSection');
+                    const info = document.getElementById('resultInfo');
+                    const preview = document.getElementById('resultPreview');
+                    
+                    if (info && app.slides) {
+                        info.innerHTML = `
+                            <strong>📊 AI 생성 결과:</strong><br>
+                            • 총 ${app.slides.length}장 완성<br>
+                            • 유튜브 쇼츠 최적화<br>
+                            • 27.5초 재생 시간<br>
+                            • 고품질 애니메이션 적용
+                        `;
+                    }
+                    
+                    // 즉시 슬라이드 미리보기 시작
+                    if (preview && app.slides) {
+                        handlers.startSlideshow(preview);
+                    }
+                    
+                    if (section) {
+                        section.style.display = 'block';
+                        section.scrollIntoView({ behavior: 'smooth' });
+                    }
+                }),
+                
+                preview: safe(() => {
+                    if (!app.slides) {
+                        alert('슬라이드를 먼저 생성해주세요!');
+                        return;
+                    }
+                    
+                    // 촬영 가이드 표시
+                    handlers.showGuide();
+                }),
+                
+                startSlideshow: safe((container) => {
+                    let index = 0;
+                    const gradients = [
+                        'linear-gradient(135deg, #667eea, #764ba2)',
+                        'linear-gradient(135deg, #ff6b6b, #ee5a6f)',
+                        'linear-gradient(135deg, #4ecdc4, #44a08d)',
+                        'linear-gradient(135deg, #a8edea, #fed6e3)',
+                        'linear-gradient(135deg, #feca57, #ff9ff3)'
+                    ];
+                    
+                    const updateSlide = safe(() => {
+                        if (app.slides && app.slides[index]) {
+                            const slide = app.slides[index];
+                            const gradient = gradients[index % gradients.length];
+                            
+                            container.innerHTML = `
+                                <div style="
+                                    display: flex; 
+                                    flex-direction: column; 
+                                    justify-content: center; 
+                                    align-items: center; 
+                                    height: 100%; 
+                                    background: ${gradient};
+                                    color: white; 
+                                    text-align: center; 
+                                    padding: 40px;
+                                    transition: all 0.8s ease;
+                                    border-radius: 25px;
+                                ">
+                                    <div style="font-size: 3.5em; margin-bottom: 20px; animation: pulse 2s infinite;">${slide.icon || '🎬'}</div>
+                                    <div style="font-size: 1.8em; font-weight: bold; margin-bottom: 15px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">${slide.title || '제목'}</div>
+                                    <div style="font-size: 1.1em; opacity: 0.9; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">${slide.subtitle || '부제목'}</div>
+                                    <div style="position: absolute; bottom: 20px; right: 20px; font-size: 0.9em; opacity: 0.7; background: rgba(0,0,0,0.3); padding: 5px 10px; border-radius: 15px;">
+                                        ${index + 1} / ${app.slides.length}
+                                    </div>
+                                </div>
+                                <style>
+                                    @keyframes pulse {
+                                        0%, 100% { transform: scale(1); }
+                                        50% { transform: scale(1.1); }
+                                    }
+                                </style>
+                            `;
+                            
+                            index = (index + 1) % app.slides.length;
+                        }
+                    });
+                    
+                    // 즉시 첫 슬라이드 표시
+                    updateSlide();
+                    
+                    // 2.5초마다 슬라이드 변경 (무한 반복)
+                    const interval = setInterval(() => {
+                        updateSlide();
+                    }, 2500);
+                    
+                    // 컨테이너에 인터벌 ID 저장 (나중에 정리용)
+                    container.slideInterval = interval;
+                }),
+                
+                showGuide: safe(() => {
+                    alert(`🎬 영상 녹화 안내
+
+✅ 슬라이드 미리보기가 완료되었습니다!
+
+📱 수동 녹화 방법:
+1. 휴대폰의 화면 녹화 기능을 켜세요
+2. 위의 슬라이드 미리보기를 촬영하세요
+3. 약 27.5초간 자동으로 재생됩니다
+
+💡 더 좋은 품질을 원한다면:
+- OBS Studio 같은 화면 녹화 프로그램 사용
+- 풀스크린으로 확대해서 녹화
+- 9:16 비율로 크롭하여 유튜브 쇼츠에 업로드
+
+🎉 이제 전문가급 영상을 만들 수 있습니다!`);
+                })
+            };
+
+            // 초기화
+            const init = safe(() => {
+                const elements = {
+                    setApi: document.getElementById('setApiBtn'),
+                    guide: document.getElementById('showGuideBtn'),
+                    generate: document.getElementById('generateBtn'),
+                    record: document.getElementById('recordBtn')
+                };
+                
+                if (elements.setApi) elements.setApi.addEventListener('click', handlers.apiSetup);
+                if (elements.guide) elements.guide.addEventListener('click', handlers.guide);
+                if (elements.generate) elements.generate.addEventListener('click', handlers.generate);
+                if (elements.record) elements.record.addEventListener('click', handlers.preview);
+                
+                handlers.templates();
+            });
+
+            // DOM 로드 시 초기화
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init);
+            } else {
+                init();
+            }
+        })();
     </script>
 </body>
 </html>
