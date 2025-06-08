@@ -1454,48 +1454,74 @@
             }
         }
 
-        // 입력 내용 기반 슬라이드 생성
+        // 입력 내용 기반 슬라이드 생성 - 완전히 새로운 접근
         function createSlidesFromInput(title, content) {
-            console.log('📋 입력 내용 기반 슬라이드 생성 시작');
-            
-            // 내용에서 핵심 정보 추출
-            const features = extractFeatures(content);
-            const keywords = extractKeywords(content);
-            const benefits = extractBenefits(content);
-            const contact = extractContactInfo(content);
-            
-            console.log('추출된 특징:', features);
-            console.log('추출된 키워드:', keywords);
-            console.log('추출된 혜택:', benefits);
-            console.log('추출된 연락처:', contact);
+            console.log('📋 상세 내용 기반 정확한 슬라이드 생성 시작');
+            console.log('분석할 내용:', content);
             
             const slides = [];
             
-            // 1. 인트로 슬라이드
+            // 1. 제목 슬라이드
             slides.push({
                 icon: '🚀',
                 title: title,
-                subtitle: '혁신적인 서비스가 시작됩니다',
+                subtitle: '지금 시작하는 특별한 경험',
                 type: 'intro'
             });
             
-            // 2. 키워드 기반 슬라이드들
-            keywords.forEach((keyword, index) => {
-                if (index < 3) {
-                    const icons = ['⭐', '🏆', '💎'];
+            // 2. 내용을 문장 단위로 분석
+            const sentences = content.split(/[.!?。]\s*/)
+                .filter(s => s.trim().length > 10)
+                .map(s => s.trim());
+                
+            console.log('추출된 문장들:', sentences);
+            
+            // 3. 줄 단위로 분석 (리스트 항목, 특징 등)
+            const lines = content.split('\n')
+                .map(line => line.trim())
+                .filter(line => line.length > 3);
+                
+            console.log('추출된 줄들:', lines);
+            
+            // 4. 프로그램/서비스 추출
+            const programs = extractPrograms(content);
+            console.log('추출된 프로그램:', programs);
+            
+            // 5. 특징/장점 추출
+            const features = extractDetailedFeatures(content);
+            console.log('추출된 특징:', features);
+            
+            // 6. 성과/수치 추출
+            const achievements = extractAchievements(content);
+            console.log('추출된 성과:', achievements);
+            
+            // 7. 혜택 추출
+            const benefits = extractDetailedBenefits(content);
+            console.log('추출된 혜택:', benefits);
+            
+            // 8. 연락처 정보 추출
+            const contact = extractDetailedContact(content);
+            console.log('추출된 연락처:', contact);
+            
+            // 슬라이드 생성 시작
+            
+            // 프로그램/서비스 슬라이드들
+            programs.forEach((program, index) => {
+                if (index < 4) { // 최대 4개 프로그램
+                    const icons = ['📚', '⚡', '💬', '🎯'];
                     slides.push({
                         icon: icons[index],
-                        title: keyword,
-                        subtitle: '차별화된 핵심 포인트',
-                        type: 'keyword'
+                        title: program.name,
+                        subtitle: program.description,
+                        type: 'program'
                     });
                 }
             });
             
-            // 3. 특징 기반 슬라이드들
+            // 특징/장점 슬라이드들
             features.forEach((feature, index) => {
-                if (index < 6) {
-                    const icons = ['📚', '⚡', '💬', '🎯', '👑', '📖'];
+                if (index < 3) { // 최대 3개 특징
+                    const icons = ['⭐', '🏆', '💎'];
                     slides.push({
                         icon: icons[index],
                         title: feature.title,
@@ -1505,51 +1531,88 @@
                 }
             });
             
-            // 4. 혜택 슬라이드들
+            // 성과 슬라이드들
+            achievements.forEach((achievement, index) => {
+                if (index < 2) { // 최대 2개 성과
+                    const icons = ['📊', '🎖️'];
+                    slides.push({
+                        icon: icons[index],
+                        title: achievement.title,
+                        subtitle: achievement.description,
+                        type: 'achievement'
+                    });
+                }
+            });
+            
+            // 혜택 슬라이드들
             benefits.forEach((benefit, index) => {
-                if (index < 2) {
+                if (index < 2) { // 최대 2개 혜택
                     const icons = ['🎁', '🌟'];
                     slides.push({
                         icon: icons[index],
-                        title: benefit,
-                        subtitle: '특별한 혜택을 놓치지 마세요!',
+                        title: benefit.title,
+                        subtitle: benefit.description,
                         type: 'benefit'
                     });
                 }
             });
             
-            // 5. 연락처 슬라이드
-            if (contact.phone || contact.address) {
+            // 연락처 슬라이드들
+            if (contact.address) {
                 slides.push({
                     icon: '📍',
-                    title: contact.address || '편리한 위치',
-                    subtitle: '찾아오시기 쉬운 곳에 있습니다',
+                    title: '찾아오세요',
+                    subtitle: contact.address,
                     type: 'location'
                 });
-                
+            }
+            
+            if (contact.phone) {
                 slides.push({
                     icon: '📞',
-                    title: contact.phone || '지금 바로 연락!',
-                    subtitle: '상담 및 문의를 기다립니다',
+                    title: '지금 바로 연락!',
+                    subtitle: contact.phone,
                     type: 'contact'
                 });
             }
             
-            // 6. 부족한 슬라이드 채우기
-            while (slides.length < 15) {
-                const extraSlides = [
-                    { icon: '💡', title: '혁신적 아이디어', subtitle: '새로운 가능성을 제시합니다' },
-                    { icon: '🔥', title: '인기 급상승', subtitle: '많은 분들의 선택' },
-                    { icon: '💪', title: '강력한 성능', subtitle: '탁월한 결과를 보장합니다' },
-                    { icon: '🌈', title: '밝은 미래', subtitle: '함께 만들어가는 성공' },
-                    { icon: '✨', title: '특별한 경험', subtitle: '잊을 수 없는 만족감' }
-                ];
-                
-                const extra = extraSlides[(slides.length - 1) % extraSlides.length];
+            if (contact.hours) {
                 slides.push({
-                    ...extra,
-                    type: 'extra'
+                    icon: '🕐',
+                    title: '운영시간',
+                    subtitle: contact.hours,
+                    type: 'hours'
                 });
+            }
+            
+            // 부족한 슬라이드 채우기 (내용 기반)
+            while (slides.length < 15) {
+                const remainingSentences = sentences.slice(slides.length - 1);
+                
+                if (remainingSentences.length > 0) {
+                    const sentence = remainingSentences[0];
+                    const extraIcons = ['💡', '🔥', '💪', '🌈', '✨', '🎪', '🚁', '🎨'];
+                    
+                    slides.push({
+                        icon: extraIcons[(slides.length - 1) % extraIcons.length],
+                        title: sentence.length > 30 ? sentence.substring(0, 30) + '...' : sentence,
+                        subtitle: sentence.length > 30 ? sentence.substring(30) : '중요한 포인트입니다',
+                        type: 'content'
+                    });
+                } else {
+                    // 기본 마무리 슬라이드들
+                    const defaultSlides = [
+                        { icon: '💡', title: '혁신적인 접근', subtitle: '새로운 방식으로 더 나은 결과를' },
+                        { icon: '🔥', title: '열정적인 서비스', subtitle: '최선을 다하는 전문가들' },
+                        { icon: '🎯', title: '정확한 목표', subtitle: '원하는 결과를 위한 체계적 접근' }
+                    ];
+                    
+                    const defaultSlide = defaultSlides[(slides.length - 1) % defaultSlides.length];
+                    slides.push({
+                        ...defaultSlide,
+                        type: 'default'
+                    });
+                }
             }
             
             // 슬라이드 번호 추가
@@ -1558,8 +1621,264 @@
                 ...slide
             }));
             
-            console.log('✅ 입력 기반 슬라이드 생성 완료:', finalSlides.length + '개');
+            console.log('✅ 상세 내용 기반 슬라이드 생성 완료:', finalSlides);
+            finalSlides.forEach((slide, index) => {
+                console.log(`슬라이드 ${index + 1}: ${slide.title} - ${slide.subtitle}`);
+            });
+            
             return finalSlides;
+        }
+
+        // 프로그램/서비스 상세 추출
+        function extractPrograms(content) {
+            const programs = [];
+            
+            // 패턴 1: "- 프로그램명: 설명" 형태
+            const programPattern1 = /[\-\•\*]\s*([^:]+):\s*([^\n]+)/g;
+            let match;
+            while ((match = programPattern1.exec(content)) !== null) {
+                const name = match[1].trim();
+                const desc = match[2].trim();
+                if (name.length > 2 && name.length < 50 && desc.length > 5) {
+                    programs.push({ name, description: desc });
+                }
+            }
+            
+            // 패턴 2: "프로그램:" 섹션 찾기
+            const programSectionMatch = content.match(/프로그램[s]?[:\s]*([^]*?)(?=\n\n|\n[가-힣]+:|$)/i);
+            if (programSectionMatch) {
+                const programSection = programSectionMatch[1];
+                const programLines = programSection.split('\n')
+                    .filter(line => line.trim() && line.includes('-'))
+                    .slice(0, 5);
+                    
+                programLines.forEach(line => {
+                    const cleanLine = line.replace(/^[\-\•\*\s]+/, '').trim();
+                    if (cleanLine.includes(':')) {
+                        const [name, desc] = cleanLine.split(':');
+                        if (name && desc && name.trim().length < 50) {
+                            programs.push({
+                                name: name.trim(),
+                                description: desc.trim()
+                            });
+                        }
+                    } else if (cleanLine.length > 5 && cleanLine.length < 80) {
+                        programs.push({
+                            name: cleanLine,
+                            description: '핵심 프로그램 중 하나입니다'
+                        });
+                    }
+                });
+            }
+            
+            return programs.slice(0, 6);
+        }
+
+        // 상세 특징 추출
+        function extractDetailedFeatures(content) {
+            const features = [];
+            
+            // 패턴 1: "차별점", "특징", "장점" 섹션 찾기
+            const featureSections = ['차별점', '특징', '장점', '특별', '혁신'];
+            
+            featureSections.forEach(keyword => {
+                const regex = new RegExp(`${keyword}[^\\n]*[:\\s]*([^]*?)(?=\\n\\n|\\n[가-힣]+:|$)`, 'i');
+                const match = content.match(regex);
+                
+                if (match) {
+                    const section = match[1];
+                    const lines = section.split('\n')
+                        .filter(line => line.trim() && line.includes('-'))
+                        .slice(0, 4);
+                        
+                    lines.forEach(line => {
+                        const cleanLine = line.replace(/^[\-\•\*\s]+/, '').trim();
+                        if (cleanLine.includes(':')) {
+                            const [title, desc] = cleanLine.split(':');
+                            features.push({
+                                title: title.trim(),
+                                description: desc.trim()
+                            });
+                        } else if (cleanLine.length > 10) {
+                            features.push({
+                                title: cleanLine.length > 40 ? cleanLine.substring(0, 40) + '...' : cleanLine,
+                                description: '중요한 특징입니다'
+                            });
+                        }
+                    });
+                }
+            });
+            
+            // 패턴 2: 일반적인 특징 문장 찾기
+            const sentences = content.split(/[.!?。]\s*/)
+                .filter(s => s.trim().length > 20 && s.trim().length < 100)
+                .filter(s => 
+                    s.includes('최고') || s.includes('전문') || s.includes('특별') ||
+                    s.includes('혁신') || s.includes('차별') || s.includes('독창') ||
+                    s.includes('맞춤') || s.includes('개인별')
+                );
+                
+            sentences.slice(0, 3).forEach(sentence => {
+                const cleanSentence = sentence.trim();
+                features.push({
+                    title: cleanSentence.length > 35 ? cleanSentence.substring(0, 35) + '...' : cleanSentence,
+                    description: '핵심 차별화 포인트'
+                });
+            });
+            
+            return features.slice(0, 5);
+        }
+
+        // 성과/수치 추출
+        function extractAchievements(content) {
+            const achievements = [];
+            
+            // 숫자가 포함된 성과 문장 찾기
+            const patterns = [
+                /(\d+년[^.!?\n]*)/g,
+                /(\d+%[^.!?\n]*)/g,
+                /(\d+명[^.!?\n]*)/g,
+                /(\d+배[^.!?\n]*)/g,
+                /(만족도[^.!?\n]*\d+[^.!?\n]*)/gi,
+                /(향상[^.!?\n]*\d+[^.!?\n]*)/gi
+            ];
+            
+            patterns.forEach(pattern => {
+                let match;
+                while ((match = pattern.exec(content)) !== null) {
+                    const achievement = match[1].trim();
+                    if (achievement.length > 5 && achievement.length < 80) {
+                        achievements.push({
+                            title: achievement.length > 35 ? achievement.substring(0, 35) + '...' : achievement,
+                            description: '검증된 우수한 성과'
+                        });
+                    }
+                }
+            });
+            
+            // "성과" 섹션 찾기
+            const achievementSection = content.match(/성과[:\s]*([^]*?)(?=\n\n|\n[가-힣]+:|$)/i);
+            if (achievementSection) {
+                const lines = achievementSection[1].split('\n')
+                    .filter(line => line.trim() && line.includes('-'))
+                    .slice(0, 3);
+                    
+                lines.forEach(line => {
+                    const cleanLine = line.replace(/^[\-\•\*\s]+/, '').trim();
+                    if (cleanLine.length > 5) {
+                        achievements.push({
+                            title: cleanLine.length > 40 ? cleanLine.substring(0, 40) + '...' : cleanLine,
+                            description: '실제 검증된 결과'
+                        });
+                    }
+                });
+            }
+            
+            return achievements.slice(0, 4);
+        }
+
+        // 상세 혜택 추출
+        function extractDetailedBenefits(content) {
+            const benefits = [];
+            
+            // 혜택 관련 키워드 패턴
+            const benefitPatterns = [
+                /(할인[^.!?\n]*)/gi,
+                /(무료[^.!?\n]*)/gi,
+                /(특가[^.!?\n]*)/gi,
+                /(이벤트[^.!?\n]*)/gi,
+                /(혜택[^.!?\n]*)/gi,
+                /(\d+%\s*할인[^.!?\n]*)/gi
+            ];
+            
+            benefitPatterns.forEach(pattern => {
+                let match;
+                while ((match = pattern.exec(content)) !== null) {
+                    const benefit = match[1].trim();
+                    if (benefit.length > 3 && benefit.length < 60) {
+                        benefits.push({
+                            title: benefit.length > 30 ? benefit.substring(0, 30) + '...' : benefit,
+                            description: '놓치면 안 되는 기회!'
+                        });
+                    }
+                }
+            });
+            
+            // "혜택" 섹션 찾기
+            const benefitSection = content.match(/혜택[:\s]*([^]*?)(?=\n\n|\n[가-힣]+:|$)/i);
+            if (benefitSection) {
+                const lines = benefitSection[1].split('\n')
+                    .filter(line => line.trim() && line.includes('-'))
+                    .slice(0, 4);
+                    
+                lines.forEach(line => {
+                    const cleanLine = line.replace(/^[\-\•\*\s]+/, '').trim();
+                    if (cleanLine.length > 3) {
+                        benefits.push({
+                            title: cleanLine.length > 35 ? cleanLine.substring(0, 35) + '...' : cleanLine,
+                            description: '특별한 혜택입니다'
+                        });
+                    }
+                });
+            }
+            
+            return benefits.slice(0, 4);
+        }
+
+        // 상세 연락처 정보 추출
+        function extractDetailedContact(content) {
+            const contact = {};
+            
+            // 전화번호 추출 (다양한 형태)
+            const phonePatterns = [
+                /연락처[:\s]*(\d{2,3}[-\s]?\d{3,4}[-\s]?\d{4})/i,
+                /전화[:\s]*(\d{2,3}[-\s]?\d{3,4}[-\s]?\d{4})/i,
+                /(\d{3}[-\s]?\d{4}[-\s]?\d{4})/,
+                /(\d{2}[-\s]?\d{3,4}[-\s]?\d{4})/
+            ];
+            
+            for (const pattern of phonePatterns) {
+                const match = content.match(pattern);
+                if (match) {
+                    contact.phone = match[1];
+                    break;
+                }
+            }
+            
+            // 주소 추출 (더 정확하게)
+            const addressPatterns = [
+                /위치[:\s]*([^\n]+)/i,
+                /주소[:\s]*([^\n]+)/i,
+                /(인천[^,\n]*연수구[^,\n]*)/i,
+                /([가-힣]+시\s+[가-힣]+구\s+[가-힣]+동[^,\n]*)/,
+                /([가-힣]+동\s+\d+[-\d\s]*[^\n,]*)/
+            ];
+            
+            for (const pattern of addressPatterns) {
+                const match = content.match(pattern);
+                if (match) {
+                    contact.address = (match[1] || match[0]).trim();
+                    break;
+                }
+            }
+            
+            // 운영시간 추출
+            const hoursPatterns = [
+                /운영[:\s]*([^\n]*(?:시|휴무)[^\n]*)/i,
+                /상담시간[:\s]*([^\n]*시[^\n]*)/i,
+                /(평일[^\n]*주말[^\n]*)/i,
+                /(오전[^\n]*오후[^\n]*)/i
+            ];
+            
+            for (const pattern of hoursPatterns) {
+                const match = content.match(pattern);
+                if (match) {
+                    contact.hours = (match[1] || match[0]).trim();
+                    break;
+                }
+            }
+            
+            return contact;
         }
 
         // 특징 추출 함수 (개선)
