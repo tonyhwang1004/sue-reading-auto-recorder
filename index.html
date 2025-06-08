@@ -1377,7 +1377,7 @@
             return result;
         }
 
-        // 슬라이드 생성 메인 함수 - 완전히 단순화
+        // 슬라이드 생성 메인 함수 - 입력 내용 정확 반영
         async function generateSlides() {
             const title = document.getElementById('titleInput').value.trim();
             const content = document.getElementById('contentInput').value.trim();
@@ -1386,6 +1386,7 @@
             console.log('🚀 슬라이드 생성 시작');
             console.log('제목:', title);
             console.log('내용:', content);
+            console.log('이미지 프롬프트:', imagePrompt);
             
             if (!apiKey) {
                 alert('❌ API 키를 먼저 설정해주세요!');
@@ -1397,80 +1398,295 @@
                 return;
             }
             
-            // 즉시 슬라이드 데이터 생성 (API 호출 없이)
-            console.log('📝 슬라이드 데이터 생성 중...');
-            slides = createSimpleSlides(title, content);
-            console.log('생성된 슬라이드:', slides);
-            
             // 프로그레스 모달 표시
             showProgressModal(true);
             
             try {
-                updateProgress(20, '🧠 AI 분석 시작', '내용을 분석하고 있습니다...', '🤖');
-                await delay(500);
+                updateProgress(20, '📝 내용 분석', '입력한 내용을 분석하고 있습니다...', '🤖');
+                await delay(300);
                 
-                updateProgress(50, '📝 슬라이드 구성', '15장의 슬라이드를 구성하고 있습니다...', '📋');
-                await delay(500);
+                // 입력 내용 기반으로 슬라이드 생성
+                console.log('📊 입력 내용 기반 슬라이드 생성 중...');
+                slides = createSlidesFromInput(title, content);
+                console.log('생성된 슬라이드:', slides);
                 
-                updateProgress(80, '🎨 디자인 적용', '색상과 아이콘을 적용하고 있습니다...', '🎨');
-                await delay(500);
+                updateProgress(50, '🎨 슬라이드 구성', '15장의 맞춤 슬라이드를 구성하고 있습니다...', '📋');
+                await delay(400);
                 
-                // 이미지 생성 (선택사항)
-                if (imagePrompt) {
-                    updateProgress(90, '🖼️ 이미지 생성', '맞춤 이미지를 생성중...', '🎨');
-                    await delay(300);
+                updateProgress(70, '🎭 디자인 적용', '멋진 색상과 아이콘을 적용하고 있습니다...', '🎨');
+                await delay(300);
+                
+                // 이미지 생성 (이미지 프롬프트가 있을 때)
+                if (imagePrompt.trim()) {
+                    updateProgress(85, '🖼️ AI 이미지 생성', 'DALL-E 3가 맞춤 이미지를 생성중...', '🎨');
+                    await delay(200);
+                    
+                    console.log('🎨 이미지 생성 시작...');
                     generatedImage = await generateAIImage(imagePrompt);
+                    
                     if (generatedImage) {
+                        console.log('✅ 이미지 생성 완료:', generatedImage);
                         updateImagePreview();
+                        updateProgress(95, '✅ 이미지 완성', '맞춤 이미지가 생성되었습니다!', '🖼️');
+                        await delay(200);
                     }
+                } else {
+                    updateProgress(90, '🌟 마무리', '최종 검토 중...', '✨');
+                    await delay(300);
                 }
                 
-                updateProgress(100, '✅ 완성!', '슬라이드가 준비되었습니다!', '🎉');
-                await delay(500);
+                updateProgress(100, '🎉 완성!', '맞춤 슬라이드가 준비되었습니다!', '🎉');
+                await delay(400);
                 
                 // 프로그레스 모달 숨기기
                 showProgressModal(false);
                 
                 // 결과 즉시 표시
                 console.log('🎬 결과 표시 시작');
-                showResultsNow();
+                setTimeout(() => {
+                    showResultsNow();
+                }, 200);
                 
             } catch (error) {
                 console.error('생성 중 오류:', error);
                 showProgressModal(false);
-                alert('❌ 슬라이드 생성에 실패했습니다.');
+                alert('❌ 슬라이드 생성에 실패했습니다: ' + error.message);
             }
         }
 
-        // 단순한 슬라이드 생성
-        function createSimpleSlides(title, content) {
-            console.log('📋 단순 슬라이드 생성 시작');
+        // 입력 내용 기반 슬라이드 생성
+        function createSlidesFromInput(title, content) {
+            console.log('📋 입력 내용 기반 슬라이드 생성 시작');
             
-            const simpleSlides = [
-                { icon: '🚀', title: title, subtitle: '혁신적인 서비스의 시작' },
-                { icon: '⭐', title: '특별한 차별점', subtitle: '고품질 서비스 제공' },
-                { icon: '🏆', title: '검증된 성과', subtitle: '만족도 높은 결과와 신뢰성' },
-                { icon: '📚', title: '핵심 서비스', subtitle: '전문적이고 체계적인 접근' },
-                { icon: '⚡', title: '빠른 결과', subtitle: '즉시 확인 가능한 효과' },
-                { icon: '💬', title: '소통 중심', subtitle: '고객과의 원활한 커뮤니케이션' },
-                { icon: '🎯', title: '목표 달성', subtitle: '정확한 목표 설정과 달성' },
-                { icon: '👑', title: '프리미엄 품질', subtitle: '최고 수준의 서비스 경험' },
-                { icon: '📖', title: '전문 지식', subtitle: '풍부한 경험과 노하우' },
-                { icon: '🧠', title: '맞춤 솔루션', subtitle: '개인별 최적화된 서비스' },
-                { icon: '📊', title: '성과 분석', subtitle: '데이터 기반 결과 제공' },
-                { icon: '🎁', title: '특별 혜택', subtitle: '지금 바로 시작하세요!' },
-                { icon: '📍', title: '편리한 위치', subtitle: '접근성 좋은 최적의 장소' },
-                { icon: '📅', title: '유연한 시간', subtitle: '고객 맞춤 스케줄 제공' },
-                { icon: '📞', title: '지금 연락!', subtitle: '더 자세한 정보를 원하시면 연락주세요' }
-            ];
+            // 내용에서 핵심 정보 추출
+            const features = extractFeatures(content);
+            const keywords = extractKeywords(content);
+            const benefits = extractBenefits(content);
+            const contact = extractContactInfo(content);
             
-            const result = simpleSlides.map((slide, index) => ({
+            console.log('추출된 특징:', features);
+            console.log('추출된 키워드:', keywords);
+            console.log('추출된 혜택:', benefits);
+            console.log('추출된 연락처:', contact);
+            
+            const slides = [];
+            
+            // 1. 인트로 슬라이드
+            slides.push({
+                icon: '🚀',
+                title: title,
+                subtitle: '혁신적인 서비스가 시작됩니다',
+                type: 'intro'
+            });
+            
+            // 2. 키워드 기반 슬라이드들
+            keywords.forEach((keyword, index) => {
+                if (index < 3) {
+                    const icons = ['⭐', '🏆', '💎'];
+                    slides.push({
+                        icon: icons[index],
+                        title: keyword,
+                        subtitle: '차별화된 핵심 포인트',
+                        type: 'keyword'
+                    });
+                }
+            });
+            
+            // 3. 특징 기반 슬라이드들
+            features.forEach((feature, index) => {
+                if (index < 6) {
+                    const icons = ['📚', '⚡', '💬', '🎯', '👑', '📖'];
+                    slides.push({
+                        icon: icons[index],
+                        title: feature.title,
+                        subtitle: feature.description,
+                        type: 'feature'
+                    });
+                }
+            });
+            
+            // 4. 혜택 슬라이드들
+            benefits.forEach((benefit, index) => {
+                if (index < 2) {
+                    const icons = ['🎁', '🌟'];
+                    slides.push({
+                        icon: icons[index],
+                        title: benefit,
+                        subtitle: '특별한 혜택을 놓치지 마세요!',
+                        type: 'benefit'
+                    });
+                }
+            });
+            
+            // 5. 연락처 슬라이드
+            if (contact.phone || contact.address) {
+                slides.push({
+                    icon: '📍',
+                    title: contact.address || '편리한 위치',
+                    subtitle: '찾아오시기 쉬운 곳에 있습니다',
+                    type: 'location'
+                });
+                
+                slides.push({
+                    icon: '📞',
+                    title: contact.phone || '지금 바로 연락!',
+                    subtitle: '상담 및 문의를 기다립니다',
+                    type: 'contact'
+                });
+            }
+            
+            // 6. 부족한 슬라이드 채우기
+            while (slides.length < 15) {
+                const extraSlides = [
+                    { icon: '💡', title: '혁신적 아이디어', subtitle: '새로운 가능성을 제시합니다' },
+                    { icon: '🔥', title: '인기 급상승', subtitle: '많은 분들의 선택' },
+                    { icon: '💪', title: '강력한 성능', subtitle: '탁월한 결과를 보장합니다' },
+                    { icon: '🌈', title: '밝은 미래', subtitle: '함께 만들어가는 성공' },
+                    { icon: '✨', title: '특별한 경험', subtitle: '잊을 수 없는 만족감' }
+                ];
+                
+                const extra = extraSlides[(slides.length - 1) % extraSlides.length];
+                slides.push({
+                    ...extra,
+                    type: 'extra'
+                });
+            }
+            
+            // 슬라이드 번호 추가
+            const finalSlides = slides.slice(0, 15).map((slide, index) => ({
                 slideNumber: index + 1,
                 ...slide
             }));
             
-            console.log('✅ 단순 슬라이드 생성 완료:', result.length + '개');
-            return result;
+            console.log('✅ 입력 기반 슬라이드 생성 완료:', finalSlides.length + '개');
+            return finalSlides;
+        }
+
+        // 특징 추출 함수 (개선)
+        function extractFeatures(content) {
+            const features = [];
+            const lines = content.split('\n').filter(line => line.trim());
+            
+            lines.forEach(line => {
+                // "제목: 설명" 형태 찾기
+                if (line.includes(':')) {
+                    const parts = line.split(':');
+                    if (parts.length >= 2) {
+                        const title = parts[0].trim().replace(/^[•\-\*\s\d\.]+/, '');
+                        const desc = parts[1].trim();
+                        if (title.length > 2 && title.length < 50 && desc.length > 5) {
+                            features.push({ title, description: desc });
+                        }
+                    }
+                }
+                // "- 제목" 형태 찾기
+                else if (line.match(/^[\-\•\*]\s+(.+)/)) {
+                    const title = line.replace(/^[\-\•\*]\s+/, '').trim();
+                    if (title.length > 5 && title.length < 50) {
+                        features.push({ 
+                            title, 
+                            description: '핵심 서비스 중 하나입니다' 
+                        });
+                    }
+                }
+                // 일반 문장에서 특징 찾기
+                else if (line.length > 10 && line.length < 80 && !line.includes('위치:') && !line.includes('연락처:')) {
+                    features.push({
+                        title: line.trim(),
+                        description: '중요한 포인트입니다'
+                    });
+                }
+            });
+            
+            return features.slice(0, 8);
+        }
+
+        // 키워드 추출 함수 (개선)
+        function extractKeywords(content) {
+            const keywords = [];
+            
+            // 패턴 기반 키워드 추출
+            const patterns = [
+                /(\d+년[^,.\n]*)/g,
+                /(\d+%[^,.\n]*)/g,
+                /(AI[^,.\n]*)/gi,
+                /(전문[^,.\n]*)/g,
+                /(최고[^,.\n]*)/g,
+                /(혁신[^,.\n]*)/g,
+                /(특별[^,.\n]*)/g,
+                /(프리미엄[^,.\n]*)/g
+            ];
+            
+            patterns.forEach(pattern => {
+                const matches = content.match(pattern);
+                if (matches) {
+                    matches.forEach(match => {
+                        const clean = match.trim();
+                        if (clean.length > 3 && clean.length < 30) {
+                            keywords.push(clean);
+                        }
+                    });
+                }
+            });
+            
+            // 중복 제거
+            return [...new Set(keywords)].slice(0, 5);
+        }
+
+        // 혜택 추출 함수
+        function extractBenefits(content) {
+            const benefits = [];
+            const benefitPatterns = [
+                /(\d+%\s*할인[^,.\n]*)/gi,
+                /(무료[^,.\n]*)/gi,
+                /(할인[^,.\n]*)/gi,
+                /(혜택[^,.\n]*)/gi,
+                /(특가[^,.\n]*)/gi,
+                /(이벤트[^,.\n]*)/gi
+            ];
+            
+            benefitPatterns.forEach(pattern => {
+                const matches = content.match(pattern);
+                if (matches) {
+                    matches.forEach(match => {
+                        const clean = match.trim();
+                        if (clean.length > 3 && clean.length < 40) {
+                            benefits.push(clean);
+                        }
+                    });
+                }
+            });
+            
+            return [...new Set(benefits)].slice(0, 3);
+        }
+
+        // 연락처 정보 추출 함수
+        function extractContactInfo(content) {
+            const contact = {};
+            
+            // 전화번호 찾기
+            const phoneMatch = content.match(/(\d{2,3}[-\s]?\d{3,4}[-\s]?\d{4})/);
+            if (phoneMatch) {
+                contact.phone = phoneMatch[0];
+            }
+            
+            // 주소 찾기
+            const addressPatterns = [
+                /위치[:\s]*([^\n]+)/i,
+                /주소[:\s]*([^\n]+)/i,
+                /([가-힣]+시\s+[가-힣]+구[^\n,]*)/,
+                /([가-힣]+동\s+\d+[-\d\s]*[^\n,]*)/
+            ];
+            
+            for (const pattern of addressPatterns) {
+                const match = content.match(pattern);
+                if (match) {
+                    contact.address = match[1] || match[0];
+                    break;
+                }
+            }
+            
+            return contact;
         }
 
         // 결과 즉시 표시
@@ -1636,10 +1852,13 @@
             return features.slice(0, 8);
         }
         
-        // AI 이미지 생성 함수 (실제 API 호출)
+        // AI 이미지 생성 함수 (이미지 비율 문제 해결)
         async function generateAIImage(prompt) {
             try {
-                console.log('🎨 AI 이미지 생성 시작:', prompt);
+                console.log('🎨 DALL-E 3 이미지 생성 시작:', prompt);
+                
+                // 이미지 프롬프트 개선 (세로 방향 강조)
+                const enhancedPrompt = `${prompt}. Professional, clean, modern design. Vertical orientation, portrait format. High quality, detailed, vibrant colors. Corporate style, premium look.`;
                 
                 const response = await fetch('https://api.openai.com/v1/images/generations', {
                     method: 'POST',
@@ -1649,62 +1868,107 @@
                     },
                     body: JSON.stringify({
                         model: "dall-e-3",
-                        prompt: prompt,
+                        prompt: enhancedPrompt,
                         size: selectedImageSize,
                         quality: "standard",
-                        n: 1
+                        n: 1,
+                        style: "vivid"
                     })
                 });
                 
                 if (!response.ok) {
-                    throw new Error(`API Error: ${response.status}`);
+                    throw new Error(`API Error: ${response.status} - ${response.statusText}`);
                 }
                 
                 const data = await response.json();
                 const imageUrl = data.data[0].url;
                 
-                console.log('✅ AI 이미지 생성 완료:', imageUrl);
+                console.log('✅ DALL-E 3 이미지 생성 완료:', imageUrl);
                 return imageUrl;
                 
             } catch (error) {
-                console.error('❌ 이미지 생성 실패:', error);
+                console.error('❌ DALL-E 3 이미지 생성 실패:', error);
+                // 실패 시 고품질 플레이스홀더 반환
                 return createHighQualityPlaceholder(prompt);
             }
         }
-        
-        // 고품질 플레이스홀더 이미지 생성
+
+        // 고품질 플레이스홀더 이미지 생성 (세로 비율 맞춤)
         function createHighQualityPlaceholder(description) {
             const canvas = document.createElement('canvas');
-            canvas.width = parseInt(selectedImageSize.split('x')[0]);
-            canvas.height = parseInt(selectedImageSize.split('x')[1]);
+            
+            // 선택된 크기에 맞춰 캔버스 생성
+            const [width, height] = selectedImageSize.split('x').map(Number);
+            canvas.width = width;
+            canvas.height = height;
             const ctx = canvas.getContext('2d');
             
-            const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+            // 그라데이션 배경 (세로 방향)
+            const gradient = ctx.createLinearGradient(0, 0, 0, height);
             gradient.addColorStop(0, '#667eea');
-            gradient.addColorStop(0.5, '#764ba2');
+            gradient.addColorStop(0.3, '#764ba2');
+            gradient.addColorStop(0.7, '#4ecdc4');
             gradient.addColorStop(1, '#ff6b6b');
             
             ctx.fillStyle = gradient;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillRect(0, 0, width, height);
             
+            // 패턴 추가
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+            for (let i = 0; i < 10; i++) {
+                ctx.beginPath();
+                ctx.arc(Math.random() * width, Math.random() * height, Math.random() * 50 + 20, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            
+            // 텍스트 설정
             ctx.fillStyle = 'white';
-            ctx.font = 'bold 40px Arial';
             ctx.textAlign = 'center';
             ctx.shadowColor = 'rgba(0,0,0,0.5)';
-            ctx.shadowBlur = 10;
+            ctx.shadowBlur = 15;
             
-            ctx.font = '80px Arial';
-            ctx.fillText('🎨', canvas.width/2, canvas.height/2 - 60);
+            // 메인 아이콘
+            const iconSize = Math.min(width, height) * 0.15;
+            ctx.font = `${iconSize}px Arial`;
+            ctx.fillText('🎨', width/2, height * 0.3);
             
-            ctx.font = 'bold 32px Arial';
-            ctx.fillText('AI Generated Image', canvas.width/2, canvas.height/2 + 20);
+            // 제목
+            const titleSize = Math.min(width, height) * 0.08;
+            ctx.font = `bold ${titleSize}px Arial`;
+            ctx.fillText('AI Generated', width/2, height * 0.45);
             
-            ctx.font = '24px Arial';
-            ctx.fillText(`${selectedImageSize}`, canvas.width/2, canvas.height/2 + 60);
+            // 부제목
+            const subtitleSize = Math.min(width, height) * 0.06;
+            ctx.font = `${subtitleSize}px Arial`;
+            ctx.fillText('Image', width/2, height * 0.55);
             
-            ctx.font = '18px Arial';
-            const shortDesc = description.length > 20 ? description.substring(0, 20) + '...' : description;
-            ctx.fillText(shortDesc, canvas.width/2, canvas.height/2 + 100);
+            // 크기 정보
+            const sizeSize = Math.min(width, height) * 0.04;
+            ctx.font = `${sizeSize}px Arial`;
+            ctx.fillText(selectedImageSize, width/2, height * 0.7);
+            
+            // 설명 (줄바꿈 처리)
+            const descSize = Math.min(width, height) * 0.035;
+            ctx.font = `${descSize}px Arial`;
+            const maxWidth = width * 0.8;
+            const words = description.split(' ');
+            let line = '';
+            let y = height * 0.8;
+            
+            for (let i = 0; i < words.length && y < height * 0.95; i++) {
+                const testLine = line + words[i] + ' ';
+                const metrics = ctx.measureText(testLine);
+                if (metrics.width > maxWidth && i > 0) {
+                    ctx.fillText(line, width/2, y);
+                    line = words[i] + ' ';
+                    y += descSize * 1.2;
+                } else {
+                    line = testLine;
+                }
+            }
+            if (line.trim() && y < height * 0.95) {
+                ctx.fillText(line, width/2, y);
+            }
             
             return canvas.toDataURL('image/png');
         }
@@ -1781,9 +2045,9 @@
             }
         }
         
-        // 슬라이드 미리보기 강제 생성
+        // 슬라이드 미리보기 강제 생성 - 멋진 디자인과 역동적 전환
         function createSlidePreviewNow() {
-            console.log('🎬 슬라이드 미리보기 강제 생성 시작');
+            console.log('🎬 멋진 슬라이드 미리보기 생성 시작');
             
             const container = document.getElementById('slideContainer');
             if (!container) {
@@ -1793,133 +2057,269 @@
             
             if (!slides || slides.length === 0) {
                 console.error('❌ 슬라이드 데이터 없음');
-                console.log('슬라이드 데이터:', slides);
                 return;
             }
             
             console.log('✅ 컨테이너 찾음, 슬라이드 개수:', slides.length);
             
-            // 컨테이너 초기화
+            // 컨테이너 초기화 및 3D 효과 준비
             container.innerHTML = '';
-            container.style.width = '100%';
-            container.style.height = '100%';
-            container.style.position = 'relative';
+            container.style.cssText = `
+                width: 100%;
+                height: 100%;
+                position: relative;
+                transform-style: preserve-3d;
+                perspective: 1500px;
+                overflow: hidden;
+            `;
             
             currentSlideIndex = 0;
             
-            // 15가지 색상 테마
-            const colors = [
-                'linear-gradient(135deg, #667eea, #764ba2)',
-                'linear-gradient(135deg, #4ecdc4, #44a08d)', 
-                'linear-gradient(135deg, #ff6b6b, #ee5a6f)',
-                'linear-gradient(135deg, #a8edea, #fed6e3)',
-                'linear-gradient(135deg, #feca57, #ff9ff3)',
-                'linear-gradient(135deg, #96ceb4, #ffecd2)',
-                'linear-gradient(135deg, #74b9ff, #0984e3)',
-                'linear-gradient(135deg, #fd79a8, #fdcb6e)',
-                'linear-gradient(135deg, #6c5ce7, #a29bfe)',
-                'linear-gradient(135deg, #e17055, #fdcb6e)',
-                'linear-gradient(135deg, #81ecec, #74b9ff)',
-                'linear-gradient(135deg, #fab1a0, #e17055)',
-                'linear-gradient(135deg, #00b894, #00cec9)',
-                'linear-gradient(135deg, #e84393, #fd79a8)',
-                'linear-gradient(135deg, #fdcb6e, #e17055)'
+            // 15가지 프리미엄 색상 테마
+            const premiumColors = [
+                'linear-gradient(145deg, #667eea 0%, #764ba2 50%, #a8edea 100%)',
+                'linear-gradient(145deg, #4ecdc4 0%, #44a08d 50%, #81ecec 100%)', 
+                'linear-gradient(145deg, #ff6b6b 0%, #ee5a6f 50%, #fd79a8 100%)',
+                'linear-gradient(145deg, #a8edea 0%, #fed6e3 50%, #fab1a0 100%)',
+                'linear-gradient(145deg, #feca57 0%, #ff9ff3 50%, #fdcb6e 100%)',
+                'linear-gradient(145deg, #96ceb4 0%, #ffecd2 50%, #00b894 100%)',
+                'linear-gradient(145deg, #74b9ff 0%, #0984e3 50%, #81ecec 100%)',
+                'linear-gradient(145deg, #fd79a8 0%, #fdcb6e 50%, #e84393 100%)',
+                'linear-gradient(145deg, #6c5ce7 0%, #a29bfe 50%, #74b9ff 100%)',
+                'linear-gradient(145deg, #e17055 0%, #fdcb6e 50%, #fab1a0 100%)',
+                'linear-gradient(145deg, #00b894 0%, #00cec9 50%, #55efc4 100%)',
+                'linear-gradient(145deg, #e84393 0%, #fd79a8 50%, #ff7675 100%)',
+                'linear-gradient(145deg, #fdcb6e 0%, #e17055 50%, #fab1a0 100%)',
+                'linear-gradient(145deg, #00cec9 0%, #55efc4 50%, #81ecec 100%)',
+                'linear-gradient(145deg, #fd79a8 0%, #e84393 50%, #a29bfe 100%)'
             ];
             
             slides.forEach((slide, index) => {
-                console.log(`슬라이드 ${index + 1} 생성 중: ${slide.title}`);
+                console.log(`멋진 슬라이드 ${index + 1} 생성 중: ${slide.title}`);
                 
                 const slideDiv = document.createElement('div');
-                slideDiv.className = 'slide';
+                slideDiv.className = 'premium-slide';
                 slideDiv.id = `slide-${index}`;
                 
-                // 스타일 직접 적용
-                slideDiv.style.position = 'absolute';
-                slideDiv.style.top = '0';
-                slideDiv.style.left = '0';
-                slideDiv.style.width = '100%';
-                slideDiv.style.height = '100%';
-                slideDiv.style.background = colors[index % colors.length];
-                slideDiv.style.borderRadius = '26px';
-                slideDiv.style.display = 'flex';
-                slideDiv.style.flexDirection = 'column';
-                slideDiv.style.justifyContent = 'center';
-                slideDiv.style.alignItems = 'center';
-                slideDiv.style.textAlign = 'center';
-                slideDiv.style.padding = '30px';
-                slideDiv.style.color = 'white';
-                slideDiv.style.transition = 'all 0.5s ease';
-                slideDiv.style.zIndex = index === 0 ? '10' : '1';
-                slideDiv.style.opacity = index === 0 ? '1' : '0';
-                slideDiv.style.transform = index === 0 ? 'scale(1)' : 'scale(0.8)';
-                
-                // 슬라이드 내용
-                slideDiv.innerHTML = `
-                    <div style="font-size: 4em; margin-bottom: 20px; filter: drop-shadow(0 0 20px rgba(255,255,255,0.3));">
-                        ${slide.icon}
-                    </div>
-                    <div style="font-size: 2.2em; font-weight: 900; margin-bottom: 15px; text-shadow: 2px 2px 8px rgba(0,0,0,0.5); line-height: 1.2;">
-                        ${slide.title}
-                    </div>
-                    <div style="font-size: 1.3em; opacity: 0.9; text-shadow: 1px 1px 4px rgba(0,0,0,0.5); line-height: 1.3; max-width: 90%;">
-                        ${slide.subtitle}
-                    </div>
-                    <div style="position: absolute; bottom: 15px; right: 15px; background: rgba(0,0,0,0.3); padding: 6px 12px; border-radius: 15px; font-size: 0.9em;">
-                        ${index + 1} / ${slides.length}
-                    </div>
+                // 프리미엄 3D 스타일 적용
+                slideDiv.style.cssText = `
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: ${premiumColors[index % premiumColors.length]};
+                    border-radius: 30px;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+                    text-align: center;
+                    padding: 40px 30px;
+                    color: white;
+                    box-shadow: 
+                        0 25px 50px rgba(0,0,0,0.3),
+                        inset 0 1px 0 rgba(255,255,255,0.2),
+                        inset 0 -1px 0 rgba(0,0,0,0.1);
+                    transition: all 0.8s cubic-bezier(0.4, 0.0, 0.2, 1);
+                    transform-style: preserve-3d;
+                    backface-visibility: hidden;
+                    z-index: ${index === 0 ? '100' : '1'};
+                    opacity: ${index === 0 ? '1' : '0'};
+                    transform: ${index === 0 ? 'rotateY(0deg) translateZ(0px) scale(1)' : 'rotateY(90deg) translateZ(-200px) scale(0.7)'};
                 `;
                 
-                // 생성된 이미지가 있으면 추가
-                if (generatedImage && index < 3) { // 처음 3장에만 이미지 추가
+                // 글로우 효과 추가
+                if (index === 0) {
+                    slideDiv.style.filter = 'drop-shadow(0 0 30px rgba(255,255,255,0.3))';
+                }
+                
+                // 슬라이드 내용 - 더 멋진 레이아웃
+                slideDiv.innerHTML = `
+                    <div class="slide-bg-pattern" style="
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: radial-gradient(circle at 20% 20%, rgba(255,255,255,0.1) 0%, transparent 50%),
+                                    radial-gradient(circle at 80% 80%, rgba(255,255,255,0.1) 0%, transparent 50%);
+                        border-radius: 30px;
+                        pointer-events: none;
+                    "></div>
+                    
+                    <div class="slide-icon-container" style="
+                        font-size: 5em;
+                        margin-bottom: 25px;
+                        filter: drop-shadow(0 10px 30px rgba(0,0,0,0.3));
+                        animation: iconFloat 4s ease-in-out infinite;
+                        transform-style: preserve-3d;
+                    ">
+                        ${slide.icon}
+                    </div>
+                    
+                    <div class="slide-title-main" style="
+                        font-size: 2.5em;
+                        font-weight: 900;
+                        margin-bottom: 20px;
+                        text-shadow: 
+                            0 2px 10px rgba(0,0,0,0.3),
+                            0 0 30px rgba(255,255,255,0.2);
+                        line-height: 1.2;
+                        background: linear-gradient(45deg, #ffffff, #f0f0f0);
+                        -webkit-background-clip: text;
+                        -webkit-text-fill-color: transparent;
+                        background-clip: text;
+                        animation: titleGlow 3s ease-in-out infinite alternate;
+                    ">
+                        ${slide.title}
+                    </div>
+                    
+                    <div class="slide-subtitle-main" style="
+                        font-size: 1.4em;
+                        opacity: 0.95;
+                        text-shadow: 0 2px 8px rgba(0,0,0,0.2);
+                        line-height: 1.4;
+                        max-width: 90%;
+                        margin-bottom: 30px;
+                        font-weight: 500;
+                    ">
+                        ${slide.subtitle}
+                    </div>
+                    
+                    <div class="slide-counter-badge" style="
+                        position: absolute;
+                        bottom: 20px;
+                        right: 20px;
+                        background: linear-gradient(45deg, rgba(0,0,0,0.4), rgba(0,0,0,0.2));
+                        backdrop-filter: blur(10px);
+                        padding: 12px 18px;
+                        border-radius: 25px;
+                        font-size: 1em;
+                        font-weight: 600;
+                        border: 1px solid rgba(255,255,255,0.2);
+                        box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+                    ">
+                        ${index + 1} / ${slides.length}
+                    </div>
+                    
+                    <div class="slide-progress-bar" style="
+                        position: absolute;
+                        bottom: 0;
+                        left: 0;
+                        height: 4px;
+                        background: linear-gradient(90deg, #4ecdc4, #feca57);
+                        border-radius: 0 0 30px 30px;
+                        width: ${((index + 1) / slides.length) * 100}%;
+                        transition: width 0.8s ease;
+                        box-shadow: 0 0 10px rgba(78, 205, 196, 0.5);
+                    "></div>
+                `;
+                
+                // 생성된 이미지가 있으면 멋지게 추가
+                if (generatedImage && index < 5) {
+                    const imgContainer = document.createElement('div');
+                    imgContainer.style.cssText = `
+                        position: absolute;
+                        top: 25px;
+                        right: 25px;
+                        width: 80px;
+                        height: 80px;
+                        border-radius: 50%;
+                        overflow: hidden;
+                        border: 3px solid rgba(255,255,255,0.3);
+                        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+                        cursor: pointer;
+                        transition: all 0.3s ease;
+                        transform: perspective(1000px) rotateY(-15deg);
+                    `;
+                    
                     const img = document.createElement('img');
                     img.src = generatedImage;
                     img.style.cssText = `
-                        position: absolute;
-                        top: 15px;
-                        right: 15px;
-                        width: 50px;
-                        height: 50px;
-                        border-radius: 50%;
-                        border: 2px solid rgba(255,255,255,0.3);
+                        width: 100%;
+                        height: 100%;
                         object-fit: cover;
-                        cursor: pointer;
+                        transition: transform 0.3s ease;
                     `;
-                    img.onclick = () => window.open(generatedImage, '_blank');
-                    slideDiv.appendChild(img);
+                    
+                    imgContainer.appendChild(img);
+                    
+                    // 이미지 호버 효과
+                    imgContainer.addEventListener('mouseenter', () => {
+                        imgContainer.style.transform = 'perspective(1000px) rotateY(0deg) scale(1.1)';
+                        imgContainer.style.boxShadow = '0 15px 40px rgba(0,0,0,0.4)';
+                        img.style.transform = 'scale(1.1)';
+                    });
+                    
+                    imgContainer.addEventListener('mouseleave', () => {
+                        imgContainer.style.transform = 'perspective(1000px) rotateY(-15deg) scale(1)';
+                        imgContainer.style.boxShadow = '0 10px 30px rgba(0,0,0,0.3)';
+                        img.style.transform = 'scale(1)';
+                    });
+                    
+                    imgContainer.addEventListener('click', () => {
+                        window.open(generatedImage, '_blank');
+                    });
+                    
+                    slideDiv.appendChild(imgContainer);
                 }
                 
                 container.appendChild(slideDiv);
             });
             
-            console.log(`✅ ${slides.length}개 슬라이드 DOM 생성 완료`);
+            // CSS 애니메이션 추가
+            if (!document.getElementById('slideAnimations')) {
+                const style = document.createElement('style');
+                style.id = 'slideAnimations';
+                style.textContent = `
+                    @keyframes iconFloat {
+                        0%, 100% { transform: translateY(0px) rotateZ(0deg); }
+                        50% { transform: translateY(-20px) rotateZ(5deg); }
+                    }
+                    
+                    @keyframes titleGlow {
+                        0% { text-shadow: 0 2px 10px rgba(0,0,0,0.3), 0 0 30px rgba(255,255,255,0.2); }
+                        100% { text-shadow: 0 2px 10px rgba(0,0,0,0.3), 0 0 50px rgba(255,255,255,0.4); }
+                    }
+                    
+                    .premium-slide:hover {
+                        transform: rotateY(0deg) translateZ(20px) scale(1.02) !important;
+                        box-shadow: 0 30px 60px rgba(0,0,0,0.4) !important;
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+            
+            console.log(`✅ ${slides.length}개 프리미엄 슬라이드 DOM 생성 완료`);
             
             // 카운터 업데이트
             updateSlideCounter();
             
-            // 자동 재생 시작
+            // 자동 재생 시작 (약간 지연)
             setTimeout(() => {
-                console.log('🎬 자동 슬라이드쇼 시작');
-                startAutoSlideshowNow();
-            }, 1000);
+                console.log('🎬 프리미엄 자동 슬라이드쇼 시작');
+                startPremiumSlideshow();
+            }, 1500);
         }
 
-        // 자동 슬라이드쇼 강제 시작
-        function startAutoSlideshowNow() {
+        // 프리미엄 자동 슬라이드쇼
+        function startPremiumSlideshow() {
             if (autoSlideInterval) {
                 clearInterval(autoSlideInterval);
             }
             
-            console.log('🔄 자동 슬라이드쇼 인터벌 시작');
+            console.log('🔄 프리미엄 자동 슬라이드쇼 인터벌 시작');
             
             autoSlideInterval = setInterval(() => {
                 const nextIndex = (currentSlideIndex + 1) % slides.length;
-                console.log(`슬라이드 전환: ${currentSlideIndex} → ${nextIndex}`);
-                showSlideNow(nextIndex);
-            }, 2200); // 2.2초마다 전환
+                console.log(`역동적 슬라이드 전환: ${currentSlideIndex} → ${nextIndex}`);
+                showPremiumSlide(nextIndex);
+            }, 2500); // 2.5초마다 전환 (약간 여유있게)
         }
 
-        // 슬라이드 즉시 표시
-        function showSlideNow(index) {
+        // 프리미엄 슬라이드 표시 (3D 회전 효과)
+        function showPremiumSlide(index) {
             if (!slides || slides.length === 0) return;
             
             const container = document.getElementById('slideContainer');
@@ -1927,20 +2327,32 @@
             
             const allSlides = container.children;
             
-            // 모든 슬라이드 숨기기
-            for (let i = 0; i < allSlides.length; i++) {
-                const slide = allSlides[i];
-                slide.style.opacity = '0';
-                slide.style.transform = 'scale(0.8)';
-                slide.style.zIndex = '1';
+            // 현재 슬라이드 숨기기 (왼쪽으로 회전하며 사라짐)
+            if (allSlides[currentSlideIndex]) {
+                const currentSlide = allSlides[currentSlideIndex];
+                currentSlide.style.transition = 'all 0.8s cubic-bezier(0.4, 0.0, 0.2, 1)';
+                currentSlide.style.transform = 'rotateY(-90deg) translateZ(-200px) scale(0.7)';
+                currentSlide.style.opacity = '0';
+                currentSlide.style.zIndex = '1';
+                currentSlide.style.filter = 'none';
             }
             
-            // 현재 슬라이드 표시
+            // 새 슬라이드 표시 (오른쪽에서 회전하며 등장)
             if (allSlides[index]) {
-                const currentSlide = allSlides[index];
-                currentSlide.style.opacity = '1';
-                currentSlide.style.transform = 'scale(1)';
-                currentSlide.style.zIndex = '10';
+                const newSlide = allSlides[index];
+                
+                // 시작 위치 (오른쪽에서 회전된 상태)
+                newSlide.style.transform = 'rotateY(90deg) translateZ(-200px) scale(0.7)';
+                newSlide.style.opacity = '0';
+                newSlide.style.zIndex = '100';
+                
+                // 잠시 후 중앙으로 회전하며 등장
+                setTimeout(() => {
+                    newSlide.style.transition = 'all 0.8s cubic-bezier(0.4, 0.0, 0.2, 1)';
+                    newSlide.style.transform = 'rotateY(0deg) translateZ(0px) scale(1)';
+                    newSlide.style.opacity = '1';
+                    newSlide.style.filter = 'drop-shadow(0 0 30px rgba(255,255,255,0.3))';
+                }, 50);
             }
             
             currentSlideIndex = index;
@@ -2073,9 +2485,9 @@
             console.log('✅ 슬라이드 리스트 생성 완료');
         }
 
-        // 수동 슬라이드 표시
+        // 수동 슬라이드 표시 (프리미엄 버전)
         function showSlideManual(index) {
-            console.log(`🎯 수동으로 슬라이드 ${index + 1} 표시`);
+            console.log(`🎯 수동으로 프리미엄 슬라이드 ${index + 1} 표시`);
             
             // 자동 재생 잠시 중지
             if (autoSlideInterval) {
@@ -2083,13 +2495,146 @@
                 autoSlideInterval = null;
             }
             
-            showSlideNow(index);
+            showPremiumSlide(index);
             
             // 5초 후 자동 재생 재시작
             setTimeout(() => {
-                console.log('🔄 자동 재생 재시작');
-                startAutoSlideshowNow();
+                console.log('🔄 프리미엄 자동 재생 재시작');
+                startPremiumSlideshow();
             }, 5000);
+        }
+
+        // 이전/다음 슬라이드 (프리미엄 버전)
+        function prevSlide() {
+            console.log('⬅️ 이전 프리미엄 슬라이드');
+            const newIndex = currentSlideIndex > 0 ? currentSlideIndex - 1 : slides.length - 1;
+            showSlideManual(newIndex);
+        }
+        
+        function nextSlide() {
+            console.log('➡️ 다음 프리미엄 슬라이드');
+            const newIndex = currentSlideIndex < slides.length - 1 ? currentSlideIndex + 1 : 0;
+            showSlideManual(newIndex);
+        }
+
+        // 이미지 미리보기 업데이트 (개선된 버전)
+        function updateImagePreview() {
+            console.log('🖼️ 이미지 미리보기 업데이트 시작');
+            
+            const preview = document.getElementById('imagePreview');
+            if (!preview || !generatedImage) {
+                console.log('미리보기 요소 또는 이미지 없음');
+                return;
+            }
+            
+            // 기존 내용 제거
+            preview.innerHTML = '';
+            
+            // 메인 컨테이너
+            const container = document.createElement('div');
+            container.style.cssText = `
+                position: relative;
+                width: 100%;
+                height: 100%;
+                border-radius: 20px;
+                overflow: hidden;
+                box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+                transition: all 0.3s ease;
+            `;
+            
+            // 이미지 요소
+            const img = document.createElement('img');
+            img.src = generatedImage;
+            img.alt = 'AI Generated Image';
+            img.style.cssText = `
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                cursor: pointer;
+                transition: transform 0.3s ease;
+            `;
+            
+            // 오버레이
+            const overlay = document.createElement('div');
+            overlay.style.cssText = `
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(45deg, transparent 60%, rgba(255,255,255,0.1) 100%);
+                pointer-events: none;
+            `;
+            
+            // 크게보기 버튼
+            const viewBtn = document.createElement('button');
+            viewBtn.innerHTML = '🔍 크게보기';
+            viewBtn.style.cssText = `
+                position: absolute;
+                bottom: 15px;
+                right: 15px;
+                background: linear-gradient(45deg, rgba(0,0,0,0.8), rgba(0,0,0,0.6));
+                color: white;
+                border: none;
+                border-radius: 20px;
+                padding: 10px 16px;
+                font-size: 0.9em;
+                font-weight: 600;
+                cursor: pointer;
+                backdrop-filter: blur(10px);
+                transition: all 0.3s ease;
+                transform: scale(0.9);
+                opacity: 0.8;
+            `;
+            
+            // 크기 정보 뱃지
+            const sizeBadge = document.createElement('div');
+            sizeBadge.innerHTML = selectedImageSize;
+            sizeBadge.style.cssText = `
+                position: absolute;
+                top: 15px;
+                left: 15px;
+                background: linear-gradient(45deg, rgba(78, 205, 196, 0.9), rgba(68, 160, 141, 0.9));
+                color: white;
+                border-radius: 15px;
+                padding: 6px 12px;
+                font-size: 0.8em;
+                font-weight: 600;
+                backdrop-filter: blur(5px);
+            `;
+            
+            // 이벤트 리스너
+            img.addEventListener('click', () => window.open(generatedImage, '_blank'));
+            viewBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                window.open(generatedImage, '_blank');
+            });
+            
+            // 호버 효과
+            container.addEventListener('mouseenter', () => {
+                img.style.transform = 'scale(1.05)';
+                viewBtn.style.transform = 'scale(1)';
+                viewBtn.style.opacity = '1';
+                container.style.transform = 'translateY(-5px)';
+                container.style.boxShadow = '0 25px 50px rgba(0,0,0,0.3)';
+            });
+            
+            container.addEventListener('mouseleave', () => {
+                img.style.transform = 'scale(1)';
+                viewBtn.style.transform = 'scale(0.9)';
+                viewBtn.style.opacity = '0.8';
+                container.style.transform = 'translateY(0)';
+                container.style.boxShadow = '0 15px 35px rgba(0,0,0,0.2)';
+            });
+            
+            // 요소 조립
+            container.appendChild(img);
+            container.appendChild(overlay);
+            container.appendChild(sizeBadge);
+            container.appendChild(viewBtn);
+            preview.appendChild(container);
+            
+            console.log('✅ 이미지 미리보기 업데이트 완료');
         }
         
         // 슬라이드 표시 (수동 네비게이션용)
