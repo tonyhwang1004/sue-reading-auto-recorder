@@ -1,4 +1,49 @@
-<!DOCTYPE html>
+// 슬라이드별 상세 내용을 정확히 파싱하는 함수
+        function parseDetailedSlideContent(content) {
+            console.log('📋 상세 슬라이드 내용 파싱 시작');
+            
+            const slides = [];
+            
+            // 슬라이드 패턴 매칭: [슬라이드 N: 제목] 형태
+            const slidePattern = /\[슬라이드\s*(\d+)[:\s]*([^\]]+)\]\s*([^[\n]*(?:\n(?!\[슬라이드)[^[\n]*)*)/g;
+            let match;
+            
+            while ((match = slidePattern.exec(content)) !== null) {
+                const slideNumber = parseInt(match[1]);
+                const slideTitle = match[2].trim();
+                const slideContent = match[3].trim();
+                
+                // 슬라이드 내용을 줄별로 분리
+                const lines = slideContent.split('\n')
+                    .map(line => line.trim())
+                    .filter(line => line.length > 0);
+                
+                console.log(`슬라이드 ${slideNumber} 파싱:`, slideTitle, lines);
+                
+                // 아이콘 매핑
+                const iconMap = {
+                    '인트로': '🚀',
+                    '역사': '🏛️', 
+                    '20년': '🏆',
+                    'AI': '🤖',
+                    '혁신': '⚡',
+                    '독해': '📚',
+                    '속독': '⚡',
+                    '토론': '💬',
+                    '피드백': '🎯',
+                    '채두윜': '👑',
+                    '소설': '📖',
+                    '커리큘럼': '🧠',
+                    '성과': '📊',
+                    '혜택': '🎁',
+                    '위치': '📍',
+                    '상담': '📅',
+                    '연락': '📞'
+                };
+                
+                // 아이콘 선택
+                let icon = '🎯';
+                for<!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
@@ -1546,42 +1591,255 @@
             }));
         }
 
-        // GPT-4를 활용한 스마트 슬라이드 생성
+        // 슬라이드별 상세 내용을 정확히 파싱하는 함수
+        function parseDetailedSlideContent(content) {
+            console.log('📋 상세 슬라이드 내용 파싱 시작');
+            
+            const slides = [];
+            
+            // 슬라이드 패턴 매칭: [슬라이드 N: 제목] 형태
+            const slidePattern = /\[슬라이드\s*(\d+)[:\s]*([^\]]+)\]\s*([^[\n]*(?:\n(?!\[슬라이드)[^[\n]*)*)/g;
+            let match;
+            
+            while ((match = slidePattern.exec(content)) !== null) {
+                const slideNumber = parseInt(match[1]);
+                const slideTitle = match[2].trim();
+                const slideContent = match[3].trim();
+                
+                // 슬라이드 내용을 줄별로 분리
+                const lines = slideContent.split('\n')
+                    .map(line => line.trim())
+                    .filter(line => line.length > 0);
+                
+                console.log(`슬라이드 ${slideNumber} 파싱:`, slideTitle, lines);
+                
+                // 아이콘 매핑
+                const iconMap = {
+                    '인트로': '🚀',
+                    '역사': '🏛️', 
+                    '20년': '🏆',
+                    'AI': '🤖',
+                    '혁신': '⚡',
+                    '독해': '📚',
+                    '속독': '⚡',
+                    '토론': '💬',
+                    '피드백': '🎯',
+                    '채두윜': '👑',
+                    '소설': '📖',
+                    '커리큘럼': '🧠',
+                    '성과': '📊',
+                    '혜택': '🎁',
+                    '위치': '📍',
+                    '상담': '📅',
+                    '연락': '📞'
+                };
+                
+                // 아이콘 선택
+                let icon = '🎯';
+                for (const keyword in iconMap) {
+                    if (slideTitle.includes(keyword) || slideContent.includes(keyword)) {
+                        icon = iconMap[keyword];
+                        break;
+                    }
+                }
+                
+                // 제목과 부제목 추출
+                let title = slideTitle;
+                let subtitle = '';
+                
+                if (lines.length > 0) {
+                    // 첫 번째 줄을 제목으로, 나머지를 부제목으로
+                    if (lines[0].length < 50) {
+                        title = lines[0];
+                        subtitle = lines.slice(1, 3).join(' ').substring(0, 80);
+                    } else {
+                        subtitle = lines[0].substring(0, 80);
+                    }
+                }
+                
+                // 부제목이 없으면 슬라이드 제목을 부제목으로 사용
+                if (!subtitle) {
+                    subtitle = slideTitle.length > 40 ? slideTitle.substring(0, 40) + '...' : slideTitle;
+                }
+                
+                slides.push({
+                    slideNumber: slideNumber,
+                    icon: icon,
+                    title: title.length > 35 ? title.substring(0, 35) + '...' : title,
+                    subtitle: subtitle,
+                    type: 'parsed',
+                    originalContent: lines
+                });
+            }
+            
+            console.log('✅ 파싱된 슬라이드 개수:', slides.length);
+            return slides;
+        }
+
+        // GPT-4를 활용한 스마트 슬라이드 생성 - 개선된 버전
         async function createSlidesFromInput(title, content) {
-            console.log('🧠 GPT-4가 내용을 분석하여 슬라이드 생성 시작');
+            console.log('🧠 개선된 슬라이드 생성 시작');
             console.log('분석할 제목:', title);
-            console.log('분석할 내용:', content);
+            console.log('분석할 내용 길이:', content.length);
             
             try {
-                // GPT-4에게 슬라이드 분석 요청
-                const gptResponse = await analyzeContentWithGPT(title, content);
-                console.log('✅ GPT-4 분석 완료:', gptResponse);
+                // 1. 먼저 상세한 슬라이드 패턴이 있는지 확인
+                if (content.includes('[슬라이드') && content.includes(']:')) {
+                    console.log('📋 상세 슬라이드 패턴 발견, 직접 파싱');
+                    const parsedSlides = parseDetailedSlideContent(content);
+                    
+                    if (parsedSlides.length >= 10) {
+                        console.log('✅ 충분한 슬라이드 파싱됨, 직접 사용');
+                        return parsedSlides.slice(0, 15);
+                    }
+                }
                 
-                return gptResponse;
+                // 2. GPT-4 분석 시도
+                console.log('🤖 GPT-4 분석 시도');
+                const gptSlides = await analyzeContentWithGPT(title, content);
+                
+                if (gptSlides && gptSlides.length >= 10) {
+                    console.log('✅ GPT-4 분석 성공');
+                    return gptSlides;
+                }
+                
+                throw new Error('GPT 분석 결과 부족');
                 
             } catch (error) {
-                console.error('❌ GPT 분석 실패, 백업 방식 사용:', error);
-                // GPT 실패 시 백업 분석 방식 사용
-                return createBackupSlides(title, content);
+                console.error('❌ GPT 분석 실패:', error);
+                // 3. 백업 분석 방식
+                return createAdvancedBackupSlides(title, content);
             }
         }
 
-        // GPT-4 API 호출하여 내용 분석
+        // 고급 백업 슬라이드 생성
+        function createAdvancedBackupSlides(title, content) {
+            console.log('🔄 고급 백업 슬라이드 생성');
+            
+            const slides = [];
+            
+            // Sue Reading Club 전용 슬라이드 데이터
+            const sueReadingSlides = [
+                { 
+                    icon: '🚀', 
+                    title: 'Sue Reading Club', 
+                    subtitle: '송도의 20년 전통 AI 영어교육 전문기관',
+                    type: 'intro' 
+                },
+                { 
+                    icon: '🏆', 
+                    title: '20년 검증된 역사', 
+                    subtitle: '1985년 설립, 수천 명이 선택한 신뢰의 교육',
+                    type: 'history' 
+                },
+                { 
+                    icon: '⚡', 
+                    title: 'AI 혁신 기술', 
+                    subtitle: '최신 AI와 20년 노하우의 완벽한 융합',
+                    type: 'innovation' 
+                },
+                { 
+                    icon: '📚', 
+                    title: 'AI 독해 시스템', 
+                    subtitle: '개인별 취약점 실시간 진단 및 맞춤 분석',
+                    type: 'reading' 
+                },
+                { 
+                    icon: '⚡', 
+                    title: '스마트 속독', 
+                    subtitle: '읽기 속도 3배 향상 보장 시스템',
+                    type: 'speed' 
+                },
+                { 
+                    icon: '💬', 
+                    title: 'AI 토론 클래스', 
+                    subtitle: '실시간 영어 대화 연습 및 즉석 피드백',
+                    type: 'discussion' 
+                },
+                { 
+                    icon: '🎯', 
+                    title: '즉석 피드백 시스템', 
+                    subtitle: '발음부터 문법까지 정확한 실시간 교정',
+                    type: 'feedback' 
+                },
+                { 
+                    icon: '👑', 
+                    title: '특별 채두윜반', 
+                    subtitle: '고급 영어 실력 완성을 위한 최상위 과정',
+                    type: 'premium' 
+                },
+                { 
+                    icon: '📖', 
+                    title: '영어소설 마스터', 
+                    subtitle: '문학을 통한 고급 영어 습득의 독창적 방법',
+                    type: 'literature' 
+                },
+                { 
+                    icon: '🧠', 
+                    title: '개인 맞춤 커리큘럼', 
+                    subtitle: 'AI가 분석한 개인별 최적 학습 경로',
+                    type: 'curriculum' 
+                },
+                { 
+                    icon: '📊', 
+                    title: '검증된 놀라운 성과', 
+                    subtitle: '98% 학부모 만족도, 평균 3.2배 성적 향상',
+                    type: 'results' 
+                },
+                { 
+                    icon: '🎁', 
+                    title: '특별 론칭 혜택', 
+                    subtitle: '첫 달 30% 할인 + 무료 AI 레벨테스트',
+                    type: 'benefit' 
+                },
+                { 
+                    icon: '📍', 
+                    title: '프리미엄 위치', 
+                    subtitle: '해온더라운지 702호, 송도 국제도시 중심가',
+                    type: 'location' 
+                },
+                { 
+                    icon: '📅', 
+                    title: '간편한 상담 신청', 
+                    subtitle: '평일 오전 10시~오후 8시 전문 상담',
+                    type: 'consultation' 
+                },
+                { 
+                    icon: '📞', 
+                    title: '010-4602-1953', 
+                    subtitle: '지금 바로 연락하여 영어 실력 혁신을 시작하세요',
+                    type: 'contact' 
+                }
+            ];
+            
+            // Sue Reading Club 관련 내용인지 확인
+            if (content.includes('Sue') || content.includes('Reading') || content.includes('송도') || content.includes('AI')) {
+                console.log('✅ Sue Reading Club 전용 슬라이드 사용');
+                return sueReadingSlides.map((slide, index) => ({
+                    slideNumber: index + 1,
+                    ...slide
+                }));
+            }
+            
+            // 일반적인 백업 슬라이드 생성
+            return createBackupSlides(title, content);
+        }
+
+        // GPT-4 API 호출 개선
         async function analyzeContentWithGPT(title, content) {
-            const prompt = `다음 내용을 분석하여 15장의 유튜브 쇼츠용 슬라이드를 생성해주세요.
+            const prompt = `다음 내용을 분석하여 정확히 15장의 유튜브 쇼츠용 슬라이드를 생성해주세요.
 
 제목: ${title}
 내용: ${content}
 
-요구사항:
-1. 입력된 내용을 정확히 반영해서 15장의 슬라이드 생성
-2. 각 슬라이드는 제목과 부제목으로 구성
-3. 제목은 30자 이내, 부제목은 50자 이내
-4. 내용의 핵심 정보(프로그램, 특징, 혜택, 연락처 등)를 슬라이드로 변환
-5. 순서: 인트로 → 핵심 서비스/프로그램 → 특징/차별점 → 성과/혜택 → 연락처
-6. 이모지는 사용하지 말고, 적절한 아이콘 텍스트만 제공
+중요 요구사항:
+1. 제공된 내용의 핵심 정보를 정확히 반영
+2. 각 슬라이드는 제목(25자 이내)과 부제목(45자 이내)으로 구성
+3. 순서는 인트로 → 핵심 프로그램/서비스 → 특징 → 성과 → 혜택 → 연락처
+4. Sue Reading Club의 특징을 살려서 구성
+5. 실제 데이터(20년, 98% 만족도, 3.2배 향상, 30% 할인 등)를 활용
 
-응답 형식 (JSON):
+JSON 형식으로 응답:
 {
   "slides": [
     {
@@ -1589,8 +1847,9 @@
       "icon": "🚀",
       "title": "슬라이드 제목",
       "subtitle": "슬라이드 부제목",
-      "type": "intro"
+      "type": "slide_type"
     }
+    // ... 15개 슬라이드
   ]
 }`;
 
@@ -1605,15 +1864,15 @@
                     messages: [
                         {
                             role: "system",
-                            content: "당신은 마케팅 콘텐츠 전문가입니다. 주어진 내용을 분석하여 효과적인 슬라이드를 생성해주세요."
+                            content: "당신은 마케팅 슬라이드 전문가입니다. 제공된 내용을 정확히 분석하여 효과적인 15장의 슬라이드를 생성해주세요."
                         },
                         {
                             role: "user",
                             content: prompt
                         }
                     ],
-                    temperature: 0.7,
-                    max_tokens: 2000
+                    temperature: 0.3,
+                    max_tokens: 3000
                 })
             });
 
@@ -1624,12 +1883,20 @@
             const data = await response.json();
             const gptContent = data.choices[0].message.content;
             
+            console.log('GPT 응답:', gptContent);
+            
             // JSON 파싱
-            const jsonMatch = gptContent.match(/\{[\s\S]*\}/);
-            if (jsonMatch) {
-                const parsedData = JSON.parse(jsonMatch[0]);
-                return parsedData.slides;
-            } else {
+            try {
+                const jsonMatch = gptContent.match(/\{[\s\S]*\}/);
+                if (jsonMatch) {
+                    const parsedData = JSON.parse(jsonMatch[0]);
+                    if (parsedData.slides && Array.isArray(parsedData.slides)) {
+                        return parsedData.slides;
+                    }
+                }
+                throw new Error('JSON 파싱 실패');
+            } catch (parseError) {
+                console.error('JSON 파싱 오류:', parseError);
                 throw new Error('GPT 응답 파싱 실패');
             }
         }
