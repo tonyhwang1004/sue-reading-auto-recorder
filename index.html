@@ -1,4 +1,49 @@
-<!DOCTYPE html>
+// 슬라이드별 상세 내용을 정확히 파싱하는 함수
+        function parseDetailedSlideContent(content) {
+            console.log('📋 상세 슬라이드 내용 파싱 시작');
+            
+            const slides = [];
+            
+            // 슬라이드 패턴 매칭: [슬라이드 N: 제목] 형태
+            const slidePattern = /\[슬라이드\s*(\d+)[:\s]*([^\]]+)\]\s*([^[\n]*(?:\n(?!\[슬라이드)[^[\n]*)*)/g;
+            let match;
+            
+            while ((match = slidePattern.exec(content)) !== null) {
+                const slideNumber = parseInt(match[1]);
+                const slideTitle = match[2].trim();
+                const slideContent = match[3].trim();
+                
+                // 슬라이드 내용을 줄별로 분리
+                const lines = slideContent.split('\n')
+                    .map(line => line.trim())
+                    .filter(line => line.length > 0);
+                
+                console.log(`슬라이드 ${slideNumber} 파싱:`, slideTitle, lines);
+                
+                // 아이콘 매핑
+                const iconMap = {
+                    '인트로': '🚀',
+                    '역사': '🏛️', 
+                    '20년': '🏆',
+                    'AI': '🤖',
+                    '혁신': '⚡',
+                    '독해': '📚',
+                    '속독': '⚡',
+                    '토론': '💬',
+                    '피드백': '🎯',
+                    '채두윜': '👑',
+                    '소설': '📖',
+                    '커리큘럼': '🧠',
+                    '성과': '📊',
+                    '혜택': '🎁',
+                    '위치': '📍',
+                    '상담': '📅',
+                    '연락': '📞'
+                };
+                
+                // 아이콘 선택
+                let icon = '🎯';
+                for<!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
@@ -951,7 +996,7 @@
                        style="max-width: 600px; margin-bottom: 20px;">
                 <div>
                     <button class="btn btn-primary" id="setApiBtn">API 키 설정</button>
-                    <button class="btn btn-secondary" id="showGuideBtn">발급 방법</button>
+                    <button class="btn btn-secondary" id="showGuideBtn">📖 사용법 가이드</button>
                 </div>
                 <div class="status-message" id="apiStatus"></div>
             </div>
@@ -1249,21 +1294,207 @@
             }
         }
 
-        // API 가이드 표시
-        function showApiGuide() {
-            const guideText = `🔑 OpenAI API 키 발급 방법:
+        // 사용법 가이드 모달 표시
+        function showUsageGuide() {
+            const guideText = `📝 슬라이드 생성 완벽 가이드
 
-1. platform.openai.com 접속
-2. 로그인 후 API Keys 메뉴 클릭
-3. "Create new secret key" 버튼 클릭
-4. 생성된 키를 복사하여 입력
+🎯 1. 제목 작성법
+✅ 좋은 예시:
+- "Sue Reading Club - AI 영어교육의 혁신"
+- "카페 브랜드명 - 프리미엄 원두 전문점"
+- "부동산 회사명 - 송도 투자 전문가"
 
-💡 참고사항:
-- GPT-4와 DALL-E 3 API 사용 가능한 키 필요
-- API 사용량에 따라 과금됩니다
-- 키는 안전하게 보관하세요`;
-            
-            alert(guideText);
+❌ 피해야 할 예시:
+- "안녕하세요" (너무 단순)
+- "이것은 우리 회사에 대한 소개입니다" (너무 길고 구체적이지 않음)
+
+📄 2. 내용 작성법 (중요!)
+
+A. 기본 구조 (이모지로 섹션 구분):
+🏆 회사/브랜드 소개
+🤖 핵심 서비스/프로그램 (각각 별도 줄로)
+⭐ 차별화 포인트/특징
+📊 성과 및 수치 데이터
+🎁 특별 혜택/할인
+📍 위치 및 연락처
+
+B. 실제 작성 예시:
+"
+브랜드명은 지역의 N년 전통 전문기관입니다.
+
+🏆 브랜드 역사
+- 19XX년 설립 이후 N년간 지역 업계의 명문
+- 수천 명의 고객이 선택한 신뢰할 수 있는 파트너
+- 전통과 혁신이 조화를 이룬 차별화된 서비스
+
+🤖 핵심 서비스
+- 서비스A: 구체적인 설명과 효과
+- 서비스B: 구체적인 설명과 효과  
+- 서비스C: 구체적인 설명과 효과
+- 서비스D: 구체적인 설명과 효과
+
+⭐ 차별화 포인트
+- 최신 기술과 N년 노하우의 혁신적 융합
+- 개인별 맞춤 서비스로 효율성 극대화
+- 검증된 방법론으로 확실한 결과 보장
+
+📊 검증된 성과
+- N% 고객 만족도로 입증된 서비스 품질
+- 평균 N배 성과 향상이라는 놀라운 실적
+- N년간 수천 명이 경험한 확실한 결과
+
+🎁 특별 혜택
+- 첫 달 N% 할인으로 부담 없는 시작
+- 무료 상담/테스트로 정확한 진단
+- 개인별 맞춤 플랜 무료 제공
+
+📍 위치 및 연락처
+- 위치: 구체적인 주소 (건물명, 호수 포함)
+- 연락처: 010-XXXX-XXXX
+- 운영시간: 평일 오전 X시 - 오후 X시
+- 상담: 언제든 전화 상담 가능
+"
+
+🖼️ 3. 이미지 내용 작성법
+
+A. 구체적이고 상세하게:
+✅ 좋은 예시:
+"전통적이면서도 현대적인 교육 환경, 20년 전통의 신뢰감과 혁신적인 AI 기술이 조화된 공간, 영어소설과 책들로 가득한 따뜻한 학습 분위기, 학생들이 집중하며 공부하는 모습, 첨단 AI 교육 시설이 어우러진 프리미엄 학습 공간"
+
+❌ 피해야 할 예시:
+"좋은 이미지" (너무 추상적)
+"교육 관련 사진" (구체적이지 않음)
+
+B. 이미지 설명 템플릿:
+"[분위기] + [특징] + [환경묘사] + [사람들 모습] + [시설/도구] + [전체적인 느낌]"
+
+예시:
+- 카페: "따뜻하고 아늑한 카페 내부, 원목 인테리어와 빈티지 소품들, 신선한 원두가 진열된 모습, 고객들이 편안하게 커피를 즐기는 장면, 전문 바리스타가 정성스럽게 커피를 내리는 모습"
+- 병원: "깨끗하고 현대적인 의료 시설, 최신 의료 장비들, 밝고 쾌적한 진료실, 의료진이 환자를 친절하게 돌보는 모습, 신뢰감을 주는 전문적인 환경"
+
+📋 4. 완벽한 입력 체크리스트
+
+□ 제목: 브랜드명 + 핵심 가치/서비스 (30자 이내)
+□ 내용: 이모지로 섹션 구분됨
+□ 내용: 각 서비스마다 "- 서비스명: 설명" 형태
+□ 내용: 구체적인 수치 데이터 포함 (N년, N%, N배 등)
+□ 내용: 연락처와 주소 명시
+□ 이미지: 50자 이상의 구체적인 묘사
+
+🚀 5. 빠른 시작 방법
+
+1. "한번에 데이터 입력하기" 클릭
+2. "샘플 데이터 사용" 클릭 (완벽한 예시 확인)
+3. 샘플을 참고해서 본인 내용으로 수정
+4. "적용하기" → "AI 슬라이드 생성하기"
+
+💡 팁: 샘플 데이터의 구조를 그대로 유지하면서 내용만 바꾸면 100% 성공!`;
+
+            // 모달 생성
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.9);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 3000;
+                backdrop-filter: blur(10px);
+            `;
+
+            const content = document.createElement('div');
+            content.style.cssText = `
+                background: rgba(255,255,255,0.15);
+                border: 3px solid rgba(255,255,255,0.4);
+                border-radius: 25px;
+                padding: 30px;
+                max-width: 90%;
+                max-height: 90%;
+                overflow-y: auto;
+                backdrop-filter: blur(25px);
+                color: white;
+                font-family: 'Segoe UI', sans-serif;
+                line-height: 1.6;
+            `;
+
+            const header = document.createElement('div');
+            header.style.cssText = `
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 20px;
+                padding-bottom: 15px;
+                border-bottom: 2px solid rgba(255,255,255,0.2);
+            `;
+
+            const title = document.createElement('h2');
+            title.textContent = '📖 슬라이드 생성 완벽 가이드';
+            title.style.cssText = `
+                color: #feca57;
+                font-size: 1.8em;
+                margin: 0;
+                text-shadow: 0 0 20px rgba(254,202,87,0.5);
+            `;
+
+            const closeBtn = document.createElement('button');
+            closeBtn.textContent = '✕';
+            closeBtn.style.cssText = `
+                background: rgba(255,107,107,0.2);
+                border: 2px solid rgba(255,107,107,0.5);
+                border-radius: 50%;
+                color: #ff6b6b;
+                width: 40px;
+                height: 40px;
+                cursor: pointer;
+                font-size: 18px;
+                font-weight: bold;
+                transition: all 0.3s ease;
+            `;
+
+            const guideContent = document.createElement('pre');
+            guideContent.textContent = guideText;
+            guideContent.style.cssText = `
+                white-space: pre-wrap;
+                font-family: inherit;
+                font-size: 14px;
+                line-height: 1.6;
+                margin: 0;
+            `;
+
+            closeBtn.addEventListener('click', () => {
+                document.body.removeChild(modal);
+                document.body.style.overflow = 'auto';
+            });
+
+            closeBtn.addEventListener('mouseenter', () => {
+                closeBtn.style.background = 'rgba(255,107,107,0.4)';
+                closeBtn.style.transform = 'scale(1.1)';
+            });
+
+            closeBtn.addEventListener('mouseleave', () => {
+                closeBtn.style.background = 'rgba(255,107,107,0.2)';
+                closeBtn.style.transform = 'scale(1)';
+            });
+
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    document.body.removeChild(modal);
+                    document.body.style.overflow = 'auto';
+                }
+            });
+
+            header.appendChild(title);
+            header.appendChild(closeBtn);
+            content.appendChild(header);
+            content.appendChild(guideContent);
+            modal.appendChild(content);
+
+            document.body.appendChild(modal);
+            document.body.style.overflow = 'hidden';
         }
 
         // 빠른 입력 모달 관련 함수들
@@ -1552,14 +1783,194 @@
             }));
         }
 
-        // 강력한 GPT-4 분석 및 슬라이드 생성
+        // 가이드 기반 스마트 내용 분석
+        function parseGuideBasedContent(content) {
+            console.log('📋 가이드 기반 내용 분석 시작');
+            
+            const slides = [];
+            const sections = {};
+            
+            // 이모지 섹션별로 내용 분리
+            const emojiSections = {
+                '🏆': 'company',
+                '🤖': 'services', 
+                '⭐': 'features',
+                '📊': 'results',
+                '🎁': 'benefits',
+                '📍': 'contact'
+            };
+            
+            // 각 이모지 섹션 추출
+            Object.keys(emojiSections).forEach(emoji => {
+                const regex = new RegExp(`${emoji}[^🏆🤖⭐📊🎁📍]*`, 'g');
+                const match = content.match(regex);
+                if (match) {
+                    sections[emojiSections[emoji]] = match[0];
+                }
+            });
+            
+            console.log('추출된 섹션들:', sections);
+            
+            // 1. 회사 소개 슬라이드
+            if (sections.company) {
+                const companyLines = sections.company.split('\n')
+                    .filter(line => line.trim() && !line.includes('🏆'))
+                    .slice(0, 3);
+                    
+                companyLines.forEach((line, index) => {
+                    if (line.includes('-')) {
+                        const cleanLine = line.replace(/^[\-\•\*\s]+/, '').trim();
+                        slides.push({
+                            slideNumber: slides.length + 1,
+                            icon: index === 0 ? '🏆' : '⭐',
+                            title: cleanLine.length > 30 ? cleanLine.substring(0, 30) + '...' : cleanLine,
+                            subtitle: '신뢰할 수 있는 전문 기관',
+                            type: 'company'
+                        });
+                    }
+                });
+            }
+            
+            // 2. 핵심 서비스 슬라이드들
+            if (sections.services) {
+                const serviceIcons = ['📚', '⚡', '💬', '🎯', '👑', '📖'];
+                const serviceLines = sections.services.split('\n')
+                    .filter(line => line.includes('-') && line.includes(':'))
+                    .slice(0, 6);
+                    
+                serviceLines.forEach((line, index) => {
+                    const cleanLine = line.replace(/^[\-\•\*\s]+/, '').trim();
+                    const [serviceName, serviceDesc] = cleanLine.split(':');
+                    
+                    if (serviceName && serviceDesc) {
+                        slides.push({
+                            slideNumber: slides.length + 1,
+                            icon: serviceIcons[index],
+                            title: serviceName.trim(),
+                            subtitle: serviceDesc.trim().substring(0, 50),
+                            type: 'service'
+                        });
+                    }
+                });
+            }
+            
+            // 3. 차별화 포인트 슬라이드들
+            if (sections.features) {
+                const featureLines = sections.features.split('\n')
+                    .filter(line => line.includes('-'))
+                    .slice(0, 3);
+                    
+                featureLines.forEach((line, index) => {
+                    const cleanLine = line.replace(/^[\-\•\*\s]+/, '').trim();
+                    const icons = ['💎', '🌟', '🔥'];
+                    
+                    slides.push({
+                        slideNumber: slides.length + 1,
+                        icon: icons[index],
+                        title: cleanLine.length > 30 ? cleanLine.substring(0, 30) + '...' : cleanLine,
+                        subtitle: '핵심 차별화 포인트',
+                        type: 'feature'
+                    });
+                });
+            }
+            
+            // 4. 성과 슬라이드들
+            if (sections.results) {
+                const resultLines = sections.results.split('\n')
+                    .filter(line => line.includes('-'))
+                    .slice(0, 2);
+                    
+                resultLines.forEach((line, index) => {
+                    const cleanLine = line.replace(/^[\-\•\*\s]+/, '').trim();
+                    const icons = ['📊', '🏆'];
+                    
+                    slides.push({
+                        slideNumber: slides.length + 1,
+                        icon: icons[index],
+                        title: cleanLine.length > 30 ? cleanLine.substring(0, 30) + '...' : cleanLine,
+                        subtitle: '검증된 우수한 성과',
+                        type: 'result'
+                    });
+                });
+            }
+            
+            // 5. 혜택 슬라이드들
+            if (sections.benefits) {
+                const benefitLines = sections.benefits.split('\n')
+                    .filter(line => line.includes('-'))
+                    .slice(0, 2);
+                    
+                benefitLines.forEach((line, index) => {
+                    const cleanLine = line.replace(/^[\-\•\*\s]+/, '').trim();
+                    const icons = ['🎁', '✨'];
+                    
+                    slides.push({
+                        slideNumber: slides.length + 1,
+                        icon: icons[index],
+                        title: cleanLine.length > 30 ? cleanLine.substring(0, 30) + '...' : cleanLine,
+                        subtitle: '놓치면 안 되는 특별 혜택',
+                        type: 'benefit'
+                    });
+                });
+            }
+            
+            // 6. 연락처 슬라이드들
+            if (sections.contact) {
+                const contactLines = sections.contact.split('\n')
+                    .filter(line => line.includes('-'))
+                    .slice(0, 4);
+                    
+                contactLines.forEach((line, index) => {
+                    const cleanLine = line.replace(/^[\-\•\*\s]+/, '').trim();
+                    const icons = ['📍', '📞', '🕐', '💬'];
+                    
+                    slides.push({
+                        slideNumber: slides.length + 1,
+                        icon: icons[index],
+                        title: cleanLine.includes(':') ? cleanLine.split(':')[1].trim() : cleanLine,
+                        subtitle: cleanLine.includes(':') ? cleanLine.split(':')[0].trim() : '문의하세요',
+                        type: 'contact'
+                    });
+                });
+            }
+            
+            console.log('✅ 가이드 기반 파싱 완료, 슬라이드 개수:', slides.length);
+            return slides;
+        }
+
+        // 강력한 GPT-4 분석 및 슬라이드 생성 - 업데이트
         async function createSlidesFromInput(title, content) {
             console.log('🧠 강력한 GPT-4 슬라이드 생성 시작');
             console.log('분석할 제목:', title);
             console.log('분석할 내용 길이:', content.length);
             
             try {
-                // 1. 슬라이드 패턴이 있는지 먼저 확인
+                // 1. 가이드 기반 이모지 섹션이 있는지 확인
+                if (content.includes('🏆') && content.includes('🤖')) {
+                    console.log('📋 가이드 기반 이모지 섹션 발견, 직접 파싱');
+                    const guideParsed = parseGuideBasedContent(content);
+                    
+                    if (guideParsed.length >= 10) {
+                        console.log('✅ 가이드 기반 파싱 성공, 직접 사용');
+                        // 15장까지 채우기
+                        while (guideParsed.length < 15) {
+                            const fillers = [
+                                { icon: '💡', title: '혁신적 아이디어', subtitle: '새로운 가능성을 제시합니다' },
+                                { icon: '🌈', title: '밝은 미래', subtitle: '함께 만들어가는 성공' },
+                                { icon: '💪', title: '강력한 성능', subtitle: '뛰어난 결과를 보장합니다' }
+                            ];
+                            const filler = fillers[(guideParsed.length - 1) % fillers.length];
+                            guideParsed.push({
+                                slideNumber: guideParsed.length + 1,
+                                ...filler,
+                                type: 'filler'
+                            });
+                        }
+                        return guideParsed.slice(0, 15);
+                    }
+                }
+                
+                // 2. 슬라이드 패턴이 있는지 확인
                 if (content.includes('[슬라이드') && content.includes(']:')) {
                     console.log('📋 상세 슬라이드 패턴 발견, 직접 파싱');
                     const parsedSlides = parseDetailedSlideContent(content);
@@ -1570,7 +1981,7 @@
                     }
                 }
                 
-                // 2. 강력한 GPT-4 분석 시도
+                // 3. 강력한 GPT-4 분석 시도
                 console.log('🤖 강력한 GPT-4 분석 시작');
                 const gptSlides = await powerfulGPTAnalysis(title, content);
                 
@@ -1583,7 +1994,7 @@
                 
             } catch (error) {
                 console.error('❌ GPT 분석 실패:', error);
-                // 3. Sue Reading Club 맞춤 백업 사용
+                // 4. Sue Reading Club 맞춤 백업 사용
                 console.log('🔄 Sue Reading Club 맞춤 백업 슬라이드 사용');
                 return createSueReadingSlides(title, content);
             }
@@ -3489,8 +3900,8 @@
             // 가이드 버튼
             const showGuideBtn = document.getElementById('showGuideBtn');
             if (showGuideBtn) {
-                showGuideBtn.addEventListener('click', showApiGuide);
-                showGuideBtn.onclick = showApiGuide;
+                showGuideBtn.addEventListener('click', showUsageGuide);
+                showGuideBtn.onclick = showUsageGuide;
             }
             
             // 빠른 입력 버튼
