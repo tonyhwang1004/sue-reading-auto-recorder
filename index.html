@@ -522,6 +522,105 @@
             flex-wrap: wrap;
         }
 
+        /* 이미지 생성 옵션 */
+        .image-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .image-option {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .image-option:hover {
+            border-color: #4ecdc4;
+            background: rgba(78, 205, 196, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .image-option.selected {
+            border-color: #feca57;
+            background: rgba(254, 202, 87, 0.2);
+        }
+
+        .image-option-title {
+            font-weight: 700;
+            color: #4ecdc4;
+            margin-bottom: 8px;
+            font-size: clamp(0.9em, 2vw, 1.1em);
+        }
+
+        .image-option-desc {
+            font-size: clamp(0.8em, 1.8vw, 0.95em);
+            opacity: 0.8;
+        }
+
+        .cost-info {
+            background: rgba(255, 165, 0, 0.1);
+            border: 1px solid rgba(255, 165, 0, 0.3);
+            border-radius: 10px;
+            padding: 12px;
+            margin: 15px 0;
+            font-size: clamp(0.85em, 1.8vw, 0.95em);
+            text-align: center;
+        }
+
+        /* 이미지 프리뷰 */
+        .image-preview {
+            width: 100%;
+            max-width: min(90%, 350px);
+            height: min(40vw, 350px);
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            margin: clamp(15px, 3vw, 25px) auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .image-preview:hover {
+            border-color: #4ecdc4;
+            box-shadow: 0 0 20px rgba(78, 205, 196, 0.3);
+        }
+
+        .image-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 18px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .image-preview img:hover {
+            transform: scale(1.05);
+        }
+
+        .image-placeholder {
+            color: rgba(255, 255, 255, 0.6);
+            text-align: center;
+            font-size: clamp(1em, 2.2vw, 1.2em);
+            padding: clamp(15px, 3vw, 25px);
+        }
+
+        .image-placeholder-icon {
+            font-size: clamp(2.5em, 6vw, 4em);
+            margin-bottom: clamp(10px, 2vw, 20px);
+            animation: placeholderPulse 2s ease-in-out infinite;
+        }
+
         @media (max-width: 768px) {
             .quick-input-buttons {
                 justify-content: center;
@@ -530,6 +629,10 @@
             .quick-input-buttons .btn {
                 flex: 1;
                 min-width: 140px;
+            }
+            
+            .image-options {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -600,10 +703,58 @@
             </div>
 
             <div class="input-group">
-                <label class="input-label">🖼️ 이미지 설명 (선택사항)</label>
+                <label class="input-label">🎨 색상 테마</label>
+                <select class="input-field" id="colorSelect">
+                    <option value="gradient1">파워 블루 (추천)</option>
+                    <option value="gradient2">다이나믹 레드</option>
+                    <option value="gradient3">네이처 그린</option>
+                    <option value="gradient4">로얄 퍼플</option>
+                    <option value="gradient5">선셋 오렌지</option>
+                    <option value="auto">AI 자동 선택</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="section image-section">
+            <h2 class="section-title">🎨 AI 이미지 생성</h2>
+            <p style="text-align: center; margin-bottom: 30px; opacity: 0.9; font-size: clamp(1em, 2.2vw, 1.2em);">
+                DALL-E 3 AI가 주제에 맞는 고품질 이미지를 자동 생성합니다.
+            </p>
+            
+            <div class="input-group">
+                <label class="input-label">🖼️ 이미지 컨셉 (선택사항)</label>
                 <input type="text" class="input-field" id="imagePromptInput" 
-                       placeholder="예: 전통적이면서도 현대적인 교육 환경" 
+                       placeholder="예: 전통적이면서도 현대적인 교육 환경, 20년 전통의 신뢰감, 영어소설과 책들, AI 기술이 접목된 학습공간" 
                        maxlength="200">
+            </div>
+
+            <div class="input-group">
+                <label class="input-label">📐 이미지 크기 선택</label>
+                <div class="image-options">
+                    <div class="image-option selected" data-size="1024x1024" data-cost="$0.040">
+                        <div class="image-option-title">🎯 표준 크기</div>
+                        <div class="image-option-desc">1024×1024<br>슬라이드 썸네일용</div>
+                    </div>
+                    <div class="image-option" data-size="1024x1792" data-cost="$0.080">
+                        <div class="image-option-title">📱 세로형</div>
+                        <div class="image-option-desc">1024×1792<br>쇼츠 배경용 (추천)</div>
+                    </div>
+                    <div class="image-option" data-size="1792x1024" data-cost="$0.080">
+                        <div class="image-option-title">🖥️ 가로형</div>
+                        <div class="image-option-desc">1792×1024<br>와이드 화면용</div>
+                    </div>
+                </div>
+                <div class="cost-info" id="costInfo">
+                    💰 예상 비용: $0.040 (약 55원) | 고품질 AI 이미지 1장
+                </div>
+            </div>
+
+            <div class="image-preview" id="imagePreview">
+                <div class="image-placeholder">
+                    <div class="image-placeholder-icon">🤖</div>
+                    <div>AI가 생성할 이미지 미리보기</div>
+                    <div style="font-size: 0.9em; opacity: 0.7; margin-top: 10px;">생성 후 클릭하면 새창으로 크게 볼 수 있습니다</div>
+                </div>
             </div>
         </div>
 
@@ -662,6 +813,9 @@
         // 전역 변수
         let apiKey = '';
         let slides = [];
+        let selectedImageSize = '1024x1024';
+        let selectedImageCost = '$0.040';
+        let generatedImage = null;
 
         // 파티클 시스템 초기화
         function initParticles() {
@@ -924,8 +1078,21 @@
             }
             
             try {
-                // 슬라이드 생성 시뮬레이션 (실제로는 GPT-4 API 호출)
-                alert('🚀 슬라이드 생성 시작!\n\n실제 환경에서는 GPT-4 API를 호출하여\n15장의 프로급 슬라이드를 생성합니다.');
+                let message = '🚀 슬라이드 생성 시작!\n\n';
+                message += '실제 환경에서는 다음과 같이 진행됩니다:\n';
+                message += '1. GPT-4로 15장의 프로급 슬라이드 생성\n';
+                
+                if (imagePrompt) {
+                    message += `2. DALL-E 3로 ${selectedImageSize} 크기의 AI 이미지 생성\n`;
+                    message += `3. 예상 비용: ${selectedImageCost}\n`;
+                    
+                    // 이미지 미리보기 업데이트 (플레이스홀더)
+                    updateImagePreview();
+                }
+                
+                message += '4. 유튜브 쇼츠 최적화 완료';
+                
+                alert(message);
                 
                 // 결과 섹션 표시
                 document.getElementById('resultSection').style.display = 'block';
@@ -934,6 +1101,62 @@
             } catch (error) {
                 alert('❌ 슬라이드 생성에 실패했습니다.\nAPI 키와 인터넷 연결을 확인해주세요.');
             }
+        }
+        
+        // 이미지 미리보기 업데이트
+        function updateImagePreview() {
+            const preview = document.getElementById('imagePreview');
+            if (preview) {
+                // 생성된 이미지가 있으면 표시, 없으면 플레이스홀더 이미지 생성
+                const placeholderSvg = createPlaceholderImage();
+                
+                const container = document.createElement('div');
+                container.style.position = 'relative';
+                container.style.width = '100%';
+                container.style.height = '100%';
+                
+                const img = document.createElement('img');
+                img.src = placeholderSvg;
+                img.alt = 'AI Generated Image Preview';
+                img.style.cssText = 'width: 100%; height: 100%; object-fit: cover; border-radius: 18px; cursor: pointer;';
+                img.addEventListener('click', () => {
+                    window.open(placeholderSvg, '_blank');
+                });
+                
+                const btn = document.createElement('button');
+                btn.style.cssText = 'position: absolute; bottom: 10px; right: 10px; background: rgba(0,0,0,0.7); color: white; border: none; border-radius: 15px; padding: 8px 12px; font-size: 0.8em; cursor: pointer; backdrop-filter: blur(5px);';
+                btn.innerHTML = '🔍 크게보기';
+                btn.addEventListener('click', () => {
+                    window.open(placeholderSvg, '_blank');
+                });
+                
+                container.appendChild(img);
+                container.appendChild(btn);
+                preview.innerHTML = '';
+                preview.appendChild(container);
+            }
+        }
+        
+        // 플레이스홀더 이미지 생성
+        function createPlaceholderImage() {
+            const svg = `
+                <svg width="400" height="400" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#667eea"/>
+                            <stop offset="50%" stop-color="#764ba2"/>
+                            <stop offset="100%" stop-color="#ff6b6b"/>
+                        </linearGradient>
+                    </defs>
+                    <rect width="400" height="400" fill="url(#grad)"/>
+                    <text x="50%" y="100" font-size="60" fill="white" text-anchor="middle">🎨</text>
+                    <text x="50%" y="200" font-size="24" fill="white" text-anchor="middle">AI 생성 이미지</text>
+                    <text x="50%" y="230" font-size="18" fill="white" text-anchor="middle">크기: ${selectedImageSize}</text>
+                    <text x="50%" y="260" font-size="16" fill="white" text-anchor="middle">DALL-E 3 품질</text>
+                    <text x="50%" y="320" font-size="50" fill="white" text-anchor="middle">🚀</text>
+                </svg>
+            `;
+            return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
         }
 
         // 녹화 가이드
@@ -1082,7 +1305,26 @@
                 });
             }
             
-            console.log('✅ 모든 이벤트 리스너 설정 완료');
+            // 이미지 크기 선택 이벤트
+            const imageOptions = document.querySelectorAll('.image-option');
+            imageOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    // 모든 옵션에서 selected 클래스 제거
+                    imageOptions.forEach(opt => opt.classList.remove('selected'));
+                    
+                    // 클릭된 옵션에 selected 클래스 추가
+                    this.classList.add('selected');
+                    
+                    // 선택된 크기와 비용 저장
+                    selectedImageSize = this.dataset.size;
+                    selectedImageCost = this.dataset.cost;
+                    
+                    // 비용 정보 업데이트
+                    updateCostInfo();
+                    
+                    console.log('이미지 크기 선택됨:', selectedImageSize, selectedImageCost);
+                });
+            });
             
             // 초기 버튼 상태 설정
             updateGenerateButton();
