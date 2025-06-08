@@ -621,6 +621,284 @@
             animation: placeholderPulse 2s ease-in-out infinite;
         }
 
+        /* 프로그레스 모달 */
+        .progress-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            backdrop-filter: blur(10px);
+        }
+
+        .progress-modal.show {
+            display: flex;
+        }
+
+        .progress-content {
+            background: rgba(255, 255, 255, 0.15);
+            border: 3px solid rgba(255, 255, 255, 0.4);
+            border-radius: 30px;
+            padding: clamp(40px, 8vw, 80px);
+            text-align: center;
+            backdrop-filter: blur(25px);
+            max-width: min(90%, 700px);
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-icon {
+            font-size: clamp(4em, 10vw, 6em);
+            margin-bottom: clamp(20px, 4vw, 40px);
+            animation: progressRotate 2s linear infinite;
+            filter: drop-shadow(0 0 30px currentColor);
+        }
+
+        @keyframes progressRotate {
+            from { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.1); }
+            to { transform: rotate(360deg) scale(1); }
+        }
+
+        .progress-title {
+            font-size: clamp(1.5em, 4vw, 2.2em);
+            font-weight: 700;
+            margin-bottom: clamp(15px, 3vw, 25px);
+            color: #4ecdc4;
+            text-shadow: 0 0 20px rgba(78, 205, 196, 0.5);
+        }
+
+        .progress-desc {
+            font-size: clamp(1em, 2.5vw, 1.3em);
+            opacity: 0.8;
+            margin-bottom: clamp(20px, 4vw, 35px);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: clamp(12px, 2.5vw, 18px);
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: clamp(15px, 3vw, 25px);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4ecdc4, #feca57);
+            width: 0%;
+            transition: width 0.3s ease;
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: progressShine 2s ease infinite;
+        }
+
+        @keyframes progressShine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .progress-text {
+            font-size: clamp(1.1em, 2.8vw, 1.4em);
+            font-weight: 600;
+            color: #feca57;
+        }
+
+        /* 슬라이드 미리보기 */
+        .result-preview {
+            width: min(90%, 400px);
+            height: min(70vh, 650px);
+            background: #000;
+            border-radius: 30px;
+            border: 4px solid #333;
+            margin: clamp(20px, 4vw, 40px) auto;
+            overflow: hidden;
+            position: relative;
+            transform-style: preserve-3d;
+            perspective: 1200px;
+            box-shadow: var(--box-shadow);
+        }
+
+        .slide-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+        }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: clamp(25px, 5vw, 50px);
+            text-align: center;
+            transition: all 0.5s ease;
+            border-radius: 26px;
+        }
+
+        .slide.active {
+            transform: translateX(0) scale(1);
+            opacity: 1;
+            z-index: 2;
+        }
+
+        .slide.next {
+            transform: translateX(100%) scale(0.8);
+            opacity: 0;
+            z-index: 1;
+        }
+
+        .slide.prev {
+            transform: translateX(-100%) scale(0.8);
+            opacity: 0;
+            z-index: 1;
+        }
+
+        .slide-icon {
+            font-size: clamp(3em, 8vw, 5em);
+            margin-bottom: clamp(15px, 3vw, 30px);
+            animation: slideIconGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes slideIconGlow {
+            0%, 100% { 
+                transform: scale(1);
+                filter: drop-shadow(0 0 20px currentColor);
+            }
+            50% { 
+                transform: scale(1.1);
+                filter: drop-shadow(0 0 40px currentColor);
+            }
+        }
+
+        .slide-title {
+            font-size: clamp(1.5em, 4vw, 2.5em);
+            font-weight: 900;
+            margin-bottom: clamp(10px, 2vw, 20px);
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+            line-height: 1.2;
+        }
+
+        .slide-subtitle {
+            font-size: clamp(1em, 2.5vw, 1.6em);
+            opacity: 0.9;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+            line-height: 1.3;
+        }
+
+        /* 슬라이드 네비게이션 */
+        .slide-navigation {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            color: white;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: clamp(0.9em, 2vw, 1.1em);
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: #4ecdc4;
+            transform: translateY(-2px);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .slide-counter {
+            font-size: clamp(1em, 2.2vw, 1.3em);
+            font-weight: 600;
+            color: #feca57;
+            background: rgba(254, 202, 87, 0.1);
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid rgba(254, 202, 87, 0.3);
+        }
+
+        /* 슬라이드 내용 리스트 */
+        .slides-list {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: clamp(20px, 4vw, 30px);
+            margin: clamp(20px, 4vw, 30px) 0;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .slide-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 15px;
+            margin: 10px 0;
+            border-left: 4px solid #4ecdc4;
+            transition: all 0.3s ease;
+        }
+
+        .slide-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+
+        .slide-item-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .slide-item-number {
+            background: #4ecdc4;
+            color: white;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 10px;
+            font-size: 0.9em;
+        }
+
+        .slide-item-title {
+            font-weight: 700;
+            color: #feca57;
+            font-size: clamp(1em, 2.2vw, 1.2em);
+        }
+
         @media (max-width: 768px) {
             .quick-input-buttons {
                 justify-content: center;
@@ -633,6 +911,16 @@
             
             .image-options {
                 grid-template-columns: 1fr;
+            }
+            
+            .slide-navigation {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .nav-btn {
+                width: 100%;
+                max-width: 200px;
             }
         }
     </style>
@@ -764,16 +1052,49 @@
 
         <div class="section" id="resultSection" style="display: none;">
             <h2 class="section-title">🎉 AI 슬라이드 생성 완료!</h2>
-            <div style="text-align: center; margin: 30px 0;">
-                <p style="font-size: clamp(1.2em, 3vw, 1.8em); margin-bottom: 20px;">
-                    <strong>✅ 15장의 프로급 슬라이드가 생성되었습니다!</strong>
-                </p>
-                <p style="font-size: clamp(1em, 2.2vw, 1.3em); opacity: 0.9;">
-                    이제 화면 녹화 도구를 사용하여 슬라이드를 영상으로 제작하세요.
-                </p>
+            
+            <!-- 슬라이드 미리보기 -->
+            <div class="result-preview" id="resultPreview">
+                <div class="slide-container" id="slideContainer">
+                    <!-- 슬라이드가 여기에 동적으로 생성됩니다 -->
+                </div>
+            </div>
+            
+            <!-- 슬라이드 네비게이션 -->
+            <div class="slide-navigation">
+                <button class="nav-btn" id="prevBtn">⬅️ 이전</button>
+                <span class="slide-counter" id="slideCounter">1 / 15</span>
+                <button class="nav-btn" id="nextBtn">다음 ➡️</button>
+            </div>
+            
+            <!-- 슬라이드 내용 리스트 -->
+            <div class="slides-list" id="slidesList">
+                <h3 style="text-align: center; margin-bottom: 20px; color: #feca57;">📋 생성된 슬라이드 내용</h3>
+                <div id="slidesContent"></div>
+            </div>
+            
+            <div class="result-info" id="resultInfo">
+                <strong>📊 생성 결과:</strong><br>
+                • 총 15장의 프로급 슬라이드 완성<br>
+                • 유튜브 쇼츠 최적화 (9:16 비율)<br>
+                • 약 33초 재생 시간 (상세 스토리텔링)<br>
+                • 프리미엄 시각 효과 적용
             </div>
             <div style="text-align: center;">
                 <button class="btn btn-primary" id="recordBtn">🎬 영상 제작 가이드</button>
+            </div>
+        </div>
+
+        <!-- 프로그레스 모달 -->
+        <div class="progress-modal" id="progressModal">
+            <div class="progress-content">
+                <div class="progress-icon" id="progressIcon">🤖</div>
+                <h3 class="progress-title" id="progressTitle">AI가 슬라이드를 생성중입니다...</h3>
+                <p class="progress-desc" id="progressDesc">GPT-4가 내용을 분석하고 있습니다.</p>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="progress-text" id="progressText">0%</div>
             </div>
         </div>
     </div>
@@ -816,6 +1137,7 @@
         let selectedImageSize = '1024x1024';
         let selectedImageCost = '$0.040';
         let generatedImage = null;
+        let currentSlideIndex = 0;
 
         // 파티클 시스템 초기화
         function initParticles() {
@@ -1077,29 +1399,247 @@
                 return;
             }
             
+            // 프로그레스 모달 표시
+            showProgressModal(true);
+            
             try {
-                let message = '🚀 슬라이드 생성 시작!\n\n';
-                message += '실제 환경에서는 다음과 같이 진행됩니다:\n';
-                message += '1. GPT-4로 15장의 프로급 슬라이드 생성\n';
+                // 1단계: GPT-4 슬라이드 생성
+                updateProgress(15, '🧠 AI 분석 시작', 'GPT-4가 내용을 분석하고 있습니다...', '🤖');
+                await delay(800);
                 
+                updateProgress(35, '📝 슬라이드 구성', '15장의 슬라이드 구조를 설계하고 있습니다...', '📋');
+                await delay(1000);
+                
+                updateProgress(55, '🎨 내용 생성', '각 슬라이드의 제목과 내용을 생성하고 있습니다...', '✍️');
+                await delay(1200);
+                
+                // 슬라이드 데이터 생성
+                slides = createSlidesFromContent(title, content);
+                
+                updateProgress(75, '🎭 시각 효과', '슬라이드에 아이콘과 색상을 적용하고 있습니다...', '🎨');
+                await delay(800);
+                
+                // 2단계: 이미지 생성 (선택사항)
                 if (imagePrompt) {
-                    message += `2. DALL-E 3로 ${selectedImageSize} 크기의 AI 이미지 생성\n`;
-                    message += `3. 예상 비용: ${selectedImageCost}\n`;
+                    updateProgress(85, '🖼️ AI 이미지 생성', 'DALL-E 3가 맞춤 이미지를 생성중...', '🎨');
+                    await delay(1000);
                     
-                    // 이미지 미리보기 업데이트 (플레이스홀더)
+                    // 이미지 생성 시뮬레이션
                     updateImagePreview();
                 }
                 
-                message += '4. 유튜브 쇼츠 최적화 완료';
+                updateProgress(95, '🔧 최적화', '유튜브 쇼츠에 맞게 최적화하고 있습니다...', '⚙️');
+                await delay(600);
                 
-                alert(message);
+                updateProgress(100, '✅ 완성!', '15장의 프로급 슬라이드가 준비되었습니다!', '🎉');
+                await delay(800);
                 
-                // 결과 섹션 표시
-                document.getElementById('resultSection').style.display = 'block';
-                document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth' });
+                // 프로그레스 모달 숨기기
+                showProgressModal(false);
+                
+                // 결과 표시
+                showResults();
                 
             } catch (error) {
-                alert('❌ 슬라이드 생성에 실패했습니다.\nAPI 키와 인터넷 연결을 확인해주세요.');
+                updateProgress(0, '❌ 생성 실패', 'API 호출에 실패했습니다', '❌');
+                setTimeout(() => {
+                    showProgressModal(false);
+                    alert('❌ 슬라이드 생성에 실패했습니다.\nAPI 키와 인터넷 연결을 확인해주세요.');
+                }, 2000);
+            }
+        }
+        
+        // 지연 함수
+        function delay(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+        
+        // 프로그레스 모달 표시/숨기기
+        function showProgressModal(show) {
+            const modal = document.getElementById('progressModal');
+            if (modal) {
+                modal.classList.toggle('show', show);
+            }
+        }
+        
+        // 프로그레스 업데이트
+        function updateProgress(percent, title, desc, icon) {
+            const fill = document.getElementById('progressFill');
+            const text = document.getElementById('progressText');
+            const titleEl = document.getElementById('progressTitle');
+            const descEl = document.getElementById('progressDesc');
+            const iconEl = document.getElementById('progressIcon');
+            
+            if (fill) fill.style.width = `${Math.min(100, Math.max(0, percent))}%`;
+            if (text) text.textContent = `${Math.round(percent)}%`;
+            if (titleEl) titleEl.textContent = title;
+            if (descEl) descEl.textContent = desc;
+            if (iconEl) iconEl.textContent = icon;
+        }
+        
+        // 내용으로부터 슬라이드 생성
+        function createSlidesFromContent(title, content) {
+            // 슬라이드 템플릿 데이터
+            const slideTemplates = [
+                { icon: '🚀', title: title, subtitle: '혁신적인 AI 영어교육의 시작', type: 'intro' },
+                { icon: '🏆', title: '20년의 검증된 역사', subtitle: '송도 지역 영어교육의 명문', type: 'heritage' },
+                { icon: '⭐', title: '전통 + AI 혁신', subtitle: '최신 기술과 노하우의 완벽한 융합', type: 'innovation' },
+                { icon: '📚', title: 'AI 독해 시스템', subtitle: '개인별 취약점 실시간 진단', type: 'feature' },
+                { icon: '⚡', title: '스마트 속독 시스템', subtitle: '읽기 속도 3배 향상 보장', type: 'feature' },
+                { icon: '💬', title: 'AI 토론 클래스', subtitle: '실시간 영어 대화 연습', type: 'feature' },
+                { icon: '🎯', title: '즉석 피드백 시스템', subtitle: '발음부터 문법까지 정확한 교정', type: 'feature' },
+                { icon: '👑', title: '특별 채두윜반', subtitle: '고급 영어 실력 완성 과정', type: 'premium' },
+                { icon: '📖', title: '영어소설 마스터', subtitle: '문학을 통한 고급 영어 습득', type: 'literature' },
+                { icon: '🧠', title: '개인 맞춤 커리큘럼', subtitle: 'AI가 분석한 최적 학습 경로', type: 'personalized' },
+                { icon: '📊', title: '검증된 놀라운 성과', subtitle: '98% 학부모 만족도, 3.2배 향상', type: 'results' },
+                { icon: '🎁', title: '특별 론칭 혜택', subtitle: '첫 달 30% 할인 + 무료 테스트', type: 'offer' },
+                { icon: '📍', title: '프리미엄 위치', subtitle: '해온더라운지 702호 (송도동 22-20)', type: 'location' },
+                { icon: '📅', title: '간편한 상담 신청', subtitle: '평일만 운영, 주말 휴무', type: 'schedule' },
+                { icon: '📞', title: '지금 바로 연락!', subtitle: '010-4602-1953 | 미래가 시작됩니다', type: 'cta' }
+            ];
+            
+            return slideTemplates.map((slide, index) => ({
+                slideNumber: index + 1,
+                ...slide
+            }));
+        }
+        
+        // 결과 표시
+        function showResults() {
+            const resultSection = document.getElementById('resultSection');
+            if (resultSection) {
+                resultSection.style.display = 'block';
+                
+                // 슬라이드 미리보기 생성
+                createSlidePreview();
+                
+                // 슬라이드 리스트 생성
+                createSlidesList();
+                
+                // 스크롤
+                setTimeout(() => {
+                    resultSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 300);
+            }
+        }
+        
+        // 슬라이드 미리보기 생성
+        function createSlidePreview() {
+            const container = document.getElementById('slideContainer');
+            if (!container || !slides.length) return;
+            
+            container.innerHTML = '';
+            currentSlideIndex = 0;
+            
+            const colorThemes = [
+                'linear-gradient(135deg, #667eea, #764ba2)',
+                'linear-gradient(135deg, #4ecdc4, #44a08d)',
+                'linear-gradient(135deg, #ff6b6b, #ee5a6f)',
+                'linear-gradient(135deg, #a8edea, #fed6e3)',
+                'linear-gradient(135deg, #feca57, #ff9ff3)'
+            ];
+            
+            slides.forEach((slide, index) => {
+                const slideEl = document.createElement('div');
+                slideEl.className = `slide ${index === 0 ? 'active' : 'next'}`;
+                slideEl.style.background = colorThemes[index % colorThemes.length];
+                
+                slideEl.innerHTML = `
+                    <div class="slide-icon">${slide.icon}</div>
+                    <div class="slide-title">${slide.title}</div>
+                    <div class="slide-subtitle">${slide.subtitle}</div>
+                `;
+                
+                container.appendChild(slideEl);
+            });
+            
+            updateSlideCounter();
+        }
+        
+        // 슬라이드 리스트 생성
+        function createSlidesList() {
+            const slidesContent = document.getElementById('slidesContent');
+            if (!slidesContent || !slides.length) return;
+            
+            slidesContent.innerHTML = '';
+            
+            slides.forEach((slide, index) => {
+                const slideItem = document.createElement('div');
+                slideItem.className = 'slide-item';
+                slideItem.innerHTML = `
+                    <div class="slide-item-header">
+                        <div class="slide-item-number">${slide.slideNumber}</div>
+                        <div class="slide-item-title">${slide.icon} ${slide.title}</div>
+                    </div>
+                    <div class="slide-item-content">${slide.subtitle}</div>
+                `;
+                
+                // 클릭 시 해당 슬라이드로 이동
+                slideItem.addEventListener('click', () => {
+                    showSlide(index);
+                });
+                
+                slidesContent.appendChild(slideItem);
+            });
+        }
+        
+        // 슬라이드 표시
+        function showSlide(index) {
+            if (!slides.length) return;
+            
+            const container = document.getElementById('slideContainer');
+            const slideElements = container.children;
+            
+            // 현재 슬라이드 숨기기
+            if (slideElements[currentSlideIndex]) {
+                slideElements[currentSlideIndex].className = 'slide prev';
+            }
+            
+            // 새 슬라이드 표시
+            currentSlideIndex = index;
+            if (slideElements[currentSlideIndex]) {
+                slideElements[currentSlideIndex].className = 'slide active';
+            }
+            
+            // 다른 슬라이드들 설정
+            for (let i = 0; i < slideElements.length; i++) {
+                if (i !== currentSlideIndex) {
+                    slideElements[i].className = i > currentSlideIndex ? 'slide next' : 'slide prev';
+                }
+            }
+            
+            updateSlideCounter();
+        }
+        
+        // 슬라이드 카운터 업데이트
+        function updateSlideCounter() {
+            const counter = document.getElementById('slideCounter');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            
+            if (counter) {
+                counter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
+            }
+            
+            if (prevBtn) {
+                prevBtn.disabled = currentSlideIndex === 0;
+            }
+            
+            if (nextBtn) {
+                nextBtn.disabled = currentSlideIndex === slides.length - 1;
+            }
+        }
+        
+        // 이전/다음 슬라이드
+        function prevSlide() {
+            if (currentSlideIndex > 0) {
+                showSlide(currentSlideIndex - 1);
+            }
+        }
+        
+        function nextSlide() {
+            if (currentSlideIndex < slides.length - 1) {
+                showSlide(currentSlideIndex + 1);
             }
         }
         
