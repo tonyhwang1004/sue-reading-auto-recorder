@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎬 다중이미지 유튜브 쇼츠 AI 생성기 Pro</title>
+    <title>🎬 자동녹화 유튜브 쇼츠 AI 생성기 Pro</title>
     <style>
         * {
             margin: 0;
@@ -211,6 +211,18 @@
             background: var(--accent-gradient);
             color: white;
             box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+        }
+
+        .btn-recording {
+            background: linear-gradient(45deg, #ff0844, #ffb199);
+            color: white;
+            box-shadow: 0 8px 25px rgba(255, 8, 68, 0.4);
+            animation: recordingGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes recordingGlow {
+            0%, 100% { box-shadow: 0 8px 25px rgba(255, 8, 68, 0.4); }
+            50% { box-shadow: 0 8px 35px rgba(255, 8, 68, 0.8); }
         }
 
         .btn:hover:not(:disabled) {
@@ -525,6 +537,227 @@
             border: 1px solid rgba(254, 202, 87, 0.3);
         }
 
+        /* 자동 녹화 관련 스타일 */
+        .auto-recording-section {
+            background: rgba(255, 0, 68, 0.1);
+            border: 3px solid rgba(255, 0, 68, 0.4);
+            box-shadow: 0 0 30px rgba(255, 0, 68, 0.2);
+        }
+
+        .recording-status {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 0, 0, 0.9);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 25px;
+            font-weight: bold;
+            z-index: 5000;
+            display: none;
+            animation: recordingBlink 1s ease-in-out infinite;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .recording-status.show {
+            display: block;
+        }
+
+        @keyframes recordingBlink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0.7; }
+        }
+
+        .recording-timer {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.9);
+            color: #4ecdc4;
+            padding: 15px 25px;
+            border-radius: 25px;
+            font-weight: bold;
+            z-index: 5000;
+            display: none;
+            border: 3px solid rgba(78, 205, 196, 0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        .recording-timer.show {
+            display: block;
+        }
+
+        .recording-preview {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 200px;
+            height: 350px;
+            background: #000;
+            border-radius: 20px;
+            border: 3px solid #ff0844;
+            overflow: hidden;
+            z-index: 4000;
+            display: none;
+            box-shadow: 0 10px 40px rgba(255, 8, 68, 0.6);
+        }
+
+        .recording-preview.show {
+            display: block;
+        }
+
+        .recording-controls {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: none;
+            gap: 15px;
+            z-index: 5000;
+        }
+
+        .recording-controls.show {
+            display: flex;
+        }
+
+        .recording-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            color: white;
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+        }
+
+        .recording-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .recording-btn.stop {
+            background: rgba(255, 0, 0, 0.3);
+            border-color: rgba(255, 0, 0, 0.5);
+        }
+
+        .recording-btn.pause {
+            background: rgba(255, 165, 0, 0.3);
+            border-color: rgba(255, 165, 0, 0.5);
+        }
+
+        .recording-mode {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index: 4000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .recording-mode.active {
+            display: flex;
+        }
+
+        .recording-container {
+            width: 400px;
+            height: 700px;
+            background: #000;
+            border-radius: 30px;
+            border: 4px solid #333;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 0 50px rgba(255, 255, 255, 0.1);
+        }
+
+        .recording-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 0, 0, 0.1);
+            border: 3px solid #ff0000;
+            border-radius: 26px;
+            pointer-events: none;
+            animation: recordingPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes recordingPulse {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.02); }
+        }
+
+        .recording-indicator {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: #ff0000;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            z-index: 10;
+            animation: recordingBlink 1s ease-in-out infinite;
+        }
+
+        .countdown-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 15;
+        }
+
+        .countdown-number {
+            font-size: 8em;
+            color: #4ecdc4;
+            font-weight: 900;
+            text-shadow: 0 0 30px rgba(78, 205, 196, 0.8);
+            animation: countdownPulse 1s ease-in-out;
+        }
+
+        @keyframes countdownPulse {
+            0% { transform: scale(0.5); opacity: 0; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.8; }
+        }
+
+        .image-generation-status {
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(78, 205, 196, 0.1);
+            border: 2px solid rgba(78, 205, 196, 0.3);
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .cost-estimate {
+            background: rgba(255, 165, 0, 0.1);
+            border: 2px solid rgba(255, 165, 0, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .cost-estimate h4 {
+            color: #feca57;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
         /* 전체화면 모달 스타일 */
         .fullscreen-modal {
             position: fixed;
@@ -681,154 +914,6 @@
             transform: none;
         }
 
-        /* 녹화 모드 스타일 */
-        .recording-mode {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #000;
-            z-index: 4000;
-            display: none;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .recording-mode.active {
-            display: flex;
-        }
-
-        .recording-container {
-            width: 400px;
-            height: 700px;
-            background: #000;
-            border-radius: 30px;
-            border: 4px solid #333;
-            overflow: hidden;
-            position: relative;
-            box-shadow: 0 0 50px rgba(255, 255, 255, 0.1);
-        }
-
-        .recording-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 0, 0, 0.1);
-            border: 3px solid #ff0000;
-            border-radius: 26px;
-            pointer-events: none;
-            animation: recordingPulse 2s ease-in-out infinite;
-        }
-
-        @keyframes recordingPulse {
-            0%, 100% { opacity: 0.3; transform: scale(1); }
-            50% { opacity: 0.8; transform: scale(1.02); }
-        }
-
-        .recording-indicator {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            background: #ff0000;
-            color: white;
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-weight: bold;
-            z-index: 10;
-            animation: recordingBlink 1s ease-in-out infinite;
-        }
-
-        @keyframes recordingBlink {
-            0%, 50% { opacity: 1; }
-            51%, 100% { opacity: 0.5; }
-        }
-
-        .countdown-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 15;
-        }
-
-        .countdown-number {
-            font-size: 8em;
-            color: #4ecdc4;
-            font-weight: 900;
-            text-shadow: 0 0 30px rgba(78, 205, 196, 0.8);
-            animation: countdownPulse 1s ease-in-out;
-        }
-
-        @keyframes countdownPulse {
-            0% { transform: scale(0.5); opacity: 0; }
-            50% { transform: scale(1.2); opacity: 1; }
-            100% { transform: scale(1); opacity: 0.8; }
-        }
-
-        .recording-controls {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 15px;
-            z-index: 10;
-        }
-
-        .recording-btn {
-            background: rgba(255, 255, 255, 0.2);
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 15px;
-            color: white;
-            padding: 10px 20px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 600;
-            backdrop-filter: blur(10px);
-        }
-
-        .recording-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: translateY(-2px);
-        }
-
-        .recording-btn.stop {
-            background: rgba(255, 0, 0, 0.3);
-            border-color: rgba(255, 0, 0, 0.5);
-        }
-
-        .image-generation-status {
-            margin: 20px 0;
-            padding: 15px;
-            background: rgba(78, 205, 196, 0.1);
-            border: 2px solid rgba(78, 205, 196, 0.3);
-            border-radius: 15px;
-            text-align: center;
-        }
-
-        .cost-estimate {
-            background: rgba(255, 165, 0, 0.1);
-            border: 2px solid rgba(255, 165, 0, 0.3);
-            border-radius: 15px;
-            padding: 20px;
-            margin: 20px 0;
-            text-align: center;
-        }
-
-        .cost-estimate h4 {
-            color: #feca57;
-            margin-bottom: 10px;
-            font-size: 1.2em;
-        }
-
         @media (max-width: 768px) {
             .image-grid {
                 grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -841,11 +926,11 @@
     <div class="container">
         <div class="hero">
             <div class="hero-icon">🎬</div>
-            <h1 class="hero-title">다중이미지 유튜브 쇼츠 AI 생성기</h1>
-            <p class="hero-subtitle">각 슬라이드마다 맞춤 AI 이미지 자동 생성!</p>
+            <h1 class="hero-title">자동녹화 유튜브 쇼츠 AI 생성기</h1>
+            <p class="hero-subtitle">AI 이미지 생성 + 완전 자동 화면 녹화!</p>
             <p class="hero-description">
-                GPT-4 AI + 슬라이드별 DALL-E 3 이미지 생성으로 
-                완전히 새로운 차원의 유튜브 쇼츠를 경험하세요.
+                GPT-4 + DALL-E 3 + 자동 화면 녹화 시스템으로 
+                버튼 클릭 한 번에 완성된 유튜브 쇼츠 영상을 만들어보세요.
             </p>
         </div>
 
@@ -934,6 +1019,34 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
             <span>🚀 다중 이미지 슬라이드 생성하기</span>
         </button>
 
+        <div class="section auto-recording-section" id="autoRecordingSection" style="display: none;">
+            <h2 class="section-title">🎥 자동 화면 녹화 시스템</h2>
+            <p style="text-align: center; margin-bottom: 30px; opacity: 0.9; font-size: clamp(1em, 2.2vw, 1.2em);">
+                버튼 클릭 한 번으로 전체 과정을 자동으로 녹화합니다!
+            </p>
+            
+            <div style="text-align: center; margin: 30px 0;">
+                <button class="btn btn-recording" id="autoRecordBtn" onclick="startAutoRecording()" style="font-size: 1.6em; padding: 25px 50px; text-transform: none;">
+                    🔴 자동 녹화 시작
+                </button>
+                <button class="btn btn-secondary" onclick="showAutoRecordingGuide()" style="margin: 10px; text-transform: none;">
+                    📖 자동녹화 가이드
+                </button>
+            </div>
+
+            <div style="background: rgba(0,255,100,0.1); border: 2px solid rgba(0,255,100,0.3); border-radius: 15px; padding: 20px; margin: 20px 0;">
+                <h4 style="color: #00ff88; margin-bottom: 15px;">✨ 자동 녹화 기능</h4>
+                <ul style="text-align: left; margin-left: 20px; line-height: 1.8;">
+                    <li>🎬 화면 전체를 자동으로 캡처</li>
+                    <li>⏱️ 33초 완벽한 타이밍으로 녹화</li>
+                    <li>📱 모바일/PC 모두 지원</li>
+                    <li>🎨 슬라이드 전환 효과까지 녹화</li>
+                    <li>💾 자동으로 다운로드 폴더에 저장</li>
+                    <li>🎯 유튜브 쇼츠 최적 포맷 (9:16)</li>
+                </ul>
+            </div>
+        </div>
+
         <div class="section" id="resultSection" style="display: none;">
             <h2 class="section-title">🎉 다중 이미지 슬라이드 완성!</h2>
             
@@ -958,8 +1071,11 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
             </div>
             
             <div style="text-align: center; margin: 30px 0;">
+                <button class="btn btn-recording" onclick="startAutoRecording()" style="font-size: 1.6em; padding: 25px 50px; margin: 10px; text-transform: none;">
+                    🔴 자동 녹화 시작
+                </button>
                 <button class="btn btn-primary" onclick="startRecordingMode()" style="font-size: 1.4em; padding: 20px 40px; background: linear-gradient(45deg, #ff6b6b, #4ecdc4); margin: 10px; text-transform: none;">
-                    📹 영상 녹화 시작
+                    📹 수동 녹화 모드
                 </button>
                 <button class="btn btn-secondary" onclick="showRecordingGuide()" style="margin: 10px; text-transform: none;">
                     📖 녹화 가이드
@@ -971,7 +1087,22 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
         </div>
     </div>
 
-    <!-- 녹화 모드 -->
+    <!-- 자동 녹화 상태 표시 -->
+    <div class="recording-status" id="recordingStatus">
+        🔴 자동 녹화 중...
+    </div>
+
+    <div class="recording-timer" id="recordingTimer">
+        ⏱️ <span id="timerDisplay">00:00</span>
+    </div>
+
+    <!-- 자동 녹화 컨트롤 -->
+    <div class="recording-controls" id="autoRecordingControls">
+        <button class="recording-btn pause" onclick="pauseRecording()" id="pauseBtn">⏸️ 일시정지</button>
+        <button class="recording-btn stop" onclick="stopAutoRecording()">⏹️ 녹화 중지</button>
+    </div>
+
+    <!-- 수동 녹화 모드 -->
     <div class="recording-mode" id="recordingMode">
         <div class="recording-container">
             <div class="recording-overlay" id="recordingOverlay" style="display: none;"></div>
@@ -1026,6 +1157,14 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
         let currentSlideIndex = 0;
         let fullscreenSlideIndex = 0; // 전체화면 슬라이드 인덱스
         let autoSlideInterval = null;
+        
+        // 자동 녹화 관련 변수
+        let mediaRecorder = null;
+        let recordedChunks = [];
+        let isRecording = false;
+        let isPaused = false;
+        let recordingStartTime = 0;
+        let recordingTimer = null;
 
         // API 키 설정
         function setupApiKey() {
@@ -1117,6 +1256,267 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
                 showProgressModal(false);
                 alert('❌ 슬라이드 생성에 실패했습니다: ' + error.message);
             }
+        }
+
+        // 자동 녹화 시작
+        async function startAutoRecording() {
+            if (!slides || slides.length === 0) {
+                alert('❌ 먼저 슬라이드를 생성해주세요!');
+                return;
+            }
+
+            try {
+                // 화면 캡처 권한 요청
+                const stream = await navigator.mediaDevices.getDisplayMedia({
+                    video: {
+                        mediaSource: 'screen',
+                        width: { ideal: 1080 },
+                        height: { ideal: 1920 },
+                        frameRate: { ideal: 30 }
+                    },
+                    audio: {
+                        echoCancellation: true,
+                        noiseSuppression: true,
+                        sampleRate: 44100
+                    }
+                });
+
+                // MediaRecorder 설정
+                mediaRecorder = new MediaRecorder(stream, {
+                    mimeType: 'video/webm;codecs=vp9'
+                });
+
+                recordedChunks = [];
+                isRecording = true;
+                isPaused = false;
+
+                // 녹화 데이터 수집
+                mediaRecorder.ondataavailable = (event) => {
+                    if (event.data.size > 0) {
+                        recordedChunks.push(event.data);
+                    }
+                };
+
+                // 녹화 완료 처리
+                mediaRecorder.onstop = () => {
+                    saveRecording();
+                    hideRecordingUI();
+                };
+
+                // 녹화 시작
+                mediaRecorder.start(1000); // 1초마다 데이터 수집
+                
+                // UI 표시
+                showRecordingUI();
+                
+                // 자동 슬라이드쇼 시작
+                startRecordingSlideshow();
+                
+                // 33초 후 자동 종료
+                setTimeout(() => {
+                    if (isRecording) {
+                        stopAutoRecording();
+                    }
+                }, 33000);
+
+                console.log('✅ 자동 녹화 시작됨');
+
+            } catch (error) {
+                console.error('❌ 자동 녹화 실패:', error);
+                
+                if (error.name === 'NotAllowedError') {
+                    alert('❌ 화면 녹화 권한이 거부되었습니다.\n\n브라우저에서 화면 공유를 허용해주세요.');
+                } else if (error.name === 'NotSupportedError') {
+                    alert('❌ 이 브라우저는 화면 녹화를 지원하지 않습니다.\n\nChrome, Firefox, Edge 최신 버전을 사용해주세요.');
+                } else {
+                    alert('❌ 녹화 시작에 실패했습니다: ' + error.message);
+                }
+            }
+        }
+
+        // 녹화 UI 표시
+        function showRecordingUI() {
+            document.getElementById('recordingStatus').classList.add('show');
+            document.getElementById('recordingTimer').classList.add('show');
+            document.getElementById('autoRecordingControls').classList.add('show');
+            
+            // 타이머 시작
+            recordingStartTime = Date.now();
+            startRecordingTimer();
+        }
+
+        // 녹화 UI 숨기기
+        function hideRecordingUI() {
+            document.getElementById('recordingStatus').classList.remove('show');
+            document.getElementById('recordingTimer').classList.remove('show');
+            document.getElementById('autoRecordingControls').classList.remove('show');
+            
+            // 타이머 정지
+            if (recordingTimer) {
+                clearInterval(recordingTimer);
+                recordingTimer = null;
+            }
+        }
+
+        // 녹화 타이머 시작
+        function startRecordingTimer() {
+            recordingTimer = setInterval(() => {
+                if (!isPaused) {
+                    const elapsed = Date.now() - recordingStartTime;
+                    const seconds = Math.floor(elapsed / 1000);
+                    const minutes = Math.floor(seconds / 60);
+                    const remainingSeconds = seconds % 60;
+                    
+                    const display = `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+                    document.getElementById('timerDisplay').textContent = display;
+                }
+            }, 1000);
+        }
+
+        // 녹화 일시정지/재개
+        function pauseRecording() {
+            if (!mediaRecorder || !isRecording) return;
+
+            const pauseBtn = document.getElementById('pauseBtn');
+            
+            if (isPaused) {
+                // 재개
+                mediaRecorder.resume();
+                isPaused = false;
+                pauseBtn.innerHTML = '⏸️ 일시정지';
+                pauseBtn.classList.remove('recording');
+                
+                // 슬라이드쇼 재개
+                startAutoSlideshow();
+            } else {
+                // 일시정지
+                mediaRecorder.pause();
+                isPaused = true;
+                pauseBtn.innerHTML = '▶️ 재개';
+                pauseBtn.classList.add('recording');
+                
+                // 슬라이드쇼 정지
+                if (autoSlideInterval) {
+                    clearInterval(autoSlideInterval);
+                }
+            }
+        }
+
+        // 자동 녹화 중지
+        function stopAutoRecording() {
+            if (mediaRecorder && isRecording) {
+                mediaRecorder.stop();
+                
+                // 스트림 정리
+                const tracks = mediaRecorder.stream.getTracks();
+                tracks.forEach(track => track.stop());
+                
+                isRecording = false;
+                isPaused = false;
+                
+                console.log('✅ 자동 녹화 중지됨');
+            }
+        }
+
+        // 녹화 저장
+        function saveRecording() {
+            if (recordedChunks.length === 0) {
+                alert('❌ 녹화된 데이터가 없습니다.');
+                return;
+            }
+
+            const blob = new Blob(recordedChunks, { type: 'video/webm' });
+            const url = URL.createObjectURL(blob);
+            
+            // 파일 다운로드
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `youtube-shorts-${new Date().getTime()}.webm`;
+            a.style.display = 'none';
+            
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            
+            // URL 해제
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
+            
+            // 성공 메시지
+            alert('🎉 녹화 완료!\n\n33초 영상이 다운로드 폴더에 저장되었습니다.\n바로 유튜브 쇼츠에 업로드 할 수 있습니다!');
+            
+            console.log('✅ 녹화 파일 저장 완료');
+        }
+
+        // 녹화용 슬라이드쇼 시작
+        function startRecordingSlideshow() {
+            // 기존 슬라이드쇼 정지
+            if (autoSlideInterval) {
+                clearInterval(autoSlideInterval);
+            }
+            
+            currentSlideIndex = 0;
+            showSlide(0);
+            
+            // 2.2초 간격으로 슬라이드 전환 (15장 × 2.2초 = 33초)
+            autoSlideInterval = setInterval(() => {
+                if (!isPaused) {
+                    const nextIndex = (currentSlideIndex + 1) % slides.length;
+                    showSlide(nextIndex);
+                    
+                    // 한 바퀴 완료 시 정지
+                    if (nextIndex === 0 && currentSlideIndex !== 0) {
+                        clearInterval(autoSlideInterval);
+                    }
+                }
+            }, 2200);
+        }
+
+        // 자동 녹화 가이드
+        function showAutoRecordingGuide() {
+            const guideText = `🎥 자동 화면 녹화 완벽 가이드
+
+🚀 자동 녹화 기능:
+✅ 버튼 클릭 한 번으로 모든 과정 자동화
+✅ 33초 완벽한 타이밍으로 녹화
+✅ 유튜브 쇼츠 최적 포맷 (9:16)
+✅ 고품질 1080×1920 해상도
+✅ 자동 다운로드 및 저장
+
+📋 사용 방법:
+1. 슬라이드 생성 완료 후 "🔴 자동 녹화 시작" 클릭
+2. 브라우저에서 화면 공유 권한 허용
+3. 자동으로 33초 녹화 진행
+4. 완료 후 자동으로 파일 다운로드
+
+🎯 최적 설정:
+• 해상도: 1080×1920 (자동 설정)
+• 프레임률: 30fps (자동 설정)
+• 포맷: WebM (호환성 우수)
+• 음질: 44.1kHz (고품질)
+
+🌟 지원 브라우저:
+• Chrome 72+ (권장)
+• Firefox 66+
+• Edge 79+
+• Safari 13+ (일부 제한)
+
+💡 녹화 팁:
+• 전체화면으로 브라우저 확대
+• 다른 프로그램은 종료 권장
+• 안정적인 인터넷 연결 필요
+• 일시정지/재개 기능 활용 가능
+
+🎬 완성 후:
+• WebM → MP4 변환 (필요시)
+• 유튜브 쇼츠에 바로 업로드
+• BGM이나 자막 추가 (선택사항)
+
+❗ 주의사항:
+• 화면 공유 권한 필수
+• 개인정보 화면 주의
+• 저작권 음악 사용 주의`;
+            
+            alert(guideText);
         }
 
         // 슬라이드별 이미지 생성
@@ -1510,6 +1910,8 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
             console.log('📊 결과 표시 시작');
             
             const resultSection = document.getElementById('resultSection');
+            const autoRecordingSection = document.getElementById('autoRecordingSection');
+            
             if (resultSection) {
                 console.log('결과 섹션 찾음, 표시 중...');
                 resultSection.style.display = 'block';
@@ -1519,62 +1921,14 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
                 createSlidePreview();
                 startAutoSlideshow();
                 
-                // 강제로 버튼들이 보이도록 설정
-                setTimeout(() => {
-                    const buttonContainer = resultSection.querySelector('div[style*="text-align: center"]');
-                    if (buttonContainer) {
-                        buttonContainer.style.display = 'block';
-                        buttonContainer.style.visibility = 'visible';
-                        console.log('✅ 녹화 버튼들 강제 표시 완료');
-                    }
-                }, 500);
-                
                 setTimeout(() => {
                     resultSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }, 1000);
-            } else {
-                console.error('❌ 결과 섹션을 찾을 수 없음');
-                // 결과 섹션이 없으면 강제로 버튼 추가
-                addRecordingButtonsDirectly();
             }
-        }
 
-        // 직접 녹화 버튼 추가 (백업용)
-        function addRecordingButtonsDirectly() {
-            const container = document.querySelector('.container');
-            const existingButtons = document.getElementById('recording-buttons-backup');
-            
-            if (!existingButtons) {
-                const buttonSection = document.createElement('div');
-                buttonSection.id = 'recording-buttons-backup';
-                buttonSection.style.cssText = `
-                    background: rgba(255, 255, 255, 0.15);
-                    border: 3px solid rgba(255, 255, 255, 0.3);
-                    border-radius: 25px;
-                    padding: 40px;
-                    margin: 40px 0;
-                    text-align: center;
-                    backdrop-filter: blur(15px);
-                `;
-                
-                buttonSection.innerHTML = `
-                    <h2 style="color: #feca57; margin-bottom: 30px; font-size: 2em;">🎬 영상 제작 도구</h2>
-                    <div style="margin: 20px 0;">
-                        <button class="btn btn-primary" onclick="startRecordingMode()" style="font-size: 1.4em; padding: 20px 40px; background: linear-gradient(45deg, #ff6b6b, #4ecdc4); margin: 10px; text-transform: none;">
-                            📹 영상 녹화 시작
-                        </button>
-                        <button class="btn btn-secondary" onclick="showRecordingGuide()" style="margin: 10px; text-transform: none;">
-                            📖 녹화 가이드
-                        </button>
-                        <button class="btn btn-primary" onclick="downloadSlideImages()" style="margin: 10px; text-transform: none;">
-                            📁 이미지 다운로드
-                        </button>
-                    </div>
-                    <p style="margin-top: 20px; opacity: 0.8;">슬라이드가 생성되면 위 버튼들을 사용할 수 있습니다.</p>
-                `;
-                
-                container.appendChild(buttonSection);
-                console.log('✅ 백업 녹화 버튼 추가 완료');
+            // 자동 녹화 섹션도 표시
+            if (autoRecordingSection) {
+                autoRecordingSection.style.display = 'block';
             }
         }
 
@@ -1696,6 +2050,19 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
             }, 5000);
         }
 
+        function nextSlide() {
+            if (autoSlideInterval) {
+                clearInterval(autoSlideInterval);
+            }
+            
+            const newIndex = currentSlideIndex < slides.length - 1 ? currentSlideIndex + 1 : 0;
+            showSlide(newIndex);
+            
+            setTimeout(() => {
+                startAutoSlideshow();
+            }, 5000);
+        }
+
         // 전체화면 열기
         function openFullscreen(slideIndex) {
             if (!slides || slides.length === 0) return;
@@ -1711,7 +2078,6 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
             // 전체화면 모달 표시
             const modal = document.getElementById('fullscreenModal');
             const content = document.getElementById('fullscreenContent');
-            const slideContainer = document.getElementById('fullscreenSlide');
             
             // 배경 이미지 설정
             if (slideImages[slideIndex]) {
@@ -1783,7 +2149,7 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
             }
         }
 
-        // 녹화 모드 시작
+        // 수동 녹화 모드 시작
         function startRecordingMode() {
             if (!slides || slides.length === 0) {
                 alert('❌ 먼저 슬라이드를 생성해주세요!');
@@ -1881,13 +2247,13 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
                 if (count < 0) {
                     clearInterval(countdownInterval);
                     countdownOverlay.style.display = 'none';
-                    startRecordingSlideshow();
+                    startManualRecordingSlideshow();
                 }
             }, 1000);
         }
 
-        // 녹화용 슬라이드쇼 시작
-        function startRecordingSlideshow() {
+        // 수동 녹화용 슬라이드쇼 시작
+        function startManualRecordingSlideshow() {
             const recordingOverlay = document.getElementById('recordingOverlay');
             const recordingIndicator = document.getElementById('recordingIndicator');
             
@@ -1974,7 +2340,7 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
             }, 4000);
         }
 
-        // 녹화 모드 종료
+        // 수동 녹화 모드 종료
         function exitRecordingMode() {
             const recordingMode = document.getElementById('recordingMode');
             recordingMode.classList.remove('active');
@@ -1988,10 +2354,10 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
 
         // 상세 녹화 가이드
         function showRecordingGuide() {
-            const guideText = `🎬 영상 녹화 완벽 가이드
+            const guideText = `🎬 수동 녹화 완벽 가이드
 
 📱 모바일 녹화 (권장):
-1. "📹 영상 녹화 시작" 버튼 클릭
+1. "📹 수동 녹화 모드" 버튼 클릭
 2. 3-2-1 카운트다운 후 자동 재생 시작
 3. 제어센터에서 "화면 기록" 버튼 누르기
 4. 33초 자동 재생 완료까지 대기
@@ -2001,7 +2367,7 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
 💻 PC 녹화:
 1. OBS Studio 또는 Bandicam 실행
 2. 1080x1920 해상도 설정
-3. "📹 영상 녹화 시작" 버튼 클릭
+3. "📹 수동 녹화 모드" 버튼 클릭
 4. 카운트다운과 함께 PC에서 녹화 시작
 5. 33초 재생 완료 후 녹화 중지
 
@@ -2046,19 +2412,6 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
             });
         }
 
-        function nextSlide() {
-            if (autoSlideInterval) {
-                clearInterval(autoSlideInterval);
-            }
-            
-            const newIndex = currentSlideIndex < slides.length - 1 ? currentSlideIndex + 1 : 0;
-            showSlide(newIndex);
-            
-            setTimeout(() => {
-                startAutoSlideshow();
-            }, 5000);
-        }
-
         // 페이지 로드 완료 후 실행
         document.addEventListener('DOMContentLoaded', function() {
             // 입력 필드 이벤트
@@ -2088,6 +2441,10 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
             document.addEventListener('keydown', function(e) {
                 if (e.key === 'Escape') {
                     closeFullscreen();
+                    // 자동 녹화 중일 때 ESC로 중지
+                    if (isRecording) {
+                        stopAutoRecording();
+                    }
                 }
                 // 전체화면에서 방향키로 슬라이드 이동
                 if (document.getElementById('fullscreenModal').classList.contains('show')) {
@@ -2111,7 +2468,25 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
             
             // 초기 버튼 상태 설정
             updateGenerateButton();
+
+            // 브라우저 호환성 체크
+            checkBrowserCompatibility();
         });
+
+        // 브라우저 호환성 체크
+        function checkBrowserCompatibility() {
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
+                console.warn('⚠️ 이 브라우저는 화면 녹화를 지원하지 않습니다.');
+                
+                // 자동 녹화 버튼 비활성화
+                const autoRecordBtn = document.getElementById('autoRecordBtn');
+                if (autoRecordBtn) {
+                    autoRecordBtn.disabled = true;
+                    autoRecordBtn.innerHTML = '❌ 브라우저 미지원';
+                    autoRecordBtn.title = 'Chrome, Firefox, Edge 최신 버전을 사용해주세요.';
+                }
+            }
+        }
     </script>
 </body>
 </html>
