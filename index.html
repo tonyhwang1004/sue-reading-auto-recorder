@@ -1278,42 +1278,48 @@
             document.body.style.overflow = 'auto';
         }
 
+        // 샘플 데이터 사용 - Sue Reading Club 정확한 데이터
         function useSampleData() {
             const sampleData = `제목: Sue Reading Club - AI 영어교육의 혁신
 
 내용: Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관입니다.
 
-주요 프로그램:
-- AI 독해 시스템: 개인 맞춤 분석
-- 스마트 속독: 읽기 속도 3배 향상  
-- AI 토론 클래스: 실시간 대화 학습
-- 영어소설 독해: 문학을 통한 고급 영어
-- 채두윜반: 최고 수준 영어 완성 과정
+🏆 20년 검증된 역사
+- 1985년 설립 이후 송도 지역 영어교육의 명문
+- 수천 명의 학생들이 선택한 신뢰할 수 있는 교육 파트너
+- 전통과 혁신이 조화를 이룬 차별화된 교육 철학
 
-20년 전통의 차별점:
-- 송도 지역 영어교육의 명문
-- 최신 AI 기술과 검증된 교육법 융합
-- 개인별 맞춤 커리큘럼 자동 생성
-- 영어소설을 활용한 독창적 교육법
+🤖 핵심 AI 프로그램
+- AI 독해 시스템: 개인별 취약점 실시간 진단 및 분석
+- 스마트 속독: 읽기 속도 3배 향상 보장 시스템
+- AI 토론 클래스: 실시간 영어 대화 연습 및 즉석 피드백
+- 즉석 피드백 시스템: 발음부터 문법까지 정확한 실시간 교정
+- 특별 채두윜반: 고급 영어 실력 완성을 위한 최상위 과정
+- 영어소설 마스터: 문학을 통한 고급 영어 습득의 독창적 방법
 
-성과:
-- 20년간 검증된 교육 노하우
-- 98% 학부모 만족도
-- 평균 3.2배 성적 향상
-- 수천 명의 영어 실력 향상 사례
+⭐ 차별화 포인트
+- 최신 AI 기술과 20년 교육 노하우의 혁신적 융합
+- 개인별 맞춤 학습으로 효율성 극대화
+- AI가 분석한 개인별 최적 학습 경로 제공
+- 미래형 교육 시스템으로 영어 학습의 새로운 패러다임 제시
 
-특별 혜택:
-- 첫 달 30% 할인
-- 무료 AI 레벨테스트
-- 개인별 맞춤 학습 플랜
-- 학부모 정기 상담 서비스
+📊 검증된 성과
+- 98% 학부모 만족도로 입증된 교육 품질
+- 평균 3.2배 성적 향상이라는 놀라운 실적
+- 20년간 수천 명이 경험한 확실한 영어 실력 향상
 
-위치: 인천 연수구 송도동 22-20 해온더라운지 702호
-연락처: 010-4602-1953
-운영: 평일만 (주말 휴무)
-상담시간: 오전 10시 - 오후 8시
+🎁 특별 혜택
+- 첫 달 30% 할인으로 부담 없는 시작
+- 무료 AI 레벨테스트로 정확한 실력 진단
+- 개인별 맞춤 학습 플랜 무료 제공
 
-이미지: 전통적이면서도 현대적인 교육 환경, 20년 전통의 신뢰감, 영어소설과 책들, AI 기술이 접목된 학습공간`;
+📍 위치 및 연락처
+- 위치: 인천 연수구 송도동 22-20 해온더라운지 702호
+- 연락처: 010-4602-1953
+- 운영시간: 평일 오전 10시 - 오후 8시 (주말 휴무)
+- 상담: 언제든 전화 상담 가능
+
+이미지: 전통적이면서도 현대적인 교육 환경, 20년 전통의 신뢰감과 혁신적인 AI 기술이 조화된 공간, 영어소설과 책들로 가득한 따뜻한 학습 분위기, 학생들이 집중하며 공부하는 모습, 첨단 AI 교육 시설이 어우러진 프리미엄 학습 공간`;
 
             document.getElementById('quickTextarea').value = sampleData;
         }
@@ -1546,6 +1552,43 @@
             }));
         }
 
+        // 강력한 GPT-4 분석 및 슬라이드 생성
+        async function createSlidesFromInput(title, content) {
+            console.log('🧠 강력한 GPT-4 슬라이드 생성 시작');
+            console.log('분석할 제목:', title);
+            console.log('분석할 내용 길이:', content.length);
+            
+            try {
+                // 1. 슬라이드 패턴이 있는지 먼저 확인
+                if (content.includes('[슬라이드') && content.includes(']:')) {
+                    console.log('📋 상세 슬라이드 패턴 발견, 직접 파싱');
+                    const parsedSlides = parseDetailedSlideContent(content);
+                    
+                    if (parsedSlides.length >= 10) {
+                        console.log('✅ 충분한 슬라이드 파싱됨, 직접 사용');
+                        return parsedSlides.slice(0, 15);
+                    }
+                }
+                
+                // 2. 강력한 GPT-4 분석 시도
+                console.log('🤖 강력한 GPT-4 분석 시작');
+                const gptSlides = await powerfulGPTAnalysis(title, content);
+                
+                if (gptSlides && gptSlides.length >= 15) {
+                    console.log('✅ GPT-4 분석 성공, 15장 생성됨');
+                    return gptSlides;
+                }
+                
+                throw new Error('GPT 분석 결과 부족');
+                
+            } catch (error) {
+                console.error('❌ GPT 분석 실패:', error);
+                // 3. Sue Reading Club 맞춤 백업 사용
+                console.log('🔄 Sue Reading Club 맞춤 백업 슬라이드 사용');
+                return createSueReadingSlides(title, content);
+            }
+        }
+
         // 슬라이드별 상세 내용을 정확히 파싱하는 함수
         function parseDetailedSlideContent(content) {
             console.log('📋 상세 슬라이드 내용 파싱 시작');
@@ -1631,229 +1674,235 @@
             return slides;
         }
 
-        // GPT-4를 활용한 스마트 슬라이드 생성 - 개선된 버전
-        async function createSlidesFromInput(title, content) {
-            console.log('🧠 개선된 슬라이드 생성 시작');
-            console.log('분석할 제목:', title);
-            console.log('분석할 내용 길이:', content.length);
-            
-            try {
-                // 1. 먼저 상세한 슬라이드 패턴이 있는지 확인
-                if (content.includes('[슬라이드') && content.includes(']:')) {
-                    console.log('📋 상세 슬라이드 패턴 발견, 직접 파싱');
-                    const parsedSlides = parseDetailedSlideContent(content);
-                    
-                    if (parsedSlides.length >= 10) {
-                        console.log('✅ 충분한 슬라이드 파싱됨, 직접 사용');
-                        return parsedSlides.slice(0, 15);
-                    }
-                }
-                
-                // 2. GPT-4 분석 시도
-                console.log('🤖 GPT-4 분석 시도');
-                const gptSlides = await analyzeContentWithGPT(title, content);
-                
-                if (gptSlides && gptSlides.length >= 10) {
-                    console.log('✅ GPT-4 분석 성공');
-                    return gptSlides;
-                }
-                
-                throw new Error('GPT 분석 결과 부족');
-                
-            } catch (error) {
-                console.error('❌ GPT 분석 실패:', error);
-                // 3. 백업 분석 방식
-                return createAdvancedBackupSlides(title, content);
-            }
-        }
+        // 강력한 GPT-4 분석 함수
+        async function powerfulGPTAnalysis(title, content) {
+            const detailedPrompt = `당신은 마케팅 슬라이드 전문가입니다. 다음 내용을 정확히 분석하여 15장의 유튜브 쇼츠용 슬라이드를 생성하세요.
 
-        // 고급 백업 슬라이드 생성
-        function createAdvancedBackupSlides(title, content) {
-            console.log('🔄 고급 백업 슬라이드 생성');
-            
-            const slides = [];
-            
-            // Sue Reading Club 전용 슬라이드 데이터
-            const sueReadingSlides = [
-                { 
-                    icon: '🚀', 
-                    title: 'Sue Reading Club', 
-                    subtitle: '송도의 20년 전통 AI 영어교육 전문기관',
-                    type: 'intro' 
-                },
-                { 
-                    icon: '🏆', 
-                    title: '20년 검증된 역사', 
-                    subtitle: '1985년 설립, 수천 명이 선택한 신뢰의 교육',
-                    type: 'history' 
-                },
-                { 
-                    icon: '⚡', 
-                    title: 'AI 혁신 기술', 
-                    subtitle: '최신 AI와 20년 노하우의 완벽한 융합',
-                    type: 'innovation' 
-                },
-                { 
-                    icon: '📚', 
-                    title: 'AI 독해 시스템', 
-                    subtitle: '개인별 취약점 실시간 진단 및 맞춤 분석',
-                    type: 'reading' 
-                },
-                { 
-                    icon: '⚡', 
-                    title: '스마트 속독', 
-                    subtitle: '읽기 속도 3배 향상 보장 시스템',
-                    type: 'speed' 
-                },
-                { 
-                    icon: '💬', 
-                    title: 'AI 토론 클래스', 
-                    subtitle: '실시간 영어 대화 연습 및 즉석 피드백',
-                    type: 'discussion' 
-                },
-                { 
-                    icon: '🎯', 
-                    title: '즉석 피드백 시스템', 
-                    subtitle: '발음부터 문법까지 정확한 실시간 교정',
-                    type: 'feedback' 
-                },
-                { 
-                    icon: '👑', 
-                    title: '특별 채두윜반', 
-                    subtitle: '고급 영어 실력 완성을 위한 최상위 과정',
-                    type: 'premium' 
-                },
-                { 
-                    icon: '📖', 
-                    title: '영어소설 마스터', 
-                    subtitle: '문학을 통한 고급 영어 습득의 독창적 방법',
-                    type: 'literature' 
-                },
-                { 
-                    icon: '🧠', 
-                    title: '개인 맞춤 커리큘럼', 
-                    subtitle: 'AI가 분석한 개인별 최적 학습 경로',
-                    type: 'curriculum' 
-                },
-                { 
-                    icon: '📊', 
-                    title: '검증된 놀라운 성과', 
-                    subtitle: '98% 학부모 만족도, 평균 3.2배 성적 향상',
-                    type: 'results' 
-                },
-                { 
-                    icon: '🎁', 
-                    title: '특별 론칭 혜택', 
-                    subtitle: '첫 달 30% 할인 + 무료 AI 레벨테스트',
-                    type: 'benefit' 
-                },
-                { 
-                    icon: '📍', 
-                    title: '프리미엄 위치', 
-                    subtitle: '해온더라운지 702호, 송도 국제도시 중심가',
-                    type: 'location' 
-                },
-                { 
-                    icon: '📅', 
-                    title: '간편한 상담 신청', 
-                    subtitle: '평일 오전 10시~오후 8시 전문 상담',
-                    type: 'consultation' 
-                },
-                { 
-                    icon: '📞', 
-                    title: '010-4602-1953', 
-                    subtitle: '지금 바로 연락하여 영어 실력 혁신을 시작하세요',
-                    type: 'contact' 
-                }
-            ];
-            
-            // Sue Reading Club 관련 내용인지 확인
-            if (content.includes('Sue') || content.includes('Reading') || content.includes('송도') || content.includes('AI')) {
-                console.log('✅ Sue Reading Club 전용 슬라이드 사용');
-                return sueReadingSlides.map((slide, index) => ({
-                    slideNumber: index + 1,
-                    ...slide
-                }));
-            }
-            
-            // 일반적인 백업 슬라이드 생성
-            return createBackupSlides(title, content);
-        }
-
-        // GPT-4 API 호출 개선
-        async function analyzeContentWithGPT(title, content) {
-            const prompt = `다음 내용을 분석하여 정확히 15장의 유튜브 쇼츠용 슬라이드를 생성해주세요.
-
+# 입력 데이터
 제목: ${title}
 내용: ${content}
 
-중요 요구사항:
-1. 제공된 내용의 핵심 정보를 정확히 반영
-2. 각 슬라이드는 제목(25자 이내)과 부제목(45자 이내)으로 구성
-3. 순서는 인트로 → 핵심 프로그램/서비스 → 특징 → 성과 → 혜택 → 연락처
-4. Sue Reading Club의 특징을 살려서 구성
-5. 실제 데이터(20년, 98% 만족도, 3.2배 향상, 30% 할인 등)를 활용
+# 중요 지시사항
+1. 제공된 내용의 모든 핵심 정보를 빠짐없이 반영하세요
+2. 각 슬라이드는 제목(최대 30자)과 부제목(최대 50자)으로 구성
+3. Sue Reading Club의 특징을 정확히 반영하세요:
+   - 20년 전통 (1985년 설립)
+   - AI 기반 영어교육
+   - 송도 위치
+   - 98% 만족도, 3.2배 향상
+   - 첫 달 30% 할인
+   - 010-4602-1953
+   - 해온더라운지 702호
 
-JSON 형식으로 응답:
+4. 슬라이드 구성 순서:
+   - 슬라이드 1: 브랜드 소개 (Sue Reading Club)
+   - 슬라이드 2-3: 역사와 전통 (20년, 1985년)
+   - 슬라이드 4-9: 핵심 프로그램 (AI 독해, 속독, 토론, 피드백, 채두윜반, 영어소설)
+   - 슬라이드 10-11: 차별점과 성과 (98% 만족도, 3.2배 향상)
+   - 슬라이드 12: 특별 혜택 (30% 할인)
+   - 슬라이드 13: 위치 (해온더라운지 702호)
+   - 슬라이드 14: 운영시간 (평일 10시-8시)
+   - 슬라이드 15: 연락처 (010-4602-1953)
+
+5. 각 슬라이드에 적절한 이모지 아이콘 포함
+
+# 응답 형식 (반드시 이 형식으로만 응답)
 {
   "slides": [
     {
       "slideNumber": 1,
       "icon": "🚀",
-      "title": "슬라이드 제목",
-      "subtitle": "슬라이드 부제목",
-      "type": "slide_type"
+      "title": "Sue Reading Club",
+      "subtitle": "송도의 20년 전통 AI 영어교육 전문기관",
+      "type": "intro"
+    },
+    {
+      "slideNumber": 2,
+      "icon": "🏆",
+      "title": "20년 검증된 역사",
+      "subtitle": "1985년 설립, 송도 지역 영어교육의 명문",
+      "type": "history"
     }
-    // ... 15개 슬라이드
+    // ... 계속해서 15개 슬라이드 모두 생성
   ]
-}`;
+}
 
-            const response = await fetch('https://api.openai.com/v1/chat/completions', {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${apiKey}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    model: "gpt-4",
-                    messages: [
-                        {
-                            role: "system",
-                            content: "당신은 마케팅 슬라이드 전문가입니다. 제공된 내용을 정확히 분석하여 효과적인 15장의 슬라이드를 생성해주세요."
-                        },
-                        {
-                            role: "user",
-                            content: prompt
-                        }
-                    ],
-                    temperature: 0.3,
-                    max_tokens: 3000
-                })
-            });
+반드시 위의 JSON 형식으로만 응답하고, 다른 설명은 포함하지 마세요.`;
 
-            if (!response.ok) {
-                throw new Error(`GPT API Error: ${response.status}`);
-            }
-
-            const data = await response.json();
-            const gptContent = data.choices[0].message.content;
-            
-            console.log('GPT 응답:', gptContent);
-            
-            // JSON 파싱
             try {
-                const jsonMatch = gptContent.match(/\{[\s\S]*\}/);
-                if (jsonMatch) {
-                    const parsedData = JSON.parse(jsonMatch[0]);
-                    if (parsedData.slides && Array.isArray(parsedData.slides)) {
-                        return parsedData.slides;
-                    }
+                const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${apiKey}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        model: "gpt-4",
+                        messages: [
+                            {
+                                role: "system",
+                                content: "당신은 마케팅 슬라이드 전문가입니다. 주어진 내용을 정확히 분석하여 JSON 형식으로만 응답하세요. 다른 설명은 절대 포함하지 마세요."
+                            },
+                            {
+                                role: "user",
+                                content: detailedPrompt
+                            }
+                        ],
+                        temperature: 0.1, // 더 정확한 결과를 위해 낮춤
+                        max_tokens: 4000
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`GPT API Error: ${response.status} - ${response.statusText}`);
                 }
-                throw new Error('JSON 파싱 실패');
+
+                const data = await response.json();
+                const gptContent = data.choices[0].message.content.trim();
+                
+                console.log('GPT 응답 원본:', gptContent);
+                
+                // JSON 추출 및 파싱
+                let jsonContent = gptContent;
+                
+                // JSON 부분만 추출
+                if (gptContent.includes('{') && gptContent.includes('}')) {
+                    const startIndex = gptContent.indexOf('{');
+                    const endIndex = gptContent.lastIndexOf('}') + 1;
+                    jsonContent = gptContent.substring(startIndex, endIndex);
+                }
+                
+                console.log('추출된 JSON:', jsonContent);
+                
+                const parsedData = JSON.parse(jsonContent);
+                
+                if (parsedData.slides && Array.isArray(parsedData.slides)) {
+                    console.log('✅ GPT 파싱 성공, 슬라이드 개수:', parsedData.slides.length);
+                    return parsedData.slides;
+                } else {
+                    throw new Error('슬라이드 배열이 없음');
+                }
+                
             } catch (parseError) {
-                console.error('JSON 파싱 오류:', parseError);
-                throw new Error('GPT 응답 파싱 실패');
+                console.error('❌ GPT 응답 파싱 오류:', parseError);
+                throw new Error('GPT 응답 파싱 실패: ' + parseError.message);
             }
+        }
+
+        // Sue Reading Club 맞춤 슬라이드 (백업용)
+        function createSueReadingSlides(title, content) {
+            console.log('🎓 Sue Reading Club 맞춤 슬라이드 생성');
+            
+            const sueSlides = [
+                {
+                    slideNumber: 1,
+                    icon: '🚀',
+                    title: 'Sue Reading Club',
+                    subtitle: '송도의 20년 전통 AI 영어교육 전문기관',
+                    type: 'intro'
+                },
+                {
+                    slideNumber: 2,
+                    icon: '🏆',
+                    title: '20년 검증된 역사',
+                    subtitle: '1985년 설립, 송도 지역 영어교육의 명문',
+                    type: 'history'
+                },
+                {
+                    slideNumber: 3,
+                    icon: '⚡',
+                    title: 'AI 혁신 기술',
+                    subtitle: '최신 AI와 20년 노하우의 완벽한 융합',
+                    type: 'innovation'
+                },
+                {
+                    slideNumber: 4,
+                    icon: '📚',
+                    title: 'AI 독해 시스템',
+                    subtitle: '개인별 취약점 실시간 진단 및 맞춤 분석',
+                    type: 'reading'
+                },
+                {
+                    slideNumber: 5,
+                    icon: '⚡',
+                    title: '스마트 속독 시스템',
+                    subtitle: '읽기 속도 3배 향상 보장 프로그램',
+                    type: 'speed'
+                },
+                {
+                    slideNumber: 6,
+                    icon: '💬',
+                    title: 'AI 토론 클래스',
+                    subtitle: '실시간 영어 대화 연습 및 즉석 피드백',
+                    type: 'discussion'
+                },
+                {
+                    slideNumber: 7,
+                    icon: '🎯',
+                    title: '즉석 피드백 시스템',
+                    subtitle: '발음부터 문법까지 정확한 실시간 교정',
+                    type: 'feedback'
+                },
+                {
+                    slideNumber: 8,
+                    icon: '👑',
+                    title: '특별 채두윜반',
+                    subtitle: '고급 영어 실력 완성을 위한 최상위 과정',
+                    type: 'premium'
+                },
+                {
+                    slideNumber: 9,
+                    icon: '📖',
+                    title: '영어소설 마스터',
+                    subtitle: '문학을 통한 고급 영어 습득의 독창적 방법',
+                    type: 'literature'
+                },
+                {
+                    slideNumber: 10,
+                    icon: '🧠',
+                    title: '개인 맞춤 커리큘럼',
+                    subtitle: 'AI가 분석한 개인별 최적 학습 경로',
+                    type: 'curriculum'
+                },
+                {
+                    slideNumber: 11,
+                    icon: '📊',
+                    title: '검증된 놀라운 성과',
+                    subtitle: '98% 학부모 만족도, 평균 3.2배 성적 향상',
+                    type: 'results'
+                },
+                {
+                    slideNumber: 12,
+                    icon: '🎁',
+                    title: '특별 론칭 혜택',
+                    subtitle: '첫 달 30% 할인 + 무료 AI 레벨테스트',
+                    type: 'benefit'
+                },
+                {
+                    slideNumber: 13,
+                    icon: '📍',
+                    title: '프리미엄 위치',
+                    subtitle: '해온더라운지 702호, 송도 국제도시 중심가',
+                    type: 'location'
+                },
+                {
+                    slideNumber: 14,
+                    icon: '📅',
+                    title: '상담 및 운영시간',
+                    subtitle: '평일 오전 10시~오후 8시, 언제든 상담 가능',
+                    type: 'hours'
+                },
+                {
+                    slideNumber: 15,
+                    icon: '📞',
+                    title: '010-4602-1953',
+                    subtitle: '지금 바로 연락하여 영어 실력 혁신을 시작!',
+                    type: 'contact'
+                }
+            ];
+            
+            console.log('✅ Sue Reading Club 맞춤 슬라이드 15장 생성 완료');
+            return sueSlides;
         }
 
         // 백업 분석 방식 (GPT 실패 시)
