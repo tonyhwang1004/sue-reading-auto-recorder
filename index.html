@@ -1377,7 +1377,7 @@
             return result;
         }
 
-        // 슬라이드 생성 메인 함수 - 입력 내용 정확 반영
+        // 슬라이드 생성 메인 함수 - 디버깅 강화
         async function generateSlides() {
             const title = document.getElementById('titleInput').value.trim();
             const content = document.getElementById('contentInput').value.trim();
@@ -1387,6 +1387,7 @@
             console.log('제목:', title);
             console.log('내용:', content);
             console.log('이미지 프롬프트:', imagePrompt);
+            console.log('API 키 존재:', !!apiKey);
             
             if (!apiKey) {
                 alert('❌ API 키를 먼저 설정해주세요!');
@@ -1405,10 +1406,16 @@
                 updateProgress(20, '📝 내용 분석', '입력한 내용을 분석하고 있습니다...', '🤖');
                 await delay(300);
                 
-                // 입력 내용 기반으로 슬라이드 생성
-                console.log('📊 입력 내용 기반 슬라이드 생성 중...');
-                slides = createSlidesFromInput(title, content);
-                console.log('생성된 슬라이드:', slides);
+                console.log('📊 슬라이드 생성 시작...');
+                
+                // 우선 백업 방식으로 슬라이드 생성 (GPT 오류 방지)
+                slides = createBackupSlides(title, content);
+                console.log('생성된 슬라이드 개수:', slides.length);
+                console.log('생성된 슬라이드 데이터:', slides);
+                
+                if (!slides || slides.length === 0) {
+                    throw new Error('슬라이드 생성 실패');
+                }
                 
                 updateProgress(50, '🎨 슬라이드 구성', '15장의 맞춤 슬라이드를 구성하고 있습니다...', '📋');
                 await delay(400);
@@ -1441,17 +1448,102 @@
                 // 프로그레스 모달 숨기기
                 showProgressModal(false);
                 
-                // 결과 즉시 표시
                 console.log('🎬 결과 표시 시작');
+                console.log('최종 슬라이드 확인:', slides);
+                
+                // 결과 즉시 표시
                 setTimeout(() => {
-                    showResultsNow();
-                }, 200);
+                    forceShowResults();
+                }, 100);
                 
             } catch (error) {
-                console.error('생성 중 오류:', error);
+                console.error('❌ 생성 중 오류:', error);
                 showProgressModal(false);
-                alert('❌ 슬라이드 생성에 실패했습니다: ' + error.message);
+                
+                // 에러 발생 시에도 기본 슬라이드 생성 시도
+                console.log('🔄 에러 복구: 기본 슬라이드 생성 시도');
+                slides = createEmergencySlides(title, content);
+                
+                if (slides && slides.length > 0) {
+                    console.log('✅ 기본 슬라이드 생성 성공');
+                    setTimeout(() => {
+                        forceShowResults();
+                    }, 100);
+                } else {
+                    alert('❌ 슬라이드 생성에 실패했습니다: ' + error.message);
+                }
             }
+        }
+
+        // 강제 결과 표시
+        function forceShowResults() {
+            console.log('🎯 강제 결과 표시 시작');
+            console.log('슬라이드 데이터 확인:', slides);
+            
+            if (!slides || slides.length === 0) {
+                console.error('❌ 표시할 슬라이드가 없음');
+                alert('❌ 슬라이드 데이터가 없습니다. 다시 시도해주세요.');
+                return;
+            }
+            
+            const resultSection = document.getElementById('resultSection');
+            if (!resultSection) {
+                console.error('❌ 결과 섹션을 찾을 수 없음');
+                return;
+            }
+            
+            console.log('✅ 결과 섹션 찾음, 강제 표시 중...');
+            
+            // 결과 섹션 강제 표시
+            resultSection.style.display = 'block';
+            resultSection.style.visibility = 'visible';
+            resultSection.style.opacity = '1';
+            
+            // 슬라이드 미리보기 강제 생성
+            setTimeout(() => {
+                console.log('🎨 슬라이드 미리보기 강제 생성 시작');
+                forceCreateSlidePreview();
+            }, 200);
+            
+            // 슬라이드 리스트 강제 생성
+            setTimeout(() => {
+                console.log('📋 슬라이드 리스트 강제 생성 시작');
+                forceCreateSlidesList();
+            }, 400);
+            
+            // 스크롤
+            setTimeout(() => {
+                resultSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 600);
+        }
+
+        // 응급 슬라이드 생성
+        function createEmergencySlides(title, content) {
+            console.log('🚨 응급 슬라이드 생성');
+            
+            const emergencySlides = [
+                { icon: '🚀', title: title || '새로운 시작', subtitle: '특별한 경험이 기다립니다' },
+                { icon: '⭐', title: '핵심 포인트', subtitle: '중요한 내용을 확인하세요' },
+                { icon: '🏆', title: '우수한 품질', subtitle: '최고 수준의 서비스' },
+                { icon: '📚', title: '전문 서비스', subtitle: '체계적이고 전문적인 접근' },
+                { icon: '⚡', title: '빠른 결과', subtitle: '즉시 확인 가능한 효과' },
+                { icon: '💬', title: '원활한 소통', subtitle: '고객과의 지속적인 커뮤니케이션' },
+                { icon: '🎯', title: '정확한 목표', subtitle: '원하는 결과를 위한 체계적 계획' },
+                { icon: '👑', title: '프리미엄 경험', subtitle: '특별하고 만족스러운 서비스' },
+                { icon: '📖', title: '풍부한 경험', subtitle: '검증된 노하우와 전문성' },
+                { icon: '🧠', title: '맞춤형 솔루션', subtitle: '개인별 최적화된 서비스' },
+                { icon: '📊', title: '검증된 성과', subtitle: '데이터로 입증된 우수한 결과' },
+                { icon: '🎁', title: '특별한 혜택', subtitle: '지금 바로 시작하는 기회' },
+                { icon: '📍', title: '편리한 접근', subtitle: '찾기 쉽고 이용하기 편한 위치' },
+                { icon: '💡', title: '혁신적 아이디어', subtitle: '새로운 방식의 차별화된 접근' },
+                { icon: '📞', title: '지금 연락하세요', subtitle: '더 자세한 정보와 상담을 원하시면' }
+            ];
+            
+            return emergencySlides.map((slide, index) => ({
+                slideNumber: index + 1,
+                ...slide,
+                type: 'emergency'
+            }));
         }
 
         // GPT-4를 활용한 스마트 슬라이드 생성
@@ -2436,24 +2528,27 @@
             }
         }
         
-        // 슬라이드 미리보기 강제 생성 - 멋진 디자인과 역동적 전환
-        function createSlidePreviewNow() {
-            console.log('🎬 멋진 슬라이드 미리보기 생성 시작');
+        // 강제 슬라이드 미리보기 생성
+        function forceCreateSlidePreview() {
+            console.log('🎬 강제 슬라이드 미리보기 생성 시작');
+            console.log('슬라이드 데이터 체크:', slides);
             
             const container = document.getElementById('slideContainer');
             if (!container) {
                 console.error('❌ slideContainer 찾을 수 없음');
+                alert('❌ 슬라이드 컨테이너를 찾을 수 없습니다.');
                 return;
             }
             
             if (!slides || slides.length === 0) {
                 console.error('❌ 슬라이드 데이터 없음');
+                alert('❌ 슬라이드 데이터가 없습니다.');
                 return;
             }
             
             console.log('✅ 컨테이너 찾음, 슬라이드 개수:', slides.length);
             
-            // 컨테이너 초기화 및 3D 효과 준비
+            // 컨테이너 완전 초기화
             container.innerHTML = '';
             container.style.cssText = `
                 width: 100%;
@@ -2462,225 +2557,237 @@
                 transform-style: preserve-3d;
                 perspective: 1500px;
                 overflow: hidden;
+                background: #000;
+                border-radius: 30px;
             `;
             
             currentSlideIndex = 0;
             
-            // 15가지 프리미엄 색상 테마
-            const premiumColors = [
-                'linear-gradient(145deg, #667eea 0%, #764ba2 50%, #a8edea 100%)',
-                'linear-gradient(145deg, #4ecdc4 0%, #44a08d 50%, #81ecec 100%)', 
-                'linear-gradient(145deg, #ff6b6b 0%, #ee5a6f 50%, #fd79a8 100%)',
-                'linear-gradient(145deg, #a8edea 0%, #fed6e3 50%, #fab1a0 100%)',
-                'linear-gradient(145deg, #feca57 0%, #ff9ff3 50%, #fdcb6e 100%)',
-                'linear-gradient(145deg, #96ceb4 0%, #ffecd2 50%, #00b894 100%)',
-                'linear-gradient(145deg, #74b9ff 0%, #0984e3 50%, #81ecec 100%)',
-                'linear-gradient(145deg, #fd79a8 0%, #fdcb6e 50%, #e84393 100%)',
-                'linear-gradient(145deg, #6c5ce7 0%, #a29bfe 50%, #74b9ff 100%)',
-                'linear-gradient(145deg, #e17055 0%, #fdcb6e 50%, #fab1a0 100%)',
-                'linear-gradient(145deg, #00b894 0%, #00cec9 50%, #55efc4 100%)',
-                'linear-gradient(145deg, #e84393 0%, #fd79a8 50%, #ff7675 100%)',
-                'linear-gradient(145deg, #fdcb6e 0%, #e17055 50%, #fab1a0 100%)',
-                'linear-gradient(145deg, #00cec9 0%, #55efc4 50%, #81ecec 100%)',
-                'linear-gradient(145deg, #fd79a8 0%, #e84393 50%, #a29bfe 100%)'
+            // 단순하고 확실한 색상들
+            const simpleColors = [
+                'linear-gradient(135deg, #667eea, #764ba2)',
+                'linear-gradient(135deg, #4ecdc4, #44a08d)', 
+                'linear-gradient(135deg, #ff6b6b, #ee5a6f)',
+                'linear-gradient(135deg, #feca57, #ff9ff3)',
+                'linear-gradient(135deg, #96ceb4, #ffecd2)',
+                'linear-gradient(135deg, #74b9ff, #0984e3)',
+                'linear-gradient(135deg, #fd79a8, #fdcb6e)',
+                'linear-gradient(135deg, #6c5ce7, #a29bfe)',
+                'linear-gradient(135deg, #e17055, #fdcb6e)',
+                'linear-gradient(135deg, #00b894, #00cec9)',
+                'linear-gradient(135deg, #e84393, #fd79a8)',
+                'linear-gradient(135deg, #fdcb6e, #e17055)',
+                'linear-gradient(135deg, #00cec9, #55efc4)',
+                'linear-gradient(135deg, #a29bfe, #6c5ce7)',
+                'linear-gradient(135deg, #fd79a8, #fdcb6e)'
             ];
             
+            // 각 슬라이드 생성
             slides.forEach((slide, index) => {
-                console.log(`멋진 슬라이드 ${index + 1} 생성 중: ${slide.title}`);
+                console.log(`강제 슬라이드 ${index + 1} 생성: ${slide.title}`);
                 
                 const slideDiv = document.createElement('div');
-                slideDiv.className = 'premium-slide';
-                slideDiv.id = `slide-${index}`;
+                slideDiv.className = 'force-slide';
+                slideDiv.id = `force-slide-${index}`;
                 
-                // 프리미엄 3D 스타일 적용
+                // 인라인 스타일로 확실하게 적용
                 slideDiv.style.cssText = `
                     position: absolute;
                     top: 0;
                     left: 0;
                     width: 100%;
                     height: 100%;
-                    background: ${premiumColors[index % premiumColors.length]};
+                    background: ${simpleColors[index % simpleColors.length]};
                     border-radius: 30px;
                     display: flex;
                     flex-direction: column;
                     justify-content: center;
                     align-items: center;
                     text-align: center;
-                    padding: 40px 30px;
+                    padding: 30px 20px;
                     color: white;
-                    box-shadow: 
-                        0 25px 50px rgba(0,0,0,0.3),
-                        inset 0 1px 0 rgba(255,255,255,0.2),
-                        inset 0 -1px 0 rgba(0,0,0,0.1);
-                    transition: all 0.8s cubic-bezier(0.4, 0.0, 0.2, 1);
-                    transform-style: preserve-3d;
-                    backface-visibility: hidden;
+                    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+                    transition: all 0.6s ease;
                     z-index: ${index === 0 ? '100' : '1'};
                     opacity: ${index === 0 ? '1' : '0'};
-                    transform: ${index === 0 ? 'rotateY(0deg) translateZ(0px) scale(1)' : 'rotateY(90deg) translateZ(-200px) scale(0.7)'};
+                    transform: ${index === 0 ? 'scale(1)' : 'scale(0.8)'};
                 `;
                 
-                // 글로우 효과 추가
-                if (index === 0) {
-                    slideDiv.style.filter = 'drop-shadow(0 0 30px rgba(255,255,255,0.3))';
-                }
-                
-                // 슬라이드 내용 - 더 깔끔하고 정확한 레이아웃
+                // 슬라이드 내용
                 slideDiv.innerHTML = `
-                    <div class="slide-bg-pattern" style="
-                        position: absolute;
-                        top: 0;
-                        left: 0;
-                        width: 100%;
-                        height: 100%;
-                        background: radial-gradient(circle at 20% 20%, rgba(255,255,255,0.08) 0%, transparent 50%),
-                                    radial-gradient(circle at 80% 80%, rgba(255,255,255,0.08) 0%, transparent 50%);
-                        border-radius: 30px;
-                        pointer-events: none;
-                    "></div>
-                    
-                    <div class="slide-icon-container" style="
-                        font-size: 4.5em;
-                        margin-bottom: 30px;
-                        filter: drop-shadow(0 10px 30px rgba(0,0,0,0.3));
-                        animation: iconFloat 4s ease-in-out infinite;
-                        transform-style: preserve-3d;
-                    ">
-                        ${slide.icon}
+                    <div style="font-size: 4em; margin-bottom: 25px; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.3));">
+                        ${slide.icon || '🎯'}
                     </div>
-                    
-                    <div class="slide-title-main" style="
-                        font-size: clamp(1.8em, 4vw, 2.8em);
-                        font-weight: 900;
-                        margin-bottom: 25px;
-                        text-shadow: 
-                            0 2px 10px rgba(0,0,0,0.4),
-                            0 0 30px rgba(255,255,255,0.3);
-                        line-height: 1.1;
-                        background: linear-gradient(45deg, #ffffff, #f8f8f8);
-                        -webkit-background-clip: text;
-                        -webkit-text-fill-color: transparent;
-                        background-clip: text;
-                        animation: titleGlow 3s ease-in-out infinite alternate;
-                        max-width: 95%;
-                        word-break: keep-all;
-                        text-align: center;
-                    ">
-                        ${slide.title}
+                    <div style="font-size: clamp(1.5em, 4vw, 2.5em); font-weight: 900; margin-bottom: 20px; text-shadow: 2px 2px 8px rgba(0,0,0,0.3); line-height: 1.1; max-width: 95%; word-break: keep-all;">
+                        ${slide.title || '제목'}
                     </div>
-                    
-                    <div class="slide-subtitle-main" style="
-                        font-size: clamp(1.1em, 2.5vw, 1.6em);
-                        opacity: 0.95;
-                        text-shadow: 0 2px 8px rgba(0,0,0,0.3);
-                        line-height: 1.4;
-                        max-width: 90%;
-                        margin-bottom: 20px;
-                        font-weight: 500;
-                        text-align: center;
-                        word-break: keep-all;
-                    ">
-                        ${slide.subtitle}
+                    <div style="font-size: clamp(1em, 2.5vw, 1.4em); opacity: 0.9; text-shadow: 1px 1px 4px rgba(0,0,0,0.2); line-height: 1.3; max-width: 90%; word-break: keep-all;">
+                        ${slide.subtitle || '부제목'}
                     </div>
-                    
-                    <div class="slide-progress-bar" style="
-                        position: absolute;
-                        bottom: 0;
-                        left: 0;
-                        height: 4px;
-                        background: linear-gradient(90deg, #4ecdc4, #feca57);
-                        border-radius: 0 0 30px 30px;
-                        width: ${((index + 1) / slides.length) * 100}%;
-                        transition: width 0.8s ease;
-                        box-shadow: 0 0 10px rgba(78, 205, 196, 0.5);
-                    "></div>
+                    <div style="position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.3); padding: 8px 15px; border-radius: 20px; font-size: 0.9em;">
+                        ${index + 1} / ${slides.length}
+                    </div>
                 `;
                 
-                // 생성된 이미지가 있으면 멋지게 추가
-                if (generatedImage && index < 5) {
-                    const imgContainer = document.createElement('div');
-                    imgContainer.style.cssText = `
+                // 이미지가 있으면 추가
+                if (generatedImage && index < 3) {
+                    const imgDiv = document.createElement('div');
+                    imgDiv.style.cssText = `
                         position: absolute;
-                        top: 25px;
-                        right: 25px;
-                        width: 80px;
-                        height: 80px;
+                        top: 20px;
+                        right: 20px;
+                        width: 60px;
+                        height: 60px;
                         border-radius: 50%;
                         overflow: hidden;
-                        border: 3px solid rgba(255,255,255,0.3);
-                        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+                        border: 2px solid rgba(255,255,255,0.3);
                         cursor: pointer;
-                        transition: all 0.3s ease;
-                        transform: perspective(1000px) rotateY(-15deg);
                     `;
                     
                     const img = document.createElement('img');
                     img.src = generatedImage;
-                    img.style.cssText = `
-                        width: 100%;
-                        height: 100%;
-                        object-fit: cover;
-                        transition: transform 0.3s ease;
-                    `;
+                    img.style.cssText = 'width: 100%; height: 100%; object-fit: cover;';
+                    img.onclick = () => window.open(generatedImage, '_blank');
                     
-                    imgContainer.appendChild(img);
-                    
-                    // 이미지 호버 효과
-                    imgContainer.addEventListener('mouseenter', () => {
-                        imgContainer.style.transform = 'perspective(1000px) rotateY(0deg) scale(1.1)';
-                        imgContainer.style.boxShadow = '0 15px 40px rgba(0,0,0,0.4)';
-                        img.style.transform = 'scale(1.1)';
-                    });
-                    
-                    imgContainer.addEventListener('mouseleave', () => {
-                        imgContainer.style.transform = 'perspective(1000px) rotateY(-15deg) scale(1)';
-                        imgContainer.style.boxShadow = '0 10px 30px rgba(0,0,0,0.3)';
-                        img.style.transform = 'scale(1)';
-                    });
-                    
-                    imgContainer.addEventListener('click', () => {
-                        window.open(generatedImage, '_blank');
-                    });
-                    
-                    slideDiv.appendChild(imgContainer);
+                    imgDiv.appendChild(img);
+                    slideDiv.appendChild(imgDiv);
                 }
                 
                 container.appendChild(slideDiv);
             });
             
-            // CSS 애니메이션 추가
-            if (!document.getElementById('slideAnimations')) {
-                const style = document.createElement('style');
-                style.id = 'slideAnimations';
-                style.textContent = `
-                    @keyframes iconFloat {
-                        0%, 100% { transform: translateY(0px) rotateZ(0deg); }
-                        50% { transform: translateY(-20px) rotateZ(5deg); }
-                    }
-                    
-                    @keyframes titleGlow {
-                        0% { text-shadow: 0 2px 10px rgba(0,0,0,0.3), 0 0 30px rgba(255,255,255,0.2); }
-                        100% { text-shadow: 0 2px 10px rgba(0,0,0,0.3), 0 0 50px rgba(255,255,255,0.4); }
-                    }
-                    
-                    .premium-slide:hover {
-                        transform: rotateY(0deg) translateZ(20px) scale(1.02) !important;
-                        box-shadow: 0 30px 60px rgba(0,0,0,0.4) !important;
-                    }
-                `;
-                document.head.appendChild(style);
-            }
-            
-            console.log(`✅ ${slides.length}개 프리미엄 슬라이드 DOM 생성 완료`);
+            console.log(`✅ ${slides.length}개 강제 슬라이드 DOM 생성 완료`);
             
             // 카운터 업데이트
             updateSlideCounter();
             
-            // 자동 재생 시작 (약간 지연)
+            // 자동 재생 시작
             setTimeout(() => {
-                console.log('🎬 프리미엄 자동 슬라이드쇼 시작');
-                startPremiumSlideshow();
-            }, 1500);
+                console.log('🎬 강제 자동 슬라이드쇼 시작');
+                startForceSlideshow();
+            }, 1000);
+        }
+
+        // 강제 자동 슬라이드쇼
+        function startForceSlideshow() {
+            if (autoSlideInterval) {
+                clearInterval(autoSlideInterval);
+            }
+            
+            console.log('🔄 강제 자동 슬라이드쇼 시작');
+            
+            autoSlideInterval = setInterval(() => {
+                const nextIndex = (currentSlideIndex + 1) % slides.length;
+                console.log(`강제 슬라이드 전환: ${currentSlideIndex} → ${nextIndex}`);
+                showForceSlide(nextIndex);
+            }, 2500);
+        }
+
+        // 강제 슬라이드 표시
+        function showForceSlide(index) {
+            if (!slides || slides.length === 0) return;
+            
+            const container = document.getElementById('slideContainer');
+            if (!container) return;
+            
+            const allSlides = container.children;
+            
+            // 모든 슬라이드 숨기기
+            for (let i = 0; i < allSlides.length; i++) {
+                const slide = allSlides[i];
+                slide.style.opacity = '0';
+                slide.style.transform = 'scale(0.8)';
+                slide.style.zIndex = '1';
+            }
+            
+            // 현재 슬라이드 표시
+            if (allSlides[index]) {
+                const currentSlide = allSlides[index];
+                currentSlide.style.opacity = '1';
+                currentSlide.style.transform = 'scale(1)';
+                currentSlide.style.zIndex = '100';
+            }
+            
+            currentSlideIndex = index;
+            updateSlideCounter();
+        }
+
+        // 강제 슬라이드 리스트 생성
+        function forceCreateSlidesList() {
+            console.log('📋 강제 슬라이드 리스트 생성');
+            
+            const slidesContent = document.getElementById('slidesContent');
+            if (!slidesContent) {
+                console.error('❌ slidesContent 찾을 수 없음');
+                return;
+            }
+            
+            if (!slides || slides.length === 0) {
+                console.error('❌ 슬라이드 데이터 없음');
+                return;
+            }
+            
+            slidesContent.innerHTML = '';
+            
+            slides.forEach((slide, index) => {
+                const item = document.createElement('div');
+                item.style.cssText = `
+                    background: rgba(255, 255, 255, 0.1);
+                    border-radius: 12px;
+                    padding: 15px;
+                    margin: 10px 0;
+                    border-left: 3px solid #4ecdc4;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                `;
+                
+                item.innerHTML = `
+                    <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                        <div style="background: #4ecdc4; color: white; border-radius: 50%; width: 25px; height: 25px; display: flex; align-items: center; justify-content: center; font-weight: bold; margin-right: 10px; font-size: 0.8em;">
+                            ${index + 1}
+                        </div>
+                        <div style="font-weight: 700; color: #feca57; font-size: 1em;">
+                            ${slide.icon || '🎯'} ${slide.title || '제목'}
+                        </div>
+                    </div>
+                    <div style="color: rgba(255,255,255,0.8); padding-left: 35px; font-size: 0.9em;">
+                        ${slide.subtitle || '부제목'}
+                    </div>
+                `;
+                
+                // 클릭 이벤트
+                item.addEventListener('click', () => {
+                    console.log(`강제 슬라이드 ${index + 1} 클릭`);
+                    showForceSlideManual(index);
+                });
+                
+                item.addEventListener('mouseenter', () => {
+                    item.style.background = 'rgba(255, 255, 255, 0.15)';
+                    item.style.transform = 'translateX(5px)';
+                });
+                
+                item.addEventListener('mouseleave', () => {
+                    item.style.background = 'rgba(255, 255, 255, 0.1)';
+                    item.style.transform = 'translateX(0)';
+                });
+                
+                slidesContent.appendChild(item);
+            });
+            
+            console.log('✅ 강제 슬라이드 리스트 생성 완료');
+        }
+
+        // 강제 수동 슬라이드 표시
+        function showForceSlideManual(index) {
+            if (autoSlideInterval) {
+                clearInterval(autoSlideInterval);
+            }
+            
+            showForceSlide(index);
+            
+            setTimeout(() => {
+                startForceSlideshow();
+            }, 5000);
         }
 
         // 프리미엄 자동 슬라이드쇼
