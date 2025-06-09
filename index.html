@@ -1230,53 +1230,299 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
             if (imageStatus) imageStatus.style.display = 'none';
         }
 
-        // 향상된 슬라이드 구조 생성 (그라데이션 모드용)
+        // 향상된 슬라이드 구조 생성 (그라데이션 모드용 - 완전 개선)
         function generateEnhancedSlideStructure(title, content) {
+            console.log('🎨 향상된 그라데이션 슬라이드 구조 생성 시작');
             const slides = [];
             
-            // 첫 번째 슬라이드 - 타이틀
+            // 1. 강력한 인트로 슬라이드
             slides.push({
                 icon: "🎯",
-                title: title,
-                subtitle: "지금 시작합니다!",
-                imagePrompt: ""
+                title: title.length > 8 ? title.substring(0, 8) + "!" : title,
+                subtitle: "지금 바로 시작하세요!\n놓치지 마세요",
+                designTip: "강력한 첫인상"
             });
             
-            // 내용을 의미 단위로 분석하여 슬라이드 생성
-            const sections = parseContentIntoSections(content);
+            // 2. 내용을 체계적으로 분석
+            const processedSections = smartContentAnalysis(content);
             
-            sections.forEach((section, index) => {
-                if (slides.length < 14) { // 마지막 슬라이드 공간 확보
+            // 3. 핵심 섹션들을 슬라이드로 변환
+            processedSections.forEach((section, index) => {
+                if (slides.length < 14) { // 마지막 CTA 슬라이드 공간 확보
                     slides.push({
                         icon: section.icon,
                         title: section.title,
                         subtitle: section.subtitle,
-                        imagePrompt: ""
+                        designTip: section.designTip
                     });
                 }
             });
             
-            // 마지막 슬라이드 - CTA
-            slides.push({
-                icon: "🚀",
-                title: "지금 문의하세요!",
-                subtitle: "더 많은 정보를 원하시면\n언제든 연락주세요",
-                imagePrompt: ""
-            });
-            
-            // 정확히 15개가 되도록 조정
-            while (slides.length < 15) {
-                const bonusSlides = [
-                    { icon: "⭐", title: "특별 혜택", subtitle: "놓치지 마세요!" },
-                    { icon: "💎", title: "프리미엄 서비스", subtitle: "최고의 품질을 약속합니다" },
-                    { icon: "🔥", title: "한정 특가", subtitle: "지금이 기회입니다" }
+            // 4. 부족한 슬라이드 채우기
+            while (slides.length < 14) {
+                const fillerSlides = [
+                    {
+                        icon: "⭐",
+                        title: "특별 혜택",
+                        subtitle: "지금만 제공하는\n놓칠 수 없는 기회!",
+                        designTip: "긴급성 강조"
+                    },
+                    {
+                        icon: "💎",
+                        title: "프리미엄",
+                        subtitle: "최고 품질을\n약속드립니다",
+                        designTip: "품질 보증"
+                    },
+                    {
+                        icon: "🔥",
+                        title: "한정 특가",
+                        subtitle: "오늘만 특별가로\n만나보세요",
+                        designTip: "한정성 어필"
+                    },
+                    {
+                        icon: "🚀",
+                        title: "빠른 성과",
+                        subtitle: "즉시 확인 가능한\n놀라운 결과",
+                        designTip: "즉시성 강조"
+                    },
+                    {
+                        icon: "📈",
+                        title: "성장 보장",
+                        subtitle: "확실한 성과를\n경험하세요",
+                        designTip: "성과 보장"
+                    }
                 ];
                 
-                const bonusSlide = bonusSlides[(slides.length - 2) % bonusSlides.length];
-                slides.splice(-1, 0, { ...bonusSlide, imagePrompt: "" });
+                const fillerSlide = fillerSlides[(slides.length - 2) % fillerSlides.length];
+                slides.splice(-1, 0, fillerSlide);
             }
             
+            // 5. 강력한 CTA 슬라이드
+            slides.push({
+                icon: "📞",
+                title: "지금 문의!",
+                subtitle: "더 많은 정보는\n언제든 연락주세요",
+                designTip: "강력한 행동 유도"
+            });
+            
+            console.log('✅ 향상된 그라데이션 슬라이드 생성 완료:', slides.length + '장');
             return slides.slice(0, 15);
+        }
+
+        // 스마트 내용 분석 시스템
+        function smartContentAnalysis(content) {
+            const sections = [];
+            const lines = content.split('\n').filter(line => line.trim().length > 0);
+            
+            const iconMapping = {
+                // 회사/서비스 관련
+                '회사': '🏢', '기업': '🏢', '소개': '👋', '회사소개': '🏢',
+                '서비스': '⚡', '제품': '📦', '솔루션': '💡',
+                
+                // 기술/AI 관련  
+                'AI': '🤖', '인공지능': '🤖', '기술': '💻', '시스템': '⚙️',
+                '자동': '🔄', '스마트': '🧠', '디지털': '💻',
+                
+                // 교육 관련
+                '교육': '📚', '학습': '🎓', '공부': '📖', '수업': '👨‍🏫',
+                '성적': '📈', '점수': '💯', '레벨': '📊',
+                
+                // 성과/결과 관련
+                '성과': '📈', '결과': '🎯', '효과': '✨', '향상': '⬆️',
+                '증가': '📊', '개선': '🔧', '발전': '🚀',
+                
+                // 혜택/할인 관련
+                '혜택': '🎁', '할인': '💰', '특가': '🔥', '무료': '🆓',
+                '이벤트': '🎉', '프로모션': '🎊',
+                
+                // 연락/문의 관련
+                '연락': '📞', '문의': '💬', '상담': '🗣️', '예약': '📅',
+                '위치': '📍', '주소': '🏠', '전화': '☎️'
+            };
+            
+            let currentSection = null;
+            
+            lines.forEach((line, index) => {
+                const trimmedLine = line.trim();
+                
+                // 섹션 헤더 감지 (이모지로 시작하거나 특정 키워드 포함)
+                const headerMatch = trimmedLine.match(/^([🎯🏆🤖⭐📊🎁📍🔥💡✨🚀📱💻🎨🌟💎🔥])\s*(.+?)[:：]?\s*(.*)$/);
+                
+                if (headerMatch || isLikelySectionHeader(trimmedLine)) {
+                    // 이전 섹션 저장
+                    if (currentSection && currentSection.content.length > 0) {
+                        sections.push(processSection(currentSection, iconMapping));
+                    }
+                    
+                    // 새 섹션 시작
+                    let icon, title, initialContent;
+                    
+                    if (headerMatch) {
+                        icon = headerMatch[1];
+                        title = headerMatch[2].trim();
+                        initialContent = headerMatch[3].trim();
+                    } else {
+                        const detectedIcon = detectBestIcon(trimmedLine, iconMapping);
+                        icon = detectedIcon;
+                        
+                        if (trimmedLine.includes(':') || trimmedLine.includes('：')) {
+                            const parts = trimmedLine.split(/[:：]/);
+                            title = parts[0].replace(/^[🎯🏆🤖⭐📊🎁📍🔥💡✨🚀📱💻🎨🌟💎🔥]\s*/, '').trim();
+                            initialContent = parts.slice(1).join(':').trim();
+                        } else {
+                            title = trimmedLine.replace(/^[🎯🏆🤖⭐📊🎁📍🔥💡✨🚀📱💻🎨🌟💎🔥]\s*/, '').trim();
+                            initialContent = '';
+                        }
+                    }
+                    
+                    currentSection = {
+                        icon: icon,
+                        title: title,
+                        content: initialContent ? [initialContent] : [],
+                        rawContent: [trimmedLine]
+                    };
+                    
+                } else if (currentSection && trimmedLine.startsWith('-')) {
+                    // 리스트 아이템
+                    const listItem = trimmedLine.replace(/^-\s*/, '').trim();
+                    if (listItem.length > 0) {
+                        currentSection.content.push(listItem);
+                        currentSection.rawContent.push(trimmedLine);
+                    }
+                } else if (currentSection && trimmedLine.length > 0) {
+                    // 일반 내용
+                    currentSection.content.push(trimmedLine);
+                    currentSection.rawContent.push(trimmedLine);
+                } else if (trimmedLine.length > 0) {
+                    // 섹션 없이 독립적인 내용
+                    const icon = detectBestIcon(trimmedLine, iconMapping);
+                    sections.push(processSection({
+                        icon: icon,
+                        title: extractKeyPhrase(trimmedLine),
+                        content: [trimmedLine],
+                        rawContent: [trimmedLine]
+                    }, iconMapping));
+                }
+            });
+            
+            // 마지막 섹션 저장
+            if (currentSection && currentSection.content.length > 0) {
+                sections.push(processSection(currentSection, iconMapping));
+            }
+            
+            console.log('📋 분석된 섹션 수:', sections.length);
+            return sections;
+        }
+
+        // 섹션 헤더 여부 판단
+        function isLikelySectionHeader(text) {
+            const headerKeywords = ['회사소개', '핵심서비스', '차별화포인트', '성과데이터', '특별혜택', '연락처', '서비스', '특징', '장점', '혜택'];
+            return headerKeywords.some(keyword => text.includes(keyword));
+        }
+
+        // 최적 아이콘 감지
+        function detectBestIcon(text, iconMapping) {
+            // 정확한 키워드 매칭
+            for (const [keyword, icon] of Object.entries(iconMapping)) {
+                if (text.includes(keyword)) {
+                    return icon;
+                }
+            }
+            
+            // 컨텍스트 기반 아이콘 선택
+            if (text.includes('AI') || text.includes('인공지능') || text.includes('스마트')) return '🤖';
+            if (text.includes('교육') || text.includes('학습') || text.includes('공부')) return '📚';
+            if (text.includes('성과') || text.includes('결과') || text.includes('향상')) return '📈';
+            if (text.includes('할인') || text.includes('특가') || text.includes('%')) return '💰';
+            if (text.includes('연락') || text.includes('문의') || text.includes('전화')) return '📞';
+            if (text.includes('위치') || text.includes('주소') || text.includes('찾아오시는')) return '📍';
+            
+            // 기본 아이콘들 중 랜덤 선택
+            const defaultIcons = ['✨', '💡', '🎯', '⭐', '🔥', '💎', '🚀', '🌟'];
+            return defaultIcons[Math.floor(Math.random() * defaultIcons.length)];
+        }
+
+        // 핵심 구문 추출
+        function extractKeyPhrase(text) {
+            // 첫 번째 의미 있는 구문 추출 (8글자 이내)
+            const words = text.replace(/[🎯🏆🤖⭐📊🎁📍🔥💡✨🚀📱💻🎨🌟💎🔥]/g, '').trim().split(/\s+/);
+            let phrase = '';
+            
+            for (const word of words) {
+                if (phrase.length + word.length <= 8) {
+                    phrase += (phrase ? ' ' : '') + word;
+                } else {
+                    break;
+                }
+            }
+            
+            return phrase || text.substring(0, 8);
+        }
+
+        // 섹션 처리 및 최적화
+        function processSection(section, iconMapping) {
+            // 제목 최적화 (8글자 이내)
+            let optimizedTitle = section.title;
+            if (optimizedTitle.length > 8) {
+                // 의미 있는 단위로 자르기
+                const words = optimizedTitle.split(/\s+/);
+                optimizedTitle = '';
+                for (const word of words) {
+                    if (optimizedTitle.length + word.length <= 8) {
+                        optimizedTitle += (optimizedTitle ? ' ' : '') + word;
+                    } else {
+                        break;
+                    }
+                }
+                if (optimizedTitle.length === 0) {
+                    optimizedTitle = section.title.substring(0, 7) + '…';
+                }
+            }
+            
+            // 부제목 생성 (내용 요약)
+            let subtitle = '';
+            if (section.content.length > 0) {
+                // 가장 중요한 내용 2줄로 요약
+                const importantContent = section.content.slice(0, 2);
+                subtitle = importantContent.map(content => {
+                    // 각 줄을 12글자 이내로 제한
+                    return content.length > 12 ? content.substring(0, 11) + '…' : content;
+                }).join('\n');
+            }
+            
+            // 부제목이 없으면 기본 메시지
+            if (!subtitle) {
+                subtitle = "자세한 내용을\n확인해보세요!";
+            }
+            
+            // 디자인 팁 생성
+            const designTip = generateDesignTip(section.title, section.content.join(' '));
+            
+            return {
+                icon: section.icon,
+                title: optimizedTitle,
+                subtitle: subtitle,
+                designTip: designTip
+            };
+        }
+
+        // 디자인 팁 생성
+        function generateDesignTip(title, content) {
+            const fullText = (title + ' ' + content).toLowerCase();
+            
+            if (fullText.includes('할인') || fullText.includes('%') || fullText.includes('특가')) {
+                return '긴급성과 혜택 강조';
+            } else if (fullText.includes('ai') || fullText.includes('기술') || fullText.includes('혁신')) {
+                return '혁신성과 전문성 어필';
+            } else if (fullText.includes('성과') || fullText.includes('결과') || fullText.includes('향상')) {
+                return '신뢰도와 성과 강조';
+            } else if (fullText.includes('서비스') || fullText.includes('품질')) {
+                return '품질과 서비스 강조';
+            } else if (fullText.includes('연락') || fullText.includes('문의')) {
+                return '강력한 행동 유도';
+            } else {
+                return '핵심 메시지 강조';
+            }
         }
 
         // 내용을 의미 단위로 파싱
@@ -2094,6 +2340,11 @@ JSON 형식으로 응답해주세요:
                 apiInput.addEventListener('keypress', function(e) {
                     if (e.key === 'Enter') {
                         e.preventDefault();
+      
+    
+    
+      
+    
                         setupApiKey();
                     }
                 });
