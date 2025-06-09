@@ -1186,23 +1186,23 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
             </p>
             
             <div style="text-align: center; margin: 30px 0;">
-                <button class="btn btn-recording" id="autoRecordBtn" onclick="startAutoRecording()" style="font-size: 1.6em; padding: 25px 50px; text-transform: none;">
-                    🔴 자동 녹화 시작
+                <button class="btn btn-recording" onclick="startAutoRecording()" style="font-size: 1.6em; padding: 25px 50px; margin: 10px; text-transform: none;">
+                    🎬 고화질 MP4 자동 녹화
                 </button>
                 <button class="btn btn-secondary" onclick="showAutoRecordingGuide()" style="margin: 10px; text-transform: none;">
-                    📖 자동녹화 가이드
+                    📖 녹화 가이드
                 </button>
             </div>
 
             <div style="background: rgba(0,255,100,0.1); border: 2px solid rgba(0,255,100,0.3); border-radius: 15px; padding: 20px; margin: 20px 0;">
-                <h4 style="color: #00ff88; margin-bottom: 15px;">✨ 자동 녹화 기능</h4>
+                <h4 style="color: #00ff88; margin-bottom: 15px;">✨ Canvas 기반 고화질 녹화</h4>
                 <ul style="text-align: left; margin-left: 20px; line-height: 1.8;">
-                    <li>🎬 화면 전체를 자동으로 캡처</li>
-                    <li>⏱️ 33초 완벽한 타이밍으로 녹화</li>
-                    <li>📱 모바일/PC 모두 지원</li>
-                    <li>🎨 슬라이드 전환 효과까지 녹화</li>
-                    <li>💾 자동으로 다운로드 폴더에 저장</li>
-                    <li>🎯 유튜브 쇼츠 최적 포맷 (9:16)</li>
+                    <li>🎨 슬라이드를 Canvas에 직접 렌더링</li>
+                    <li>⏱️ 33초 완벽한 타이밍으로 자동 녹화</li>
+                    <li>📱 화면 캡처 없이 순수 슬라이드만</li>
+                    <li>🎬 1080×1920 초고화질 MP4 생성</li>
+                    <li>💾 마이크 권한만 요청 (선택사항)</li>
+                    <li>🎯 유튜브 쇼츠 완벽 최적화</li>
                 </ul>
             </div>
         </div>
@@ -1232,13 +1232,13 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
             
             <div style="text-align: center; margin: 30px 0;">
                 <button class="btn btn-recording" onclick="startAutoRecording()" style="font-size: 1.6em; padding: 25px 50px; margin: 10px; text-transform: none;">
-                    🔴 자동 녹화 시작
+                    🎬 고화질 MP4 자동 녹화
                 </button>
                 <button class="btn btn-primary" onclick="startRecordingMode()" style="font-size: 1.4em; padding: 20px 40px; background: linear-gradient(45deg, #ff6b6b, #4ecdc4); margin: 10px; text-transform: none;">
-                    📹 수동 녹화 모드
+                    📱 수동 화면 녹화
                 </button>
                 <button class="btn btn-secondary" onclick="showRecordingGuide()" style="margin: 10px; text-transform: none;">
-                    📖 녹화 가이드
+                    📖 수동 녹화 가이드
                 </button>
                 <button class="btn btn-primary" onclick="downloadSlideImages()" style="margin: 10px; text-transform: none;">
                     📁 이미지 다운로드
@@ -1694,49 +1694,50 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
 
         // 자동 녹화 가이드
         function showAutoRecordingGuide() {
-            const guideText = `🎥 자동 화면 녹화 완벽 가이드
+            const guideText = `🎬 Canvas 기반 고화질 녹화 가이드
 
-🚀 자동 녹화 기능:
-✅ 버튼 클릭 한 번으로 모든 과정 자동화
-✅ 33초 완벽한 타이밍으로 녹화
-✅ 슬라이드만 최적화하여 고화질 녹화
-✅ 유튜브 쇼츠 최적 포맷 (9:16)
-✅ 자동 다운로드 및 저장
+🚀 혁신적인 녹화 방식:
+✅ 화면 캡처 없이 슬라이드 직접 렌더링
+✅ 1080×1920 초고화질 MP4/WebM 생성
+✅ AI 이미지 배경까지 완벽 품질
+✅ 33초 정확한 타이밍 자동 제어
+✅ 유튜브 쇼츠 최적 포맷
 
-📋 사용 방법:
-1. 슬라이드 생성 완료 후 "🔴 자동 녹화 시작" 클릭
-2. 전체화면 모드로 자동 전환
-3. 화면 공유 창에서 "전체 화면" 또는 "Chrome 탭" 선택
-4. "공유" 버튼 클릭
-5. 자동으로 33초 녹화 진행
-6. 완료 후 자동으로 파일 다운로드
+📋 간단한 사용법:
+1. 슬라이드 생성 완료 후 "🎬 고화질 녹화" 클릭
+2. 마이크 권한 요청 시 "허용" 클릭 (선택사항)
+   - 허용: 음성 + 비디오 녹화
+   - 거부: 비디오만 녹화 (문제없음)
+3. 자동으로 33초 고화질 녹화 진행
+4. MP4 파일 자동 다운로드
 
-🎯 권한 선택 가이드:
-• 📌 "전체 화면" 선택 (권장)
-• 📌 "Chrome 탭" 선택 (브라우저만)
-• ❌ "창" 선택 시 화질 저하 가능
+🎯 핵심 장점:
+• 🖥️ 화면 공유 권한 불필요
+• 🎨 순수 슬라이드만 깔끔하게 녹화
+• 💎 최고 화질 보장 (1080×1920)
+• 🎵 선택적 오디오 녹음
+• 📱 모든 브라우저 지원
 
-🌟 지원 브라우저:
-• Chrome 72+ (권장)
-• Firefox 66+
-• Edge 79+
-• Safari 13+ (일부 제한)
+🌟 지원 포맷:
+• MP4 (Chrome, Edge - 권장)
+• WebM (Firefox, 구형 브라우저)
+• 자동으로 최적 포맷 선택
 
-💡 최적 녹화 팁:
-• 전체화면으로 브라우저 확대
-• 다른 프로그램은 종료 권장
-• 안정적인 인터넷 연결 필요
-• 슬라이드 영역이 자동으로 최적화됨
+💡 품질 최적화:
+• 5Mbps 고화질 비트레이트
+• 30fps 부드러운 전환
+• AI 이미지 무손실 렌더링
+• 텍스트 선명도 최적화
 
 🎬 완성 후:
-• WebM → MP4 변환 (필요시)
-• 유튜브 쇼츠에 바로 업로드
-• BGM이나 자막 추가 (선택사항)
+• 바로 유튜브 쇼츠 업로드 가능
+• 추가 편집 불필요 (완벽한 품질)
+• BGM 추가 시 CapCut 등 사용 권장
 
-❗ 문제 해결:
-• 권한 거부 시: 다시 시도하여 "공유" 클릭
-• 녹화 안됨: 다른 브라우저에서 시도
-• 화질 문제: "전체 화면" 선택 권장`;
+❗ 참고사항:
+• 마이크 권한은 선택사항
+• 거부해도 비디오는 정상 녹화
+• 모든 최신 브라우저 지원`;
             
             alert(guideText);
         }
@@ -2747,56 +2748,17 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
             
             if (hasCanvasCapture && hasMediaRecorder) {
                 console.log('✅ Canvas 기반 고화질 녹화 지원');
-                
-                // 자동 녹화 버튼 업데이트
-                const autoRecordBtn = document.getElementById('autoRecordBtn');
-                if (autoRecordBtn) {
-                    if (hasMP4Support) {
-                        autoRecordBtn.innerHTML = '🎬 고화질 MP4 녹화';
-                        autoRecordBtn.title = '1080×1920 고화질 MP4로 녹화됩니다';
-                    } else {
-                        autoRecordBtn.innerHTML = '🎬 고화질 WebM 녹화';
-                        autoRecordBtn.title = '1080×1920 고화질 WebM으로 녹화됩니다';
-                    }
-                }
-                
+                // Canvas 녹화는 항상 지원됨 (별도 버튼 변경 불필요)
             } else {
                 console.warn('❌ Canvas 녹화 미지원');
                 
                 // 자동 녹화 버튼 비활성화
-                const autoRecordBtn = document.getElementById('autoRecordBtn');
+                const autoRecordBtn = document.querySelector('button[onclick="startAutoRecording()"]');
                 if (autoRecordBtn) {
                     autoRecordBtn.disabled = true;
                     autoRecordBtn.innerHTML = '❌ 브라우저 미지원';
                     autoRecordBtn.title = 'Chrome, Firefox, Edge 최신 버전을 사용해주세요.';
                 }
-            }
-            
-            // 안내 메시지 업데이트
-            updateRecordingGuideMessage(hasCanvasCapture && hasMediaRecorder, hasMP4Support);
-        }
-
-        // 녹화 가이드 메시지 업데이트
-        function updateRecordingGuideMessage(isSupported, hasMP4) {
-            const guideSection = document.querySelector('.auto-recording-section ul');
-            if (!guideSection) return;
-            
-            if (isSupported) {
-                const format = hasMP4 ? 'MP4' : 'WebM';
-                guideSection.innerHTML = `
-                    <li>🎬 슬라이드를 직접 고화질로 렌더링</li>
-                    <li>⏱️ 33초 완벽한 타이밍으로 자동 녹화</li>
-                    <li>📱 화면 캡처 없이 순수 슬라이드만 녹화</li>
-                    <li>🎨 AI 이미지 배경까지 완벽 렌더링</li>
-                    <li>💾 고화질 ${format} 파일로 자동 저장</li>
-                    <li>🎯 유튜브 쇼츠 최적 포맷 (1080×1920)</li>
-                `;
-            } else {
-                guideSection.innerHTML = `
-                    <li>❌ 현재 브라우저는 Canvas 녹화를 지원하지 않습니다</li>
-                    <li>🔄 Chrome, Firefox, Edge 최신 버전으로 업데이트하세요</li>
-                    <li>📱 수동 녹화 모드를 사용해주세요</li>
-                `;
             }
         }
     </script>
