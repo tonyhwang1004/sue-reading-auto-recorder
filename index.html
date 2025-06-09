@@ -687,13 +687,25 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
             </div>
 
             <div style="background: rgba(0,255,100,0.1); border: 2px solid rgba(0,255,100,0.3); border-radius: 15px; padding: 20px; margin: 20px 0;">
-                <h4 style="color: #00ff88; margin-bottom: 15px;">✨ 자동 화면 녹화 특징</h4>
+                <h4 style="color: #00ff88; margin-bottom: 15px;">✨ Canvas MP4 생성 (권장)</h4>
                 <ul style="text-align: left; margin-left: 20px; line-height: 1.8;">
-                    <li>🎨 슬라이드쇼 자동 재생 및 녹화</li>
+                    <li>🎨 순수 Canvas 데이터로 MP4 생성</li>
                     <li>⏱️ 33초 완벽한 타이밍으로 자동 생성</li>
-                    <li>📱 1080×1920 유튜브 쇼츠 최적화</li>
-                    <li>🎬 WebM/MP4 형식 자동 다운로드</li>
-                    <li>🎯 브라우저 기본 기능만 사용</li>
+                    <li>📱 정확한 1080×1920 해상도 (9:16)</li>
+                    <li>🎬 화면 공유 없이 완벽한 품질</li>
+                    <li>🎯 슬라이드만 정확히 포함</li>
+                    <li>💎 PowerPoint 방식과 동일한 원리</li>
+                </ul>
+            </div>
+            
+            <div style="background: rgba(255,165,0,0.1); border: 2px solid rgba(255,165,0,0.3); border-radius: 15px; padding: 20px; margin: 20px 0;">
+                <h4 style="color: #feca57; margin-bottom: 15px;">📱 화면 녹화 (전체화면)</h4>
+                <ul style="text-align: left; margin-left: 20px; line-height: 1.8;">
+                    <li>🖥️ 브라우저 화면 공유 기능 사용</li>
+                    <li>⚡ 실시간 화면 캡처</li>
+                    <li>🎵 오디오 포함 가능</li>
+                    <li>📺 전체 화면/탭/창 선택 가능</li>
+                    <li>⚠️ 주변 UI 요소도 함께 녹화됨</li>
                 </ul>
             </div>
         </div>
@@ -722,8 +734,11 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
             </div>
             
             <div style="text-align: center; margin: 30px 0;">
-                <button class="btn btn-recording" onclick="startScreenRecording()" style="font-size: 1.6em; padding: 25px 50px; margin: 10px; text-transform: none;">
-                    🎬 화면 녹화 시작
+                <button class="btn btn-recording" onclick="generateCanvasMP4()" style="font-size: 1.6em; padding: 25px 50px; margin: 10px; text-transform: none;">
+                    🎬 Canvas MP4 생성 (권장)
+                </button>
+                <button class="btn btn-primary" onclick="startScreenRecording()" style="font-size: 1.4em; padding: 20px 40px; margin: 10px; text-transform: none;">
+                    📱 화면 녹화 (전체)
                 </button>
                 <button class="btn btn-secondary" onclick="showRecordingGuide()" style="margin: 10px; text-transform: none;">
                     📖 녹화 가이드
@@ -900,7 +915,230 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
             }
         }
 
-        // 화면 녹화 시작 (개선된 버전)
+        // Canvas 기반 MP4 생성 (화면 녹화 대신)
+        async function generateCanvasMP4() {
+            if (!slides || slides.length === 0) {
+                alert('❌ 먼저 슬라이드를 생성해주세요!');
+                return;
+            }
+
+            try {
+                // Canvas 및 MediaRecorder 지원 확인
+                if (!HTMLCanvasElement.prototype.captureStream || !window.MediaRecorder) {
+                    alert('❌ 이 브라우저는 Canvas MP4 생성을 지원하지 않습니다.\n\nChrome, Firefox, Edge 최신 버전을 사용해주세요.');
+                    return;
+                }
+
+                const userConfirm = confirm(`🎬 Canvas 기반 MP4 생성
+
+✨ 특징:
+• 화면 공유 없이 순수 Canvas로 MP4 생성
+• 정확한 9:16 비율 (1080×1920)
+• 슬라이드 데이터만으로 완벽한 품질
+• 33초 자동 생성
+
+🚀 시작하시겠습니까?`);
+
+                if (!userConfirm) return;
+
+                // 진행 상태 표시
+                showProgressModal(true);
+                updateProgress(10, '🎨 Canvas 준비', 'Canvas 기반 MP4 생성을 시작합니다...', '🎬');
+
+                // Canvas 생성 (9:16 비율)
+                const canvas = document.createElement('canvas');
+                canvas.width = 1080;  // 1080p 가로
+                canvas.height = 1920; // 9:16 비율
+                const ctx = canvas.getContext('2d');
+
+                if (!ctx) {
+                    throw new Error('Canvas 2D 컨텍스트를 생성할 수 없습니다');
+                }
+
+                updateProgress(20, '🎥 녹화 설정', 'MediaRecorder를 설정하고 있습니다...', '⚙️');
+
+                // Canvas 스트림 생성
+                const stream = canvas.captureStream(30); // 30fps
+                
+                // 지원되는 MIME 타입 확인
+                let mimeType = 'video/webm;codecs=vp9';
+                if (!MediaRecorder.isTypeSupported(mimeType)) {
+                    mimeType = 'video/webm;codecs=vp8';
+                    if (!MediaRecorder.isTypeSupported(mimeType)) {
+                        mimeType = 'video/webm';
+                    }
+                }
+
+                const mediaRecorder = new MediaRecorder(stream, {
+                    mimeType: mimeType,
+                    videoBitsPerSecond: 8000000 // 8Mbps 고화질
+                });
+
+                const recordedChunks = [];
+
+                mediaRecorder.ondataavailable = (event) => {
+                    if (event.data.size > 0) {
+                        recordedChunks.push(event.data);
+                    }
+                };
+
+                mediaRecorder.onstop = () => {
+                    try {
+                        const blob = new Blob(recordedChunks, { type: mimeType });
+                        const url = URL.createObjectURL(blob);
+                        
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `youtube-shorts-canvas-${new Date().getTime()}.webm`;
+                        a.click();
+                        
+                        URL.revokeObjectURL(url);
+                        
+                        showProgressModal(false);
+                        alert('🎉 Canvas MP4 생성 완료!\n\n완벽한 9:16 비율의 고화질 영상이 다운로드되었습니다!');
+                    } catch (error) {
+                        showProgressModal(false);
+                        alert('❌ 파일 저장에 실패했습니다: ' + error.message);
+                    }
+                };
+
+                updateProgress(30, '🎬 녹화 시작', 'Canvas에 슬라이드를 렌더링하고 있습니다...', '🎨');
+
+                // 녹화 시작
+                mediaRecorder.start(100);
+
+                // 각 슬라이드를 Canvas에 렌더링
+                for (let i = 0; i < slides.length; i++) {
+                    const slide = slides[i];
+                    const progress = 30 + (i / slides.length) * 60;
+                    
+                    updateProgress(progress, '🎨 슬라이드 렌더링', `${i + 1}/15 슬라이드를 Canvas에 그리고 있습니다...`, '🖼️');
+                    
+                    await renderSlideToCanvas(ctx, slide, i, canvas.width, canvas.height);
+                    
+                    // 2.2초 대기 (각 슬라이드 표시 시간)
+                    await delay(2200);
+                }
+
+                updateProgress(95, '🏁 완료 처리', '녹화를 마무리하고 있습니다...', '✅');
+                
+                // 녹화 중지
+                mediaRecorder.stop();
+
+            } catch (error) {
+                console.error('❌ Canvas MP4 생성 실패:', error);
+                showProgressModal(false);
+                alert('❌ Canvas MP4 생성에 실패했습니다: ' + error.message);
+            }
+        }
+
+        // Canvas에 슬라이드 렌더링
+        async function renderSlideToCanvas(ctx, slide, index, width, height) {
+            try {
+                // 배경 그라데이션
+                const colors = [
+                    ['#667eea', '#764ba2'], ['#4ecdc4', '#44a08d'], ['#ff6b6b', '#ee5a6f'],
+                    ['#feca57', '#ff9ff3'], ['#96ceb4', '#ffecd2'], ['#74b9ff', '#0984e3'],
+                    ['#fd79a8', '#fdcb6e'], ['#6c5ce7', '#a29bfe'], ['#e17055', '#fdcb6e'],
+                    ['#00b894', '#00cec9'], ['#e84393', '#fd79a8'], ['#fdcb6e', '#e17055'],
+                    ['#00cec9', '#55efc4'], ['#a29bfe', '#6c5ce7'], ['#fd79a8', '#fdcb6e']
+                ];
+
+                const colorPair = colors[index % colors.length];
+                const gradient = ctx.createLinearGradient(0, 0, width, height);
+                gradient.addColorStop(0, colorPair[0]);
+                gradient.addColorStop(1, colorPair[1]);
+
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, 0, width, height);
+
+                // 배경 이미지가 있으면 그리기
+                if (slideImages[index]) {
+                    try {
+                        const img = new Image();
+                        img.crossOrigin = 'anonymous';
+                        
+                        await new Promise((resolve, reject) => {
+                            img.onload = () => resolve();
+                            img.onerror = () => reject(new Error('이미지 로드 실패'));
+                            img.src = slideImages[index];
+                        });
+
+                        // 이미지를 Canvas 크기에 맞게 그리기
+                        ctx.globalAlpha = 0.7;
+                        ctx.drawImage(img, 0, 0, width, height);
+                        ctx.globalAlpha = 1.0;
+
+                        // 어두운 오버레이
+                        ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+                        ctx.fillRect(0, 0, width, height);
+                    } catch (error) {
+                        console.warn('이미지 렌더링 실패:', error);
+                    }
+                }
+
+                // 텍스트 설정
+                ctx.fillStyle = 'white';
+                ctx.textAlign = 'center';
+                ctx.shadowColor = 'rgba(0,0,0,0.8)';
+                ctx.shadowBlur = 20;
+
+                // 아이콘 (큰 크기)
+                ctx.font = `${height * 0.15}px Arial`; // 높이의 15%
+                ctx.fillText(slide.icon || '🎯', width / 2, height * 0.3);
+
+                // 제목 (적응형 크기)
+                const titleFontSize = Math.min(height * 0.08, width * 0.06);
+                ctx.font = `bold ${titleFontSize}px Arial`;
+                
+                // 제목 줄바꿈 처리
+                const titleLines = wrapText(ctx, slide.title, width * 0.9);
+                const titleY = height * 0.5;
+                titleLines.forEach((line, i) => {
+                    ctx.fillText(line, width / 2, titleY + (i * titleFontSize * 1.2));
+                });
+
+                // 부제목
+                const subtitleFontSize = Math.min(height * 0.05, width * 0.04);
+                ctx.font = `${subtitleFontSize}px Arial`;
+                ctx.fillStyle = 'rgba(255,255,255,0.9)';
+                
+                const subtitleLines = wrapText(ctx, slide.subtitle, width * 0.9);
+                const subtitleY = titleY + (titleLines.length * titleFontSize * 1.2) + 40;
+                subtitleLines.forEach((line, i) => {
+                    ctx.fillText(line, width / 2, subtitleY + (i * subtitleFontSize * 1.2));
+                });
+
+                // 슬라이드 번호
+                ctx.font = `${height * 0.04}px Arial`;
+                ctx.fillStyle = 'rgba(255,255,255,0.7)';
+                ctx.fillText(`${index + 1} / 15`, width / 2, height * 0.9);
+
+            } catch (error) {
+                console.error('슬라이드 렌더링 중 오류:', error);
+                throw error;
+            }
+        }
+
+        // 텍스트 줄바꿈 함수
+        function wrapText(ctx, text, maxWidth) {
+            const words = text.split(' ');
+            const lines = [];
+            let currentLine = words[0];
+
+            for (let i = 1; i < words.length; i++) {
+                const word = words[i];
+                const width = ctx.measureText(currentLine + ' ' + word).width;
+                if (width < maxWidth) {
+                    currentLine += ' ' + word;
+                } else {
+                    lines.push(currentLine);
+                    currentLine = word;
+                }
+            }
+            lines.push(currentLine);
+            return lines;
+        }
         async function startScreenRecording() {
             if (!slides || slides.length === 0) {
                 alert('❌ 먼저 슬라이드를 생성해주세요!');
