@@ -537,7 +537,52 @@
             border: 1px solid rgba(254, 202, 87, 0.3);
         }
 
-        /* 자동 녹화 관련 스타일 */
+        /* 옵션 카드 스타일 */
+        .option-card {
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .option-card.selected {
+            border-color: #4ecdc4 !important;
+            box-shadow: 0 0 30px rgba(78, 205, 196, 0.5);
+            transform: scale(1.02);
+        }
+
+        .option-card.selected::after {
+            content: '✓';
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #4ecdc4;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .gradient-preview {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .gradient-preview:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
         .auto-recording-section {
             background: rgba(255, 0, 68, 0.1);
             border: 3px solid rgba(255, 0, 68, 0.4);
@@ -1044,6 +1089,85 @@
             backdrop-filter: blur(10px);
         }
 
+        /* 개선된 녹화 상태 표시 */
+        .recording-warning {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 165, 0, 0.95);
+            color: white;
+            padding: 30px 40px;
+            border-radius: 20px;
+            font-size: 1.2em;
+            font-weight: bold;
+            z-index: 7000;
+            text-align: center;
+            backdrop-filter: blur(15px);
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            display: none;
+        }
+
+        .recording-warning.show {
+            display: block;
+            animation: warningPulse 1s ease-in-out infinite;
+        }
+
+        @keyframes warningPulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.05); }
+        }
+
+        .recording-preparation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 7500;
+            backdrop-filter: blur(20px);
+        }
+
+        .recording-preparation.show {
+            display: flex;
+        }
+
+        .preparation-content {
+            text-align: center;
+            color: white;
+            max-width: 600px;
+            padding: 40px;
+        }
+
+        .preparation-icon {
+            font-size: 5em;
+            margin-bottom: 30px;
+            animation: preparationSpin 2s linear infinite;
+        }
+
+        @keyframes preparationSpin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .preparation-title {
+            font-size: 2.5em;
+            font-weight: 900;
+            margin-bottom: 20px;
+            color: #4ecdc4;
+        }
+
+        .preparation-desc {
+            font-size: 1.3em;
+            line-height: 1.6;
+            opacity: 0.9;
+        }
+
         @media (max-width: 768px) {
             .fullscreen-recording-slide {
                 width: 100vw;
@@ -1137,27 +1261,108 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
             </div>
         </div>
 
-        <div class="section multi-image-section">
-            <h2 class="section-title">🎨 슬라이드별 AI 이미지 자동생성</h2>
+        <div class="section">
+            <h2 class="section-title">🎨 슬라이드 생성 옵션 선택</h2>
             <p style="text-align: center; margin-bottom: 30px; opacity: 0.9; font-size: clamp(1em, 2.2vw, 1.2em);">
-                각 슬라이드 내용에 맞는 맞춤 이미지를 DALL-E 3가 자동으로 생성합니다!
+                원하는 방식을 선택하여 슬라이드를 생성하세요!
             </p>
             
-            <div class="cost-estimate">
-                <h4>💰 예상 비용 안내</h4>
-                <p>슬라이드 15장 × $0.040 = <strong>$0.60 (약 830원)</strong></p>
-                <p style="margin-top: 10px; opacity: 0.8; font-size: 0.9em;">
-                    각 슬라이드별로 고품질 1024×1024 이미지가 생성됩니다
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin: 30px 0;">
+                <!-- AI 이미지 생성 옵션 -->
+                <div class="option-card" id="aiImageOption" onclick="selectOption('aiImage')" style="border: 3px solid rgba(255, 215, 0, 0.4); background: rgba(255, 215, 0, 0.1);">
+                    <div style="text-align: center; padding: 30px;">
+                        <div style="font-size: 4em; margin-bottom: 20px;">🎨</div>
+                        <h3 style="color: #feca57; margin-bottom: 15px; font-size: 1.5em;">AI 이미지 생성</h3>
+                        <p style="margin-bottom: 20px; line-height: 1.6;">각 슬라이드에 맞는 고품질 DALL-E 3 이미지를 자동 생성합니다.</p>
+                        
+                        <div style="background: rgba(255, 165, 0, 0.2); border: 2px solid rgba(255, 165, 0, 0.4); border-radius: 15px; padding: 15px; margin: 15px 0;">
+                            <h4 style="color: #feca57; margin-bottom: 10px;">💰 비용</h4>
+                            <p><strong>$0.60 (약 830원)</strong></p>
+                            <p style="font-size: 0.9em; opacity: 0.8;">15장 × $0.040</p>
+                        </div>
+                        
+                        <div style="font-size: 0.9em; opacity: 0.8; margin-top: 15px;">
+                            ✅ 고품질 1024×1024 이미지<br>
+                            ✅ 슬라이드별 맞춤 생성<br>
+                            ✅ 전문적인 비주얼
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 그라데이션 배경 옵션 -->
+                <div class="option-card" id="gradientOption" onclick="selectOption('gradient')" style="border: 3px solid rgba(78, 205, 196, 0.4); background: rgba(78, 205, 196, 0.1);">
+                    <div style="text-align: center; padding: 30px;">
+                        <div style="font-size: 4em; margin-bottom: 20px;">🌈</div>
+                        <h3 style="color: #4ecdc4; margin-bottom: 15px; font-size: 1.5em;">그라데이션 배경</h3>
+                        <p style="margin-bottom: 20px; line-height: 1.6;">아름다운 색상 그라데이션으로 슬라이드를 꾸밉니다.</p>
+                        
+                        <div style="background: rgba(0, 255, 100, 0.2); border: 2px solid rgba(0, 255, 100, 0.4); border-radius: 15px; padding: 15px; margin: 15px 0;">
+                            <h4 style="color: #00ff88; margin-bottom: 10px;">💰 비용</h4>
+                            <p><strong>무료 (Free)</strong></p>
+                            <p style="font-size: 0.9em; opacity: 0.8;">API 비용 없음</p>
+                        </div>
+                        
+                        <div style="font-size: 0.9em; opacity: 0.8; margin-top: 15px;">
+                            ✅ 비용 절약<br>
+                            ✅ 즉시 생성<br>
+                            ✅ 15가지 색상 조합
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- AI 이미지 생성 세부 정보 (선택 시에만 표시) -->
+            <div class="multi-image-section" id="aiImageDetails" style="display: none; margin-top: 30px;">
+                <div class="cost-estimate">
+                    <h4>💰 상세 비용 안내</h4>
+                    <p>슬라이드 15장 × $0.040 = <strong>$0.60 (약 830원)</strong></p>
+                    <p style="margin-top: 10px; opacity: 0.8; font-size: 0.9em;">
+                        각 슬라이드별로 고품질 1024×1024 이미지가 생성됩니다
+                    </p>
+                </div>
+
+                <div class="image-generation-status" id="imageStatus" style="display: none;">
+                    <h4>🎨 이미지 생성 현황</h4>
+                    <div id="imageProgress">준비 중...</div>
+                </div>
+
+                <div class="image-grid" id="imageGrid">
+                    <!-- 이미지 미리보기 카드들이 여기에 동적으로 생성됩니다 -->
+                </div>
+            </div>
+            
+            <!-- 그라데이션 옵션 세부 정보 (선택 시에만 표시) -->
+            <div id="gradientDetails" style="display: none; margin-top: 30px; background: rgba(78, 205, 196, 0.1); border: 3px solid rgba(78, 205, 196, 0.4); border-radius: 25px; padding: 30px;">
+                <h4 style="color: #4ecdc4; margin-bottom: 20px; text-align: center;">🌈 그라데이션 배경 미리보기</h4>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 15px;">
+                    <div class="gradient-preview" style="height: 80px; border-radius: 15px; background: linear-gradient(135deg, #667eea, #764ba2); position: relative;">
+                        <span style="position: absolute; bottom: 5px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.7); color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.8em;">1</span>
+                    </div>
+                    <div class="gradient-preview" style="height: 80px; border-radius: 15px; background: linear-gradient(135deg, #4ecdc4, #44a08d); position: relative;">
+                        <span style="position: absolute; bottom: 5px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.7); color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.8em;">2</span>
+                    </div>
+                    <div class="gradient-preview" style="height: 80px; border-radius: 15px; background: linear-gradient(135deg, #ff6b6b, #ee5a6f); position: relative;">
+                        <span style="position: absolute; bottom: 5px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.7); color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.8em;">3</span>
+                    </div>
+                    <div class="gradient-preview" style="height: 80px; border-radius: 15px; background: linear-gradient(135deg, #feca57, #ff9ff3); position: relative;">
+                        <span style="position: absolute; bottom: 5px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.7); color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.8em;">4</span>
+                    </div>
+                    <div class="gradient-preview" style="height: 80px; border-radius: 15px; background: linear-gradient(135deg, #96ceb4, #ffecd2); position: relative;">
+                        <span style="position: absolute; bottom: 5px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.7); color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.8em;">5</span>
+                    </div>
+                    <div class="gradient-preview" style="height: 80px; border-radius: 15px; background: linear-gradient(135deg, #74b9ff, #0984e3); position: relative;">
+                        <span style="position: absolute; bottom: 5px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.7); color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.8em;">6</span>
+                    </div>
+                    <div class="gradient-preview" style="height: 80px; border-radius: 15px; background: linear-gradient(135deg, #fd79a8, #fdcb6e); position: relative;">
+                        <span style="position: absolute; bottom: 5px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.7); color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.8em;">7</span>
+                    </div>
+                    <div class="gradient-preview" style="height: 80px; border-radius: 15px; background: linear-gradient(135deg, #6c5ce7, #a29bfe); position: relative;">
+                        <span style="position: absolute; bottom: 5px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.7); color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.8em;">8</span>
+                    </div>
+                </div>
+                <p style="text-align: center; margin-top: 20px; opacity: 0.9;">
+                    각 슬라이드마다 다른 아름다운 그라데이션이 자동으로 적용됩니다.
                 </p>
-            </div>
-
-            <div class="image-generation-status" id="imageStatus" style="display: none;">
-                <h4>🎨 이미지 생성 현황</h4>
-                <div id="imageProgress">준비 중...</div>
-            </div>
-
-            <div class="image-grid" id="imageGrid">
-                <!-- 이미지 미리보기 카드들이 여기에 동적으로 생성됩니다 -->
             </div>
         </div>
 
@@ -1210,7 +1415,7 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
             <div style="margin: 30px 0; text-align: center; background: rgba(255,255,255,0.1); padding: 25px; border-radius: 20px;">
                 <h3 style="color: #feca57; margin-bottom: 15px;">📊 생성 결과</h3>
                 <p><strong>✅ 총 15장의 프리미엄 슬라이드 완성</strong></p>
-                <p><strong>🎨 각 슬라이드별 맞춤 AI 이미지 생성</strong></p>
+                <p id="slideTypeResult"><strong>🎨 각 슬라이드별 맞춤 배경 적용</strong></p>
                 <p><strong>⏰ 자동 재생: 33초 (각 슬라이드 2.2초)</strong></p>
                 <p><strong>📱 유튜브 쇼츠 최적화 (9:16 비율)</strong></p>
                 <p style="margin-top: 15px; font-size: 1.1em; color: #4ecdc4;"><strong>🎬 자동 재생 중! 수동 조작 시 5초 후 재시작</strong></p>
@@ -1226,7 +1431,7 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
                 <button class="btn btn-secondary" onclick="showRecordingGuide()" style="margin: 10px; text-transform: none;">
                     📖 녹화 가이드
                 </button>
-                <button class="btn btn-primary" onclick="downloadSlideImages()" style="margin: 10px; text-transform: none;">
+                <button class="btn btn-primary" onclick="downloadSlideImages()" style="margin: 10px; text-transform: none;" id="downloadBtn">
                     📁 이미지 다운로드
                 </button>
             </div>
@@ -1283,6 +1488,26 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
         </div>
     </div>
 
+    <!-- 녹화 준비 모달 -->
+    <div class="recording-preparation" id="recordingPreparation">
+        <div class="preparation-content">
+            <div class="preparation-icon">⚙️</div>
+            <div class="preparation-title">녹화 준비 중...</div>
+            <div class="preparation-desc">
+                최고의 화질로 녹화하기 위해 시스템을 준비하고 있습니다.<br>
+                잠시만 기다려주세요.
+            </div>
+        </div>
+    </div>
+
+    <!-- 녹화 경고 -->
+    <div class="recording-warning" id="recordingWarning">
+        <div>⚠️ 녹화가 진행 중입니다!</div>
+        <div style="font-size: 0.9em; margin-top: 10px;">
+            화면을 움직이지 말고 33초간 기다려주세요.
+        </div>
+    </div>
+
     <div class="progress-modal" id="progressModal">
         <div class="progress-content">
             <div class="progress-icon" id="progressIcon">🤖</div>
@@ -1296,1228 +1521,6 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
     </div>
 
     <script>
-        // 전역 변수
-        let apiKey = '';
-        let slides = [];
-        let slideImages = {}; // 슬라이드별 이미지 저장
-        let currentSlideIndex = 0;
-        let fullscreenSlideIndex = 0; // 전체화면 슬라이드 인덱스
-        let autoSlideInterval = null;
-        
-        // 자동 녹화 관련 변수
-        let mediaRecorder = null;
-        let recordedChunks = [];
-        let isRecording = false;
-        let isPaused = false;
-        let recordingStartTime = 0;
-        let recordingTimer = null;
-
-        // API 키 설정
-        function setupApiKey() {
-            const input = document.getElementById('apiInput');
-            const key = input.value.trim();
-            
-            if (!key) {
-                showStatus('❌ API 키를 입력해주세요.', 'error');
-                return;
-            }
-            
-            if (!key.startsWith('sk-') || key.length < 40) {
-                showStatus('❌ 올바른 API 키 형식이 아닙니다.', 'error');
-                return;
-            }
-            
-            apiKey = key;
-            showStatus('✅ API 키가 설정되었습니다!', 'success');
-            
-            const apiSection = document.getElementById('apiSection');
-            apiSection.classList.add('success');
-            
-            updateGenerateButton();
-        }
-
-        // 상태 메시지 표시
-        function showStatus(message, type) {
-            const statusEl = document.getElementById('apiStatus');
-            statusEl.textContent = message;
-            statusEl.className = `status-message ${type}`;
-            statusEl.style.display = 'block';
-        }
-
-        // 생성 버튼 상태 업데이트
-        function updateGenerateButton() {
-            const title = document.getElementById('titleInput').value.trim();
-            const content = document.getElementById('contentInput').value.trim();
-            const generateBtn = document.getElementById('generateBtn');
-            
-            if (apiKey && title && content) {
-                generateBtn.disabled = false;
-                generateBtn.style.opacity = '1';
-            } else {
-                generateBtn.disabled = true;
-                generateBtn.style.opacity = '0.5';
-            }
-        }
-
-        // 다중 이미지 슬라이드 생성 메인 함수
-        async function generateMultiImageSlides() {
-            const title = document.getElementById('titleInput').value.trim();
-            const content = document.getElementById('contentInput').value.trim();
-            
-            if (!apiKey || !title || !content) {
-                alert('❌ API 키, 제목, 내용을 모두 입력해주세요!');
-                return;
-            }
-            
-            showProgressModal(true);
-            
-            try {
-                // 1단계: 슬라이드 생성
-                updateProgress(10, '📝 슬라이드 분석', '내용을 분석하여 15장의 슬라이드를 생성하고 있습니다...', '🤖');
-                await delay(500);
-                
-                slides = await createSlidesFromContent(title, content);
-                console.log('생성된 슬라이드:', slides);
-                
-                updateProgress(25, '🎨 이미지 준비', '각 슬라이드별 맞춤 이미지를 준비하고 있습니다...', '🎨');
-                await delay(300);
-                
-                // 2단계: 이미지 그리드 표시
-                displayImageGrid();
-                
-                // 3단계: 각 슬라이드별 이미지 생성
-                await generateImagesForAllSlides();
-                
-                updateProgress(95, '🎬 최종 완성', '슬라이드와 이미지를 조합하고 있습니다...', '✨');
-                await delay(500);
-                
-                updateProgress(100, '🎉 완성!', '다중 이미지 슬라이드가 준비되었습니다!', '🎉');
-                await delay(500);
-                
-                showProgressModal(false);
-                showResults();
-                
-            } catch (error) {
-                console.error('❌ 생성 중 오류:', error);
-                showProgressModal(false);
-                alert('❌ 슬라이드 생성에 실패했습니다: ' + error.message);
-            }
-        }
-
-        // 자동 녹화 시작
-        async function startAutoRecording() {
-            if (!slides || slides.length === 0) {
-                alert('❌ 먼저 슬라이드를 생성해주세요!');
-                return;
-            }
-
-            try {
-                // 1단계: 슬라이드를 전체화면 모드로 전환
-                await enterFullscreenRecordingMode();
-                
-                // 잠시 대기 (전체화면 전환 완료까지)
-                await delay(1000);
-
-                // 2단계: 화면 캡처 권한 요청
-                const stream = await navigator.mediaDevices.getDisplayMedia({
-                    video: {
-                        mediaSource: 'screen',
-                        width: { ideal: 1080 },
-                        height: { ideal: 1920 },
-                        frameRate: { ideal: 30 }
-                    },
-                    audio: {
-                        echoCancellation: true,
-                        noiseSuppression: true,
-                        sampleRate: 44100
-                    }
-                });
-
-                // MediaRecorder 설정
-                mediaRecorder = new MediaRecorder(stream, {
-                    mimeType: 'video/webm;codecs=vp9'
-                });
-
-                recordedChunks = [];
-                isRecording = true;
-                isPaused = false;
-
-                // 녹화 데이터 수집
-                mediaRecorder.ondataavailable = (event) => {
-                    if (event.data.size > 0) {
-                        recordedChunks.push(event.data);
-                    }
-                };
-
-                // 녹화 완료 처리
-                mediaRecorder.onstop = () => {
-                    saveRecording();
-                    hideRecordingUI();
-                    exitFullscreenRecordingMode(); // 전체화면 모드 종료
-                };
-
-                // 3단계: 녹화 시작
-                mediaRecorder.start(1000); // 1초마다 데이터 수집
-                
-                // UI 표시
-                showRecordingUI();
-                
-                // 4단계: 전체화면에서 슬라이드쇼 시작
-                startFullscreenRecordingSlideshow();
-                
-                // 33초 후 자동 종료
-                setTimeout(() => {
-                    if (isRecording) {
-                        stopAutoRecording();
-                    }
-                }, 33000);
-
-                console.log('✅ 전체화면 자동 녹화 시작됨');
-
-            } catch (error) {
-                console.error('❌ 자동 녹화 실패:', error);
-                
-                // 에러 발생 시 전체화면 모드 종료
-                exitFullscreenRecordingMode();
-                
-                if (error.name === 'NotAllowedError') {
-                    alert('❌ 화면 녹화 권한이 거부되었습니다.\n\n브라우저에서 화면 공유를 허용해주세요.');
-                } else if (error.name === 'NotSupportedError') {
-                    alert('❌ 이 브라우저는 화면 녹화를 지원하지 않습니다.\n\nChrome, Firefox, Edge 최신 버전을 사용해주세요.');
-                } else {
-                    alert('❌ 녹화 시작에 실패했습니다: ' + error.message);
-                }
-            }
-        }
-
-        // 전체화면 녹화 모드 진입
-        async function enterFullscreenRecordingMode() {
-            const fullscreenMode = document.getElementById('fullscreenRecordingMode');
-            fullscreenMode.classList.add('active');
-            
-            // 문서 전체를 전체화면으로 만들기
-            if (document.documentElement.requestFullscreen) {
-                await document.documentElement.requestFullscreen();
-            } else if (document.documentElement.mozRequestFullScreen) {
-                await document.documentElement.mozRequestFullScreen();
-            } else if (document.documentElement.webkitRequestFullscreen) {
-                await document.documentElement.webkitRequestFullscreen();
-            } else if (document.documentElement.msRequestFullscreen) {
-                await document.documentElement.msRequestFullscreen();
-            }
-            
-            // 마우스 커서 숨기기
-            document.body.style.cursor = 'none';
-            
-            console.log('✅ 전체화면 녹화 모드 진입');
-        }
-
-        // 전체화면 녹화 모드 종료
-        function exitFullscreenRecordingMode() {
-            const fullscreenMode = document.getElementById('fullscreenRecordingMode');
-            fullscreenMode.classList.remove('active');
-            
-            // 전체화면 종료
-            if (document.exitFullscreen) {
-                document.exitFullscreen();
-            } else if (document.mozCancelFullScreen) {
-                document.mozCancelFullScreen();
-            } else if (document.webkitExitFullscreen) {
-                document.webkitExitFullscreen();
-            } else if (document.msExitFullscreen) {
-                document.msExitFullscreen();
-            }
-            
-            // 마우스 커서 복원
-            document.body.style.cursor = 'auto';
-            
-            console.log('✅ 전체화면 녹화 모드 종료');
-        }
-
-        // 전체화면에서 슬라이드쇼 시작
-        function startFullscreenRecordingSlideshow() {
-            currentSlideIndex = 0;
-            showFullscreenRecordingSlide(0);
-            
-            // 녹화 표시 활성화
-            document.getElementById('fullscreenRecordingOverlay').classList.add('show');
-            document.getElementById('fullscreenRecordingIndicator').classList.add('show');
-            
-            // 2.2초 간격으로 슬라이드 전환 (15장 × 2.2초 = 33초)
-            autoSlideInterval = setInterval(() => {
-                if (!isPaused) {
-                    const nextIndex = (currentSlideIndex + 1) % slides.length;
-                    showFullscreenRecordingSlide(nextIndex);
-                    
-                    // 한 바퀴 완료 시 정지
-                    if (nextIndex === 0 && currentSlideIndex !== 0) {
-                        clearInterval(autoSlideInterval);
-                    }
-                }
-            }, 2200);
-        }
-
-        // 전체화면에서 슬라이드 표시
-        function showFullscreenRecordingSlide(index) {
-            if (!slides[index]) return;
-            
-            const slide = slides[index];
-            const content = document.getElementById('fullscreenRecordingContent');
-            
-            // 배경 이미지 설정
-            if (slideImages[index]) {
-                content.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url(${slideImages[index]})`;
-                content.style.backgroundSize = 'cover';
-                content.style.backgroundPosition = 'center';
-            } else {
-                // 색상 그라데이션 배경
-                const colors = [
-                    'linear-gradient(135deg, #667eea, #764ba2)',
-                    'linear-gradient(135deg, #4ecdc4, #44a08d)', 
-                    'linear-gradient(135deg, #ff6b6b, #ee5a6f)',
-                    'linear-gradient(135deg, #feca57, #ff9ff3)',
-                    'linear-gradient(135deg, #96ceb4, #ffecd2)',
-                    'linear-gradient(135deg, #74b9ff, #0984e3)',
-                    'linear-gradient(135deg, #fd79a8, #fdcb6e)',
-                    'linear-gradient(135deg, #6c5ce7, #a29bfe)',
-                    'linear-gradient(135deg, #e17055, #fdcb6e)',
-                    'linear-gradient(135deg, #00b894, #00cec9)',
-                    'linear-gradient(135deg, #e84393, #fd79a8)',
-                    'linear-gradient(135deg, #fdcb6e, #e17055)',
-                    'linear-gradient(135deg, #00cec9, #55efc4)',
-                    'linear-gradient(135deg, #a29bfe, #6c5ce7)',
-                    'linear-gradient(135deg, #fd79a8, #fdcb6e)'
-                ];
-                content.style.background = colors[index % colors.length];
-                content.style.backgroundImage = 'none';
-            }
-            
-            // 슬라이드 내용 업데이트
-            document.getElementById('fullscreenRecordingIcon').textContent = slide.icon;
-            document.getElementById('fullscreenRecordingTitle').textContent = slide.title;
-            document.getElementById('fullscreenRecordingSubtitle').textContent = slide.subtitle;
-            document.getElementById('fullscreenRecordingCounter').textContent = `${index + 1} / ${slides.length}`;
-            
-            currentSlideIndex = index;
-            
-            console.log(`📺 전체화면 슬라이드 ${index + 1} 표시`);
-        }
-
-        // 자동 녹화 중지
-        function stopAutoRecording() {
-            if (mediaRecorder && isRecording) {
-                mediaRecorder.stop();
-                
-                // 스트림 정리
-                const tracks = mediaRecorder.stream.getTracks();
-                tracks.forEach(track => track.stop());
-                
-                isRecording = false;
-                isPaused = false;
-                
-                // 슬라이드쇼 정지
-                if (autoSlideInterval) {
-                    clearInterval(autoSlideInterval);
-                }
-                
-                console.log('✅ 자동 녹화 중지됨');
-            }
-        }
-
-        // 녹화 저장
-        function saveRecording() {
-            if (recordedChunks.length === 0) {
-                alert('❌ 녹화된 데이터가 없습니다.');
-                return;
-            }
-
-            const blob = new Blob(recordedChunks, { type: 'video/webm' });
-            const url = URL.createObjectURL(blob);
-            
-            // 파일 다운로드
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `youtube-shorts-${new Date().getTime()}.webm`;
-            a.style.display = 'none';
-            
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            
-            // URL 해제
-            setTimeout(() => URL.revokeObjectURL(url), 1000);
-            
-            // 성공 메시지
-            alert('🎉 고화질 녹화 완료!\n\n슬라이드 전용 33초 영상이 다운로드 폴더에 저장되었습니다.\n바로 유튜브 쇼츠에 업로드 할 수 있습니다!');
-            
-            console.log('✅ 고화질 녹화 파일 저장 완료');
-        }
-
-        // 녹화용 슬라이드쇼 시작
-        function startRecordingSlideshow() {
-            // 기존 슬라이드쇼 정지
-            if (autoSlideInterval) {
-                clearInterval(autoSlideInterval);
-            }
-            
-            currentSlideIndex = 0;
-            showSlide(0);
-            
-            // 2.2초 간격으로 슬라이드 전환 (15장 × 2.2초 = 33초)
-            autoSlideInterval = setInterval(() => {
-                if (!isPaused) {
-                    const nextIndex = (currentSlideIndex + 1) % slides.length;
-                    showSlide(nextIndex);
-                    
-                    // 한 바퀴 완료 시 정지
-                    if (nextIndex === 0 && currentSlideIndex !== 0) {
-                        clearInterval(autoSlideInterval);
-                    }
-                }
-            }, 2200);
-        }
-
-        // 자동 녹화 가이드
-        function showAutoRecordingGuide() {
-            const guideText = `🎥 자동 화면 녹화 완벽 가이드
-
-🚀 자동 녹화 기능:
-✅ 버튼 클릭 한 번으로 모든 과정 자동화
-✅ 33초 완벽한 타이밍으로 녹화
-✅ 유튜브 쇼츠 최적 포맷 (9:16)
-✅ 고품질 1080×1920 해상도
-✅ 자동 다운로드 및 저장
-
-📋 사용 방법:
-1. 슬라이드 생성 완료 후 "🔴 자동 녹화 시작" 클릭
-2. 브라우저에서 화면 공유 권한 허용
-3. 자동으로 33초 녹화 진행
-4. 완료 후 자동으로 파일 다운로드
-
-🎯 최적 설정:
-• 해상도: 1080×1920 (자동 설정)
-• 프레임률: 30fps (자동 설정)
-• 포맷: WebM (호환성 우수)
-• 음질: 44.1kHz (고품질)
-
-🌟 지원 브라우저:
-• Chrome 72+ (권장)
-• Firefox 66+
-• Edge 79+
-• Safari 13+ (일부 제한)
-
-💡 녹화 팁:
-• 전체화면으로 브라우저 확대
-• 다른 프로그램은 종료 권장
-• 안정적인 인터넷 연결 필요
-• 일시정지/재개 기능 활용 가능
-
-🎬 완성 후:
-• WebM → MP4 변환 (필요시)
-• 유튜브 쇼츠에 바로 업로드
-• BGM이나 자막 추가 (선택사항)
-
-❗ 주의사항:
-• 화면 공유 권한 필수
-• 개인정보 화면 주의
-• 저작권 음악 사용 주의`;
-            
-            alert(guideText);
-        }
-
-        // 슬라이드별 이미지 생성
-        async function generateImagesForAllSlides() {
-            const imageStatus = document.getElementById('imageStatus');
-            const imageProgress = document.getElementById('imageProgress');
-            
-            imageStatus.style.display = 'block';
-            
-            for (let i = 0; i < slides.length; i++) {
-                const slide = slides[i];
-                
-                // 진행상황 업데이트
-                const progressPercent = 30 + (i / slides.length) * 60; // 30%에서 90%까지
-                updateProgress(progressPercent, '🎨 이미지 생성', `${i + 1}/15 슬라이드 이미지 생성 중...`, '🎨');
-                
-                imageProgress.innerHTML = `🎨 슬라이드 ${i + 1}/15 이미지 생성 중... (${Math.round((i / slides.length) * 100)}%)`;
-                
-                try {
-                    // 슬라이드별 맞춤 이미지 프롬프트 생성
-                    const imagePrompt = generateImagePromptForSlide(slide, i);
-                    console.log(`슬라이드 ${i + 1} 이미지 프롬프트:`, imagePrompt);
-                    
-                    // DALL-E 3로 이미지 생성
-                    const imageUrl = await generateAIImage(imagePrompt);
-                    
-                    if (imageUrl) {
-                        slideImages[i] = imageUrl;
-                        updateImageCard(i, imageUrl);
-                        console.log(`✅ 슬라이드 ${i + 1} 이미지 생성 완료`);
-                    } else {
-                        // 실패 시 플레이스홀더 생성
-                        slideImages[i] = createPlaceholderImage(slide, i);
-                        updateImageCard(i, slideImages[i]);
-                        console.log(`⚠️ 슬라이드 ${i + 1} 플레이스홀더 사용`);
-                    }
-                    
-                    // API 제한을 위한 약간의 지연
-                    if (i < slides.length - 1) {
-                        await delay(1000);
-                    }
-                    
-                } catch (error) {
-                    console.error(`❌ 슬라이드 ${i + 1} 이미지 생성 실패:`, error);
-                    slideImages[i] = createPlaceholderImage(slide, i);
-                    updateImageCard(i, slideImages[i]);
-                }
-            }
-            
-            imageProgress.innerHTML = `✅ 모든 이미지 생성 완료! (15/15)`;
-        }
-
-        // 슬라이드별 맞춤 이미지 프롬프트 생성
-        function generateImagePromptForSlide(slide, index) {
-            const basePrompts = {
-                // Sue Reading Club 특화 프롬프트들
-                0: "Modern language school exterior with 'Sue Reading Club' sign, professional educational building, clean architecture, students entering, bright and welcoming atmosphere",
-                1: "Traditional yet modern educational environment, 20 years of trust and heritage, classic books and modern AI technology harmoniously combined, warm learning atmosphere",
-                2: "Innovative AI technology in education, futuristic learning devices, holographic displays, students using advanced technology, bright blue and white colors",
-                3: "AI reading comprehension system, students analyzing texts with digital assistance, interactive screens showing reading progress, modern classroom setting",
-                4: "Speed reading training session, students practicing rapid reading techniques, books and digital timers, focused learning environment",
-                5: "AI discussion class, students having animated conversations in English, circular seating arrangement, teacher facilitating, interactive atmosphere",
-                6: "Real-time feedback system, instant correction interface, pronunciation analysis on screens, student speaking into microphone, encouraging environment",
-                7: "Premium advanced English class, sophisticated learning materials, elite students, luxurious classroom setting, high-end educational environment",
-                8: "English literature and novels, classic books artistically arranged, cozy reading nook, soft lighting, intellectual atmosphere",
-                9: "Personalized curriculum planning, AI analyzing student data, customized learning paths on digital displays, individual attention",
-                10: "Success metrics and achievements, graphs showing improvement, certificates and awards, satisfied students and parents, celebration atmosphere",
-                11: "Special offers and benefits, gift boxes, discount banners, happy families, promotional materials, exciting opportunities",
-                12: "Premium location in Songdo, modern office building, sophisticated interior design, professional reception area, urban skyline view",
-                13: "Consultation and operating hours, friendly staff helping students, scheduling calendars, welcoming reception desk, professional service",
-                14: "Contact information display, phone consultation, friendly staff on phone, contact details prominently shown, call-to-action atmosphere"
-            };
-            
-            // 기본 프롬프트가 있으면 사용, 없으면 슬라이드 내용 기반으로 생성
-            if (basePrompts[index]) {
-                return basePrompts[index] + ". Professional, high quality, educational, modern design, vibrant colors, 1024x1024 square format.";
-            }
-            
-            // 슬라이드 내용 기반 프롬프트 생성
-            const title = slide.title || '';
-            const subtitle = slide.subtitle || '';
-            const icon = slide.icon || '';
-            
-            let prompt = "";
-            
-            // 아이콘 기반 키워드 매핑
-            if (icon.includes('🏆')) prompt += "Achievement and success, trophy and awards, ";
-            else if (icon.includes('🤖')) prompt += "AI technology, artificial intelligence, modern tech, ";
-            else if (icon.includes('📚')) prompt += "Books and reading, educational materials, study environment, ";
-            else if (icon.includes('⚡')) prompt += "Speed and efficiency, dynamic energy, fast-paced learning, ";
-            else if (icon.includes('💬')) prompt += "Communication and discussion, people talking, interactive, ";
-            else if (icon.includes('🎯')) prompt += "Target and precision, focused goals, accuracy, ";
-            else if (icon.includes('📊')) prompt += "Data and analytics, charts and graphs, statistics, ";
-            else if (icon.includes('🎁')) prompt += "Gifts and benefits, special offers, promotional, ";
-            else if (icon.includes('📍')) prompt += "Location and place, building exterior, address, ";
-            else if (icon.includes('📞')) prompt += "Communication and contact, phone consultation, ";
-            else prompt += "Professional service, educational excellence, ";
-            
-            // 제목과 부제목에서 키워드 추출
-            const keywords = extractKeywordsFromText(title + ' ' + subtitle);
-            if (keywords.length > 0) {
-                prompt += keywords.join(', ') + ', ';
-            }
-            
-            prompt += "professional, educational, modern, high quality, bright colors, clean design, 1024x1024 square format";
-            
-            return prompt;
-        }
-
-        // 텍스트에서 키워드 추출
-        function extractKeywordsFromText(text) {
-            const keywords = [];
-            
-            // 교육 관련 키워드
-            if (text.includes('AI') || text.includes('인공지능')) keywords.push('artificial intelligence');
-            if (text.includes('독해') || text.includes('읽기')) keywords.push('reading comprehension');
-            if (text.includes('속독')) keywords.push('speed reading');
-            if (text.includes('토론') || text.includes('대화')) keywords.push('discussion');
-            if (text.includes('피드백')) keywords.push('feedback system');
-            if (text.includes('영어') || text.includes('English')) keywords.push('English education');
-            if (text.includes('학습') || text.includes('공부')) keywords.push('learning');
-            if (text.includes('성과') || text.includes('결과')) keywords.push('achievement');
-            if (text.includes('혜택') || text.includes('할인')) keywords.push('benefits');
-            if (text.includes('위치') || text.includes('연락')) keywords.push('location');
-            if (text.includes('전통') || text.includes('역사')) keywords.push('traditional heritage');
-            if (text.includes('현대') || text.includes('혁신')) keywords.push('modern innovation');
-            
-            return keywords;
-        }
-
-        // AI 이미지 생성
-        async function generateAIImage(prompt) {
-            try {
-                console.log('🎨 DALL-E 3 이미지 생성 시작:', prompt);
-                
-                const response = await fetch('https://api.openai.com/v1/images/generations', {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${apiKey}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        model: "dall-e-3",
-                        prompt: prompt,
-                        size: "1024x1024",
-                        quality: "standard",
-                        n: 1,
-                        style: "vivid"
-                    })
-                });
-                
-                if (!response.ok) {
-                    throw new Error(`API Error: ${response.status}`);
-                }
-                
-                const data = await response.json();
-                const imageUrl = data.data[0].url;
-                
-                console.log('✅ DALL-E 3 이미지 생성 완료');
-                return imageUrl;
-                
-            } catch (error) {
-                console.error('❌ DALL-E 3 이미지 생성 실패:', error);
-                return null;
-            }
-        }
-
-        // 플레이스홀더 이미지 생성
-        function createPlaceholderImage(slide, index) {
-            const canvas = document.createElement('canvas');
-            canvas.width = 1024;
-            canvas.height = 1024;
-            const ctx = canvas.getContext('2d');
-            
-            // 그라데이션 배경
-            const gradient = ctx.createLinearGradient(0, 0, 1024, 1024);
-            const colors = [
-                ['#667eea', '#764ba2'],
-                ['#4ecdc4', '#44a08d'],
-                ['#ff6b6b', '#ee5a6f'],
-                ['#feca57', '#ff9ff3'],
-                ['#96ceb4', '#ffecd2']
-            ];
-            const colorPair = colors[index % colors.length];
-            gradient.addColorStop(0, colorPair[0]);
-            gradient.addColorStop(1, colorPair[1]);
-            
-            ctx.fillStyle = gradient;
-            ctx.fillRect(0, 0, 1024, 1024);
-            
-            // 텍스트 설정
-            ctx.fillStyle = 'white';
-            ctx.textAlign = 'center';
-            ctx.shadowColor = 'rgba(0,0,0,0.5)';
-            ctx.shadowBlur = 10;
-            
-            // 아이콘
-            ctx.font = '120px Arial';
-            ctx.fillText(slide.icon || '🎯', 512, 300);
-            
-            // 제목
-            ctx.font = 'bold 80px Arial';
-            const title = slide.title || '제목';
-            ctx.fillText(title.length > 15 ? title.substring(0, 15) + '...' : title, 512, 450);
-            
-            // 슬라이드 번호
-            ctx.font = '60px Arial';
-            ctx.fillText(`${index + 1}/15`, 512, 600);
-            
-            // 부제목
-            ctx.font = '50px Arial';
-            ctx.fillStyle = 'rgba(255,255,255,0.8)';
-            const subtitle = slide.subtitle || '부제목';
-            ctx.fillText(subtitle.length > 20 ? subtitle.substring(0, 20) + '...' : subtitle, 512, 700);
-            
-            return canvas.toDataURL('image/png');
-        }
-
-        // 이미지 그리드 표시
-        function displayImageGrid() {
-            const imageGrid = document.getElementById('imageGrid');
-            imageGrid.innerHTML = '';
-            
-            slides.forEach((slide, index) => {
-                const card = document.createElement('div');
-                card.className = 'image-card';
-                card.innerHTML = `
-                    <div class="image-preview-mini" id="image-preview-${index}">
-                        <div class="image-placeholder-mini">🎨</div>
-                    </div>
-                    <h4 style="color: #feca57; margin-bottom: 8px;">슬라이드 ${index + 1}</h4>
-                    <p style="font-size: 0.9em; opacity: 0.8;">${slide.icon} ${slide.title}</p>
-                    <div style="margin-top: 10px; font-size: 0.8em; opacity: 0.6;" id="status-${index}">대기 중...</div>
-                `;
-                imageGrid.appendChild(card);
-            });
-        }
-
-        // 이미지 카드 업데이트
-        function updateImageCard(index, imageUrl) {
-            const preview = document.getElementById(`image-preview-${index}`);
-            const status = document.getElementById(`status-${index}`);
-            
-            if (preview && imageUrl) {
-                preview.innerHTML = `<img src="${imageUrl}" alt="슬라이드 ${index + 1}" onclick="window.open('${imageUrl}', '_blank')">`;
-                status.textContent = '✅ 완료';
-                status.style.color = '#00ff88';
-            }
-        }
-
-        // 슬라이드 생성 (Sue Reading Club 맞춤)
-        async function createSlidesFromContent(title, content) {
-            // Sue Reading Club에 최적화된 15장 슬라이드
-            return [
-                {
-                    slideNumber: 1,
-                    icon: '🚀',
-                    title: 'Sue Reading Club',
-                    subtitle: '송도의 20년 전통 AI 영어교육 전문기관',
-                    type: 'intro'
-                },
-                {
-                    slideNumber: 2,
-                    icon: '🏆',
-                    title: '20년 검증된 역사',
-                    subtitle: '1985년 설립, 송도 지역 영어교육의 명문',
-                    type: 'history'
-                },
-                {
-                    slideNumber: 3,
-                    icon: '🤖',
-                    title: 'AI 혁신 기술',
-                    subtitle: '최신 AI와 20년 노하우의 완벽한 융합',
-                    type: 'innovation'
-                },
-                {
-                    slideNumber: 4,
-                    icon: '📚',
-                    title: 'AI 독해 시스템',
-                    subtitle: '개인별 취약점 실시간 진단 및 맞춤 분석',
-                    type: 'reading'
-                },
-                {
-                    slideNumber: 5,
-                    icon: '⚡',
-                    title: '스마트 속독 시스템',
-                    subtitle: '읽기 속도 3배 향상 보장 프로그램',
-                    type: 'speed'
-                },
-                {
-                    slideNumber: 6,
-                    icon: '💬',
-                    title: 'AI 토론 클래스',
-                    subtitle: '실시간 영어 대화 연습 및 즉석 피드백',
-                    type: 'discussion'
-                },
-                {
-                    slideNumber: 7,
-                    icon: '🎯',
-                    title: '즉석 피드백 시스템',
-                    subtitle: '발음부터 문법까지 정확한 실시간 교정',
-                    type: 'feedback'
-                },
-                {
-                    slideNumber: 8,
-                    icon: '👑',
-                    title: '특별 채두윜반',
-                    subtitle: '고급 영어 실력 완성을 위한 최상위 과정',
-                    type: 'premium'
-                },
-                {
-                    slideNumber: 9,
-                    icon: '📖',
-                    title: '영어소설 마스터',
-                    subtitle: '문학을 통한 고급 영어 습득의 독창적 방법',
-                    type: 'literature'
-                },
-                {
-                    slideNumber: 10,
-                    icon: '🧠',
-                    title: '개인 맞춤 커리큘럼',
-                    subtitle: 'AI가 분석한 개인별 최적 학습 경로',
-                    type: 'curriculum'
-                },
-                {
-                    slideNumber: 11,
-                    icon: '📊',
-                    title: '검증된 놀라운 성과',
-                    subtitle: '98% 학부모 만족도, 평균 3.2배 성적 향상',
-                    type: 'results'
-                },
-                {
-                    slideNumber: 12,
-                    icon: '🎁',
-                    title: '특별 론칭 혜택',
-                    subtitle: '첫 달 30% 할인 + 무료 AI 레벨테스트',
-                    type: 'benefit'
-                },
-                {
-                    slideNumber: 13,
-                    icon: '📍',
-                    title: '프리미엄 위치',
-                    subtitle: '해온더라운지 702호, 송도 국제도시 중심가',
-                    type: 'location'
-                },
-                {
-                    slideNumber: 14,
-                    icon: '📅',
-                    title: '상담 및 운영시간',
-                    subtitle: '평일 오전 10시~오후 8시, 언제든 상담 가능',
-                    type: 'hours'
-                },
-                {
-                    slideNumber: 15,
-                    icon: '📞',
-                    title: '010-4602-1953',
-                    subtitle: '지금 바로 연락하여 영어 실력 혁신을 시작!',
-                    type: 'contact'
-                }
-            ];
-        }
-
-        // 지연 함수
-        function delay(ms) {
-            return new Promise(resolve => setTimeout(resolve, ms));
-        }
-
-        // 프로그레스 모달 표시/숨기기
-        function showProgressModal(show) {
-            const modal = document.getElementById('progressModal');
-            modal.classList.toggle('show', show);
-        }
-
-        // 프로그레스 업데이트
-        function updateProgress(percent, title, desc, icon) {
-            const fill = document.getElementById('progressFill');
-            const text = document.getElementById('progressText');
-            const titleEl = document.getElementById('progressTitle');
-            const descEl = document.getElementById('progressDesc');
-            const iconEl = document.getElementById('progressIcon');
-            
-            if (fill) fill.style.width = `${Math.min(100, Math.max(0, percent))}%`;
-            if (text) text.textContent = `${Math.round(percent)}%`;
-            if (titleEl) titleEl.textContent = title;
-            if (descEl) descEl.textContent = desc;
-            if (iconEl) iconEl.textContent = icon;
-        }
-
-        // 결과 표시
-        function showResults() {
-            console.log('📊 결과 표시 시작');
-            
-            const resultSection = document.getElementById('resultSection');
-            const autoRecordingSection = document.getElementById('autoRecordingSection');
-            
-            if (resultSection) {
-                console.log('결과 섹션 찾음, 표시 중...');
-                resultSection.style.display = 'block';
-                resultSection.style.visibility = 'visible';
-                resultSection.style.opacity = '1';
-                
-                createSlidePreview();
-                startAutoSlideshow();
-                
-                setTimeout(() => {
-                    resultSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }, 1000);
-            }
-
-            // 자동 녹화 섹션도 표시
-            if (autoRecordingSection) {
-                autoRecordingSection.style.display = 'block';
-            }
-        }
-
-        // 슬라이드 미리보기 생성
-        function createSlidePreview() {
-            const container = document.getElementById('slideContainer');
-            container.innerHTML = '';
-            
-            currentSlideIndex = 0;
-            
-            const colors = [
-                'linear-gradient(135deg, #667eea, #764ba2)',
-                'linear-gradient(135deg, #4ecdc4, #44a08d)', 
-                'linear-gradient(135deg, #ff6b6b, #ee5a6f)',
-                'linear-gradient(135deg, #feca57, #ff9ff3)',
-                'linear-gradient(135deg, #96ceb4, #ffecd2)',
-                'linear-gradient(135deg, #74b9ff, #0984e3)',
-                'linear-gradient(135deg, #fd79a8, #fdcb6e)',
-                'linear-gradient(135deg, #6c5ce7, #a29bfe)',
-                'linear-gradient(135deg, #e17055, #fdcb6e)',
-                'linear-gradient(135deg, #00b894, #00cec9)',
-                'linear-gradient(135deg, #e84393, #fd79a8)',
-                'linear-gradient(135deg, #fdcb6e, #e17055)',
-                'linear-gradient(135deg, #00cec9, #55efc4)',
-                'linear-gradient(135deg, #a29bfe, #6c5ce7)',
-                'linear-gradient(135deg, #fd79a8, #fdcb6e)'
-            ];
-            
-            slides.forEach((slide, index) => {
-                const slideDiv = document.createElement('div');
-                slideDiv.className = 'slide';
-                slideDiv.style.background = colors[index % colors.length];
-                
-                // 이미지가 있으면 배경으로 사용
-                if (slideImages[index]) {
-                    slideDiv.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url(${slideImages[index]})`;
-                    slideDiv.style.backgroundSize = 'cover';
-                    slideDiv.style.backgroundPosition = 'center';
-                }
-                
-                slideDiv.innerHTML = `
-                    <div class="slide-icon">${slide.icon}</div>
-                    <div class="slide-title">${slide.title}</div>
-                    <div class="slide-subtitle">${slide.subtitle}</div>
-                    <div style="position: absolute; bottom: 10px; right: 10px; background: rgba(0,0,0,0.5); padding: 5px 10px; border-radius: 10px; font-size: 0.8em;">
-                        ${index + 1}/15
-                    </div>
-                    <div style="position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,0.2); padding: 8px; border-radius: 50%; font-size: 1.2em; backdrop-filter: blur(5px); cursor: pointer;" title="크게보기">
-                        🔍
-                    </div>
-                `;
-                
-                // 슬라이드 클릭 이벤트 추가
-                slideDiv.addEventListener('click', () => {
-                    openFullscreen(index);
-                });
-                
-                if (index === 0) {
-                    slideDiv.classList.add('active');
-                } else {
-                    slideDiv.classList.add('hidden');
-                }
-                
-                container.appendChild(slideDiv);
-            });
-            
-            updateSlideCounter();
-        }
-
-        // 자동 슬라이드쇼 시작
-        function startAutoSlideshow() {
-            if (autoSlideInterval) {
-                clearInterval(autoSlideInterval);
-            }
-            
-            autoSlideInterval = setInterval(() => {
-                const nextIndex = (currentSlideIndex + 1) % slides.length;
-                showSlide(nextIndex);
-            }, 2200);
-        }
-
-        // 슬라이드 표시
-        function showSlide(index) {
-            const slideElements = document.querySelectorAll('.slide');
-            
-            slideElements.forEach((slide, i) => {
-                if (i === index) {
-                    slide.classList.remove('hidden');
-                    slide.classList.add('active');
-                } else {
-                    slide.classList.remove('active');
-                    slide.classList.add('hidden');
-                }
-            });
-            
-            currentSlideIndex = index;
-            updateSlideCounter();
-        }
-
-        // 슬라이드 카운터 업데이트
-        function updateSlideCounter() {
-            const counter = document.getElementById('slideCounter');
-            if (counter && slides.length > 0) {
-                counter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
-            }
-        }
-
-        // 이전/다음 슬라이드
-        function prevSlide() {
-            if (autoSlideInterval) {
-                clearInterval(autoSlideInterval);
-            }
-            
-            const newIndex = currentSlideIndex > 0 ? currentSlideIndex - 1 : slides.length - 1;
-            showSlide(newIndex);
-            
-            setTimeout(() => {
-                startAutoSlideshow();
-            }, 5000);
-        }
-
-        function nextSlide() {
-            if (autoSlideInterval) {
-                clearInterval(autoSlideInterval);
-            }
-            
-            const newIndex = currentSlideIndex < slides.length - 1 ? currentSlideIndex + 1 : 0;
-            showSlide(newIndex);
-            
-            setTimeout(() => {
-                startAutoSlideshow();
-            }, 5000);
-        }
-
-        // 전체화면 열기
-        function openFullscreen(slideIndex) {
-            if (!slides || slides.length === 0) return;
-            
-            fullscreenSlideIndex = slideIndex;
-            const slide = slides[slideIndex];
-            
-            // 자동 슬라이드쇼 중지
-            if (autoSlideInterval) {
-                clearInterval(autoSlideInterval);
-            }
-            
-            // 전체화면 모달 표시
-            const modal = document.getElementById('fullscreenModal');
-            const content = document.getElementById('fullscreenContent');
-            
-            // 배경 이미지 설정
-            if (slideImages[slideIndex]) {
-                content.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url(${slideImages[slideIndex]})`;
-                content.style.backgroundSize = 'cover';
-                content.style.backgroundPosition = 'center';
-            } else {
-                // 색상 그라데이션 배경
-                const colors = [
-                    'linear-gradient(135deg, #667eea, #764ba2)',
-                    'linear-gradient(135deg, #4ecdc4, #44a08d)', 
-                    'linear-gradient(135deg, #ff6b6b, #ee5a6f)',
-                    'linear-gradient(135deg, #feca57, #ff9ff3)',
-                    'linear-gradient(135deg, #96ceb4, #ffecd2)',
-                    'linear-gradient(135deg, #74b9ff, #0984e3)',
-                    'linear-gradient(135deg, #fd79a8, #fdcb6e)',
-                    'linear-gradient(135deg, #6c5ce7, #a29bfe)',
-                    'linear-gradient(135deg, #e17055, #fdcb6e)',
-                    'linear-gradient(135deg, #00b894, #00cec9)',
-                    'linear-gradient(135deg, #e84393, #fd79a8)',
-                    'linear-gradient(135deg, #fdcb6e, #e17055)',
-                    'linear-gradient(135deg, #00cec9, #55efc4)',
-                    'linear-gradient(135deg, #a29bfe, #6c5ce7)',
-                    'linear-gradient(135deg, #fd79a8, #fdcb6e)'
-                ];
-                content.style.background = colors[slideIndex % colors.length];
-                content.style.backgroundImage = 'none';
-            }
-            
-            // 슬라이드 내용 업데이트
-            document.getElementById('fullscreenIcon').textContent = slide.icon;
-            document.getElementById('fullscreenTitle').textContent = slide.title;
-            document.getElementById('fullscreenSubtitle').textContent = slide.subtitle;
-            document.getElementById('fullscreenCounter').textContent = `${slideIndex + 1} / ${slides.length}`;
-            
-            // 네비게이션 버튼 상태
-            const prevBtn = document.getElementById('fullscreenPrevBtn');
-            const nextBtn = document.getElementById('fullscreenNextBtn');
-            prevBtn.disabled = slideIndex === 0;
-            nextBtn.disabled = slideIndex === slides.length - 1;
-            
-            modal.classList.add('show');
-            document.body.style.overflow = 'hidden';
-        }
-
-        // 전체화면 닫기
-        function closeFullscreen() {
-            const modal = document.getElementById('fullscreenModal');
-            modal.classList.remove('show');
-            document.body.style.overflow = 'auto';
-            
-            // 자동 슬라이드쇼 재시작
-            setTimeout(() => {
-                startAutoSlideshow();
-            }, 1000);
-        }
-
-        // 전체화면에서 이전 슬라이드
-        function fullscreenPrevSlide() {
-            if (fullscreenSlideIndex > 0) {
-                openFullscreen(fullscreenSlideIndex - 1);
-            }
-        }
-
-        // 전체화면에서 다음 슬라이드
-        function fullscreenNextSlide() {
-            if (fullscreenSlideIndex < slides.length - 1) {
-                openFullscreen(fullscreenSlideIndex + 1);
-            }
-        }
-
-        // 수동 녹화 모드 시작
-        function startRecordingMode() {
-            if (!slides || slides.length === 0) {
-                alert('❌ 먼저 슬라이드를 생성해주세요!');
-                return;
-            }
-
-            // 자동 슬라이드쇼 중지
-            if (autoSlideInterval) {
-                clearInterval(autoSlideInterval);
-            }
-
-            // 녹화 모드 활성화
-            const recordingMode = document.getElementById('recordingMode');
-            recordingMode.classList.add('active');
-            document.body.style.overflow = 'hidden';
-
-            // 슬라이드 복사
-            copySlideToRecordingMode();
-
-            // 카운트다운 시작
-            startCountdown();
-        }
-
-        // 슬라이드를 녹화 모드로 복사
-        function copySlideToRecordingMode() {
-            const recordingContainer = document.getElementById('recordingSlideContainer');
-            recordingContainer.innerHTML = '';
-
-            const colors = [
-                'linear-gradient(135deg, #667eea, #764ba2)',
-                'linear-gradient(135deg, #4ecdc4, #44a08d)', 
-                'linear-gradient(135deg, #ff6b6b, #ee5a6f)',
-                'linear-gradient(135deg, #feca57, #ff9ff3)',
-                'linear-gradient(135deg, #96ceb4, #ffecd2)',
-                'linear-gradient(135deg, #74b9ff, #0984e3)',
-                'linear-gradient(135deg, #fd79a8, #fdcb6e)',
-                'linear-gradient(135deg, #6c5ce7, #a29bfe)',
-                'linear-gradient(135deg, #e17055, #fdcb6e)',
-                'linear-gradient(135deg, #00b894, #00cec9)',
-                'linear-gradient(135deg, #e84393, #fd79a8)',
-                'linear-gradient(135deg, #fdcb6e, #e17055)',
-                'linear-gradient(135deg, #00cec9, #55efc4)',
-                'linear-gradient(135deg, #a29bfe, #6c5ce7)',
-                'linear-gradient(135deg, #fd79a8, #fdcb6e)'
-            ];
-
-            slides.forEach((slide, index) => {
-                const slideDiv = document.createElement('div');
-                slideDiv.className = 'slide';
-                slideDiv.style.background = colors[index % colors.length];
-                
-                // 이미지가 있으면 배경으로 사용
-                if (slideImages[index]) {
-                    slideDiv.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url(${slideImages[index]})`;
-                    slideDiv.style.backgroundSize = 'cover';
-                    slideDiv.style.backgroundPosition = 'center';
-                }
-                
-                slideDiv.innerHTML = `
-                    <div class="slide-icon" style="font-size: 4em; margin-bottom: 20px;">${slide.icon}</div>
-                    <div class="slide-title" style="font-size: 2.2em; font-weight: 900; margin-bottom: 15px; text-shadow: 2px 2px 8px rgba(0,0,0,0.8);">${slide.title}</div>
-                    <div class="slide-subtitle" style="font-size: 1.4em; opacity: 0.9; text-shadow: 1px 1px 4px rgba(0,0,0,0.8);">${slide.subtitle}</div>
-                    <div style="position: absolute; bottom: 15px; right: 15px; background: rgba(0,0,0,0.7); padding: 8px 15px; border-radius: 15px; font-size: 1em; font-weight: bold;">
-                        ${index + 1}/15
-                    </div>
-                `;
-                
-                if (index === 0) {
-                    slideDiv.classList.add('active');
-                } else {
-                    slideDiv.classList.add('hidden');
-                }
-                
-                recordingContainer.appendChild(slideDiv);
-            });
-        }
-
-        // 카운트다운 시작
-        function startCountdown() {
-            const countdownOverlay = document.getElementById('countdownOverlay');
-            const countdownNumber = document.getElementById('countdownNumber');
-            
-            countdownOverlay.style.display = 'flex';
-            
-            let count = 3;
-            const countdownInterval = setInterval(() => {
-                countdownNumber.textContent = count;
-                countdownNumber.style.animation = 'none';
-                setTimeout(() => {
-                    countdownNumber.style.animation = 'countdownPulse 1s ease-in-out';
-                }, 10);
-                
-                count--;
-                
-                if (count < 0) {
-                    clearInterval(countdownInterval);
-                    countdownOverlay.style.display = 'none';
-                    startManualRecordingSlideshow();
-                }
-            }, 1000);
-        }
-
-        // 수동 녹화용 슬라이드쇼 시작
-        function startManualRecordingSlideshow() {
-            const recordingOverlay = document.getElementById('recordingOverlay');
-            const recordingIndicator = document.getElementById('recordingIndicator');
-            
-            // 녹화 표시 활성화
-            recordingOverlay.style.display = 'block';
-            recordingIndicator.style.display = 'block';
-            
-            currentSlideIndex = 0;
-            
-            // 33초 동안 15장 재생 (각 슬라이드 2.2초)
-            const recordingInterval = setInterval(() => {
-                const nextIndex = (currentSlideIndex + 1) % slides.length;
-                showRecordingSlide(nextIndex);
-                
-                if (nextIndex === 0) {
-                    // 한 바퀴 완료
-                    clearInterval(recordingInterval);
-                    finishRecording();
-                }
-            }, 2200);
-            
-            // 모바일 녹화 안내
-            setTimeout(() => {
-                if (navigator.userAgent.match(/iPhone|iPad|iPod|Android/i)) {
-                    showMobileRecordingTip();
-                }
-            }, 1000);
-        }
-
-        // 녹화용 슬라이드 표시
-        function showRecordingSlide(index) {
-            const slideElements = document.querySelectorAll('#recordingSlideContainer .slide');
-            
-            slideElements.forEach((slide, i) => {
-                if (i === index) {
-                    slide.classList.remove('hidden');
-                    slide.classList.add('active');
-                } else {
-                    slide.classList.remove('active');
-                    slide.classList.add('hidden');
-                }
-            });
-            
-            currentSlideIndex = index;
-        }
-
-        // 녹화 완료
-        function finishRecording() {
-            const recordingOverlay = document.getElementById('recordingOverlay');
-            const recordingIndicator = document.getElementById('recordingIndicator');
-            
-            recordingOverlay.style.display = 'none';
-            recordingIndicator.style.display = 'none';
-            
-            // 완료 메시지
-            alert('🎉 녹화 완료!\n\n33초 영상이 완성되었습니다.\n휴대폰 갤러리에서 확인하세요!');
-        }
-
         // 모바일 녹화 팁 표시
         function showMobileRecordingTip() {
             const tip = document.createElement('div');
@@ -2542,7 +1545,9 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
             document.body.appendChild(tip);
             
             setTimeout(() => {
-                document.body.removeChild(tip);
+                if (document.body.contains(tip)) {
+                    document.body.removeChild(tip);
+                }
             }, 4000);
         }
 
@@ -2596,108 +1601,332 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
             alert(guideText);
         }
 
-        // 이미지 다운로드
+        // 이미지 다운로드 (수정)
         function downloadSlideImages() {
+            if (selectedOption !== 'aiImage') {
+                alert('📁 그라데이션 모드에서는 이미지 다운로드가 불가능합니다.\n\n대신 화면 캡처나 녹화 기능을 사용해주세요!');
+                return;
+            }
+            
             if (Object.keys(slideImages).length === 0) {
                 alert('❌ 생성된 이미지가 없습니다. 먼저 슬라이드를 생성해주세요!');
                 return;
             }
 
-            alert('📁 이미지 다운로드를 시작합니다!\n\n각 이미지를 우클릭하여 "이미지 저장"을 선택하거나,\n새 탭에서 열어서 저장하세요.');
+            alert('📁 AI 생성 이미지 다운로드를 시작합니다!\n\n각 이미지를 우클릭하여 "이미지 저장"을 선택하거나,\n새 탭에서 열어서 저장하세요.');
 
             Object.keys(slideImages).forEach((index, i) => {
-                setTimeout(() => {
-                    const link = document.createElement('a');
-                    link.href = slideImages[index];
-                    link.download = `sue-reading-slide-${parseInt(index) + 1}.png`;
-                    link.target = '_blank';
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                }, i * 500); // 0.5초 간격으로 다운로드
+                if (slideImages[index]) { // null이 아닌 경우만
+                    setTimeout(() => {
+                        const link = document.createElement('a');
+                        link.href = slideImages[index];
+                        link.download = `sue-reading-slide-${parseInt(index) + 1}.png`;
+                        link.target = '_blank';
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                    }, i * 500); // 0.5초 간격으로 다운로드
+                }
             });
         }
 
         // 페이지 로드 완료 후 실행
         document.addEventListener('DOMContentLoaded', function() {
-            // 입력 필드 이벤트
-            const titleInput = document.getElementById('titleInput');
-            const contentInput = document.getElementById('contentInput');
+        // 페이지 로드 완료 후 실행
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🎬 페이지 로드 완료 - 초기화 시작');
             
-            if (titleInput) {
-                titleInput.addEventListener('input', updateGenerateButton);
-            }
-            
-            if (contentInput) {
-                contentInput.addEventListener('input', updateGenerateButton);
-            }
-            
-            // API 키 입력에서 엔터 키 처리
-            const apiInput = document.getElementById('apiInput');
-            if (apiInput) {
-                apiInput.addEventListener('keypress', function(e) {
-                    if (e.key === 'Enter') {
-                        e.preventDefault();
-                        setupApiKey();
+            // 모든 함수가 로드된 후 이벤트 리스너 등록
+            setTimeout(() => {
+                setupEventListeners();
+                initializeOptions();
+                checkBrowserCompatibility();
+                console.log('✅ 모든 초기화 완료');
+            }, 100);
+        });
+
+        // 이벤트 리스너 설정 함수
+        function setupEventListeners() {
+            try {
+                // 입력 필드 이벤트
+                const titleInput = document.getElementById('titleInput');
+                const contentInput = document.getElementById('contentInput');
+                
+                if (titleInput) {
+                    titleInput.addEventListener('input', updateGenerateButton);
+                    console.log('✅ 제목 입력 이벤트 등록');
+                }
+                
+                if (contentInput) {
+                    contentInput.addEventListener('input', updateGenerateButton);
+                    console.log('✅ 내용 입력 이벤트 등록');
+                }
+                
+                // API 키 입력에서 엔터 키 처리
+                const apiInput = document.getElementById('apiInput');
+                if (apiInput) {
+                    apiInput.addEventListener('keypress', function(e) {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            setupApiKey();
+                        }
+                    });
+                    console.log('✅ API 키 입력 이벤트 등록');
+                }
+                
+                // ESC 키 이벤트
+                document.addEventListener('keydown', handleKeyDown);
+                
+                // 전체화면 모달 이벤트
+                const fullscreenModal = document.getElementById('fullscreenModal');
+                if (fullscreenModal) {
+                    fullscreenModal.addEventListener('click', function(e) {
+                        if (e.target === this) {
+                            closeFullscreen();
+                        }
+                    });
+                }
+                
+                // 전체화면 변경 이벤트
+                document.addEventListener('fullscreenchange', handleFullscreenChange);
+                document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+                document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+                document.addEventListener('MSFullscreenChange', handleFullscreenChange);
+                
+                // 페이지 언로드 이벤트
+                window.addEventListener('beforeunload', function() {
+                    cleanupRecording();
+                    if (window.wakeLock) {
+                        window.wakeLock.release();
                     }
                 });
+                
+                // 페이지 가시성 변경 이벤트
+                document.addEventListener('visibilitychange', function() {
+                    if (document.hidden && isRecording) {
+                        console.log('⚠️ 페이지가 숨겨져서 녹화를 일시정지합니다.');
+                        isPaused = true;
+                    } else if (!document.hidden && isRecording) {
+                        console.log('✅ 페이지가 다시 보여져서 녹화를 재개합니다.');
+                        isPaused = false;
+                    }
+                });
+                
+                console.log('✅ 모든 이벤트 리스너 등록 완료');
+                
+            } catch (error) {
+                console.error('❌ 이벤트 리스너 등록 실패:', error);
             }
-            
-            // ESC 키로 전체화면 닫기
-            document.addEventListener('keydown', function(e) {
+        }
+
+        // 초기 옵션 설정
+        function initializeOptions() {
+            try {
+                // 기본 옵션을 그라데이션으로 설정
+                selectOption('gradient');
+                updateGenerateButton();
+                console.log('✅ 초기 옵션 설정 완료');
+            } catch (error) {
+                console.error('❌ 초기 옵션 설정 실패:', error);
+            }
+        }
+
+        // 키보드 이벤트 핸들러
+        function handleKeyDown(e) {
+            try {
                 if (e.key === 'Escape') {
+                    // 전체화면 모달 닫기
                     closeFullscreen();
-                    // 자동 녹화 중일 때 ESC로 중지
+                    
+                    // 자동 녹화 중단
                     if (isRecording) {
+                        console.log('⚠️ ESC키로 녹화 중단');
                         stopAutoRecording();
                     }
+                    
                     // 전체화면 녹화 모드 종료
                     const fullscreenRecording = document.getElementById('fullscreenRecordingMode');
-                    if (fullscreenRecording.classList.contains('active')) {
+                    if (fullscreenRecording && fullscreenRecording.classList.contains('active')) {
+                        console.log('⚠️ ESC키로 전체화면 녹화 모드 종료');
+                        stopAutoRecording();
                         exitFullscreenRecordingMode();
                     }
+                    
+                    // 수동 녹화 모드 종료
+                    const recordingMode = document.getElementById('recordingMode');
+                    if (recordingMode && recordingMode.classList.contains('active')) {
+                        exitRecordingMode();
+                    }
                 }
+                
                 // 전체화면에서 방향키로 슬라이드 이동
-                if (document.getElementById('fullscreenModal').classList.contains('show')) {
+                const fullscreenModal = document.getElementById('fullscreenModal');
+                if (fullscreenModal && fullscreenModal.classList.contains('show')) {
                     if (e.key === 'ArrowLeft') {
                         fullscreenPrevSlide();
                     } else if (e.key === 'ArrowRight') {
                         fullscreenNextSlide();
                     }
                 }
-            });
-            
-            // 전체화면 모달 배경 클릭으로 닫기
-            const fullscreenModal = document.getElementById('fullscreenModal');
-            if (fullscreenModal) {
-                fullscreenModal.addEventListener('click', function(e) {
-                    if (e.target === this) {
-                        closeFullscreen();
-                    }
-                });
-            }
-            
-            // 초기 버튼 상태 설정
-            updateGenerateButton();
-
-            // 브라우저 호환성 체크
-            checkBrowserCompatibility();
-        });
-
-        // 브라우저 호환성 체크
-        function checkBrowserCompatibility() {
-            if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
-                console.warn('⚠️ 이 브라우저는 화면 녹화를 지원하지 않습니다.');
-                
-                // 자동 녹화 버튼 비활성화
-                const autoRecordBtn = document.getElementById('autoRecordBtn');
-                if (autoRecordBtn) {
-                    autoRecordBtn.disabled = true;
-                    autoRecordBtn.innerHTML = '❌ 브라우저 미지원';
-                    autoRecordBtn.title = 'Chrome, Firefox, Edge 최신 버전을 사용해주세요.';
-                }
+            } catch (error) {
+                console.error('❌ 키보드 이벤트 처리 실패:', error);
             }
         }
+
+        // 전체화면 변경 이벤트 처리
+        function handleFullscreenChange() {
+            try {
+                const isFullscreen = !!(document.fullscreenElement || 
+                                       document.webkitFullscreenElement || 
+                                       document.mozFullScreenElement ||
+                                       document.msFullscreenElement);
+                
+                if (!isFullscreen && isRecording) {
+                    console.log('⚠️ 전체화면이 종료되어 녹화를 중단합니다.');
+                    stopAutoRecording();
+                }
+            } catch (error) {
+                console.error('❌ 전체화면 변경 이벤트 처리 실패:', error);
+            }
+        }
+
+        // 브라우저 호환성 체크 (개선)
+        function checkBrowserCompatibility() {
+            try {
+                var compatibilityScore = 0;
+                var issues = [];
+                
+                // MediaDevices API 체크
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
+                    issues.push('화면 녹화 API 미지원');
+                } else {
+                    compatibilityScore += 30;
+                }
+                
+                // MediaRecorder API 체크
+                if (!window.MediaRecorder) {
+                    issues.push('MediaRecorder API 미지원');
+                } else {
+                    compatibilityScore += 30;
+                }
+                
+                // 전체화면 API 체크
+                if (!document.documentElement.requestFullscreen && 
+                    !document.documentElement.webkitRequestFullscreen &&
+                    !document.documentElement.mozRequestFullScreen) {
+                    issues.push('전체화면 API 미지원');
+                } else {
+                    compatibilityScore += 20;
+                }
+                
+                // Wake Lock API 체크
+                if ('wakeLock' in navigator) {
+                    compatibilityScore += 10;
+                }
+                
+                // Blob API 체크
+                if (window.Blob && window.URL && window.URL.createObjectURL) {
+                    compatibilityScore += 10;
+                }
+                
+                console.log('🔍 브라우저 호환성: ' + compatibilityScore + '%');
+                
+                if (compatibilityScore < 60) {
+                    console.warn('⚠️ 브라우저 호환성이 낮습니다:', issues);
+                    
+                    // 자동 녹화 버튼 비활성화
+                    var autoRecordBtn = document.getElementById('autoRecordBtn');
+                    if (autoRecordBtn && compatibilityScore < 30) {
+                        autoRecordBtn.disabled = true;
+                        autoRecordBtn.innerHTML = '❌ 브라우저 미지원';
+                        autoRecordBtn.title = '호환성 문제: ' + issues.join(', ') + '\nChrome, Firefox, Edge 최신 버전을 사용해주세요.';
+                    } else if (autoRecordBtn && compatibilityScore < 60) {
+                        autoRecordBtn.title = '일부 기능 제한: ' + issues.join(', ') + '\n더 나은 성능을 위해 Chrome 최신 버전을 권장합니다.';
+                    }
+                    
+                    // 사용자에게 알림
+                    if (compatibilityScore < 30) {
+                        setTimeout(function() {
+                            alert('⚠️ 브라우저 호환성 경고\n\n현재 브라우저는 자동 녹화 기능을 완전히 지원하지 않습니다.\n\n문제점:\n' + issues.map(function(issue) { return '• ' + issue; }).join('\n') + '\n\n권장 해결방법:\n• Chrome 최신 버전 사용 (권장)\n• Firefox 66+ 또는 Edge 79+ 사용\n• 브라우저 업데이트\n• 수동 녹화 모드 활용\n\n현재 호환성: ' + compatibilityScore + '%');
+                        }, 2000);
+                    }
+                } else {
+                    console.log('✅ 브라우저 호환성 우수');
+                }
+            } catch (error) {
+                console.error('❌ 브라우저 호환성 체크 실패:', error);
+            }
+        }
+
+        // 성능 모니터링
+        function monitorPerformance() {
+            try {
+                if (isRecording && 'performance' in window) {
+                    var now = performance.now();
+                    
+                    if ('memory' in performance) {
+                        var memory = performance.memory;
+                        console.log('📊 성능 상태: ' + now.toFixed(0) + 'ms, 메모리: ' + (memory.usedJSHeapSize / 1024 / 1024).toFixed(1) + 'MB');
+                        
+                        // 성능이 심각하게 저하된 경우
+                        if (memory.usedJSHeapSize > memory.jsHeapSizeLimit * 0.9) {
+                            console.warn('🚨 메모리 한계 근접, 녹화를 중단합니다.');
+                            stopAutoRecording();
+                            alert('⚠️ 시스템 리소스 부족으로 녹화가 중단되었습니다.\n\n다른 탭이나 프로그램을 종료한 후 다시 시도해주세요.');
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('❌ 성능 모니터링 실패:', error);
+            }
+        }
+
+        // 개선된 지연 함수 (중단 가능)
+        function delay(ms) {
+            return new Promise(function(resolve, reject) {
+                var timeout = setTimeout(resolve, ms);
+                
+                // 중단 가능하도록 전역에 저장
+                window.lastTimeout = timeout;
+                
+                // 페이지 언로드 시 중단
+                window.addEventListener('beforeunload', function() {
+                    clearTimeout(timeout);
+                    reject(new Error('Page unloaded'));
+                }, { once: true });
+            });
+        }
+
+        console.log('🎬 자동녹화 유튜브 쇼츠 AI 생성기 v2.0 로드 완료');
+        console.log('💡 디버깅이 필요하면 "debugRecording()" 함수를 실행하세요.');
+
+        // 녹화 중 주기적 성능 모니터링
+        setInterval(function() {
+            if (isRecording) {
+                monitorPerformance();
+            }
+        }, 5000);
+
+        // 전역 오류 처리
+        window.addEventListener('error', function(event) {
+            if (isRecording) {
+                console.error('❌ 녹화 중 전역 오류 발생:', event.error);
+                console.log('🔄 녹화 복구 시도 중...');
+                
+                // 녹화 복구 시도
+                setTimeout(function() {
+                    if (isRecording && mediaRecorder && mediaRecorder.state === 'inactive') {
+                        console.log('🔄 녹화 재시작 시도');
+                        try {
+                            mediaRecorder.start(200);
+                        } catch (error) {
+                            console.error('❌ 녹화 복구 실패:', error);
+                            stopAutoRecording();
+                        }
+                    }
+                }, 1000);
+            }
+        });
     </script>
 </body>
-</html>
+</html> 
