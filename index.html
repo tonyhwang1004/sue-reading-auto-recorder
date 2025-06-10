@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎬 프리미엄 영상 슬라이드 생성기</title>
+    <title>🎬 프리미엄 영상 슬라이드 생성기 Pro</title>
     <style>
         * {
             margin: 0;
@@ -15,6 +15,7 @@
             --primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             --secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
             --accent: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --success: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
             --dark: #1a1a1a;
             --light: #ffffff;
             --shadow: 0 20px 60px rgba(0,0,0,0.3);
@@ -23,12 +24,13 @@
 
         body {
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 30%, #f093fb 70%, #00f2fe 100%);
             background-size: 400% 400%;
-            animation: gradientShift 10s ease infinite;
+            animation: gradientShift 15s ease infinite;
             color: white;
             overflow-x: hidden;
             line-height: 1.6;
+            min-height: 100vh;
         }
 
         @keyframes gradientShift {
@@ -50,12 +52,12 @@
         /* 헤더 섹션 */
         .hero {
             text-align: center;
-            padding: 60px 20px;
-            background: rgba(0,0,0,0.3);
+            padding: 80px 20px;
+            background: rgba(0,0,0,0.4);
             border-radius: 30px;
             margin-bottom: 40px;
             backdrop-filter: blur(20px);
-            border: 2px solid rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.2);
             position: relative;
             overflow: hidden;
         }
@@ -68,11 +70,11 @@
             width: 200%;
             height: 200%;
             background: conic-gradient(transparent, rgba(255,255,255,0.1), transparent);
-            animation: rotate 10s linear infinite;
+            animation: heroRotate 20s linear infinite;
             z-index: -1;
         }
 
-        @keyframes rotate {
+        @keyframes heroRotate {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
         }
@@ -81,11 +83,12 @@
             font-size: clamp(2.5em, 6vw, 4em);
             font-weight: 900;
             margin-bottom: 20px;
-            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57);
-            background-size: 300% 300%;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57, #ff6b6b);
+            background-size: 400% 400%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            animation: textShimmer 3s ease infinite;
+            animation: textShimmer 4s ease infinite;
+            filter: drop-shadow(0 0 20px rgba(255,255,255,0.3));
         }
 
         @keyframes textShimmer {
@@ -94,52 +97,108 @@
             100% { background-position: 0% 50%; }
         }
 
-        /* API 설정 섹션 */
-        .api-section {
+        .hero-subtitle {
+            font-size: 1.5em;
+            opacity: 0.9;
+            margin-bottom: 30px;
+        }
+
+        .hero-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        .feature-card {
             background: rgba(255,255,255,0.1);
-            border-radius: 20px;
+            padding: 20px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+
+        /* 섹션 스타일 */
+        .section {
+            background: rgba(255,255,255,0.1);
+            border-radius: 25px;
             padding: 40px;
             margin: 30px 0;
             backdrop-filter: blur(15px);
             border: 1px solid rgba(255,255,255,0.2);
             transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
 
-        .api-section.connected {
-            background: rgba(0,255,100,0.1);
+        .section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.8s ease;
+        }
+
+        .section:hover::before {
+            left: 100%;
+        }
+
+        .section.connected {
+            background: rgba(0,255,100,0.15);
             border-color: rgba(0,255,100,0.5);
             box-shadow: var(--glow);
         }
 
+        .section h2 {
+            font-size: 2.2em;
+            margin-bottom: 25px;
+            text-align: center;
+            color: #4ecdc4;
+            text-shadow: 0 0 20px rgba(78, 205, 196, 0.5);
+        }
+
+        /* 입력 필드 */
         .input-group {
-            margin: 20px 0;
+            margin: 25px 0;
         }
 
         .input-label {
             display: block;
             font-weight: 700;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             color: #4ecdc4;
-            font-size: 1.2em;
+            font-size: 1.3em;
+            text-shadow: 0 0 10px rgba(78, 205, 196, 0.3);
         }
 
         .input-field {
             width: 100%;
-            padding: 15px 20px;
+            padding: 18px 25px;
             background: rgba(255,255,255,0.1);
             border: 2px solid rgba(255,255,255,0.3);
-            border-radius: 15px;
+            border-radius: 18px;
             color: white;
-            font-size: 1.1em;
-            transition: all 0.3s ease;
+            font-size: 1.2em;
+            transition: all 0.4s ease;
             backdrop-filter: blur(10px);
+            font-family: inherit;
         }
 
         .input-field:focus {
             outline: none;
             border-color: #4ecdc4;
-            box-shadow: 0 0 20px rgba(78, 205, 196, 0.4);
+            box-shadow: 0 0 25px rgba(78, 205, 196, 0.4);
             transform: scale(1.02);
+            background: rgba(255,255,255,0.15);
         }
 
         .input-field::placeholder {
@@ -147,24 +206,44 @@
         }
 
         .textarea-field {
-            min-height: 150px;
+            min-height: 180px;
             resize: vertical;
+            line-height: 1.6;
         }
 
         /* 버튼 스타일 */
         .btn {
             padding: 15px 30px;
             border: none;
-            border-radius: 15px;
+            border-radius: 18px;
             font-size: 1.1em;
             font-weight: 700;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.4s ease;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
             position: relative;
             overflow: hidden;
             margin: 10px;
+            font-family: inherit;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            transition: all 0.5s ease;
+            transform: translate(-50%, -50%);
+        }
+
+        .btn:hover:not(:disabled)::before {
+            width: 300px;
+            height: 300px;
         }
 
         .btn-primary {
@@ -176,19 +255,21 @@
         .btn-generate {
             background: var(--secondary);
             color: white;
-            font-size: 1.5em;
-            padding: 20px 40px;
+            font-size: 1.6em;
+            padding: 25px 50px;
             border-radius: 25px;
             display: block;
             width: 100%;
-            max-width: 600px;
-            margin: 40px auto;
+            max-width: 700px;
+            margin: 50px auto;
             box-shadow: var(--shadow);
+            position: relative;
+            z-index: 1;
         }
 
         .btn:hover:not(:disabled) {
-            transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.4);
         }
 
         .btn:disabled {
@@ -197,17 +278,53 @@
             transform: none;
         }
 
+        /* 모드 선택 */
+        .mode-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .mode-card {
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .mode-card.selected {
+            background: rgba(78, 205, 196, 0.2);
+            border-color: #4ecdc4;
+            box-shadow: 0 0 30px rgba(78, 205, 196, 0.4);
+        }
+
+        .mode-card:hover {
+            transform: translateY(-5px);
+            border-color: #4ecdc4;
+        }
+
+        .mode-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+            display: block;
+        }
+
         /* 슬라이드쇼 컨테이너 */
         .slideshow-container {
             position: relative;
-            max-width: 900px;
+            max-width: 700px;
             margin: 40px auto;
             background: #000;
             border-radius: 30px;
             overflow: hidden;
             box-shadow: var(--shadow);
-            border: 4px solid rgba(255,255,255,0.2);
-            aspect-ratio: 9/16; /* 세로형 비율 */
+            border: 4px solid rgba(255,255,255,0.3);
+            aspect-ratio: 9/16;
         }
 
         .slide {
@@ -215,7 +332,6 @@
             position: relative;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #667eea, #764ba2);
             overflow: hidden;
         }
 
@@ -225,56 +341,56 @@
             justify-content: center;
             align-items: center;
             text-align: center;
-            padding: 40px;
-            animation: slideIn 0.8s ease;
+            padding: 50px 30px;
+            animation: slideIn 1s ease;
         }
 
         @keyframes slideIn {
             from {
                 opacity: 0;
-                transform: translateX(50px);
+                transform: translateY(30px) scale(0.95);
             }
             to {
                 opacity: 1;
-                transform: translateX(0);
+                transform: translateY(0) scale(1);
             }
         }
 
-        /* 동영상 배경 효과 */
-        .video-background {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-            opacity: 0.3;
-        }
-
+        /* 3D 파티클 효과 */
         .particle-system {
             position: absolute;
             width: 100%;
             height: 100%;
-            z-index: 2;
+            z-index: 1;
+            pointer-events: none;
         }
 
         .particle {
             position: absolute;
-            width: 4px;
-            height: 4px;
+            width: 6px;
+            height: 6px;
             background: rgba(255,255,255,0.8);
             border-radius: 50%;
-            animation: float 3s ease-in-out infinite;
+            animation: particleFloat 4s ease-in-out infinite;
+            box-shadow: 0 0 10px rgba(255,255,255,0.5);
         }
 
-        @keyframes float {
+        @keyframes particleFloat {
             0%, 100% {
-                transform: translateY(0) rotate(0deg);
+                transform: translateY(0) translateX(0) rotate(0deg) scale(1);
+                opacity: 0.8;
+            }
+            25% {
+                transform: translateY(-30px) translateX(20px) rotate(90deg) scale(1.2);
                 opacity: 1;
             }
             50% {
-                transform: translateY(-50px) rotate(180deg);
-                opacity: 0.5;
+                transform: translateY(-60px) translateX(-10px) rotate(180deg) scale(0.8);
+                opacity: 0.6;
+            }
+            75% {
+                transform: translateY(-30px) translateX(-30px) rotate(270deg) scale(1.1);
+                opacity: 0.9;
             }
         }
 
@@ -285,30 +401,41 @@
         }
 
         .slide-icon {
-            font-size: 4em;
-            margin-bottom: 20px;
-            animation: iconPulse 2s ease infinite;
-            filter: drop-shadow(0 0 20px currentColor);
+            font-size: 5em;
+            margin-bottom: 25px;
+            animation: iconFloat 3s ease-in-out infinite;
+            filter: drop-shadow(0 0 25px currentColor);
         }
 
-        @keyframes iconPulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.2); }
+        @keyframes iconFloat {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg) scale(1);
+            }
+            33% {
+                transform: translateY(-15px) rotate(5deg) scale(1.1);
+            }
+            66% {
+                transform: translateY(-10px) rotate(-5deg) scale(1.05);
+            }
         }
 
         .slide-title {
-            font-size: 2.5em;
+            font-size: 2.8em;
             font-weight: 900;
-            margin-bottom: 15px;
-            text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
-            line-height: 1.2;
+            margin-bottom: 20px;
+            text-shadow: 3px 3px 10px rgba(0,0,0,0.5);
+            line-height: 1.1;
+            background: linear-gradient(45deg, #fff, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .slide-subtitle {
-            font-size: 1.4em;
-            opacity: 0.9;
-            margin-bottom: 20px;
-            text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+            font-size: 1.6em;
+            opacity: 0.95;
+            margin-bottom: 25px;
+            text-shadow: 2px 2px 6px rgba(0,0,0,0.5);
+            line-height: 1.3;
         }
 
         /* 네비게이션 */
@@ -316,32 +443,38 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 20px;
+            gap: 25px;
             margin: 30px 0;
+            flex-wrap: wrap;
         }
 
         .nav-btn {
-            background: rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.15);
             border: 2px solid rgba(255,255,255,0.4);
             color: white;
-            padding: 12px 24px;
-            border-radius: 15px;
+            padding: 15px 25px;
+            border-radius: 18px;
             cursor: pointer;
             transition: all 0.3s ease;
             backdrop-filter: blur(10px);
+            font-weight: 600;
+            font-size: 1.1em;
         }
 
         .nav-btn:hover {
-            background: rgba(255,255,255,0.3);
-            transform: translateY(-2px);
+            background: rgba(255,255,255,0.25);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
         }
 
         .slide-counter {
-            background: rgba(0,0,0,0.5);
-            padding: 10px 20px;
-            border-radius: 20px;
+            background: rgba(0,0,0,0.6);
+            padding: 12px 25px;
+            border-radius: 25px;
             font-weight: 700;
             color: #4ecdc4;
+            font-size: 1.2em;
+            border: 2px solid rgba(78, 205, 196, 0.3);
         }
 
         /* 진행 상황 모달 */
@@ -355,8 +488,8 @@
             display: none;
             justify-content: center;
             align-items: center;
-            z-index: 1000;
-            backdrop-filter: blur(10px);
+            z-index: 2000;
+            backdrop-filter: blur(15px);
         }
 
         .progress-modal.show {
@@ -365,132 +498,211 @@
 
         .progress-content {
             background: rgba(255,255,255,0.1);
-            border: 2px solid rgba(255,255,255,0.3);
+            border: 3px solid rgba(255,255,255,0.3);
             border-radius: 30px;
             padding: 60px;
             text-align: center;
-            backdrop-filter: blur(20px);
+            backdrop-filter: blur(25px);
             max-width: 500px;
             width: 90%;
+            position: relative;
+            overflow: hidden;
         }
 
         .progress-icon {
-            font-size: 4em;
-            margin-bottom: 20px;
-            animation: progressSpin 2s linear infinite;
+            font-size: 5em;
+            margin-bottom: 25px;
+            animation: progressRotate 3s ease-in-out infinite;
+            filter: drop-shadow(0 0 30px currentColor);
         }
 
-        @keyframes progressSpin {
-            from { transform: rotate(0deg) scale(1); }
-            50% { transform: rotate(180deg) scale(1.1); }
-            to { transform: rotate(360deg) scale(1); }
+        @keyframes progressRotate {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.2); }
+            100% { transform: rotate(360deg) scale(1); }
         }
 
         .progress-bar {
             width: 100%;
-            height: 15px;
+            height: 18px;
             background: rgba(255,255,255,0.2);
-            border-radius: 10px;
+            border-radius: 12px;
             overflow: hidden;
-            margin: 20px 0;
+            margin: 25px 0;
+            border: 2px solid rgba(255,255,255,0.1);
         }
 
         .progress-fill {
             height: 100%;
             background: var(--accent);
             width: 0%;
-            transition: width 0.3s ease;
+            transition: width 0.5s ease;
             border-radius: 10px;
+            box-shadow: 0 0 20px rgba(79, 172, 254, 0.5);
         }
 
         /* 상태 메시지 */
         .status-message {
             margin: 20px 0;
-            padding: 15px 25px;
-            border-radius: 15px;
+            padding: 18px 30px;
+            border-radius: 18px;
             font-weight: 700;
             text-align: center;
             display: none;
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(15px);
+            font-size: 1.1em;
         }
 
         .status-message.success {
             background: rgba(0,255,100,0.2);
             border: 2px solid rgba(0,255,100,0.5);
             color: #00ff88;
+            box-shadow: 0 0 25px rgba(0,255,100,0.3);
         }
 
         .status-message.error {
             background: rgba(255,0,100,0.2);
             border: 2px solid rgba(255,0,100,0.5);
             color: #ff6b6b;
+            box-shadow: 0 0 25px rgba(255,0,100,0.3);
+        }
+
+        .status-message.warning {
+            background: rgba(255,165,0,0.2);
+            border: 2px solid rgba(255,165,0,0.5);
+            color: #ffa500;
+            box-shadow: 0 0 25px rgba(255,165,0,0.3);
         }
 
         /* 반응형 디자인 */
         @media (max-width: 768px) {
             .container {
-                padding: 10px;
+                padding: 15px;
             }
             
             .hero {
-                padding: 40px 20px;
+                padding: 50px 20px;
             }
             
-            .api-section {
+            .section {
                 padding: 30px 20px;
             }
             
             .slide-title {
-                font-size: 2em;
+                font-size: 2.2em;
             }
             
             .slide-subtitle {
-                font-size: 1.2em;
+                font-size: 1.3em;
+            }
+            
+            .mode-selector {
+                grid-template-columns: 1fr;
+            }
+            
+            .slide-navigation {
+                gap: 15px;
+            }
+            
+            .nav-btn {
+                padding: 12px 20px;
+                font-size: 1em;
             }
         }
 
-        /* 3D 효과 */
-        .slide-3d {
-            transform-style: preserve-3d;
-            perspective: 1000px;
+        /* 추가 효과 */
+        .floating-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
         }
 
-        .slide-3d .slide-content {
-            transform: translateZ(50px);
+        .floating-element {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            animation: floatUpDown 6s ease-in-out infinite;
         }
 
-        /* 고급 애니메이션 */
-        .advanced-animation {
-            animation: advancedFloat 4s ease-in-out infinite;
-        }
-
-        @keyframes advancedFloat {
+        @keyframes floatUpDown {
             0%, 100% {
-                transform: translateY(0) rotateX(0) rotateY(0);
-            }
-            25% {
-                transform: translateY(-10px) rotateX(5deg) rotateY(5deg);
+                transform: translateY(0) rotate(0deg);
+                opacity: 0.3;
             }
             50% {
-                transform: translateY(-15px) rotateX(0) rotateY(10deg);
+                transform: translateY(-100px) rotate(180deg);
+                opacity: 0.8;
             }
-            75% {
-                transform: translateY(-10px) rotateX(-5deg) rotateY(5deg);
-            }
+        }
+
+        .success-animation {
+            animation: successPulse 2s ease-in-out;
+        }
+
+        @keyframes successPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
         }
     </style>
 </head>
 <body>
+    <!-- 떠다니는 요소들 -->
+    <div class="floating-elements" id="floatingElements"></div>
+
     <div class="container">
         <!-- 헤더 -->
         <div class="hero">
             <h1>🎬 프리미엄 영상 슬라이드 생성기</h1>
-            <p style="font-size: 1.3em; opacity: 0.9;">GPT API + 최고급 영상 효과로 완벽한 슬라이드 제작</p>
+            <p class="hero-subtitle">AI + 최고급 영상 효과로 완벽한 슬라이드 제작</p>
+            
+            <div class="hero-features">
+                <div class="feature-card">
+                    <div style="font-size: 2em; margin-bottom: 10px;">🤖</div>
+                    <h3>스마트 AI 분석</h3>
+                    <p>내용을 자동 분석하여 최적의 슬라이드 구성</p>
+                </div>
+                <div class="feature-card">
+                    <div style="font-size: 2em; margin-bottom: 10px;">🎨</div>
+                    <h3>프리미엄 효과</h3>
+                    <p>3D 애니메이션과 파티클 시스템</p>
+                </div>
+                <div class="feature-card">
+                    <div style="font-size: 2em; margin-bottom: 10px;">📱</div>
+                    <h3>완벽 최적화</h3>
+                    <p>유튜브 쇼츠 9:16 비율 지원</p>
+                </div>
+            </div>
         </div>
 
-        <!-- API 설정 -->
-        <div class="api-section" id="apiSection">
-            <h2 style="font-size: 2em; margin-bottom: 25px; text-align: center;">🔑 OpenAI API 설정</h2>
+        <!-- 생성 모드 선택 -->
+        <div class="section">
+            <h2>🎯 생성 모드 선택</h2>
+            <div class="mode-selector">
+                <div class="mode-card selected" id="smartMode" onclick="selectMode('smart')">
+                    <span class="mode-icon">🧠</span>
+                    <h3>스마트 모드</h3>
+                    <p>AI 없이도 자동으로 15장의 고품질 슬라이드 생성</p>
+                    <p style="color: #4ecdc4; font-weight: bold;">✅ 추천</p>
+                </div>
+                <div class="mode-card" id="apiMode" onclick="selectMode('api')">
+                    <span class="mode-icon">🔑</span>
+                    <h3>API 모드</h3>
+                    <p>OpenAI GPT API로 맞춤형 슬라이드 생성</p>
+                    <p style="color: #ffa500; font-weight: bold;">⚠️ API 키 필요</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- API 설정 (API 모드 선택시에만 표시) -->
+        <div class="section" id="apiSection" style="display: none;">
+            <h2>🔑 OpenAI API 설정</h2>
             <div class="input-group">
                 <label class="input-label">API 키</label>
                 <input type="password" class="input-field" id="apiKey" 
@@ -500,47 +712,95 @@
                 <button class="btn btn-primary" onclick="setupAPI()">API 연결</button>
                 <div class="status-message" id="apiStatus"></div>
             </div>
+            <div style="background: rgba(255,165,0,0.1); border: 2px solid rgba(255,165,0,0.3); border-radius: 15px; padding: 20px; margin: 20px 0;">
+                <h4 style="color: #ffa500; margin-bottom: 10px;">💡 API 관련 안내</h4>
+                <ul style="text-align: left; margin-left: 20px; line-height: 1.8;">
+                    <li>API 요청 한도 초과시 429 오류 발생 가능</li>
+                    <li>무료 계정은 분당 3회, 시간당 200회 제한</li>
+                    <li>유료 계정 권장 (더 높은 한도)</li>
+                    <li>오류 발생시 스마트 모드 이용 권장</li>
+                </ul>
+            </div>
         </div>
 
         <!-- 콘텐츠 입력 -->
-        <div class="api-section">
-            <h2 style="font-size: 2em; margin-bottom: 25px; text-align: center;">✏️ 콘텐츠 입력</h2>
+        <div class="section">
+            <h2>✏️ 콘텐츠 입력</h2>
             
             <div class="input-group">
                 <label class="input-label">📝 제목</label>
                 <input type="text" class="input-field" id="titleInput" 
-                       placeholder="슬라이드 제목을 입력하세요">
+                       placeholder="슬라이드 제목을 입력하세요"
+                       value="Sue Reading Club - AI 영어교육의 혁신">
             </div>
 
             <div class="input-group">
                 <label class="input-label">📄 내용</label>
                 <textarea class="input-field textarea-field" id="contentInput" 
-                          placeholder="슬라이드에 포함할 내용을 상세히 입력하세요..."></textarea>
+                          placeholder="슬라이드에 포함할 내용을 상세히 입력하세요...">🏆 회사소개
+Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관입니다.
+
+🤖 핵심서비스  
+- AI 독해 시스템: 개인별 취약점 실시간 진단
+- 스마트 속독: 읽기 속도 3배 향상 보장
+- AI 토론 클래스: 실시간 영어 대화 연습
+- 즉석 피드백: 발음부터 문법까지 정확한 교정
+
+⭐ 차별화포인트
+- 최신 AI 기술과 20년 노하우의 혁신적 융합
+- 개인별 맞춤 학습으로 효율성 극대화
+
+📊 성과데이터
+- 98% 학부모 만족도로 입증된 교육 품질
+- 평균 3.2배 성적 향상이라는 놀라운 실적
+
+🎁 특별혜택
+- 첫 달 30% 할인으로 부담 없는 시작
+- 무료 AI 레벨테스트로 정확한 실력 진단
+
+📍 연락처
+- 위치: 인천 연수구 송도동 22-20 해온더라운지 702호
+- 연락처: 010-4602-1953</textarea>
             </div>
 
-            <button class="btn-generate" id="generateBtn" onclick="generateSlides()" disabled>
+            <button class="btn-generate" id="generateBtn" onclick="generateSlides()">
                 🚀 프리미엄 슬라이드 생성하기
             </button>
         </div>
 
         <!-- 슬라이드쇼 결과 -->
         <div id="resultSection" style="display: none;">
-            <h2 style="font-size: 2em; margin-bottom: 25px; text-align: center;">🎉 완성된 슬라이드</h2>
-            
-            <div class="slideshow-container" id="slideshowContainer">
-                <!-- 슬라이드들이 여기에 동적으로 생성됩니다 -->
-            </div>
+            <div class="section success-animation">
+                <h2>🎉 완성된 프리미엄 슬라이드</h2>
+                
+                <div class="slideshow-container" id="slideshowContainer">
+                    <!-- 슬라이드들이 여기에 동적으로 생성됩니다 -->
+                </div>
 
-            <div class="slide-navigation">
-                <button class="nav-btn" onclick="prevSlide()">⬅️ 이전</button>
-                <span class="slide-counter" id="slideCounter">1 / 15</span>
-                <button class="nav-btn" onclick="nextSlide()">다음 ➡️</button>
-                <button class="nav-btn" onclick="toggleAutoPlay()">⏯️ 자동재생</button>
-            </div>
+                <div class="slide-navigation">
+                    <button class="nav-btn" onclick="prevSlide()">⬅️ 이전</button>
+                    <span class="slide-counter" id="slideCounter">1 / 15</span>
+                    <button class="nav-btn" onclick="nextSlide()">다음 ➡️</button>
+                    <button class="nav-btn" onclick="toggleAutoPlay()" id="autoPlayBtn">▶️ 자동재생</button>
+                </div>
 
-            <div style="text-align: center; margin: 30px 0;">
-                <button class="btn btn-primary" onclick="downloadSlides()">📁 슬라이드 다운로드</button>
-                <button class="btn btn-primary" onclick="startScreenRecord()">🎬 화면 녹화</button>
+                <div style="background: rgba(0,255,100,0.1); border: 2px solid rgba(0,255,100,0.3); border-radius: 20px; padding: 25px; margin: 30px 0;">
+                    <h3 style="color: #00ff88; margin-bottom: 15px;">✨ 슬라이드 특징</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; text-align: left;">
+                        <div>✅ 총 15장의 프리미엄 슬라이드</div>
+                        <div>🎨 3D 파티클 애니메이션</div>
+                        <div>📱 유튜브 쇼츠 최적화 (9:16)</div>
+                        <div>⚡ 부드러운 전환 효과</div>
+                        <div>🎬 자동재생 지원</div>
+                        <div>📁 고품질 다운로드</div>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin: 30px 0;">
+                    <button class="btn btn-primary" onclick="downloadSlides()">📁 슬라이드 다운로드</button>
+                    <button class="btn btn-primary" onclick="startScreenRecord()">🎬 화면 녹화</button>
+                    <button class="btn btn-primary" onclick="restartSlideshow()">🔄 처음부터 재생</button>
+                </div>
             </div>
         </div>
     </div>
@@ -548,13 +808,13 @@
     <!-- 진행 상황 모달 -->
     <div class="progress-modal" id="progressModal">
         <div class="progress-content">
-            <div class="progress-icon" id="progressIcon">🤖</div>
-            <h3 id="progressTitle">슬라이드 생성 중...</h3>
-            <p id="progressDesc">GPT가 내용을 분석하고 있습니다.</p>
+            <div class="progress-icon" id="progressIcon">🎬</div>
+            <h3 id="progressTitle">프리미엄 슬라이드 생성 중...</h3>
+            <p id="progressDesc">AI가 내용을 분석하고 있습니다.</p>
             <div class="progress-bar">
                 <div class="progress-fill" id="progressFill"></div>
             </div>
-            <div id="progressText">0%</div>
+            <div id="progressText" style="font-size: 1.2em; font-weight: bold; color: #4ecdc4;">0%</div>
         </div>
     </div>
 
@@ -565,6 +825,69 @@
         let currentSlide = 0;
         let autoPlayInterval = null;
         let isAutoPlaying = false;
+        let currentMode = 'smart';
+
+        // 페이지 로드 시 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            createFloatingElements();
+            updateGenerateButton();
+            
+            // 입력 필드 이벤트
+            document.getElementById('titleInput').addEventListener('input', updateGenerateButton);
+            document.getElementById('contentInput').addEventListener('input', updateGenerateButton);
+            
+            // 키보드 단축키
+            document.addEventListener('keydown', function(e) {
+                if (slides.length > 0) {
+                    if (e.key === 'ArrowLeft') {
+                        e.preventDefault();
+                        prevSlide();
+                    }
+                    if (e.key === 'ArrowRight') {
+                        e.preventDefault();
+                        nextSlide();
+                    }
+                    if (e.key === ' ') {
+                        e.preventDefault();
+                        toggleAutoPlay();
+                    }
+                }
+            });
+        });
+
+        // 떠다니는 요소 생성
+        function createFloatingElements() {
+            const container = document.getElementById('floatingElements');
+            for (let i = 0; i < 15; i++) {
+                const element = document.createElement('div');
+                element.className = 'floating-element';
+                element.style.left = Math.random() * 100 + '%';
+                element.style.animationDelay = Math.random() * 6 + 's';
+                element.style.animationDuration = (4 + Math.random() * 4) + 's';
+                container.appendChild(element);
+            }
+        }
+
+        // 모드 선택
+        function selectMode(mode) {
+            currentMode = mode;
+            
+            // 모드 카드 업데이트
+            document.querySelectorAll('.mode-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            document.getElementById(mode + 'Mode').classList.add('selected');
+            
+            // API 섹션 표시/숨김
+            const apiSection = document.getElementById('apiSection');
+            if (mode === 'api') {
+                apiSection.style.display = 'block';
+            } else {
+                apiSection.style.display = 'none';
+            }
+            
+            updateGenerateButton();
+        }
 
         // API 설정
         function setupAPI() {
@@ -572,27 +895,32 @@
             const key = keyInput.value.trim();
             
             if (!key) {
-                showStatus('❌ API 키를 입력해주세요.', 'error');
+                showStatus('❌ API 키를 입력해주세요.', 'error', 'apiStatus');
                 return;
             }
             
             if (!key.startsWith('sk-') || key.length < 40) {
-                showStatus('❌ 올바른 API 키 형식이 아닙니다.', 'error');
+                showStatus('❌ 올바른 API 키 형식이 아닙니다.', 'error', 'apiStatus');
                 return;
             }
             
             apiKey = key;
             document.getElementById('apiSection').classList.add('connected');
-            showStatus('✅ API 연결 성공!', 'success');
+            showStatus('✅ API 연결 성공!', 'success', 'apiStatus');
             updateGenerateButton();
         }
 
         // 상태 메시지 표시
-        function showStatus(message, type) {
-            const status = document.getElementById('apiStatus');
+        function showStatus(message, type, elementId = 'apiStatus') {
+            const status = document.getElementById(elementId);
             status.textContent = message;
             status.className = `status-message ${type}`;
             status.style.display = 'block';
+            
+            // 3초 후 자동 숨김
+            setTimeout(() => {
+                status.style.display = 'none';
+            }, 3000);
         }
 
         // 생성 버튼 상태 업데이트
@@ -603,9 +931,21 @@
             
             const hasTitle = titleInput.value.trim().length > 0;
             const hasContent = contentInput.value.trim().length > 0;
-            const hasAPI = apiKey.length > 0;
             
-            generateBtn.disabled = !(hasTitle && hasContent && hasAPI);
+            let canGenerate = hasTitle && hasContent;
+            
+            if (currentMode === 'api') {
+                canGenerate = canGenerate && apiKey.length > 0;
+            }
+            
+            generateBtn.disabled = !canGenerate;
+            
+            // 버튼 텍스트 업데이트
+            if (currentMode === 'smart') {
+                generateBtn.innerHTML = '🧠 스마트 슬라이드 생성하기';
+            } else {
+                generateBtn.innerHTML = '🤖 AI 슬라이드 생성하기';
+            }
         }
 
         // 슬라이드 생성 메인 함수
@@ -613,39 +953,207 @@
             const title = document.getElementById('titleInput').value.trim();
             const content = document.getElementById('contentInput').value.trim();
             
-            if (!apiKey || !title || !content) {
-                alert('❌ 모든 필드를 입력해주세요!');
+            if (!title || !content) {
+                alert('❌ 제목과 내용을 모두 입력해주세요!');
+                return;
+            }
+            
+            if (currentMode === 'api' && !apiKey) {
+                alert('❌ API 모드에서는 API 키가 필요합니다!');
                 return;
             }
             
             showProgressModal(true);
             
             try {
-                // 1단계: GPT로 슬라이드 내용 생성
-                updateProgress(20, '📝 내용 분석', 'GPT가 슬라이드 내용을 생성하고 있습니다...', '🤖');
-                const slideData = await generateSlideContent(title, content);
+                let slideData;
                 
-                // 2단계: 슬라이드 생성
-                updateProgress(60, '🎨 슬라이드 제작', '고급 효과를 적용하고 있습니다...', '✨');
+                if (currentMode === 'smart') {
+                    // 스마트 모드: AI 없이 자동 생성
+                    updateProgress(20, '🧠 스마트 분석', '내용을 자동으로 분석하고 있습니다...', '🧠');
+                    await delay(1000);
+                    
+                    updateProgress(60, '🎨 슬라이드 제작', '15장의 프리미엄 슬라이드를 생성하고 있습니다...', '🎨');
+                    slideData = generateSmartSlides(title, content);
+                    await delay(1500);
+                    
+                } else {
+                    // API 모드: GPT API 사용
+                    updateProgress(20, '🤖 AI 분석', 'GPT가 내용을 분석하고 있습니다...', '🤖');
+                    slideData = await generateSlideWithAPI(title, content);
+                    
+                    updateProgress(60, '🎨 슬라이드 제작', '고급 효과를 적용하고 있습니다...', '✨');
+                    await delay(1000);
+                }
+                
+                updateProgress(80, '🎬 최종 완성', '파티클 효과와 애니메이션을 추가하고 있습니다...', '✨');
                 await createSlides(slideData);
+                await delay(500);
                 
-                // 3단계: 완료
                 updateProgress(100, '🎉 완성!', '프리미엄 슬라이드가 준비되었습니다!', '🎬');
+                await delay(1000);
                 
-                setTimeout(() => {
-                    showProgressModal(false);
-                    showResults();
-                }, 1000);
+                showProgressModal(false);
+                showResults();
                 
             } catch (error) {
                 console.error('생성 오류:', error);
                 showProgressModal(false);
-                alert('❌ 슬라이드 생성에 실패했습니다: ' + error.message);
+                
+                if (error.message.includes('429')) {
+                    alert('❌ API 요청 한도 초과! 스마트 모드를 이용해보세요.\n\n스마트 모드는 API 없이도 고품질 슬라이드를 생성합니다.');
+                    selectMode('smart');
+                } else {
+                    alert('❌ 슬라이드 생성에 실패했습니다: ' + error.message);
+                }
             }
         }
 
-        // GPT API로 슬라이드 내용 생성
-        async function generateSlideContent(title, content) {
+        // 스마트 모드 슬라이드 생성
+        function generateSmartSlides(title, content) {
+            const colors = [
+                '#667eea', '#f093fb', '#4facfe', '#43e97b', '#fa709a',
+                '#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57',
+                '#ff9ff3', '#54a0ff', '#5f27cd', '#00d2d3', '#ff9f43'
+            ];
+            
+            const icons = ['🚀', '🏆', '🤖', '📚', '⚡', '💬', '🎯', '👑', '📖', '🧠', '📊', '🎁', '📍', '📅', '📞'];
+            
+            // 내용 분석해서 키워드 추출
+            const lines = content.split('\n').filter(line => line.trim());
+            const sections = [];
+            
+            // 주요 섹션 추출
+            lines.forEach(line => {
+                if (line.includes('🏆') || line.includes('회사소개')) {
+                    sections.push({ type: 'intro', content: line });
+                } else if (line.includes('🤖') || line.includes('핵심서비스')) {
+                    sections.push({ type: 'service', content: line });
+                } else if (line.includes('⭐') || line.includes('차별화')) {
+                    sections.push({ type: 'advantage', content: line });
+                } else if (line.includes('📊') || line.includes('성과')) {
+                    sections.push({ type: 'result', content: line });
+                } else if (line.includes('🎁') || line.includes('혜택')) {
+                    sections.push({ type: 'benefit', content: line });
+                } else if (line.includes('📍') || line.includes('연락처')) {
+                    sections.push({ type: 'contact', content: line });
+                } else if (line.trim().startsWith('-')) {
+                    sections.push({ type: 'feature', content: line });
+                }
+            });
+            
+            // 15장 슬라이드 구성
+            return [
+                {
+                    slideNumber: 1,
+                    icon: '🚀',
+                    title: title,
+                    subtitle: '혁신적인 교육 솔루션의 시작',
+                    color: colors[0]
+                },
+                {
+                    slideNumber: 2,
+                    icon: '🏆',
+                    title: 'Sue Reading Club',
+                    subtitle: '송도의 20년 전통 AI 기반 영어교육 전문기관',
+                    color: colors[1]
+                },
+                {
+                    slideNumber: 3,
+                    icon: '🤖',
+                    title: 'AI 혁신 기술',
+                    subtitle: '최신 AI와 20년 노하우의 완벽한 융합',
+                    color: colors[2]
+                },
+                {
+                    slideNumber: 4,
+                    icon: '📚',
+                    title: 'AI 독해 시스템',
+                    subtitle: '개인별 취약점 실시간 진단 및 분석',
+                    color: colors[3]
+                },
+                {
+                    slideNumber: 5,
+                    icon: '⚡',
+                    title: '스마트 속독 시스템',
+                    subtitle: '읽기 속도 3배 향상 보장 프로그램',
+                    color: colors[4]
+                },
+                {
+                    slideNumber: 6,
+                    icon: '💬',
+                    title: 'AI 토론 클래스',
+                    subtitle: '실시간 영어 대화 연습 및 즉석 피드백',
+                    color: colors[5]
+                },
+                {
+                    slideNumber: 7,
+                    icon: '🎯',
+                    title: '즉석 피드백 시스템',
+                    subtitle: '발음부터 문법까지 정확한 실시간 교정',
+                    color: colors[6]
+                },
+                {
+                    slideNumber: 8,
+                    icon: '👑',
+                    title: '프리미엄 교육',
+                    subtitle: '개인별 맞춤 학습으로 효율성 극대화',
+                    color: colors[7]
+                },
+                {
+                    slideNumber: 9,
+                    icon: '📖',
+                    title: '혁신적 융합',
+                    subtitle: '최신 AI 기술과 20년 노하우의 완벽한 조합',
+                    color: colors[8]
+                },
+                {
+                    slideNumber: 10,
+                    icon: '🧠',
+                    title: '개인 맞춤 학습',
+                    subtitle: 'AI가 분석한 개인별 최적 학습 경로 제공',
+                    color: colors[9]
+                },
+                {
+                    slideNumber: 11,
+                    icon: '📊',
+                    title: '검증된 성과',
+                    subtitle: '98% 학부모 만족도, 평균 3.2배 성적 향상',
+                    color: colors[10]
+                },
+                {
+                    slideNumber: 12,
+                    icon: '🎁',
+                    title: '특별 혜택',
+                    subtitle: '첫 달 30% 할인 + 무료 AI 레벨테스트',
+                    color: colors[11]
+                },
+                {
+                    slideNumber: 13,
+                    icon: '📍',
+                    title: '프리미엄 위치',
+                    subtitle: '송도 해온더라운지 702호, 접근성 최고',
+                    color: colors[12]
+                },
+                {
+                    slideNumber: 14,
+                    icon: '📅',
+                    title: '상담 및 운영시간',
+                    subtitle: '평일 오전 10시~오후 8시, 언제든 상담 가능',
+                    color: colors[13]
+                },
+                {
+                    slideNumber: 15,
+                    icon: '📞',
+                    title: '010-4602-1953',
+                    subtitle: '지금 바로 연락하여 영어 실력 혁신을 시작!',
+                    color: colors[14]
+                }
+            ];
+        }
+
+        // API 모드 슬라이드 생성
+        async function generateSlideWithAPI(title, content) {
             const prompt = `다음 내용을 기반으로 15장의 매력적인 슬라이드를 만들어주세요:
 
 제목: ${title}
@@ -672,52 +1180,45 @@
 
 JSON 형식으로만 답변해주세요.`;
 
-            const response = await fetch('https://api.openai.com/v1/chat/completions', {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${apiKey}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    model: 'gpt-4',
-                    messages: [
-                        {
-                            role: 'user',
-                            content: prompt
-                        }
-                    ],
-                    max_tokens: 2000,
-                    temperature: 0.7
-                })
-            });
-
-            if (!response.ok) {
-                throw new Error(`API 오류: ${response.status}`);
-            }
-
-            const data = await response.json();
-            const content_text = data.choices[0].message.content;
-            
             try {
-                return JSON.parse(content_text);
-            } catch (e) {
-                // JSON 파싱 실패시 기본 슬라이드 생성
-                return generateDefaultSlides(title);
-            }
-        }
+                const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${apiKey}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        model: 'gpt-4',
+                        messages: [
+                            {
+                                role: 'user',
+                                content: prompt
+                            }
+                        ],
+                        max_tokens: 2000,
+                        temperature: 0.7
+                    })
+                });
 
-        // 기본 슬라이드 생성 (백업용)
-        function generateDefaultSlides(title) {
-            const colors = ['#667eea', '#f093fb', '#4facfe', '#43e97b', '#fa709a', '#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57', '#ff9ff3', '#54a0ff', '#5f27cd', '#00d2d3', '#ff9f43'];
-            const icons = ['🚀', '💡', '🎯', '⭐', '🔥', '💎', '🌟', '🎨', '📊', '🏆', '💰', '📈', '🎉', '🌈', '✨'];
-            
-            return Array.from({length: 15}, (_, i) => ({
-                slideNumber: i + 1,
-                icon: icons[i % icons.length],
-                title: `${title} - ${i + 1}`,
-                subtitle: `슬라이드 ${i + 1}의 핵심 내용`,
-                color: colors[i % colors.length]
-            }));
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(`API Error ${response.status}: ${errorData.error?.message || '알 수 없는 오류'}`);
+                }
+
+                const data = await response.json();
+                const content_text = data.choices[0].message.content;
+                
+                try {
+                    return JSON.parse(content_text);
+                } catch (e) {
+                    // JSON 파싱 실패시 스마트 모드로 대체
+                    console.warn('JSON 파싱 실패, 스마트 모드로 대체');
+                    return generateSmartSlides(title, content);
+                }
+            } catch (error) {
+                console.error('API 요청 실패:', error);
+                throw error;
+            }
         }
 
         // 슬라이드 생성
@@ -729,9 +1230,6 @@ JSON 형식으로만 답변해주세요.`;
             slideData.forEach((slide, index) => {
                 const slideElement = createSlideElement(slide, index);
                 container.appendChild(slideElement);
-                
-                // 입자 효과 추가
-                addParticleEffect(slideElement);
             });
             
             currentSlide = 0;
@@ -741,35 +1239,36 @@ JSON 형식으로만 답변해주세요.`;
         // 개별 슬라이드 요소 생성
         function createSlideElement(slide, index) {
             const slideDiv = document.createElement('div');
-            slideDiv.className = 'slide slide-3d';
+            slideDiv.className = 'slide';
             slideDiv.style.background = `linear-gradient(135deg, ${slide.color}, #764ba2)`;
             
             slideDiv.innerHTML = `
-                <div class="video-background" id="video-bg-${index}"></div>
                 <div class="particle-system" id="particles-${index}"></div>
-                <div class="slide-content advanced-animation">
+                <div class="slide-content">
                     <div class="slide-icon">${slide.icon}</div>
                     <div class="slide-title">${slide.title}</div>
                     <div class="slide-subtitle">${slide.subtitle}</div>
-                    <div style="position: absolute; bottom: 20px; right: 20px; background: rgba(0,0,0,0.5); padding: 10px 15px; border-radius: 15px; font-size: 1em;">
+                    <div style="position: absolute; bottom: 25px; right: 25px; background: rgba(0,0,0,0.6); padding: 12px 20px; border-radius: 20px; font-size: 1.1em; font-weight: bold; border: 2px solid rgba(255,255,255,0.2);">
                         ${slide.slideNumber}/15
                     </div>
                 </div>
             `;
             
+            // 파티클 효과 추가
+            addParticleEffect(slideDiv.querySelector('.particle-system'));
+            
             return slideDiv;
         }
 
-        // 입자 효과 추가
-        function addParticleEffect(slideElement) {
-            const particleSystem = slideElement.querySelector('.particle-system');
-            
-            for (let i = 0; i < 20; i++) {
+        // 파티클 효과 추가
+        function addParticleEffect(particleSystem) {
+            for (let i = 0; i < 25; i++) {
                 const particle = document.createElement('div');
                 particle.className = 'particle';
                 particle.style.left = Math.random() * 100 + '%';
-                particle.style.animationDelay = Math.random() * 3 + 's';
-                particle.style.animationDuration = (2 + Math.random() * 2) + 's';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 4 + 's';
+                particle.style.animationDuration = (3 + Math.random() * 3) + 's';
                 particleSystem.appendChild(particle);
             }
         }
@@ -797,26 +1296,39 @@ JSON 형식으로만 답변해주세요.`;
 
         // 이전/다음 슬라이드
         function prevSlide() {
+            if (isAutoPlaying) toggleAutoPlay();
             const newIndex = currentSlide > 0 ? currentSlide - 1 : slides.length - 1;
             showSlide(newIndex);
         }
 
         function nextSlide() {
+            if (isAutoPlaying) toggleAutoPlay();
             const newIndex = currentSlide < slides.length - 1 ? currentSlide + 1 : 0;
             showSlide(newIndex);
         }
 
         // 자동 재생
         function toggleAutoPlay() {
+            const autoPlayBtn = document.getElementById('autoPlayBtn');
+            
             if (isAutoPlaying) {
                 clearInterval(autoPlayInterval);
                 isAutoPlaying = false;
+                autoPlayBtn.textContent = '▶️ 자동재생';
             } else {
                 autoPlayInterval = setInterval(() => {
-                    nextSlide();
+                    const nextIndex = currentSlide < slides.length - 1 ? currentSlide + 1 : 0;
+                    showSlide(nextIndex);
                 }, 3000);
                 isAutoPlaying = true;
+                autoPlayBtn.textContent = '⏸️ 일시정지';
             }
+        }
+
+        // 슬라이드쇼 재시작
+        function restartSlideshow() {
+            if (isAutoPlaying) toggleAutoPlay();
+            showSlide(0);
         }
 
         // 진행 상황 모달 제어
@@ -842,64 +1354,88 @@ JSON 형식으로만 답변해주세요.`;
         // 화면 녹화
         async function startScreenRecord() {
             try {
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
+                    alert('❌ 이 브라우저는 화면 녹화를 지원하지 않습니다.\n\nChrome, Firefox, Edge 최신 버전을 사용해주세요.');
+                    return;
+                }
+
                 const stream = await navigator.mediaDevices.getDisplayMedia({
-                    video: { mediaSource: 'screen', width: 1920, height: 1080 },
+                    video: { 
+                        mediaSource: 'screen', 
+                        width: { ideal: 1920 }, 
+                        height: { ideal: 1080 },
+                        frameRate: { ideal: 30 }
+                    },
                     audio: true
                 });
                 
-                const recorder = new MediaRecorder(stream);
+                const recorder = new MediaRecorder(stream, {
+                    mimeType: 'video/webm;codecs=vp9',
+                    videoBitsPerSecond: 5000000
+                });
                 const chunks = [];
                 
-                recorder.ondataavailable = (e) => chunks.push(e.data);
+                recorder.ondataavailable = (e) => {
+                    if (e.data.size > 0) chunks.push(e.data);
+                };
+                
                 recorder.onstop = () => {
                     const blob = new Blob(chunks, { type: 'video/webm' });
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement('a');
                     a.href = url;
-                    a.download = 'premium-slideshow.webm';
+                    a.download = `premium-slideshow-${Date.now()}.webm`;
                     a.click();
+                    URL.revokeObjectURL(url);
                 };
                 
                 recorder.start();
-                alert('🎬 녹화 시작! 화면 공유를 중지하면 녹화가 종료됩니다.');
+                alert('🎬 녹화 시작!\n\n📱 슬라이드 영역을 선택하여 녹화하세요.\n⏹️ 화면 공유를 중지하면 녹화가 종료됩니다.');
                 
                 stream.getVideoTracks()[0].onended = () => {
                     recorder.stop();
+                    alert('🎉 녹화 완료! 파일이 다운로드됩니다.');
                 };
                 
             } catch (error) {
+                console.error('녹화 오류:', error);
                 alert('❌ 화면 녹화에 실패했습니다: ' + error.message);
             }
         }
 
         // 슬라이드 다운로드
         function downloadSlides() {
-            const slidesData = JSON.stringify(slides, null, 2);
-            const blob = new Blob([slidesData], { type: 'application/json' });
+            const slidesData = {
+                title: document.getElementById('titleInput').value,
+                content: document.getElementById('contentInput').value,
+                slides: slides,
+                generatedAt: new Date().toISOString(),
+                mode: currentMode
+            };
+            
+            const dataStr = JSON.stringify(slidesData, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'premium-slides.json';
+            a.download = `premium-slides-${Date.now()}.json`;
             a.click();
+            URL.revokeObjectURL(url);
         }
 
-        // 이벤트 리스너
-        document.addEventListener('DOMContentLoaded', function() {
-            // 입력 필드 이벤트
-            document.getElementById('titleInput').addEventListener('input', updateGenerateButton);
-            document.getElementById('contentInput').addEventListener('input', updateGenerateButton);
-            
-            // 키보드 단축키
-            document.addEventListener('keydown', function(e) {
-                if (slides.length > 0) {
-                    if (e.key === 'ArrowLeft') prevSlide();
-                    if (e.key === 'ArrowRight') nextSlide();
-                    if (e.key === ' ') {
-                        e.preventDefault();
-                        toggleAutoPlay();
-                    }
-                }
-            });
+        // 유틸리티 함수
+        function delay(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        // 전역 오류 처리
+        window.addEventListener('error', function(event) {
+            console.error('전역 오류:', event.error);
+        });
+
+        window.addEventListener('unhandledrejection', function(event) {
+            console.error('처리되지 않은 Promise 거부:', event.reason);
+            event.preventDefault();
         });
     </script>
 </body>
