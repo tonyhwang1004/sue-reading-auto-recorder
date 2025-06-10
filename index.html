@@ -1,3 +1,5 @@
+1822
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -720,39 +722,6 @@
                 <input type="password" class="input-field" id="apiKey" 
                        placeholder="sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx">
             </div>
-            
-            <!-- 🤖 모델 선택 섹션 -->
-            <div class="input-group">
-                <label class="input-label">🤖 AI 모델 선택</label>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 15px 0;">
-                    <div class="model-option selected" id="model-gpt35" onclick="selectModel('gpt-3.5-turbo')">
-                        <div style="font-size: 2em; margin-bottom: 10px;">💰</div>
-                        <h4>GPT-3.5 Turbo</h4>
-                        <p style="color: #4ecdc4; font-weight: bold;">75% 절약!</p>
-                        <p style="font-size: 0.9em; opacity: 0.8;">$3/1M 토큰</p>
-                        <p style="font-size: 0.8em; margin-top: 5px;">빠르고 경제적</p>
-                    </div>
-                    <div class="model-option" id="model-gpt4o" onclick="selectModel('gpt-4o')">
-                        <div style="font-size: 2em; margin-bottom: 10px;">⚡</div>
-                        <h4>GPT-4o</h4>
-                        <p style="color: #feca57; font-weight: bold;">빠른 속도</p>
-                        <p style="font-size: 0.9em; opacity: 0.8;">$15/1M 토큰</p>
-                        <p style="font-size: 0.8em; margin-top: 5px;">균형잡힌 성능</p>
-                    </div>
-                    <div class="model-option" id="model-gpt4" onclick="selectModel('gpt-4')">
-                        <div style="font-size: 2em; margin-bottom: 10px;">🧠</div>
-                        <h4>GPT-4</h4>
-                        <p style="color: #ff6b6b; font-weight: bold;">최고 품질</p>
-                        <p style="font-size: 0.9em; opacity: 0.8;">$30/1M 토큰</p>
-                        <p style="font-size: 0.8em; margin-top: 5px;">프리미엄 결과</p>
-                    </div>
-                </div>
-                <div id="modelCostEstimate" style="background: rgba(78, 205, 196, 0.1); border: 2px solid rgba(78, 205, 196, 0.3); border-radius: 15px; padding: 15px; margin: 15px 0; text-align: center;">
-                    <h4 style="color: #4ecdc4; margin-bottom: 10px;">💰 예상 비용</h4>
-                    <p id="costText">GPT-3.5 Turbo: 약 $0.05-0.10 (67-135원)</p>
-                </div>
-            </div>
-            
             <div style="text-align: center;">
                 <button class="btn btn-primary" onclick="setupAPI()">API 연결</button>
                 <div class="status-message" id="apiStatus"></div>
@@ -842,58 +811,25 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
                 </div>
 
                 <div style="text-align: center; margin: 30px 0;">
-                    <!-- 🎬 해상도 선택 버튼들 -->
-                    <div style="margin-bottom: 25px;">
-                        <h3 style="color: #4ecdc4; margin-bottom: 15px;">🎬 녹화 해상도 선택</h3>
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 20px 0;">
-                            <button class="btn btn-primary" onclick="startRecordingWithResolution('1080p')" style="background: linear-gradient(45deg, #4ecdc4, #44a08d);">
-                                📱 1080p HD<br><span style="font-size: 0.8em;">1080×1920 • 부드러운 재생</span>
-                            </button>
-                            <button class="btn btn-primary" onclick="startRecordingWithResolution('1440p')" style="background: linear-gradient(45deg, #45b7d1, #4facfe);">
-                                🎯 1440p QHD<br><span style="font-size: 0.8em;">1440×2560 • 균형잡힌 품질</span>
-                            </button>
-                            <button class="btn btn-primary" onclick="startRecordingWithResolution('4k')" style="background: linear-gradient(45deg, #ff4444, #ff6666);">
-                                💎 4K UHD<br><span style="font-size: 0.8em;">2160×3840 • 최고 품질</span>
-                            </button>
-                        </div>
-                    </div>
-                    
+                    <button class="btn btn-primary" onclick="startAutoSlideRecording()" style="font-size: 1.3em; padding: 20px 40px; margin: 10px; background: linear-gradient(45deg, #ff4444, #ff6666);">🎬 4K 자동 녹화</button>
                     <button class="btn btn-primary" onclick="startScreenRecord()">📺 화면 공유 녹화</button>
                     <button class="btn btn-primary" onclick="downloadSlides()">📁 슬라이드 다운로드</button>
                     <button class="btn btn-primary" onclick="restartSlideshow()">🔄 처음부터 재생</button>
                 </div>
 
-                <div style="background: rgba(78,205,196,0.1); border: 2px solid rgba(78,205,196,0.3); border-radius: 20px; padding: 25px; margin: 30px 0;">
-                    <h3 style="color: #4ecdc4; margin-bottom: 15px;">🎬 해상도별 특징 비교</h3>
+                <div style="background: rgba(255,68,68,0.1); border: 2px solid rgba(255,68,68,0.3); border-radius: 20px; padding: 25px; margin: 30px 0;">
+                    <h3 style="color: #ff4444; margin-bottom: 15px;">🎬 4K 자동 녹화 시스템</h3>
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; text-align: left;">
-                        <div style="background: rgba(78,205,196,0.1); padding: 15px; border-radius: 10px;">
-                            <h4 style="color: #4ecdc4;">📱 1080p HD</h4>
-                            <ul style="margin: 10px 0; font-size: 0.9em;">
-                                <li>✅ 가장 부드러운 재생</li>
-                                <li>✅ 빠른 렌더링</li>
-                                <li>✅ 작은 파일 크기</li>
-                                <li>🎯 추천: 일반 사용</li>
-                            </ul>
-                        </div>
-                        <div style="background: rgba(69,183,209,0.1); padding: 15px; border-radius: 10px;">
-                            <h4 style="color: #45b7d1;">🎯 1440p QHD</h4>
-                            <ul style="margin: 10px 0; font-size: 0.9em;">
-                                <li>⚡ 좋은 품질과 성능</li>
-                                <li>⚡ 적당한 파일 크기</li>
-                                <li>⚡ 안정적인 재생</li>
-                                <li>🎯 추천: 비즈니스</li>
-                            </ul>
-                        </div>
-                        <div style="background: rgba(255,68,68,0.1); padding: 15px; border-radius: 10px;">
-                            <h4 style="color: #ff4444;">💎 4K UHD</h4>
-                            <ul style="margin: 10px 0; font-size: 0.9em;">
-                                <li>🔥 최고 화질</li>
-                                <li>⚠️ 큰 파일 크기</li>
-                                <li>⚠️ 높은 PC 사양 필요</li>
-                                <li>🎯 추천: 프리미엄</li>
-                            </ul>
-                        </div>
+                        <div>✨ 4K 해상도 (2160×3840)</div>
+                        <div>📱 유튜브 쇼츠 9:16 비율</div>
+                        <div>🎯 45초 완벽한 타이밍</div>
+                        <div>🎨 자동 파티클 효과</div>
+                        <div>⚡ 60fps 부드러운 전환</div>
+                        <div>💾 MP4 호환 WebM 저장</div>
                     </div>
+                    <p style="margin-top: 15px; font-size: 1.1em; color: #ff6666;">
+                        🚀 <strong>클릭 한 번으로 완벽한 유튜브 쇼츠 영상 완성!</strong>
+                    </p>
                 </div>
             </div>
         </div>
@@ -920,388 +856,6 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
         let autoPlayInterval = null;
         let isAutoPlaying = false;
         let currentMode = 'smart';
-        let selectedModel = 'gpt-3.5-turbo'; // 기본값
-
-        // 모델 선택
-        function selectModel(model) {
-            selectedModel = model;
-            
-            // 모델 카드 업데이트
-            document.querySelectorAll('.model-option').forEach(card => {
-                card.classList.remove('selected');
-            });
-            
-            const modelId = model.replace('.', '').replace('-', '');
-            const selectedCard = document.getElementById(`model-${modelId}`);
-            if (selectedCard) {
-                selectedCard.classList.add('selected');
-            }
-            
-            // 비용 예상 업데이트
-            updateCostEstimate(model);
-        }
-
-        // 비용 예상 업데이트
-        function updateCostEstimate(model) {
-            const costText = document.getElementById('costText');
-            if (!costText) return;
-            
-            const costs = {
-                'gpt-3.5-turbo': {
-                    usd: '$0.05-0.10',
-                    krw: '67-135원',
-                    desc: '가장 경제적인 선택'
-                },
-                'gpt-4o': {
-                    usd: '$0.25-0.50', 
-                    krw: '337-675원',
-                    desc: '빠르고 효율적'
-                },
-                'gpt-4': {
-                    usd: '$0.50-1.00',
-                    krw: '675-1350원', 
-                    desc: '최고 품질 보장'
-                }
-            };
-            
-            const cost = costs[model];
-            if (cost) {
-                costText.innerHTML = `${model}: 약 ${cost.usd} (${cost.krw})<br><small style="opacity: 0.8;">${cost.desc}</small>`;
-            }
-        }
-
-        // 🎬 해상도별 녹화 시작
-        async function startRecordingWithResolution(resolution) {
-            if (slides.length === 0) {
-                alert('❌ 먼저 슬라이드를 생성해주세요!');
-                return;
-            }
-
-            const resolutions = {
-                '1080p': { width: 1080, height: 1920, name: '1080p HD', fps: 60, bitrate: 8000000 },
-                '1440p': { width: 1440, height: 2560, name: '1440p QHD', fps: 60, bitrate: 12000000 },
-                '4k': { width: 2160, height: 3840, name: '4K UHD', fps: 60, bitrate: 20000000 }
-            };
-
-            const config = resolutions[resolution];
-            if (!config) {
-                alert('❌ 지원하지 않는 해상도입니다!');
-                return;
-            }
-
-            // 🚀 녹화 설정 확인
-            const confirm = window.confirm(`🎬 ${config.name} 자동 녹화 시작!
-
-🎯 녹화 설정:
-━━━━━━━━━━━━━━━━━━━━
-📺 해상도: ${config.name} (${config.width}×${config.height})
-📱 비율: 9:16 (유튜브 쇼츠)
-⚡ 길이: 정확히 45초
-🎨 프레임율: ${config.fps}fps
-💾 비트레이트: ${(config.bitrate/1000000)}Mbps
-🌪️ 전환: 10가지 극강 효과
-✨ 파티클: 실시간 150개
-━━━━━━━━━━━━━━━━━━━━
-
-🚀 시작하시겠습니까?`);
-
-            if (!confirm) return;
-
-            try {
-                await startAdvancedRecording(config);
-            } catch (error) {
-                console.error('🚨 녹화 오류:', error);
-                alert(`❌ 녹화 실패: ${error.message}\n\n💡 Chrome/Firefox 최신 버전을 사용해주세요.`);
-            }
-        }
-
-        // 🎬 고급 녹화 시스템 (해상도별)
-        async function startAdvancedRecording(config) {
-            // 캔버스 생성 (선택된 해상도)
-            const canvas = document.createElement('canvas');
-            canvas.width = config.width;
-            canvas.height = config.height;
-            const ctx = canvas.getContext('2d');
-            
-            recordingState.canvas = canvas;
-            recordingState.ctx = ctx;
-            recordingState.recordedChunks = [];
-            recordingState.isRecording = true;
-
-            console.log(`🎬 ${config.name} 녹화 시작: ${config.width}x${config.height}`);
-
-            // 스트림 생성 (해상도별 최적화)
-            const stream = canvas.captureStream(config.fps);
-            
-            // MediaRecorder 설정 (해상도별 비트레이트)
-            const options = {
-                mimeType: 'video/webm;codecs=vp9,opus',
-                videoBitsPerSecond: config.bitrate,
-                audioSampleRate: 48000
-            };
-
-            // 브라우저 호환성 확인
-            if (!MediaRecorder.isTypeSupported(options.mimeType)) {
-                options.mimeType = 'video/webm;codecs=vp8';
-                if (!MediaRecorder.isTypeSupported(options.mimeType)) {
-                    options.mimeType = 'video/webm';
-                    options.videoBitsPerSecond = Math.min(config.bitrate, 10000000);
-                }
-            }
-
-            recordingState.mediaRecorder = new MediaRecorder(stream, options);
-            
-            // 녹화 데이터 수집
-            recordingState.mediaRecorder.ondataavailable = (event) => {
-                if (event.data && event.data.size > 0) {
-                    recordingState.recordedChunks.push(event.data);
-                }
-            };
-
-            // 녹화 완료 처리
-            recordingState.mediaRecorder.onstop = async () => {
-                await saveOptimizedVideo(config);
-            };
-
-            // 녹화 시작
-            recordingState.mediaRecorder.start(100);
-            
-            // UI 표시
-            showOptimizedRecordingUI(config);
-
-            // 슬라이드 녹화 시작
-            await recordOptimizedSlideshow(config);
-        }
-
-        // 🎨 최적화된 슬라이드 녹화
-        async function recordOptimizedSlideshow(config) {
-            const totalDuration = 45000; // 45초
-            const slideCount = slides.length;
-            const slideBaseDuration = Math.floor(totalDuration / slideCount);
-            const transitionDuration = Math.min(1000, slideBaseDuration * 0.3); // 전환 시간 최적화
-            const contentDuration = slideBaseDuration - transitionDuration;
-
-            console.log(`🎬 ${config.name} 녹화 설정: ${slideCount}장, 각 ${slideBaseDuration}ms`);
-
-            let currentTime = 0;
-            const startTime = performance.now();
-
-            for (let i = 0; i < slideCount; i++) {
-                if (!recordingState.isRecording) break;
-
-                // 진행상황 업데이트
-                updateOptimizedProgress(i + 1, slideCount, currentTime, totalDuration, config);
-
-                // 슬라이드 내용 렌더링 (해상도 최적화)
-                const slideStartTime = performance.now();
-                while (performance.now() - slideStartTime < contentDuration) {
-                    await renderOptimizedSlide(slides[i], i, config);
-                    await delay(Math.max(16, 1000 / config.fps)); // FPS 최적화
-                }
-
-                // 전환 효과 (해상도에 따라 복잡도 조정)
-                if (i < slideCount - 1) {
-                    await animateOptimizedTransition(slides[i], slides[i + 1], config);
-                }
-
-                currentTime += slideBaseDuration;
-                
-                // 타이밍 보정
-                const expectedTime = startTime + currentTime;
-                const actualTime = performance.now();
-                const timeDiff = expectedTime - actualTime;
-                
-                if (timeDiff > 0) {
-                    await delay(timeDiff);
-                }
-            }
-
-            // 정확히 45초에 종료
-            console.log(`🎬 ${config.name} 녹화 완료!`);
-            setTimeout(() => {
-                if (recordingState.isRecording && recordingState.mediaRecorder) {
-                    recordingState.mediaRecorder.stop();
-                    recordingState.isRecording = false;
-                }
-            }, Math.max(0, totalDuration - (performance.now() - startTime)));
-        }
-
-        // 🎨 해상도 최적화 슬라이드 렌더링
-        async function renderOptimizedSlide(slide, index, config) {
-            const canvas = recordingState.canvas;
-            const ctx = recordingState.ctx;
-            const time = performance.now() * 0.002;
-            
-            // 해상도에 따른 효과 레벨 조정
-            const effectLevel = config.width >= 2160 ? 1.0 : config.width >= 1440 ? 0.7 : 0.5;
-            const particleCount = Math.floor(150 * effectLevel);
-            
-            // 동적 배경 (효과 레벨 적용)
-            const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-            const hue1 = (parseInt(slide.color.slice(1), 16) + time * 30) % 360;
-            const hue2 = (hue1 + 120) % 360;
-            
-            gradient.addColorStop(0, `hsl(${hue1}, 100%, 60%)`);
-            gradient.addColorStop(1, `hsl(${hue2}, 100%, 50%)`);
-            
-            ctx.fillStyle = gradient;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            // 최적화된 파티클 렌더링
-            renderOptimizedParticles(ctx, canvas.width, canvas.height, particleCount, effectLevel);
-
-            // 텍스트 렌더링 (해상도 비례)
-            const fontSize = canvas.height * 0.12;
-            const titleFontSize = canvas.height * 0.08;
-            const subtitleFontSize = canvas.height * 0.05;
-
-            // 아이콘
-            ctx.save();
-            ctx.font = `bold ${fontSize}px Arial, sans-serif`;
-            ctx.fillStyle = 'white';
-            ctx.shadowColor = `hsl(${hue1}, 100%, 80%)`;
-            ctx.shadowBlur = 30 * effectLevel;
-            ctx.textAlign = 'center';
-            ctx.fillText(slide.icon, canvas.width / 2, canvas.height * 0.25);
-            ctx.restore();
-
-            // 제목
-            ctx.save();
-            ctx.font = `900 ${titleFontSize}px Arial, sans-serif`;
-            ctx.fillStyle = 'white';
-            ctx.shadowColor = 'rgba(0,0,0,0.8)';
-            ctx.shadowBlur = 20;
-            ctx.textAlign = 'center';
-            
-            const titleLines = wrapText(ctx, slide.title, canvas.width * 0.9);
-            titleLines.forEach((line, i) => {
-                ctx.fillText(line, canvas.width / 2, canvas.height * 0.45 + (i * titleFontSize * 1.2));
-            });
-            ctx.restore();
-
-            // 부제목
-            ctx.save();
-            ctx.font = `600 ${subtitleFontSize}px Arial, sans-serif`;
-            ctx.fillStyle = 'rgba(255,255,255,0.9)';
-            ctx.shadowColor = 'rgba(0,0,0,0.7)';
-            ctx.shadowBlur = 15;
-            ctx.textAlign = 'center';
-            
-            const subtitleLines = wrapText(ctx, slide.subtitle, canvas.width * 0.9);
-            subtitleLines.forEach((line, i) => {
-                ctx.fillText(line, canvas.width / 2, canvas.height * 0.7 + (i * subtitleFontSize * 1.2));
-            });
-            ctx.restore();
-
-            // 슬라이드 번호
-            ctx.save();
-            ctx.font = `bold ${canvas.height * 0.04}px Arial, sans-serif`;
-            ctx.fillStyle = 'rgba(255,255,255,0.8)';
-            ctx.textAlign = 'center';
-            ctx.fillText(`${index + 1}/${slides.length}`, canvas.width * 0.85, canvas.height * 0.9);
-            ctx.restore();
-        }
-
-        // ✨ 최적화된 파티클 시스템
-        function renderOptimizedParticles(ctx, width, height, count, effectLevel) {
-            const time = performance.now() * 0.003;
-            
-            ctx.save();
-            for (let i = 0; i < count; i++) {
-                const pattern = i % 3; // 패턴 단순화
-                let x, y, size, opacity;
-                
-                switch(pattern) {
-                    case 0: // 나선
-                        const spiral = time + i * 0.2;
-                        x = width/2 + Math.cos(spiral) * (100 + i * 3);
-                        y = height/2 + Math.sin(spiral) * (100 + i * 3);
-                        break;
-                    case 1: // 파도
-                        x = (i / count) * width;
-                        y = height/2 + Math.sin(time * 2 + i * 0.5) * 80;
-                        break;
-                    case 2: // 떠오름
-                        x = Math.random() * width;
-                        y = (height - ((time * 60 + i * 10) % (height + 150)));
-                        break;
-                }
-                
-                size = (8 + Math.sin(time + i) * 4) * effectLevel;
-                opacity = (0.5 + Math.sin(time + i) * 0.3) * effectLevel;
-                
-                ctx.globalAlpha = opacity;
-                ctx.fillStyle = `hsl(${(time * 50 + i * 10) % 360}, 100%, 70%)`;
-                ctx.beginPath();
-                ctx.arc(x, y, size, 0, Math.PI * 2);
-                ctx.fill();
-            }
-            ctx.restore();
-        }
-
-        // 🌪️ 최적화된 전환 효과
-        async function animateOptimizedTransition(currentSlide, nextSlide, config) {
-            const effectLevel = config.width >= 2160 ? 1.0 : config.width >= 1440 ? 0.8 : 0.6;
-            const frames = Math.floor(20 * effectLevel); // 프레임 수 조정
-            
-            // 간단한 전환 효과들 (성능 최적화)
-            const effects = ['fade', 'slide', 'zoom'];
-            const effect = effects[Math.floor(Math.random() * effects.length)];
-            
-            for (let frame = 0; frame < frames; frame++) {
-                const progress = frame / frames;
-                const ctx = recordingState.ctx;
-                
-                switch(effect) {
-                    case 'fade':
-                        await renderOptimizedSlide(nextSlide, 0, config);
-                        ctx.save();
-                        ctx.globalAlpha = 1 - progress;
-                        await renderOptimizedSlide(currentSlide, 0, config);
-                        ctx.restore();
-                        break;
-                        
-                    case 'slide':
-                        ctx.save();
-                        ctx.translate(-progress * recordingState.canvas.width, 0);
-                        await renderOptimizedSlide(currentSlide, 0, config);
-                        ctx.restore();
-                        
-                        ctx.save();
-                        ctx.translate((1 - progress) * recordingState.canvas.width, 0);
-                        await renderOptimizedSlide(nextSlide, 0, config);
-                        ctx.restore();
-                        break;
-                        
-                    case 'zoom':
-                        const centerX = recordingState.canvas.width / 2;
-                        const centerY = recordingState.canvas.height / 2;
-                        
-                        if (progress < 0.5) {
-                            ctx.save();
-                            const scale = 1 + progress * 2;
-                            ctx.globalAlpha = 1 - progress * 2;
-                            ctx.translate(centerX, centerY);
-                            ctx.scale(scale, scale);
-                            ctx.translate(-centerX, -centerY);
-                            await renderOptimizedSlide(currentSlide, 0, config);
-                            ctx.restore();
-                        } else {
-                            ctx.save();
-                            const scale = 3 - (progress - 0.5) * 4;
-                            ctx.globalAlpha = (progress - 0.5) * 2;
-                            ctx.translate(centerX, centerY);
-                            ctx.scale(scale, scale);
-                            ctx.translate(-centerX, -centerY);
-                            await renderOptimizedSlide(nextSlide, 0, config);
-                            ctx.restore();
-                        }
-                        break;
-                }
-                
-                await delay(Math.max(16, 1000 / config.fps));
-            }
-        }
 
         // 페이지 로드 시 초기화
         document.addEventListener('DOMContentLoaded', function() {
@@ -1628,27 +1182,8 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
             ];
         }
 
-        // API 모드 슬라이드 생성 (GPT-3.5/4o 선택 가능)
+        // API 모드 슬라이드 생성
         async function generateSlideWithAPI(title, content) {
-            // 🎯 모델 선택 (비용 최적화)
-            const useGPT35 = confirm(`🤖 AI 모델 선택
-
-💰 GPT-3.5 Turbo (추천):
-- 비용: $3/1M 토큰 (75% 절약!)
-- 속도: 매우 빠름
-- 품질: 우수
-
-🧠 GPT-4o:
-- 비용: $15/1M 토큰
-- 속도: 빠름  
-- 품질: 최고급
-
-GPT-3.5 Turbo를 사용하시겠습니까?
-(비용 절약 + 빠른 속도)`);
-
-            const modelName = useGPT35 ? 'gpt-3.5-turbo' : 'gpt-4o';
-            console.log(`🤖 선택된 모델: ${modelName}`);
-
             const prompt = `다음 내용을 기반으로 15장의 매력적인 슬라이드를 만들어주세요:
 
 제목: ${title}
@@ -1683,14 +1218,14 @@ JSON 형식으로만 답변해주세요.`;
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        model: modelName,
+                        model: 'gpt-4',
                         messages: [
                             {
                                 role: 'user',
                                 content: prompt
                             }
                         ],
-                        max_tokens: useGPT35 ? 2500 : 2000, // GPT-3.5는 더 많은 토큰 허용
+                        max_tokens: 2000,
                         temperature: 0.7
                     })
                 });
@@ -1703,27 +1238,10 @@ JSON 형식으로만 답변해주세요.`;
                 const data = await response.json();
                 const content_text = data.choices[0].message.content;
                 
-                // 💰 비용 정보 표시
-                const usage = data.usage;
-                if (usage) {
-                    const inputCost = useGPT35 ? 
-                        (usage.prompt_tokens / 1000000) * 3 : 
-                        (usage.prompt_tokens / 1000000) * 15;
-                    const outputCost = useGPT35 ? 
-                        (usage.completion_tokens / 1000000) * 6 : 
-                        (usage.completion_tokens / 1000000) * 60;
-                    const totalCost = inputCost + outputCost;
-                    
-                    console.log(`💰 API 사용 비용:
-📊 모델: ${modelName}
-📥 입력 토큰: ${usage.prompt_tokens}
-📤 출력 토큰: ${usage.completion_tokens}  
-💵 예상 비용: ${totalCost.toFixed(4)} (약 ${(totalCost * 1350).toFixed(0)}원)`);
-                }
-                
                 try {
                     return JSON.parse(content_text);
                 } catch (e) {
+                    // JSON 파싱 실패시 스마트 모드로 대체
                     console.warn('JSON 파싱 실패, 스마트 모드로 대체');
                     return generateSmartSlides(title, content);
                 }
@@ -1903,688 +1421,174 @@ JSON 형식으로만 답변해주세요.`;
             }
         }
 
-            // 🎨 VIRAL 장식 프레임 (4K 전용)
-            ctx.save();
-            ctx.strokeStyle = `hsla(${hue1}, 100%, 80%, 0.6)`;
-            ctx.lineWidth = 8;
-            ctx.shadowColor = `hsla(${hue1}, 100%, 80%, 0.8)`;
-            ctx.shadowBlur = 20;
-            
-            const frameSize = 120;
-            const frameOffset = 60;
-            
-            // 🔸 4개 모서리 VIRAL 프레임
-            // 좌상단
-            ctx.beginPath();
-            ctx.moveTo(frameOffset, frameOffset + frameSize);
-            ctx.lineTo(frameOffset, frameOffset);
-            ctx.lineTo(frameOffset + frameSize, frameOffset);
-            ctx.stroke();
-            
-            // 우상단
-            ctx.beginPath();
-            ctx.moveTo(canvas.width - frameOffset - frameSize, frameOffset);
-            ctx.lineTo(canvas.width - frameOffset, frameOffset);
-            ctx.lineTo(canvas.width - frameOffset, frameOffset + frameSize);
-            ctx.stroke();
-            
-            // 좌하단
-            ctx.beginPath();
-            ctx.moveTo(frameOffset, canvas.height - frameOffset - frameSize);
-            ctx.lineTo(frameOffset, canvas.height - frameOffset);
-            ctx.lineTo(frameOffset + frameSize, canvas.height - frameOffset);
-            ctx.stroke();
-            
-            // 우하단
-            ctx.beginPath();
-            ctx.moveTo(canvas.width - frameOffset - frameSize, canvas.height - frameOffset);
-            ctx.lineTo(canvas.width - frameOffset, canvas.height - frameOffset);
-            ctx.lineTo(canvas.width - frameOffset, canvas.height - frameOffset - frameSize);
-            ctx.stroke();
-            
-            ctx.restore();
-        }
-
-        // ✨ 150개 VIRAL 파티클 시스템 (극강 효과)
-        function renderViralParticles(ctx, width, height) {
-            const particleCount = 150; // 파티클 수 3배 증가
-            const time = performance.now() * 0.003;
-            
-            ctx.save();
-            
-            for (let i = 0; i < particleCount; i++) {
-                // 🌪️ 6가지 VIRAL 움직임 패턴
-                const pattern = i % 6;
-                let x, y, size, opacity, color;
-                
-                switch(pattern) {
-                    case 0: // 🌀 나선 폭발
-                        const spiral = time * 3 + i * 0.1;
-                        const spiralRadius = (time * 200 + i * 10) % (width * 0.7);
-                        x = width/2 + Math.cos(spiral) * spiralRadius;
-                        y = height/2 + Math.sin(spiral) * spiralRadius;
-                        color = `hsl(${(time * 100 + i * 5) % 360}, 100%, 70%)`;
-                        break;
-                        
-                    case 1: // 🌊 파도 서핑
-                        x = ((time * 150 + i * 20) % (width + 200)) - 100;
-                        y = height/2 + Math.sin(time * 4 + i * 0.3) * (height * 0.3);
-                        color = `hsl(${180 + Math.sin(time + i) * 60}, 100%, 75%)`;
-                        break;
-                        
-                    case 2: // 🎯 타겟 원형
-                        const orbit = time * 2 + i * 0.4;
-                        const orbitRadius = 100 + Math.sin(time + i) * 150;
-                        x = width/2 + Math.cos(orbit) * orbitRadius;
-                        y = height/2 + Math.sin(orbit) * orbitRadius;
-                        color = `hsl(${60 + i * 3}, 100%, 80%)`;
-                        break;
-                        
-                    case 3: // 🚀 로켓 궤적
-                        const rocketTime = (time * 100 + i * 30) % (height + 400);
-                        x = width * 0.2 + Math.sin(time + i) * (width * 0.6);
-                        y = height + 200 - rocketTime;
-                        color = `hsl(${300 + Math.sin(time * 2 + i) * 60}, 100%, 85%)`;
-                        break;
-                        
-                    case 4: // ⚡ 지그재그 번개
-                        x = width * ((i / particleCount) + Math.sin(time * 5 + i) * 0.1);
-                        y = height * 0.5 + Math.sin(time * 8 + i * 2) * (height * 0.4);
-                        color = `hsl(${45 + Math.cos(time * 3 + i) * 30}, 100%, 90%)`;
-                        break;
-                        
-                    case 5: // 💫 우주 먼지
-                        const cosmic = time * 0.5 + i * 0.05;
-                        x = Math.random() * width;
-                        y = (height + Math.sin(cosmic) * 100 - ((time * 80 + i * 15) % (height + 300)));
-                        color = `hsl(${240 + Math.random() * 120}, 100%, 85%)`;
-                        break;
-                }
-                
-                // 🎯 크기와 투명도 동적 계산
-                size = Math.sin(time * 4 + i) * 15 + 20;
-                opacity = Math.sin(time * 2 + i) * 0.5 + 0.7;
-                
-                // 🌈 VIRAL 파티클 렌더링 (다중 레이어)
-                ctx.save();
-                ctx.globalAlpha = opacity;
-                
-                // 💫 외부 글로우
-                const outerGradient = ctx.createRadialGradient(x, y, 0, x, y, size * 2);
-                outerGradient.addColorStop(0, color);
-                outerGradient.addColorStop(1, 'transparent');
-                
-                ctx.fillStyle = outerGradient;
-                ctx.beginPath();
-                ctx.arc(x, y, size * 2, 0, Math.PI * 2);
-                ctx.fill();
-                
-                // ✨ 중간 파티클
-                const innerGradient = ctx.createRadialGradient(x, y, 0, x, y, size);
-                innerGradient.addColorStop(0, 'rgba(255, 255, 255, 0.9)');
-                innerGradient.addColorStop(0.7, color);
-                innerGradient.addColorStop(1, 'transparent');
-                
-                ctx.fillStyle = innerGradient;
-                ctx.beginPath();
-                ctx.arc(x, y, size, 0, Math.PI * 2);
-                ctx.fill();
-                
-                // 💎 중심 코어
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-                ctx.beginPath();
-                ctx.arc(x, y, size * 0.3, 0, Math.PI * 2);
-                ctx.fill();
-                
-                // 🔥 랜덤 플레어 효과
-                if (Math.random() < 0.05) {
-                    ctx.save();
-                    ctx.globalAlpha = 0.8;
-                    ctx.fillStyle = 'white';
-                    ctx.shadowColor = color;
-                    ctx.shadowBlur = 40;
-                    ctx.beginPath();
-                    ctx.arc(x, y, size * 2.5, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.restore();
-                }
-                
-                ctx.restore();
-            }
-            
-            ctx.restore();
-        }
-
-        // 🎭 VIRAL 녹화 UI (극강 시각적 임팩트)
-        function showViralRecordingUI() {
-            const overlay = document.createElement('div');
-            overlay.id = 'viral-recording-overlay';
-            overlay.style.cssText = `
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: radial-gradient(circle, rgba(0,0,0,0.9) 0%, rgba(255,0,68,0.1) 100%);
-                z-index: 9999;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                backdrop-filter: blur(15px);
-                animation: viralPulse 2s ease-in-out infinite;
-            `;
-            
-            overlay.innerHTML = `
-                <div style="
-                    background: linear-gradient(135deg, rgba(255,0,68,0.2), rgba(0,255,255,0.2));
-                    border: 4px solid rgba(255,255,255,0.4);
-                    border-radius: 40px;
-                    padding: 60px 40px;
-                    text-align: center;
-                    backdrop-filter: blur(25px);
-                    max-width: 600px;
-                    width: 90%;
-                    box-shadow: 0 30px 80px rgba(255,0,68,0.4);
-                    position: relative;
-                    overflow: hidden;
-                ">
-                    <div style="
-                        position: absolute;
-                        top: -50%;
-                        left: -50%;
-                        width: 200%;
-                        height: 200%;
-                        background: conic-gradient(transparent, rgba(255,255,255,0.1), transparent);
-                        animation: spin 4s linear infinite;
-                        z-index: -1;
-                    "></div>
-                    
-                    <div style="font-size: 5em; margin-bottom: 25px; animation: viralBounce 1.5s ease-in-out infinite;">🔥</div>
-                    <h2 style="color: #ff4444; margin-bottom: 20px; font-size: 2.5em; font-weight: 900; text-shadow: 0 0 20px rgba(255,68,68,0.8);">
-                        VIRAL 4K 녹화 중!
-                    </h2>
-                    <p style="color: white; margin-bottom: 25px; font-size: 1.4em; font-weight: 600;">
-                        🚀 폭발적 바이럴 영상 생성 중...
-                    </p>
-                    
-                    <div id="viral-progress-container" style="
-                        background: rgba(0,0,0,0.3);
-                        height: 25px;
-                        border-radius: 15px;
-                        overflow: hidden;
-                        margin: 25px 0;
-                        border: 2px solid rgba(255,255,255,0.2);
-                        position: relative;
-                    ">
-                        <div id="viral-progress-bar" style="
-                            background: linear-gradient(90deg, #ff4444, #ff6666, #4ecdc4, #45b7d1);
-                            background-size: 200% 100%;
-                            height: 100%;
-                            width: 0%;
-                            transition: width 0.3s ease;
-                            border-radius: 13px;
-                            animation: viralFlow 2s ease-in-out infinite;
-                            box-shadow: 0 0 20px rgba(255,68,68,0.6);
-                        "></div>
-                        <div style="
-                            position: absolute;
-                            top: 50%;
-                            left: 50%;
-                            transform: translate(-50%, -50%);
-                            color: white;
-                            font-weight: bold;
-                            font-size: 1.1em;
-                            text-shadow: 0 0 10px rgba(0,0,0,0.8);
-                            z-index: 10;
-                        " id="viral-progress-text">0%</div>
-                    </div>
-                    
-                    <div id="viral-status" style="
-                        color: #4ecdc4;
-                        font-weight: bold;
-                        font-size: 1.3em;
-                        margin: 20px 0;
-                        text-shadow: 0 0 15px rgba(78,205,196,0.6);
-                    ">🎬 준비 중...</div>
-                    
-                    <div style="
-                        display: grid;
-                        grid-template-columns: repeat(2, 1fr);
-                        gap: 15px;
-                        margin: 25px 0;
-                        font-size: 1.1em;
-                    ">
-                        <div style="color: #feca57;">⚡ 60fps</div>
-                        <div style="color: #ff6b6b;">🎯 4K 화질</div>
-                        <div style="color: #4ecdc4;">🌪️ 10가지 전환</div>
-                        <div style="color: #96ceb4;">✨ 150개 파티클</div>
-                    </div>
-                    
-                    <button onclick="stopViralRecording()" style="
-                        margin-top: 25px;
-                        padding: 15px 35px;
-                        background: linear-gradient(45deg, #ff4444, #ff6666);
-                        color: white;
-                        border: none;
-                        border-radius: 20px;
-                        font-size: 1.3em;
-                        cursor: pointer;
-                        font-weight: bold;
-                        box-shadow: 0 8px 25px rgba(255,68,68,0.4);
-                        transition: all 0.3s ease;
-                    " onmouseover="this.style.transform='translateY(-3px) scale(1.05)'" 
-                       onmouseout="this.style.transform='translateY(0) scale(1)'">
-                        ⏹️ 중지
-                    </button>
-                </div>
-            `;
-            
-            // 🎨 CSS 애니메이션 추가
-            const style = document.createElement('style');
-            style.textContent = `
-                @keyframes viralPulse {
-                    0%, 100% { background: radial-gradient(circle, rgba(0,0,0,0.9) 0%, rgba(255,0,68,0.1) 100%); }
-                    50% { background: radial-gradient(circle, rgba(0,0,0,0.9) 0%, rgba(0,255,255,0.2) 100%); }
-                }
-                
-                @keyframes viralBounce {
-                    0%, 100% { transform: translateY(0) scale(1); }
-                    50% { transform: translateY(-20px) scale(1.2); }
-                }
-                
-                @keyframes viralFlow {
-                    0% { background-position: 0% 50%; }
-                    50% { background-position: 100% 50%; }
-                    100% { background-position: 0% 50%; }
-                }
-                
-                @keyframes spin {
-                    from { transform: rotate(0deg); }
-                    to { transform: rotate(360deg); }
-                }
-            `;
-            document.head.appendChild(style);
-            document.body.appendChild(overlay);
-        }
-
-        // 📊 VIRAL 진행상황 업데이트
-        function updateViralProgress(currentSlide, totalSlides, currentTime, totalTime) {
-            const progressBar = document.getElementById('viral-progress-bar');
-            const progressText = document.getElementById('viral-progress-text');
-            const status = document.getElementById('viral-status');
-            
-            if (progressBar && progressText && status) {
-                const slideProgress = (currentSlide / totalSlides) * 100;
-                const timeProgress = (currentTime / totalTime) * 100;
-                const overallProgress = Math.max(slideProgress, timeProgress);
-                
-                progressBar.style.width = overallProgress + '%';
-                progressText.textContent = `${Math.round(overallProgress)}%`;
-                
-                const timeLeft = Math.max(0, Math.ceil((totalTime - currentTime) / 1000));
-                status.innerHTML = `🎭 슬라이드 ${currentSlide}/${totalSlides} | ⏱️ ${timeLeft}초 남음`;
-            }
-        }
-
-        // 🎉 VIRAL 영상 저장
-        async function saveViralVideo() {
-            hideViralRecordingUI();
-            
-            if (recordingState.recordedChunks.length === 0) {
-                alert('❌ 녹화된 데이터가 없습니다.');
+        // 4K 자동 슬라이드 녹화
+        async function startAutoSlideRecording() {
+            if (slides.length === 0) {
+                alert('❌ 먼저 슬라이드를 생성해주세요!');
                 return;
             }
 
-            try {
-                const blob = new Blob(recordingState.recordedChunks, { type: 'video/webm' });
-                const sizeMB = (blob.size / 1024 / 1024).toFixed(2);
-                
-                // 파일 다운로드
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `VIRAL-SHORTS-4K-${Date.now()}.webm`;
-                a.style.display = 'none';
-                
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                
-                setTimeout(() => URL.revokeObjectURL(url), 1000);
-                
-                // 🎉 성공 메시지 (극강 스타일)
-                const successMsg = `🔥 VIRAL 4K 영상 완성! 🔥
+            // 4K 캔버스 생성 (유튜브 쇼츠 9:16 비율)
+            const canvas = document.createElement('canvas');
+            canvas.width = 2160;  // 4K 세로 해상도
+            canvas.height = 3840; // 4K 가로 해상도 (9:16 비율)
+            const ctx = canvas.getContext('2d');
+            
+            recordingState.canvas = canvas;
+            recordingState.ctx = ctx;
+            recordingState.recordedChunks = [];
 
-📊 극강 품질 정보:
-━━━━━━━━━━━━━━━━━━━━
-🎬 해상도: 4K (2160×3840)
-📱 비율: 9:16 (유튜브 쇼츠)
-⏱️ 길이: 정확히 45초
-🎯 프레임율: 60fps
-💾 파일 크기: ${sizeMB}MB
-🌪️ 전환 효과: 10가지 극강
-✨ 파티클: 실시간 150개
-━━━━━━━━━━━━━━━━━━━━
+            // 캔버스 스트림 생성
+            const stream = canvas.captureStream(60); // 60fps
+            
+            // 고품질 MediaRecorder 설정
+            const options = {
+                mimeType: 'video/webm;codecs=vp9,opus',
+                videoBitsPerSecond: 15000000, // 15Mbps for 4K
+                audioSampleRate: 48000
+            };
 
-🚀 바로 유튜브 쇼츠 업로드 가능!
-💥 바이럴 폭발 준비 완료!`;
-                
-                alert(successMsg);
-                console.log('🎬 VIRAL 영상 저장 완료!');
-                
-            } catch (error) {
-                console.error('🚨 저장 오류:', error);
-                alert(`❌ 영상 저장 실패: ${error.message}`);
+            // 브라우저별 코덱 지원 확인
+            if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+                options.mimeType = 'video/webm;codecs=vp8';
+                if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+                    options.mimeType = 'video/webm';
+                }
             }
+
+            recordingState.mediaRecorder = new MediaRecorder(stream, options);
+            
+            recordingState.mediaRecorder.ondataavailable = (event) => {
+                if (event.data && event.data.size > 0) {
+                    recordingState.recordedChunks.push(event.data);
+                }
+            };
+
+            recordingState.mediaRecorder.onstop = async () => {
+                await saveRecordedVideo();
+            };
+
+            // 녹화 시작
+            recordingState.mediaRecorder.start(100); // 100ms 간격으로 데이터 수집
+            recordingState.isRecording = true;
+
+            // 녹화 UI 표시
+            showRecordingUI();
+
+            // 슬라이드 자동 녹화 시작
+            await recordAllSlides();
         }
 
-        // 🛑 VIRAL 녹화 중지
-        function stopViralRecording() {
-            if (recordingState.isRecording && recordingState.mediaRecorder) {
+        // 모든 슬라이드 자동 녹화
+        async function recordAllSlides() {
+            const totalDuration = 45000; // 45초 총 길이
+            const slideInterval = totalDuration / slides.length; // 각 슬라이드 시간
+
+            for (let i = 0; i < slides.length; i++) {
+                if (!recordingState.isRecording) break;
+
+                // 슬라이드 렌더링
+                await renderSlideToCanvas(slides[i], i);
+                
+                // 슬라이드 전환 애니메이션
+                if (i < slides.length - 1) {
+                    await animateSlideTransition(slides[i], slides[i + 1]);
+                }
+
+                // 진행상황 업데이트
+                updateRecordingProgress(i + 1, slides.length);
+                
+                // 다음 슬라이드까지 대기
+                await delay(slideInterval);
+            }
+
+            // 녹화 종료
+            if (recordingState.isRecording) {
                 recordingState.mediaRecorder.stop();
                 recordingState.isRecording = false;
-                console.log('🛑 사용자가 녹화를 중지했습니다');
-                
-                setTimeout(() => {
-                    alert('🛑 녹화가 중지되었습니다.\n\n💡 지금까지 녹화된 부분이 저장됩니다.');
-                }, 500);
             }
         }
 
-        // 🎭 VIRAL UI 숨기기
-        function hideViralRecordingUI() {
-            const overlay = document.getElementById('viral-recording-overlay');
-            if (overlay) {
-                overlay.remove();
-            }
-        }
-━━━━━━━━━━━━━━━━━━━━
-🎬 해상도: 4K (2160×3840)
-📱 비율: 9:16 (유튜브 쇼츠)
-⏱️ 길이: 정확히 45초
-🎯 프레임율: 60fps
-💾 파일 크기: ${sizeMB}MB
-🌪️ 전환 효과: 10가지 극강
-✨ 파티클: 실시간 150개
-━━━━━━━━━━━━━━━━━━━━
-
-🚀 바로 유튜브 쇼츠 업로드 가능!
-💥 바이럴 폭발 준비 완료!`;
-                
-                alert(successMsg);
-                console.log('🎬 VIRAL 영상 저장 완료!');
-                
-            } catch (error) {
-                console.error('🚨 저장 오류:', error);
-                alert(`❌ 영상 저장 실패: ${error.message}`);
-            }
-        }
-
-        // 🛑 VIRAL 녹화 중지
-        function stopViralRecording() {
-            if (recordingState.isRecording && recordingState.mediaRecorder) {
-                recordingState.mediaRecorder.stop();
-                recordingState.isRecording = false;
-                console.log('🛑 사용자가 녹화를 중지했습니다');
-                
-                setTimeout(() => {
-                    alert('🛑 녹화가 중지되었습니다.\n\n💡 지금까지 녹화된 부분이 저장됩니다.');
-                }, 500);
-            }
-        }
-
-        // 🎭 VIRAL UI 숨기기
-        function hideViralRecordingUI() {
-            const overlay = document.getElementById('viral-recording-overlay');
-            if (overlay) {
-                overlay.remove();
-            }
-        }
-
-        // 슬라이드를 4K 캔버스에 렌더링 (향상된 버전)
+        // 슬라이드를 4K 캔버스에 렌더링
         async function renderSlideToCanvas(slide, index) {
             const canvas = recordingState.canvas;
             const ctx = recordingState.ctx;
             
-            // 동적 배경 그라데이션 (시간 기반)
-            const time = Date.now() * 0.001;
+            // 배경 그라데이션
             const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-            
-            // 색상 변화 효과
-            const hue1 = (parseInt(slide.color.slice(1), 16) + time * 10) % 360;
-            const hue2 = (hue1 + 60) % 360;
-            
-            gradient.addColorStop(0, `hsl(${hue1}, 70%, 50%)`);
-            gradient.addColorStop(0.5, slide.color);
-            gradient.addColorStop(1, `hsl(${hue2}, 70%, 40%)`);
+            gradient.addColorStop(0, slide.color);
+            gradient.addColorStop(1, '#764ba2');
             
             ctx.fillStyle = gradient;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // 동적 배경 패턴
-            ctx.save();
-            ctx.globalAlpha = 0.1;
-            for (let i = 0; i < 10; i++) {
-                const x = (Math.sin(time + i) * 0.5 + 0.5) * canvas.width;
-                const y = (Math.cos(time * 1.2 + i) * 0.5 + 0.5) * canvas.height;
-                const radius = Math.sin(time * 2 + i) * 200 + 300;
-                
-                const bgGradient = ctx.createRadialGradient(x, y, 0, x, y, radius);
-                bgGradient.addColorStop(0, 'rgba(255, 255, 255, 0.3)');
-                bgGradient.addColorStop(1, 'transparent');
-                
-                ctx.fillStyle = bgGradient;
-                ctx.beginPath();
-                ctx.arc(x, y, radius, 0, Math.PI * 2);
-                ctx.fill();
-            }
-            ctx.restore();
-
-            // 향상된 파티클 효과
+            // 파티클 효과 렌더링
             renderParticles(ctx, canvas.width, canvas.height);
 
             // 텍스트 렌더링 설정
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.shadowColor = 'rgba(0,0,0,0.9)';
-            ctx.shadowBlur = 30;
-            ctx.shadowOffsetX = 6;
-            ctx.shadowOffsetY = 6;
-
-            // 아이콘 렌더링 (발광 효과)
-            ctx.save();
-            ctx.font = `bold ${canvas.height * 0.12}px Arial, sans-serif`;
-            
-            // 아이콘 발광 효과
-            ctx.shadowColor = 'rgba(255, 255, 255, 0.8)';
-            ctx.shadowBlur = 40;
-            for (let i = 0; i < 3; i++) {
-                ctx.fillStyle = 'white';
-                ctx.fillText(slide.icon, canvas.width / 2, canvas.height * 0.25);
-            }
-            
-            // 아이콘 메인
-            ctx.shadowBlur = 20;
             ctx.fillStyle = 'white';
-            ctx.fillText(slide.icon, canvas.width / 2, canvas.height * 0.25);
-            ctx.restore();
+            ctx.shadowColor = 'rgba(0,0,0,0.8)';
+            ctx.shadowBlur = 20;
+            ctx.shadowOffsetX = 4;
+            ctx.shadowOffsetY = 4;
 
-            // 제목 렌더링 (다중 효과)
-            ctx.save();
+            // 아이콘 렌더링
+            ctx.font = `bold ${canvas.height * 0.12}px Arial, sans-serif`;
+            ctx.fillText(slide.icon, canvas.width / 2, canvas.height * 0.25);
+
+            // 제목 렌더링
             ctx.font = `900 ${canvas.height * 0.08}px Arial, sans-serif`;
             const titleY = canvas.height * 0.45;
             
-            // 제목 외곽선
-            ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
-            ctx.lineWidth = canvas.height * 0.002;
-            ctx.shadowBlur = 0;
-            
+            // 제목 줄바꿈 처리
             const titleLines = wrapText(ctx, slide.title, canvas.width * 0.9);
-            titleLines.forEach((line, i) => {
-                ctx.strokeText(line, canvas.width / 2, titleY + (i * canvas.height * 0.1));
-            });
-            
-            // 제목 그라데이션
-            const titleGradient = ctx.createLinearGradient(0, titleY - 100, 0, titleY + 100);
-            titleGradient.addColorStop(0, '#ffffff');
-            titleGradient.addColorStop(0.5, '#4ecdc4');
-            titleGradient.addColorStop(1, '#ffffff');
-            
-            ctx.fillStyle = titleGradient;
-            ctx.shadowColor = 'rgba(78, 205, 196, 0.8)';
-            ctx.shadowBlur = 30;
-            
             titleLines.forEach((line, i) => {
                 ctx.fillText(line, canvas.width / 2, titleY + (i * canvas.height * 0.1));
             });
-            ctx.restore();
 
-            // 부제목 렌더링 (애니메이션 효과)
-            ctx.save();
+            // 부제목 렌더링
             ctx.font = `600 ${canvas.height * 0.05}px Arial, sans-serif`;
+            ctx.fillStyle = 'rgba(255,255,255,0.9)';
             const subtitleY = canvas.height * 0.7;
             
-            // 부제목 타이핑 효과 시뮬레이션
-            const typingProgress = (time * 2) % 4;
-            const displayText = typingProgress > 3 ? slide.subtitle : 
-                              slide.subtitle.substring(0, Math.floor(slide.subtitle.length * (typingProgress / 3)));
-            
-            ctx.fillStyle = 'rgba(255,255,255,0.95)';
-            ctx.shadowColor = 'rgba(0,0,0,0.7)';
-            ctx.shadowBlur = 20;
-            
-            const subtitleLines = wrapText(ctx, displayText, canvas.width * 0.9);
+            const subtitleLines = wrapText(ctx, slide.subtitle, canvas.width * 0.9);
             subtitleLines.forEach((line, i) => {
                 ctx.fillText(line, canvas.width / 2, subtitleY + (i * canvas.height * 0.06));
             });
-            ctx.restore();
 
-            // 슬라이드 번호 (네온 효과)
-            ctx.save();
+            // 슬라이드 번호
             ctx.font = `bold ${canvas.height * 0.04}px Arial, sans-serif`;
-            
-            // 네온 외곽선
-            ctx.strokeStyle = '#4ecdc4';
-            ctx.lineWidth = 3;
-            ctx.shadowColor = '#4ecdc4';
-            ctx.shadowBlur = 20;
-            ctx.strokeText(`${index + 1}/${slides.length}`, canvas.width * 0.85, canvas.height * 0.92);
-            
-            // 네온 내부
-            ctx.fillStyle = 'white';
+            ctx.fillStyle = 'rgba(255,255,255,0.7)';
             ctx.shadowBlur = 10;
             ctx.fillText(`${index + 1}/${slides.length}`, canvas.width * 0.85, canvas.height * 0.92);
-            ctx.restore();
 
-            // 브랜드 워터마크 (호버 효과)
-            ctx.save();
+            // 브랜드 워터마크
             ctx.font = `600 ${canvas.height * 0.025}px Arial, sans-serif`;
-            const alpha = Math.sin(time * 2) * 0.3 + 0.7;
-            ctx.fillStyle = `rgba(255,255,255,${alpha})`;
-            ctx.shadowColor = 'rgba(78, 205, 196, 0.5)';
-            ctx.shadowBlur = 15;
-            ctx.fillText('🎬 Premium AI Slideshow', canvas.width / 2, canvas.height * 0.95);
-            ctx.restore();
-
-            // 장식 요소 (모서리 효과)
-            ctx.save();
-            ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
-            ctx.lineWidth = 4;
-            ctx.shadowColor = 'rgba(255, 255, 255, 0.5)';
-            ctx.shadowBlur = 10;
-            
-            // 모서리 장식
-            const cornerSize = 80;
-            // 좌상단
-            ctx.beginPath();
-            ctx.moveTo(50, 50 + cornerSize);
-            ctx.lineTo(50, 50);
-            ctx.lineTo(50 + cornerSize, 50);
-            ctx.stroke();
-            
-            // 우상단
-            ctx.beginPath();
-            ctx.moveTo(canvas.width - 50 - cornerSize, 50);
-            ctx.lineTo(canvas.width - 50, 50);
-            ctx.lineTo(canvas.width - 50, 50 + cornerSize);
-            ctx.stroke();
-            
-            // 좌하단
-            ctx.beginPath();
-            ctx.moveTo(50, canvas.height - 50 - cornerSize);
-            ctx.lineTo(50, canvas.height - 50);
-            ctx.lineTo(50 + cornerSize, canvas.height - 50);
-            ctx.stroke();
-            
-            // 우하단
-            ctx.beginPath();
-            ctx.moveTo(canvas.width - 50 - cornerSize, canvas.height - 50);
-            ctx.lineTo(canvas.width - 50, canvas.height - 50);
-            ctx.lineTo(canvas.width - 50, canvas.height - 50 - cornerSize);
-            ctx.stroke();
-            
-            ctx.restore();
+            ctx.fillStyle = 'rgba(255,255,255,0.5)';
+            ctx.fillText('Premium Slideshow', canvas.width / 2, canvas.height * 0.95);
         }
 
-        // 파티클 효과 렌더링 (향상된 버전)
+        // 파티클 효과 렌더링
         function renderParticles(ctx, width, height) {
-            const particleCount = 50; // 파티클 수 증가
-            const time = Date.now() * 0.002; // 시간 기반 애니메이션
-            
-            ctx.save();
+            const particleCount = 30;
+            const time = Date.now() * 0.001;
             
             for (let i = 0; i < particleCount; i++) {
-                // 다양한 움직임 패턴
-                const pattern = i % 4;
-                let x, y, size, opacity;
+                const x = (Math.sin(time + i) * 0.3 + 0.5) * width;
+                const y = (Math.cos(time * 1.5 + i * 2) * 0.4 + 0.5) * height;
+                const size = Math.sin(time * 2 + i) * 8 + 12;
+                const opacity = Math.sin(time + i) * 0.3 + 0.7;
                 
-                switch(pattern) {
-                    case 0: // 나선형
-                        const spiral = time + i * 0.2;
-                        x = width/2 + Math.cos(spiral) * (100 + i * 5);
-                        y = height/2 + Math.sin(spiral) * (100 + i * 5);
-                        break;
-                    case 1: // 파도형
-                        x = (i / particleCount) * width;
-                        y = height/2 + Math.sin(time * 2 + i * 0.5) * 100;
-                        break;
-                    case 2: // 원형 궤도
-                        const orbit = time * 1.5 + i * 0.3;
-                        x = width/2 + Math.cos(orbit) * 200;
-                        y = height/2 + Math.sin(orbit) * 150;
-                        break;
-                    case 3: // 떠오르는 형태
-                        x = Math.random() * width;
-                        y = (height + Math.sin(time + i) * 50) - ((time * 100 + i * 20) % (height + 200));
-                        break;
-                }
-                
-                size = Math.sin(time * 2 + i) * 8 + 12;
-                opacity = Math.sin(time + i) * 0.4 + 0.6;
-                
-                // 그라데이션 파티클
-                const gradient = ctx.createRadialGradient(x, y, 0, x, y, size);
-                gradient.addColorStop(0, `rgba(255, 255, 255, ${opacity})`);
-                gradient.addColorStop(1, `rgba(78, 205, 196, ${opacity * 0.3})`);
-                
-                ctx.fillStyle = gradient;
+                ctx.save();
+                ctx.globalAlpha = opacity;
+                ctx.fillStyle = 'rgba(255,255,255,0.8)';
                 ctx.beginPath();
                 ctx.arc(x, y, size, 0, Math.PI * 2);
                 ctx.fill();
-                
-                // 반짝임 효과
-                if (Math.random() < 0.1) {
-                    ctx.save();
-                    ctx.globalAlpha = 0.8;
-                    ctx.fillStyle = 'white';
-                    ctx.beginPath();
-                    ctx.arc(x, y, size * 1.5, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.restore();
-                }
+                ctx.restore();
             }
-            
-            ctx.restore();
         }
 
         // 텍스트 줄바꿈 처리
@@ -2607,614 +1611,27 @@ JSON 형식으로만 답변해주세요.`;
             return lines;
         }
 
-        // 🔥 극강 역동적 화면전환 시스템 (유튜브 쇼츠 바이럴 최적화)
+        // 슬라이드 전환 애니메이션
         async function animateSlideTransition(currentSlide, nextSlide) {
-            const canvas = recordingState.canvas;
-            const ctx = recordingState.ctx;
-            
-            // 🎬 바이럴 최적화 전환 효과 (중독성 극대화)
-            const viralEffects = [
-                'hyperZoom', 'glitchExplosion', 'quantumRip', 'liquidMorph', 
-                'atomicSplit', 'timeWarp', 'dimensionCrack', 'energyBeam',
-                'cosmicCollapse', 'viralSpin'
-            ];
-            
-            const effect = viralEffects[Math.floor(Math.random() * viralEffects.length)];
-            console.log(`💥 VIRAL 전환: ${effect}`);
-            
-            switch(effect) {
-                case 'hyperZoom':
-                    await hyperZoomTransition(currentSlide, nextSlide);
-                    break;
-                case 'glitchExplosion':
-                    await glitchExplosionTransition(currentSlide, nextSlide);
-                    break;
-                case 'quantumRip':
-                    await quantumRipTransition(currentSlide, nextSlide);
-                    break;
-                case 'liquidMorph':
-                    await liquidMorphTransition(currentSlide, nextSlide);
-                    break;
-                case 'atomicSplit':
-                    await atomicSplitTransition(currentSlide, nextSlide);
-                    break;
-                case 'timeWarp':
-                    await timeWarpTransition(currentSlide, nextSlide);
-                    break;
-                case 'dimensionCrack':
-                    await dimensionCrackTransition(currentSlide, nextSlide);
-                    break;
-                case 'energyBeam':
-                    await energyBeamTransition(currentSlide, nextSlide);
-                    break;
-                case 'cosmicCollapse':
-                    await cosmicCollapseTransition(currentSlide, nextSlide);
-                    break;
-                case 'viralSpin':
-                    await viralSpinTransition(currentSlide, nextSlide);
-                    break;
-            }
-        }
-
-        // 🚀 하이퍼 줌 전환 (극강 속도감)
-        async function hyperZoomTransition(currentSlide, nextSlide) {
-            const frames = 20; // 초고속 전환
+            const frames = 20; // 전환 프레임 수
+            const frameDuration = 50; // 각 프레임 지속시간 (ms)
             
             for (let frame = 0; frame < frames; frame++) {
                 const progress = frame / frames;
-                const ctx = recordingState.ctx;
-                const centerX = recordingState.canvas.width / 2;
-                const centerY = recordingState.canvas.height / 2;
                 
-                // 극강 속도감을 위한 이징 함수
-                const easeInOut = progress < 0.5 ? 
-                    8 * progress * progress * progress * progress : 
-                    1 - Math.pow(-2 * progress + 2, 4) / 2;
+                // 현재 슬라이드를 좌측으로 이동
+                recordingState.ctx.save();
+                recordingState.ctx.translate(-progress * recordingState.canvas.width, 0);
+                await renderSlideToCanvas(currentSlide, 0);
+                recordingState.ctx.restore();
                 
-                if (progress < 0.3) {
-                    // 현재 슬라이드 하이퍼 줌인
-                    ctx.save();
-                    const scale = 1 + (easeInOut * 50); // 50배 줌
-                    ctx.globalAlpha = 1 - (progress * 5);
-                    ctx.translate(centerX, centerY);
-                    ctx.scale(scale, scale);
-                    ctx.translate(-centerX, -centerY);
-                    await renderSlideToCanvas(currentSlide, 0);
-                    ctx.restore();
-                } else {
-                    // 다음 슬라이드 하이퍼 줌아웃
-                    ctx.save();
-                    const scale = 50 - ((progress - 0.3) * 70);
-                    const alpha = (progress - 0.3) * 1.5;
-                    ctx.globalAlpha = Math.min(alpha, 1);
-                    ctx.translate(centerX, centerY);
-                    ctx.scale(scale, scale);
-                    ctx.translate(-centerX, -centerY);
-                    await renderSlideToCanvas(nextSlide, 0);
-                    ctx.restore();
-                }
-                
-                // 속도선 효과
-                ctx.save();
-                for (let i = 0; i < 100; i++) {
-                    const angle = (i / 100) * Math.PI * 2;
-                    const radius1 = progress * 2000;
-                    const radius2 = radius1 + 100;
-                    const x1 = centerX + Math.cos(angle) * radius1;
-                    const y1 = centerY + Math.sin(angle) * radius1;
-                    const x2 = centerX + Math.cos(angle) * radius2;
-                    const y2 = centerY + Math.sin(angle) * radius2;
-                    
-                    ctx.strokeStyle = `rgba(255, 255, 255, ${1 - progress})`;
-                    ctx.lineWidth = 4;
-                    ctx.beginPath();
-                    ctx.moveTo(x1, y1);
-                    ctx.lineTo(x2, y2);
-                    ctx.stroke();
-                }
-                ctx.restore();
-                
-                await delay(16); // 60fps
-            }
-        }
-
-        // 💥 글리치 폭발 전환 (디지털 버그 효과)
-        async function glitchExplosionTransition(currentSlide, nextSlide) {
-            const frames = 25;
-            
-            for (let frame = 0; frame < frames; frame++) {
-                const progress = frame / frames;
-                const ctx = recordingState.ctx;
-                
-                // 배경 렌더링
-                if (progress < 0.5) {
-                    await renderSlideToCanvas(currentSlide, 0);
-                } else {
-                    await renderSlideToCanvas(nextSlide, 0);
-                }
-                
-                // 글리치 효과
-                ctx.save();
-                const glitchIntensity = Math.sin(progress * Math.PI) * 200;
-                
-                // 랜덤 사각형 글리치
-                for (let i = 0; i < 50; i++) {
-                    const x = Math.random() * recordingState.canvas.width;
-                    const y = Math.random() * recordingState.canvas.height;
-                    const w = Math.random() * 300;
-                    const h = Math.random() * 50;
-                    
-                    // RGB 분리 효과
-                    ctx.globalCompositeOperation = 'screen';
-                    ctx.fillStyle = `rgba(255, 0, 0, ${0.3 + Math.random() * 0.3})`;
-                    ctx.fillRect(x + Math.random() * glitchIntensity - glitchIntensity/2, y, w, h);
-                    
-                    ctx.fillStyle = `rgba(0, 255, 0, ${0.3 + Math.random() * 0.3})`;
-                    ctx.fillRect(x + Math.random() * glitchIntensity - glitchIntensity/2, y, w, h);
-                    
-                    ctx.fillStyle = `rgba(0, 0, 255, ${0.3 + Math.random() * 0.3})`;
-                    ctx.fillRect(x + Math.random() * glitchIntensity - glitchIntensity/2, y, w, h);
-                }
-                
-                // 스캔라인 효과
-                ctx.globalCompositeOperation = 'overlay';
-                for (let y = 0; y < recordingState.canvas.height; y += 4) {
-                    ctx.fillStyle = `rgba(255, 255, 255, ${Math.random() * 0.1})`;
-                    ctx.fillRect(0, y, recordingState.canvas.width, 2);
-                }
-                
-                ctx.restore();
-                await delay(20);
-            }
-        }
-
-        // 🌌 퀀텀 립 전환 (차원 찢기)
-        async function quantumRipTransition(currentSlide, nextSlide) {
-            const frames = 30;
-            
-            for (let frame = 0; frame < frames; frame++) {
-                const progress = frame / frames;
-                const ctx = recordingState.ctx;
-                const centerX = recordingState.canvas.width / 2;
-                const centerY = recordingState.canvas.height / 2;
-                
-                // 다음 슬라이드 배경
+                // 다음 슬라이드를 우측에서 등장
+                recordingState.ctx.save();
+                recordingState.ctx.translate((1 - progress) * recordingState.canvas.width, 0);
                 await renderSlideToCanvas(nextSlide, 0);
+                recordingState.ctx.restore();
                 
-                // 퀀텀 립 효과
-                ctx.save();
-                
-                // 찢어지는 마스크 생성
-                ctx.beginPath();
-                const ripWidth = Math.sin(progress * Math.PI) * 400;
-                const ripHeight = recordingState.canvas.height;
-                
-                for (let y = 0; y < ripHeight; y += 20) {
-                    const wave = Math.sin((y * 0.01) + (progress * Math.PI * 4)) * ripWidth;
-                    const x = centerX + wave;
-                    
-                    if (y === 0) {
-                        ctx.moveTo(0, 0);
-                        ctx.lineTo(x, y);
-                    } else {
-                        ctx.lineTo(x, y);
-                    }
-                }
-                
-                ctx.lineTo(0, ripHeight);
-                ctx.closePath();
-                ctx.clip();
-                
-                // 현재 슬라이드 (찢어진 부분)
-                ctx.scale(1 + progress * 0.5, 1 + progress * 0.5);
-                ctx.translate(-progress * centerX * 0.5, -progress * centerY * 0.5);
-                await renderSlideToCanvas(currentSlide, 0);
-                
-                ctx.restore();
-                
-                // 퀀텀 입자 효과
-                ctx.save();
-                for (let i = 0; i < 100; i++) {
-                    const angle = Math.random() * Math.PI * 2;
-                    const distance = Math.random() * ripWidth;
-                    const x = centerX + Math.cos(angle) * distance;
-                    const y = centerY + Math.sin(angle) * distance;
-                    
-                    ctx.fillStyle = `hsla(${180 + Math.random() * 180}, 100%, 70%, ${Math.random()})`;
-                    ctx.beginPath();
-                    ctx.arc(x, y, Math.random() * 8 + 2, 0, Math.PI * 2);
-                    ctx.fill();
-                }
-                ctx.restore();
-                
-                await delay(25);
-            }
-        }
-
-        // 🌊 리퀴드 모프 전환 (액체 변형)
-        async function liquidMorphTransition(currentSlide, nextSlide) {
-            const frames = 35;
-            const morphPoints = [];
-            
-            // 모프 포인트 초기화
-            for (let i = 0; i < 20; i++) {
-                morphPoints.push({
-                    x: Math.random() * recordingState.canvas.width,
-                    y: Math.random() * recordingState.canvas.height,
-                    vx: (Math.random() - 0.5) * 20,
-                    vy: (Math.random() - 0.5) * 20,
-                    size: Math.random() * 100 + 50
-                });
-            }
-            
-            for (let frame = 0; frame < frames; frame++) {
-                const progress = frame / frames;
-                const ctx = recordingState.ctx;
-                
-                // 배경 (다음 슬라이드)
-                await renderSlideToCanvas(nextSlide, 0);
-                
-                // 리퀴드 마스크
-                ctx.save();
-                ctx.globalCompositeOperation = 'destination-out';
-                
-                // 메타볼 효과
-                const imageData = ctx.getImageData(0, 0, recordingState.canvas.width, recordingState.canvas.height);
-                const data = imageData.data;
-                
-                for (let y = 0; y < recordingState.canvas.height; y += 4) {
-                    for (let x = 0; x < recordingState.canvas.width; x += 4) {
-                        let sum = 0;
-                        
-                        morphPoints.forEach(point => {
-                            const dx = x - point.x;
-                            const dy = y - point.y;
-                            const distance = Math.sqrt(dx * dx + dy * dy);
-                            sum += point.size / (distance + 1);
-                        });
-                        
-                        if (sum > 30 * (1 - progress)) {
-                            const index = (y * recordingState.canvas.width + x) * 4;
-                            data[index + 3] = 0; // 투명하게
-                        }
-                        
-                        // 포인트 이동
-                        morphPoints.forEach(point => {
-                            point.x += point.vx;
-                            point.y += point.vy;
-                            point.size *= 1.02;
-                        });
-                    }
-                }
-                
-                ctx.putImageData(imageData, 0, 0);
-                ctx.restore();
-                
-                // 현재 슬라이드 (마스크 적용된 부분)
-                ctx.save();
-                ctx.globalCompositeOperation = 'source-over';
-                ctx.globalAlpha = 1 - progress;
-                await renderSlideToCanvas(currentSlide, 0);
-                ctx.restore();
-                
-                await delay(30);
-            }
-        }
-
-        // ⚛️ 원자 분할 전환
-        async function atomicSplitTransition(currentSlide, nextSlide) {
-            const frames = 25;
-            const atoms = [];
-            
-            // 원자 입자 생성
-            for (let i = 0; i < 150; i++) {
-                atoms.push({
-                    x: recordingState.canvas.width / 2,
-                    y: recordingState.canvas.height / 2,
-                    vx: (Math.random() - 0.5) * 100,
-                    vy: (Math.random() - 0.5) * 100,
-                    size: Math.random() * 20 + 10,
-                    energy: Math.random(),
-                    color: `hsl(${Math.random() * 60 + 300}, 100%, 70%)`
-                });
-            }
-            
-            for (let frame = 0; frame < frames; frame++) {
-                const progress = frame / frames;
-                const ctx = recordingState.ctx;
-                
-                if (progress < 0.3) {
-                    // 현재 슬라이드
-                    await renderSlideToCanvas(currentSlide, 0);
-                } else {
-                    // 다음 슬라이드
-                    await renderSlideToCanvas(nextSlide, 0);
-                }
-                
-                // 원자 폭발 효과
-                ctx.save();
-                atoms.forEach(atom => {
-                    atom.x += atom.vx * progress;
-                    atom.y += atom.vy * progress;
-                    atom.energy += 0.1;
-                    
-                    // 원자 렌더링
-                    ctx.save();
-                    ctx.translate(atom.x, atom.y);
-                    
-                    // 에너지 링
-                    for (let ring = 0; ring < 3; ring++) {
-                        ctx.strokeStyle = atom.color;
-                        ctx.lineWidth = 3;
-                        ctx.globalAlpha = (1 - progress) * (1 - ring * 0.3);
-                        ctx.beginPath();
-                        ctx.arc(0, 0, atom.size * (1 + ring + atom.energy), 0, Math.PI * 2);
-                        ctx.stroke();
-                    }
-                    
-                    // 중심 입자
-                    ctx.fillStyle = atom.color;
-                    ctx.globalAlpha = 1 - progress;
-                    ctx.beginPath();
-                    ctx.arc(0, 0, atom.size * 0.3, 0, Math.PI * 2);
-                    ctx.fill();
-                    
-                    ctx.restore();
-                });
-                ctx.restore();
-                
-                await delay(20);
-            }
-        }
-
-        // 🌀 타임 워프 전환
-        async function timeWarpTransition(currentSlide, nextSlide) {
-            const frames = 30;
-            
-            for (let frame = 0; frame < frames; frame++) {
-                const progress = frame / frames;
-                const ctx = recordingState.ctx;
-                const centerX = recordingState.canvas.width / 2;
-                const centerY = recordingState.canvas.height / 2;
-                
-                // 시간 왜곡 효과
-                ctx.save();
-                
-                const rings = 20;
-                for (let ring = 0; ring < rings; ring++) {
-                    const ringProgress = (ring / rings + progress) % 1;
-                    const radius = ringProgress * Math.max(centerX, centerY) * 2;
-                    const alpha = 1 - ringProgress;
-                    
-                    ctx.save();
-                    ctx.translate(centerX, centerY);
-                    ctx.rotate(ringProgress * Math.PI * 4);
-                    ctx.scale(1 + ringProgress * 2, 1 + ringProgress * 2);
-                    ctx.translate(-centerX, -centerY);
-                    ctx.globalAlpha = alpha * 0.5;
-                    
-                    if (ringProgress < 0.5) {
-                        await renderSlideToCanvas(currentSlide, 0);
-                    } else {
-                        await renderSlideToCanvas(nextSlide, 0);
-                    }
-                    
-                    ctx.restore();
-                }
-                
-                ctx.restore();
-                await delay(25);
-            }
-        }
-
-        // ⚡ 차원 크랙 전환
-        async function dimensionCrackTransition(currentSlide, nextSlide) {
-            const frames = 20;
-            const cracks = [];
-            
-            // 크랙 생성
-            for (let i = 0; i < 10; i++) {
-                const crack = [];
-                let x = Math.random() * recordingState.canvas.width;
-                let y = Math.random() * recordingState.canvas.height;
-                
-                for (let j = 0; j < 20; j++) {
-                    crack.push({x, y});
-                    x += (Math.random() - 0.5) * 100;
-                    y += (Math.random() - 0.5) * 100;
-                }
-                cracks.push(crack);
-            }
-            
-            for (let frame = 0; frame < frames; frame++) {
-                const progress = frame / frames;
-                const ctx = recordingState.ctx;
-                
-                // 현재 슬라이드
-                await renderSlideToCanvas(currentSlide, 0);
-                
-                // 크랙 효과
-                ctx.save();
-                cracks.forEach((crack, crackIndex) => {
-                    ctx.strokeStyle = `rgba(255, 255, 255, ${1 - progress})`;
-                    ctx.lineWidth = 10 + progress * 20;
-                    ctx.shadowColor = 'cyan';
-                    ctx.shadowBlur = 20 + progress * 30;
-                    
-                    ctx.beginPath();
-                    crack.forEach((point, index) => {
-                        const crackProgress = Math.min(1, (progress * crack.length - index) / 3);
-                        if (crackProgress > 0) {
-                            if (index === 0) {
-                                ctx.moveTo(point.x, point.y);
-                            } else {
-                                ctx.lineTo(point.x, point.y);
-                            }
-                        }
-                    });
-                    ctx.stroke();
-                });
-                ctx.restore();
-                
-                // 크랙을 통해 다음 슬라이드 보이기
-                if (progress > 0.5) {
-                    ctx.save();
-                    ctx.globalCompositeOperation = 'source-atop';
-                    ctx.globalAlpha = (progress - 0.5) * 2;
-                    await renderSlideToCanvas(nextSlide, 0);
-                    ctx.restore();
-                }
-                
-                await delay(25);
-            }
-        }
-
-        // 🔥 에너지 빔 전환
-        async function energyBeamTransition(currentSlide, nextSlide) {
-            const frames = 20;
-            
-            for (let frame = 0; frame < frames; frame++) {
-                const progress = frame / frames;
-                const ctx = recordingState.ctx;
-                
-                // 배경
-                if (progress < 0.5) {
-                    await renderSlideToCanvas(currentSlide, 0);
-                } else {
-                    await renderSlideToCanvas(nextSlide, 0);
-                }
-                
-                // 에너지 빔
-                ctx.save();
-                const beamCount = 50;
-                for (let i = 0; i < beamCount; i++) {
-                    const angle = (i / beamCount) * Math.PI * 2;
-                    const beamLength = progress * 2000;
-                    const centerX = recordingState.canvas.width / 2;
-                    const centerY = recordingState.canvas.height / 2;
-                    
-                    const x1 = centerX;
-                    const y1 = centerY;
-                    const x2 = centerX + Math.cos(angle) * beamLength;
-                    const y2 = centerY + Math.sin(angle) * beamLength;
-                    
-                    const gradient = ctx.createLinearGradient(x1, y1, x2, y2);
-                    gradient.addColorStop(0, `hsla(${60 + i * 5}, 100%, 80%, 1)`);
-                    gradient.addColorStop(1, `hsla(${60 + i * 5}, 100%, 80%, 0)`);
-                    
-                    ctx.strokeStyle = gradient;
-                    ctx.lineWidth = 8;
-                    ctx.beginPath();
-                    ctx.moveTo(x1, y1);
-                    ctx.lineTo(x2, y2);
-                    ctx.stroke();
-                }
-                ctx.restore();
-                
-                await delay(25);
-            }
-        }
-
-        // 🌌 우주 붕괴 전환
-        async function cosmicCollapseTransition(currentSlide, nextSlide) {
-            const frames = 25;
-            
-            for (let frame = 0; frame < frames; frame++) {
-                const progress = frame / frames;
-                const ctx = recordingState.ctx;
-                const centerX = recordingState.canvas.width / 2;
-                const centerY = recordingState.canvas.height / 2;
-                
-                // 우주 배경
-                ctx.fillStyle = `rgba(0, 0, 0, ${progress})`;
-                ctx.fillRect(0, 0, recordingState.canvas.width, recordingState.canvas.height);
-                
-                // 블랙홀 효과
-                ctx.save();
-                const blackHoleRadius = progress * 500;
-                
-                // 왜곡 효과
-                for (let ring = 0; ring < 10; ring++) {
-                    const ringRadius = blackHoleRadius + ring * 100;
-                    const distortion = 1 - (ring * 0.1);
-                    
-                    ctx.save();
-                    ctx.translate(centerX, centerY);
-                    ctx.scale(distortion, distortion);
-                    ctx.rotate(progress * Math.PI * ring * 0.1);
-                    ctx.translate(-centerX, -centerY);
-                    ctx.globalAlpha = 1 - progress + ring * 0.1;
-                    
-                    if (progress < 0.7) {
-                        await renderSlideToCanvas(currentSlide, 0);
-                    } else {
-                        await renderSlideToCanvas(nextSlide, 0);
-                    }
-                    
-                    ctx.restore();
-                }
-                
-                // 블랙홀 중심
-                const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, blackHoleRadius);
-                gradient.addColorStop(0, 'rgba(0, 0, 0, 1)');
-                gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
-                
-                ctx.fillStyle = gradient;
-                ctx.beginPath();
-                ctx.arc(centerX, centerY, blackHoleRadius, 0, Math.PI * 2);
-                ctx.fill();
-                
-                ctx.restore();
-                await delay(20);
-            }
-        }
-
-        // 🌪️ 바이럴 스핀 전환
-        async function viralSpinTransition(currentSlide, nextSlide) {
-            const frames = 15; // 초고속
-            
-            for (let frame = 0; frame < frames; frame++) {
-                const progress = frame / frames;
-                const ctx = recordingState.ctx;
-                const centerX = recordingState.canvas.width / 2;
-                const centerY = recordingState.canvas.height / 2;
-                
-                // 극도로 빠른 회전
-                ctx.save();
-                ctx.translate(centerX, centerY);
-                ctx.rotate(progress * Math.PI * 20); // 10바퀴 회전
-                ctx.scale(1 - progress + 0.1, 1 - progress + 0.1);
-                ctx.translate(-centerX, -centerY);
-                ctx.globalAlpha = 1 - progress;
-                await renderSlideToCanvas(currentSlide, 0);
-                ctx.restore();
-                
-                // 다음 슬라이드 (반대 회전)
-                ctx.save();
-                ctx.translate(centerX, centerY);
-                ctx.rotate(-progress * Math.PI * 20);
-                ctx.scale(progress + 0.1, progress + 0.1);
-                ctx.translate(-centerX, -centerY);
-                ctx.globalAlpha = progress;
-                await renderSlideToCanvas(nextSlide, 0);
-                ctx.restore();
-                
-                // 회전 트레일
-                ctx.save();
-                for (let i = 0; i < 20; i++) {
-                    const trailAngle = progress * Math.PI * 20 + i * 0.3;
-                    const trailRadius = 300;
-                    const x = centerX + Math.cos(trailAngle) * trailRadius;
-                    const y = centerY + Math.sin(trailAngle) * trailRadius;
-                    
-                    ctx.fillStyle = `hsla(${i * 18}, 100%, 70%, ${1 - progress})`;
-                    ctx.beginPath();
-                    ctx.arc(x, y, 20, 0, Math.PI * 2);
-                    ctx.fill();
-                }
-                ctx.restore();
-                
-                await delay(33); // 30fps
+                await delay(frameDuration);
             }
         }
 
