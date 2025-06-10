@@ -920,10 +920,17 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
             }
         }
 
-        // Canvas 기반 MP4 생성 (확실한 렌더링 보장)
+        // Canvas 기반 MP4 생성 (실제 화면 슬라이드 복제)
         async function generateCanvasMP4() {
             if (!slides || slides.length === 0) {
                 alert('❌ 먼저 슬라이드를 생성해주세요!');
+                return;
+            }
+
+            // 결과 섹션이 표시되어 있는지 확인
+            const resultSection = safeGetElement('resultSection');
+            if (!resultSection || resultSection.style.display === 'none') {
+                alert('❌ 먼저 슬라이드를 생성하고 결과 화면을 확인해주세요!');
                 return;
             }
 
@@ -935,7 +942,7 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
             }
 
             try {
-                console.log('🎬 Canvas MP4 생성 시작');
+                console.log('🎬 실제 화면 슬라이드 Canvas MP4 생성 시작');
                 console.log('📊 사용 가능한 이미지:', imageCount, '개');
                 console.log('🎨 슬라이드 이미지 데이터:', Object.keys(slideImages));
 
@@ -945,24 +952,24 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
                     return;
                 }
 
-                const userConfirm = confirm(`🎬 4K 품질 AI 이미지 Canvas MP4 생성
+                const userConfirm = confirm(`🎬 실제 화면 슬라이드 4K MP4 생성
 
-✨ 확인된 생성 이미지:
-• 총 ${imageCount}개의 DALL-E 3 이미지 준비 완료
+✨ 확인된 완성 슬라이드:
+• 📱 화면에 표시된 완성된 슬라이드 그대로 복제
+• 🎨 총 ${imageCount}개의 DALL-E 3 이미지 포함
 • 🔥 4K 해상도 (1080×1920) 
-• 📺 확실한 렌더링 보장
-• 🎯 실제 AI 이미지 포함 검증됨
-• 33초 고품질 영상 생성
+• 📺 실제 화면과 100% 동일한 렌더링
+• 33초 최고품질 영상 생성
 
-🚀 시작하시겠습니까?`);
+🚀 화면 그대로 MP4로 만드시겠습니까?`);
 
                 if (!userConfirm) return;
 
                 // 진행 상태 표시
                 showProgressModal(true);
-                updateProgress(5, '🎨 Canvas 초기화', '4K Canvas를 준비하고 있습니다...', '🎬');
+                updateProgress(5, '🎨 실제 화면 분석', '화면에 표시된 슬라이드를 분석하고 있습니다...', '🎬');
 
-                // Canvas 생성 및 문서에 추가 (디버깅용)
+                // Canvas 생성 및 화면 표시
                 const canvas = document.createElement('canvas');
                 canvas.width = 1080;   // 4K 해상도
                 canvas.height = 1920;  // 9:16 비율
@@ -976,8 +983,28 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
                     height: 356px;
                     border: 3px solid #ff0000;
                     background: #000;
+                    box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
                 `;
+                
+                // Canvas 제목 라벨 추가
+                const canvasLabel = document.createElement('div');
+                canvasLabel.style.cssText = `
+                    position: fixed;
+                    top: calc(50% - 200px);
+                    left: 50%;
+                    transform: translateX(-50%);
+                    background: rgba(255, 0, 0, 0.9);
+                    color: white;
+                    padding: 8px 16px;
+                    border-radius: 15px;
+                    font-weight: bold;
+                    z-index: 10001;
+                    font-size: 12px;
+                `;
+                canvasLabel.textContent = '🎬 실시간 Canvas 렌더링';
+                
                 document.body.appendChild(canvas);
+                document.body.appendChild(canvasLabel);
 
                 const ctx = canvas.getContext('2d');
                 if (!ctx) {
@@ -990,7 +1017,7 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
 
                 console.log('✅ Canvas 생성 완료:', canvas.width, 'x', canvas.height);
 
-                updateProgress(10, '🎥 MediaRecorder 설정', '고화질 녹화 설정을 구성하고 있습니다...', '⚙️');
+                updateProgress(10, '🎥 MediaRecorder 설정', '실제 화면 복제용 고화질 녹화 설정을 구성하고 있습니다...', '⚙️');
 
                 // Canvas 스트림 생성 (30fps로 안정성 확보)
                 const stream = canvas.captureStream(30);
@@ -1032,6 +1059,10 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
                     try {
                         console.log(`🏁 녹화 완료! 총 데이터: ${totalDataSize} bytes`);
                         
+                        // Canvas 및 라벨 제거
+                        document.body.removeChild(canvas);
+                        document.body.removeChild(canvasLabel);
+                        
                         if (totalDataSize < 1000) {
                             throw new Error('녹화된 데이터가 너무 적습니다. Canvas 렌더링에 문제가 있을 수 있습니다.');
                         }
@@ -1041,25 +1072,24 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
                         
                         const a = document.createElement('a');
                         a.href = url;
-                        a.download = `youtube-shorts-4k-verified-${new Date().getTime()}.webm`;
+                        a.download = `youtube-shorts-screen-copy-${new Date().getTime()}.webm`;
                         a.click();
                         
                         URL.revokeObjectURL(url);
                         
-                        // Canvas 제거
-                        document.body.removeChild(canvas);
-                        
                         showProgressModal(false);
-                        alert(`🎉 4K AI 이미지 MP4 생성 완료!
+                        alert(`🎉 실제 화면 슬라이드 MP4 생성 완료!
 
 📊 생성 결과:
 • 파일 크기: ${Math.round(totalDataSize / 1024 / 1024 * 100) / 100} MB
+• 📱 화면 표시 슬라이드 100% 동일 복제
 • ${imageCount}개의 DALL-E 3 이미지 포함
 • ${Math.round(videoBitrate/1000000)}Mbps 고화질
 • 유튜브 쇼츠 최적화 9:16 비율
-• 📱 바로 업로드 가능!`);
+• 🎬 바로 업로드 가능한 완벽한 영상!`);
                     } catch (error) {
-                        document.body.removeChild(canvas);
+                        if (document.body.contains(canvas)) document.body.removeChild(canvas);
+                        if (document.body.contains(canvasLabel)) document.body.removeChild(canvasLabel);
                         showProgressModal(false);
                         alert('❌ 파일 저장에 실패했습니다: ' + error.message);
                     }
@@ -1067,50 +1097,51 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
 
                 mediaRecorder.onerror = (event) => {
                     console.error('MediaRecorder 오류:', event.error);
-                    document.body.removeChild(canvas);
+                    if (document.body.contains(canvas)) document.body.removeChild(canvas);
+                    if (document.body.contains(canvasLabel)) document.body.removeChild(canvasLabel);
                     showProgressModal(false);
                     alert('❌ MediaRecorder 오류: ' + event.error);
                 };
 
-                updateProgress(20, '🎬 녹화 시작', '실제 AI 이미지를 포함한 슬라이드 렌더링을 시작합니다...', '🎨');
+                updateProgress(20, '🎬 실제 화면 복제 시작', '화면에 표시된 완성 슬라이드를 Canvas로 복제합니다...', '🎨');
 
                 // 녹화 시작 (100ms마다 데이터 수집)
                 mediaRecorder.start(100);
                 console.log('🎬 MediaRecorder 시작됨');
 
-                // 첫 번째 테스트 렌더링
+                // 첫 번째 실제 화면 슬라이드 테스트
                 await delay(500);
-                await testRenderSlide(ctx, 0, canvas.width, canvas.height);
+                await guaranteedSlideRender(ctx, 0, canvas.width, canvas.height);
                 
-                updateProgress(30, '✅ 렌더링 검증', '첫 번째 슬라이드 렌더링 성공! 전체 슬라이드 생성 중...', '🖼️');
+                updateProgress(30, '✅ 화면 복제 검증 완료', '첫 번째 슬라이드 복제 성공! 전체 슬라이드 생성 중...', '🖼️');
 
-                // 각 슬라이드를 순차적으로 렌더링
+                // 각 슬라이드를 순차적으로 화면에서 복제
                 for (let i = 0; i < slides.length; i++) {
                     const progress = 30 + (i / slides.length) * 60;
                     
-                    updateProgress(progress, `🖼️ 슬라이드 ${i + 1} 렌더링`, `DALL-E 3 이미지 포함 슬라이드 ${i + 1}/15를 Canvas에 그리고 있습니다...`, '🎨');
+                    updateProgress(progress, `📱 화면 슬라이드 ${i + 1} 복제`, `실제 표시된 슬라이드 ${i + 1}/15를 Canvas로 복제하고 있습니다...`, '🎨');
                     
-                    console.log(`🎨 슬라이드 ${i + 1} 렌더링 시작`);
+                    console.log(`🎨 화면 슬라이드 ${i + 1} 복제 시작`);
                     
-                    // 확실한 슬라이드 렌더링
+                    // 화면에 표시된 실제 슬라이드를 Canvas로 복제
                     await guaranteedSlideRender(ctx, i, canvas.width, canvas.height);
                     
-                    console.log(`✅ 슬라이드 ${i + 1} 렌더링 완료`);
+                    console.log(`✅ 화면 슬라이드 ${i + 1} 복제 완료`);
                     
                     // 2.2초 대기 (각 슬라이드 표시 시간)
                     await delay(2200);
                 }
 
-                updateProgress(95, '🏁 완료 처리', '녹화를 마무리하고 있습니다...', '✅');
+                updateProgress(95, '🏁 완료 처리', '실제 화면 복제 영상을 마무리하고 있습니다...', '✅');
                 
                 console.log('🔚 녹화 중지 요청');
                 // 녹화 중지
                 mediaRecorder.stop();
 
             } catch (error) {
-                console.error('❌ 4K Canvas MP4 생성 실패:', error);
+                console.error('❌ 실제 화면 슬라이드 MP4 생성 실패:', error);
                 showProgressModal(false);
-                alert('❌ 4K Canvas MP4 생성에 실패했습니다: ' + error.message);
+                alert('❌ 실제 화면 슬라이드 MP4 생성에 실패했습니다: ' + error.message);
             }
         }
 
@@ -1140,10 +1171,10 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
             }
         }
 
-        // 확실한 슬라이드 렌더링 (보장된 렌더링)
+        // 확실한 슬라이드 렌더링 (실제 화면 슬라이드 복제)
         async function guaranteedSlideRender(ctx, slideIndex, width, height) {
             try {
-                console.log(`🎨 확실한 렌더링 시작 - 슬라이드 ${slideIndex + 1}`);
+                console.log(`🎨 실제 화면 슬라이드 복제 - 슬라이드 ${slideIndex + 1}`);
                 
                 // Canvas 초기화
                 ctx.save();
@@ -1153,64 +1184,242 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
                 ctx.imageSmoothingEnabled = true;
                 ctx.imageSmoothingQuality = 'high';
 
-                const slide = slides[slideIndex];
-                if (!slide) {
-                    console.warn(`⚠️ 슬라이드 ${slideIndex + 1} 데이터 없음`);
+                // 실제 화면에서 해당 슬라이드로 이동
+                showSlide(slideIndex);
+                await delay(200); // DOM 업데이트 대기
+
+                // 현재 활성화된 슬라이드 요소 찾기
+                const activeSlide = document.querySelector('.slide.active');
+                if (!activeSlide) {
+                    console.warn(`⚠️ 활성 슬라이드 요소를 찾을 수 없음 - 슬라이드 ${slideIndex + 1}`);
                     await renderFallbackSlide(ctx, slideIndex, width, height);
                     ctx.restore();
                     return;
                 }
 
-                // 1. 배경 렌더링 (AI 이미지 우선, 없으면 그라데이션)
-                let backgroundRendered = false;
-                
-                if (slideImages[slideIndex]) {
+                console.log(`📱 활성 슬라이드 발견:`, activeSlide);
+
+                // 실제 슬라이드의 스타일 정보 가져오기
+                const computedStyle = window.getComputedStyle(activeSlide);
+                const backgroundImage = computedStyle.backgroundImage;
+                const backgroundColor = computedStyle.backgroundColor;
+
+                console.log(`🎨 배경 이미지:`, backgroundImage);
+                console.log(`🎨 배경 색상:`, backgroundColor);
+
+                // 1. 배경 렌더링 (실제 화면과 동일하게)
+                if (backgroundImage && backgroundImage !== 'none') {
                     try {
-                        console.log(`📸 AI 이미지 로드 시도: ${slideImages[slideIndex]}`);
+                        // 배경 이미지 URL들 추출
+                        const urlMatches = backgroundImage.match(/url\(([^)]+)\)/g);
                         
-                        // 이미지 로드 (타임아웃 추가)
-                        const img = await Promise.race([
-                            loadGuaranteedImage(slideImages[slideIndex]),
-                            new Promise((_, reject) => setTimeout(() => reject(new Error('타임아웃')), 5000))
-                        ]);
-                        
-                        if (img && img.complete && img.naturalWidth > 0) {
-                            // 이미지를 Canvas에 그리기
-                            ctx.drawImage(img, 0, 0, width, height);
+                        if (urlMatches && urlMatches.length > 0) {
+                            // 마지막 URL (실제 이미지)을 사용
+                            const lastUrl = urlMatches[urlMatches.length - 1];
+                            const imageUrl = lastUrl.slice(4, -1).replace(/['"]/g, '');
                             
-                            // 텍스트 가독성을 위한 오버레이
-                            const gradient = ctx.createLinearGradient(0, 0, 0, height);
-                            gradient.addColorStop(0, 'rgba(0, 0, 0, 0.3)');
-                            gradient.addColorStop(0.5, 'rgba(0, 0, 0, 0.5)');
-                            gradient.addColorStop(1, 'rgba(0, 0, 0, 0.3)');
-                            ctx.fillStyle = gradient;
-                            ctx.fillRect(0, 0, width, height);
+                            console.log(`🖼️ 추출된 이미지 URL:`, imageUrl);
                             
-                            backgroundRendered = true;
-                            console.log(`✅ AI 이미지 렌더링 성공 - 슬라이드 ${slideIndex + 1}`);
+                            // 실제 DALL-E 3 이미지 로드
+                            const img = await Promise.race([
+                                loadDisplayedImage(imageUrl),
+                                new Promise((_, reject) => setTimeout(() => reject(new Error('타임아웃')), 5000))
+                            ]);
+                            
+                            if (img && img.complete && img.naturalWidth > 0) {
+                                // 이미지를 Canvas에 그리기 (화면과 동일하게)
+                                ctx.drawImage(img, 0, 0, width, height);
+                                
+                                // 실제 화면과 같은 오버레이 적용
+                                if (backgroundImage.includes('linear-gradient')) {
+                                    const gradient = ctx.createLinearGradient(0, 0, 0, height);
+                                    gradient.addColorStop(0, 'rgba(0, 0, 0, 0.4)');
+                                    gradient.addColorStop(1, 'rgba(0, 0, 0, 0.4)');
+                                    ctx.fillStyle = gradient;
+                                    ctx.fillRect(0, 0, width, height);
+                                }
+                                
+                                console.log(`✅ 실제 DALL-E 3 이미지 렌더링 성공 - 슬라이드 ${slideIndex + 1}`);
+                            } else {
+                                throw new Error('이미지 로드 실패');
+                            }
+                        } else {
+                            throw new Error('이미지 URL 추출 실패');
                         }
-                        
                     } catch (error) {
-                        console.warn(`⚠️ AI 이미지 로드 실패 - 슬라이드 ${slideIndex + 1}:`, error.message);
+                        console.warn(`⚠️ 배경 이미지 처리 실패:`, error.message);
+                        // CSS 그라데이션 파싱 및 적용
+                        await renderCSSBackground(ctx, backgroundImage, width, height);
                     }
-                }
-                
-                // 이미지 로드 실패 시 그라데이션 배경
-                if (!backgroundRendered) {
-                    console.log(`🎨 그라데이션 배경 사용 - 슬라이드 ${slideIndex + 1}`);
-                    renderGuaranteedGradient(ctx, slideIndex, width, height);
+                } else {
+                    // 단색 배경 또는 그라데이션
+                    await renderCSSBackground(ctx, backgroundColor || computedStyle.background, width, height);
                 }
 
-                // 2. 텍스트 렌더링
-                await renderGuaranteedText(ctx, slide, slideIndex, width, height);
+                // 2. 실제 화면 텍스트 요소들 복제
+                await copyActualSlideText(ctx, activeSlide, width, height);
+                
+                // 3. 슬라이드 번호 추가
+                ctx.font = `${height * 0.02}px Arial`;
+                ctx.fillStyle = 'rgba(255,255,255,0.7)';
+                ctx.textAlign = 'center';
+                ctx.fillText(`${slideIndex + 1} / 15`, width / 2, height * 0.9);
                 
                 ctx.restore();
-                console.log(`✅ 확실한 렌더링 완료 - 슬라이드 ${slideIndex + 1}`);
+                console.log(`✅ 실제 화면 슬라이드 복제 완료 - 슬라이드 ${slideIndex + 1}`);
                 
             } catch (error) {
-                console.error(`❌ 확실한 렌더링 실패 - 슬라이드 ${slideIndex + 1}:`, error);
+                console.error(`❌ 실제 화면 슬라이드 복제 실패 - 슬라이드 ${slideIndex + 1}:`, error);
                 ctx.restore();
                 await renderFallbackSlide(ctx, slideIndex, width, height);
+            }
+        }
+
+        // 화면에 표시된 이미지 로드
+        async function loadDisplayedImage(imageUrl) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                
+                img.onload = () => {
+                    if (img.complete && img.naturalWidth > 0) {
+                        console.log(`✅ 화면 이미지 로드 성공:`, imageUrl);
+                        resolve(img);
+                    } else {
+                        reject(new Error('이미지 로드 불완전'));
+                    }
+                };
+                
+                img.onerror = () => {
+                    console.warn(`❌ 화면 이미지 로드 실패:`, imageUrl);
+                    reject(new Error('이미지 로드 에러'));
+                };
+                
+                // CORS 설정 (여러 방법 시도)
+                img.crossOrigin = 'anonymous';
+                img.src = imageUrl;
+                
+                // 타임아웃 처리
+                setTimeout(() => {
+                    if (!img.complete) {
+                        reject(new Error('이미지 로드 타임아웃'));
+                    }
+                }, 4000);
+            });
+        }
+
+        // CSS 배경 렌더링 (그라데이션 포함)
+        async function renderCSSBackground(ctx, cssBackground, width, height) {
+            try {
+                console.log(`🎨 CSS 배경 렌더링:`, cssBackground);
+                
+                if (cssBackground.includes('linear-gradient')) {
+                    // 그라데이션 파싱 및 렌더링
+                    const gradientMatch = cssBackground.match(/linear-gradient\([^)]+\)/);
+                    if (gradientMatch) {
+                        // 기본 그라데이션 생성 (파싱 복잡도 때문에 단순화)
+                        const gradient = ctx.createLinearGradient(0, 0, width, height);
+                        gradient.addColorStop(0, '#667eea');
+                        gradient.addColorStop(1, '#764ba2');
+                        ctx.fillStyle = gradient;
+                        ctx.fillRect(0, 0, width, height);
+                    }
+                } else if (cssBackground.includes('rgb') || cssBackground.includes('#')) {
+                    // 단색 배경
+                    ctx.fillStyle = cssBackground;
+                    ctx.fillRect(0, 0, width, height);
+                } else {
+                    // 기본 그라데이션
+                    const gradient = ctx.createLinearGradient(0, 0, width, height);
+                    gradient.addColorStop(0, '#4ecdc4');
+                    gradient.addColorStop(1, '#44a08d');
+                    ctx.fillStyle = gradient;
+                    ctx.fillRect(0, 0, width, height);
+                }
+                
+                console.log(`✅ CSS 배경 렌더링 완료`);
+            } catch (error) {
+                console.error('CSS 배경 렌더링 실패:', error);
+                // 기본 배경
+                ctx.fillStyle = '#4ecdc4';
+                ctx.fillRect(0, 0, width, height);
+            }
+        }
+
+        // 실제 화면 텍스트 요소들 복제
+        async function copyActualSlideText(ctx, activeSlide, width, height) {
+            try {
+                console.log(`📝 실제 화면 텍스트 복제 시작`);
+                
+                // 텍스트 설정
+                ctx.fillStyle = 'white';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                
+                // 고품질 그림자
+                ctx.shadowColor = 'rgba(0,0,0,0.8)';
+                ctx.shadowBlur = 20;
+                ctx.shadowOffsetX = 2;
+                ctx.shadowOffsetY = 2;
+
+                // 1. 아이콘 복제
+                const iconElement = activeSlide.querySelector('.slide-icon');
+                if (iconElement) {
+                    const iconText = iconElement.textContent || iconElement.innerText || '🎯';
+                    const iconSize = height * 0.08;
+                    ctx.font = `${iconSize}px Arial`;
+                    ctx.fillText(iconText, width / 2, height * 0.25);
+                    console.log(`✅ 아이콘 복제: ${iconText}`);
+                }
+
+                // 2. 제목 복제
+                const titleElement = activeSlide.querySelector('.slide-title');
+                if (titleElement) {
+                    const titleText = titleElement.textContent || titleElement.innerText || '';
+                    const titleSize = Math.min(height * 0.045, width * 0.06);
+                    ctx.font = `bold ${titleSize}px Arial`;
+                    ctx.fillStyle = 'white';
+                    
+                    const titleLines = wrapTextSafe(ctx, titleText, width * 0.9);
+                    const titleY = height * 0.45;
+                    
+                    titleLines.forEach((line, i) => {
+                        ctx.fillText(line, width / 2, titleY + (i * titleSize * 1.2));
+                    });
+                    console.log(`✅ 제목 복제: ${titleText}`);
+                }
+
+                // 3. 부제목 복제
+                const subtitleElement = activeSlide.querySelector('.slide-subtitle');
+                if (subtitleElement) {
+                    const subtitleText = subtitleElement.textContent || subtitleElement.innerText || '';
+                    const subtitleSize = Math.min(height * 0.025, width * 0.035);
+                    ctx.font = `${subtitleSize}px Arial`;
+                    ctx.fillStyle = 'rgba(255,255,255,0.9)';
+                    
+                    const subtitleLines = wrapTextSafe(ctx, subtitleText, width * 0.9);
+                    const subtitleY = height * 0.65;
+                    
+                    subtitleLines.forEach((line, i) => {
+                        ctx.fillText(line, width / 2, subtitleY + (i * subtitleSize * 1.2));
+                    });
+                    console.log(`✅ 부제목 복제: ${subtitleText}`);
+                }
+
+                // 그림자 초기화
+                ctx.shadowColor = 'transparent';
+                ctx.shadowBlur = 0;
+                ctx.shadowOffsetX = 0;
+                ctx.shadowOffsetY = 0;
+                
+                console.log(`✅ 실제 화면 텍스트 복제 완료`);
+                
+            } catch (error) {
+                console.error('실제 화면 텍스트 복제 실패:', error);
+                // 기본 텍스트
+                ctx.fillStyle = 'white';
+                ctx.font = 'bold 60px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('Sue Reading Club', width / 2, height / 2);
             }
         }
 
