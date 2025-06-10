@@ -1058,9 +1058,27 @@
             backdrop-filter: blur(10px);
         }
 
-        @keyframes progressSpin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
+        @media (max-width: 768px) {
+            .fullscreen-recording-slide {
+                width: 100vw;
+                height: 100vh;
+            }
+            
+            .fullscreen-recording-content {
+                padding: 6vh 3vh;
+            }
+            
+            .fullscreen-recording-icon {
+                font-size: 10vh;
+            }
+            
+            .fullscreen-recording-title {
+                font-size: 6vh;
+            }
+            
+            .fullscreen-recording-subtitle {
+                font-size: 3.5vh;
+            }
         }
     </style>
 </head>
@@ -1168,23 +1186,23 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
             </p>
             
             <div style="text-align: center; margin: 30px 0;">
-                <button class="btn btn-recording" onclick="startAutoRecording()" style="font-size: 1.6em; padding: 25px 50px; margin: 10px; text-transform: none;">
-                    🎬 고화질 MP4 자동 녹화
+                <button class="btn btn-recording" id="autoRecordBtn" onclick="startAutoRecording()" style="font-size: 1.6em; padding: 25px 50px; text-transform: none;">
+                    🔴 자동 녹화 시작
                 </button>
                 <button class="btn btn-secondary" onclick="showAutoRecordingGuide()" style="margin: 10px; text-transform: none;">
-                    📖 녹화 가이드
+                    📖 자동녹화 가이드
                 </button>
             </div>
 
             <div style="background: rgba(0,255,100,0.1); border: 2px solid rgba(0,255,100,0.3); border-radius: 15px; padding: 20px; margin: 20px 0;">
-                <h4 style="color: #00ff88; margin-bottom: 15px;">✨ PowerPoint 방식 MP4 생성</h4>
+                <h4 style="color: #00ff88; margin-bottom: 15px;">✨ 자동 녹화 기능</h4>
                 <ul style="text-align: left; margin-left: 20px; line-height: 1.8;">
-                    <li>🎨 슬라이드 데이터를 Canvas에 직접 렌더링</li>
-                    <li>⏱️ 33초 완벽한 타이밍으로 자동 생성</li>
-                    <li>📱 화면 공유나 권한 요청 없음</li>
-                    <li>🎬 1080×1920 초고화질 MP4 생성</li>
-                    <li>💾 PowerPoint "동영상 내보내기"와 동일한 방식</li>
-                    <li>🎯 유튜브 쇼츠 완벽 최적화</li>
+                    <li>🎬 화면 전체를 자동으로 캡처</li>
+                    <li>⏱️ 33초 완벽한 타이밍으로 녹화</li>
+                    <li>📱 모바일/PC 모두 지원</li>
+                    <li>🎨 슬라이드 전환 효과까지 녹화</li>
+                    <li>💾 자동으로 다운로드 폴더에 저장</li>
+                    <li>🎯 유튜브 쇼츠 최적 포맷 (9:16)</li>
                 </ul>
             </div>
         </div>
@@ -1214,13 +1232,13 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
             
             <div style="text-align: center; margin: 30px 0;">
                 <button class="btn btn-recording" onclick="startAutoRecording()" style="font-size: 1.6em; padding: 25px 50px; margin: 10px; text-transform: none;">
-                    🎬 PowerPoint 방식 MP4 생성
+                    🔴 자동 녹화 시작
                 </button>
                 <button class="btn btn-primary" onclick="startRecordingMode()" style="font-size: 1.4em; padding: 20px 40px; background: linear-gradient(45deg, #ff6b6b, #4ecdc4); margin: 10px; text-transform: none;">
-                    📱 수동 화면 녹화
+                    📹 수동 녹화 모드
                 </button>
                 <button class="btn btn-secondary" onclick="showRecordingGuide()" style="margin: 10px; text-transform: none;">
-                    📖 수동 녹화 가이드
+                    📖 녹화 가이드
                 </button>
                 <button class="btn btn-primary" onclick="downloadSlideImages()" style="margin: 10px; text-transform: none;">
                     📁 이미지 다운로드
@@ -1229,7 +1247,40 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
         </div>
     </div>
 
-    <!-- 전체화면 모달 (슬라이드 미리보기용) -->
+    <!-- 전체화면 녹화 모드 -->
+    <div class="fullscreen-recording-mode" id="fullscreenRecordingMode">
+        <div class="fullscreen-recording-slide" id="fullscreenRecordingSlide">
+            <div class="fullscreen-recording-overlay" id="fullscreenRecordingOverlay"></div>
+            <div class="fullscreen-recording-indicator" id="fullscreenRecordingIndicator">🔴 REC</div>
+            <div class="recording-exit-hint">ESC키로 종료</div>
+            <div class="fullscreen-recording-content" id="fullscreenRecordingContent">
+                <div class="fullscreen-recording-icon" id="fullscreenRecordingIcon">🎯</div>
+                <div class="fullscreen-recording-title" id="fullscreenRecordingTitle">제목</div>
+                <div class="fullscreen-recording-subtitle" id="fullscreenRecordingSubtitle">부제목</div>
+                <div class="fullscreen-recording-counter" id="fullscreenRecordingCounter">1 / 15</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 수동 녹화 모드 -->
+    <div class="recording-mode" id="recordingMode">
+        <div class="recording-container">
+            <div class="recording-overlay" id="recordingOverlay" style="display: none;"></div>
+            <div class="recording-indicator" id="recordingIndicator" style="display: none;">🔴 REC</div>
+            <div class="countdown-overlay" id="countdownOverlay" style="display: none;">
+                <div class="countdown-number" id="countdownNumber">3</div>
+            </div>
+            <div class="slide-container" id="recordingSlideContainer">
+                <!-- 슬라이드들이 여기에 복사됩니다 -->
+            </div>
+            <div class="recording-controls">
+                <button class="recording-btn" onclick="exitRecordingMode()">📱 모바일 녹화</button>
+                <button class="recording-btn stop" onclick="exitRecordingMode()">✕ 종료</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 전체화면 모달 -->
     <div class="fullscreen-modal" id="fullscreenModal">
         <div class="fullscreen-slide" id="fullscreenSlide">
             <div class="fullscreen-content" id="fullscreenContent">
@@ -1267,10 +1318,13 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
         let fullscreenSlideIndex = 0; // 전체화면 슬라이드 인덱스
         let autoSlideInterval = null;
         
-        // Canvas 녹화 관련 변수 (화면 공유 변수 제거)
+        // 자동 녹화 관련 변수
         let mediaRecorder = null;
         let recordedChunks = [];
         let isRecording = false;
+        let isPaused = false;
+        let recordingStartTime = 0;
+        let recordingTimer = null;
 
         // API 키 설정
         function setupApiKey() {
@@ -1450,44 +1504,158 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
             }
         }
 
-        // 간단한 디버깅용 함수
-        function testCanvasRecording() {
-            console.log('🧪 Canvas 녹화 테스트 시작');
+        // 전체화면 녹화 모드 진입
+        async function enterFullscreenRecordingMode() {
+            const fullscreenMode = document.getElementById('fullscreenRecordingMode');
+            fullscreenMode.classList.add('active');
             
-            if (!HTMLCanvasElement.prototype.captureStream) {
-                console.error('❌ captureStream 미지원');
-                return false;
+            // 문서 전체를 전체화면으로 만들기
+            if (document.documentElement.requestFullscreen) {
+                await document.documentElement.requestFullscreen();
+            } else if (document.documentElement.mozRequestFullScreen) {
+                await document.documentElement.mozRequestFullScreen();
+            } else if (document.documentElement.webkitRequestFullscreen) {
+                await document.documentElement.webkitRequestFullscreen();
+            } else if (document.documentElement.msRequestFullscreen) {
+                await document.documentElement.msRequestFullscreen();
             }
             
-            if (!window.MediaRecorder) {
-                console.error('❌ MediaRecorder 미지원');
-                return false;
-            }
+            // 마우스 커서 숨기기
+            document.body.style.cursor = 'none';
             
-            console.log('✅ Canvas 녹화 지원됨');
-            return true;
+            console.log('✅ 전체화면 녹화 모드 진입');
         }
 
-        // MP4 녹화 저장
-        function saveMP4Recording(mimeType) {
+        // 전체화면 녹화 모드 종료
+        function exitFullscreenRecordingMode() {
+            const fullscreenMode = document.getElementById('fullscreenRecordingMode');
+            fullscreenMode.classList.remove('active');
+            
+            // 전체화면 종료
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.mozCancelFullScreen) {
+                document.mozCancelFullScreen();
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            } else if (document.msExitFullscreen) {
+                document.msExitFullscreen();
+            }
+            
+            // 마우스 커서 복원
+            document.body.style.cursor = 'auto';
+            
+            console.log('✅ 전체화면 녹화 모드 종료');
+        }
+
+        // 전체화면에서 슬라이드쇼 시작
+        function startFullscreenRecordingSlideshow() {
+            currentSlideIndex = 0;
+            showFullscreenRecordingSlide(0);
+            
+            // 녹화 표시 활성화
+            document.getElementById('fullscreenRecordingOverlay').classList.add('show');
+            document.getElementById('fullscreenRecordingIndicator').classList.add('show');
+            
+            // 2.2초 간격으로 슬라이드 전환 (15장 × 2.2초 = 33초)
+            autoSlideInterval = setInterval(() => {
+                if (!isPaused) {
+                    const nextIndex = (currentSlideIndex + 1) % slides.length;
+                    showFullscreenRecordingSlide(nextIndex);
+                    
+                    // 한 바퀴 완료 시 정지
+                    if (nextIndex === 0 && currentSlideIndex !== 0) {
+                        clearInterval(autoSlideInterval);
+                    }
+                }
+            }, 2200);
+        }
+
+        // 전체화면에서 슬라이드 표시
+        function showFullscreenRecordingSlide(index) {
+            if (!slides[index]) return;
+            
+            const slide = slides[index];
+            const content = document.getElementById('fullscreenRecordingContent');
+            
+            // 배경 이미지 설정
+            if (slideImages[index]) {
+                content.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url(${slideImages[index]})`;
+                content.style.backgroundSize = 'cover';
+                content.style.backgroundPosition = 'center';
+            } else {
+                // 색상 그라데이션 배경
+                const colors = [
+                    'linear-gradient(135deg, #667eea, #764ba2)',
+                    'linear-gradient(135deg, #4ecdc4, #44a08d)', 
+                    'linear-gradient(135deg, #ff6b6b, #ee5a6f)',
+                    'linear-gradient(135deg, #feca57, #ff9ff3)',
+                    'linear-gradient(135deg, #96ceb4, #ffecd2)',
+                    'linear-gradient(135deg, #74b9ff, #0984e3)',
+                    'linear-gradient(135deg, #fd79a8, #fdcb6e)',
+                    'linear-gradient(135deg, #6c5ce7, #a29bfe)',
+                    'linear-gradient(135deg, #e17055, #fdcb6e)',
+                    'linear-gradient(135deg, #00b894, #00cec9)',
+                    'linear-gradient(135deg, #e84393, #fd79a8)',
+                    'linear-gradient(135deg, #fdcb6e, #e17055)',
+                    'linear-gradient(135deg, #00cec9, #55efc4)',
+                    'linear-gradient(135deg, #a29bfe, #6c5ce7)',
+                    'linear-gradient(135deg, #fd79a8, #fdcb6e)'
+                ];
+                content.style.background = colors[index % colors.length];
+                content.style.backgroundImage = 'none';
+            }
+            
+            // 텍스트 최적화
+            const optimizedTitle = optimizeTextWrapping(slide.title, 15);
+            const optimizedSubtitle = optimizeTextWrapping(slide.subtitle, 25);
+            
+            // 슬라이드 내용 업데이트
+            document.getElementById('fullscreenRecordingIcon').textContent = slide.icon;
+            document.getElementById('fullscreenRecordingTitle').innerHTML = optimizedTitle;
+            document.getElementById('fullscreenRecordingSubtitle').innerHTML = optimizedSubtitle;
+            document.getElementById('fullscreenRecordingCounter').textContent = `${index + 1} / ${slides.length}`;
+            
+            currentSlideIndex = index;
+            
+            console.log(`📺 전체화면 슬라이드 ${index + 1} 표시`);
+        }
+
+        // 자동 녹화 중지
+        function stopAutoRecording() {
+            if (mediaRecorder && isRecording) {
+                mediaRecorder.stop();
+                
+                // 스트림 정리
+                const tracks = mediaRecorder.stream.getTracks();
+                tracks.forEach(track => track.stop());
+                
+                isRecording = false;
+                isPaused = false;
+                
+                // 슬라이드쇼 정지
+                if (autoSlideInterval) {
+                    clearInterval(autoSlideInterval);
+                }
+                
+                console.log('✅ 자동 녹화 중지됨');
+            }
+        }
+
+        // 녹화 저장
+        function saveRecording() {
             if (recordedChunks.length === 0) {
                 alert('❌ 녹화된 데이터가 없습니다.');
                 return;
             }
 
-            const blob = new Blob(recordedChunks, { type: mimeType });
+            const blob = new Blob(recordedChunks, { type: 'video/webm' });
             const url = URL.createObjectURL(blob);
-            
-            // 파일 확장자 결정
-            let extension = '.mp4';
-            if (mimeType.includes('webm')) {
-                extension = '.webm';
-            }
             
             // 파일 다운로드
             const a = document.createElement('a');
             a.href = url;
-            a.download = `youtube-shorts-${new Date().getTime()}${extension}`;
+            a.download = `youtube-shorts-${new Date().getTime()}.webm`;
             a.style.display = 'none';
             
             document.body.appendChild(a);
@@ -1498,19 +1666,9 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
             setTimeout(() => URL.revokeObjectURL(url), 1000);
             
             // 성공 메시지
-            const formatName = extension === '.mp4' ? 'MP4' : 'WebM';
-            alert(`🎉 고화질 ${formatName} 녹화 완료!\n\n슬라이드 전용 33초 영상이 다운로드 폴더에 저장되었습니다.\n✨ 1080×1920 고화질로 제작되어 바로 유튜브 쇼츠에 업로드 할 수 있습니다!`);
+            alert('🎉 고화질 녹화 완료!\n\n슬라이드 전용 33초 영상이 다운로드 폴더에 저장되었습니다.\n바로 유튜브 쇼츠에 업로드 할 수 있습니다!');
             
-            console.log(`✅ 고화질 ${formatName} 녹화 파일 저장 완료`);
-        }
-
-        // 자동 녹화 중지
-        function stopAutoRecording() {
-            if (mediaRecorder && isRecording) {
-                mediaRecorder.stop();
-                isRecording = false;
-                console.log('✅ MP4 생성 중지됨');
-            }
+            console.log('✅ 고화질 녹화 파일 저장 완료');
         }
 
         // 녹화용 슬라이드쇼 시작
@@ -1539,49 +1697,49 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
 
         // 자동 녹화 가이드
         function showAutoRecordingGuide() {
-            const guideText = `🎬 PowerPoint 방식 MP4 생성 가이드
+            const guideText = `🎥 자동 화면 녹화 완벽 가이드
 
-🚀 혁신적인 방식:
-✅ 화면 공유 권한 요청 없음
-✅ 슬라이드 데이터만으로 MP4 생성
-✅ PowerPoint "동영상 내보내기"와 동일한 원리
-✅ 1080×1920 초고화질 보장
-✅ 유튜브 쇼츠 최적 포맷
+🚀 자동 녹화 기능:
+✅ 버튼 클릭 한 번으로 모든 과정 자동화
+✅ 33초 완벽한 타이밍으로 녹화
+✅ 슬라이드만 최적화하여 고화질 녹화
+✅ 유튜브 쇼츠 최적 포맷 (9:16)
+✅ 자동 다운로드 및 저장
 
-📋 초간단 사용법:
-1. 슬라이드 생성 완료 후 "🎬 PowerPoint 방식 MP4 생성" 클릭
-2. 배경음/나레이션 추가 여부 선택 (권장: "취소")
-3. 자동으로 MP4 생성 진행 (약 35초 소요)
-4. 완료 후 MP4 파일 자동 다운로드
+📋 사용 방법:
+1. 슬라이드 생성 완료 후 "🔴 자동 녹화 시작" 클릭
+2. 전체화면 모드로 자동 전환
+3. 화면 공유 창에서 "전체 화면" 또는 "Chrome 탭" 선택
+4. "공유" 버튼 클릭
+5. 자동으로 33초 녹화 진행
+6. 완료 후 자동으로 파일 다운로드
 
-🎯 핵심 장점:
-• 🖥️ 화면 공유나 캡처 없음
-• 🎨 순수 슬라이드 데이터만 사용
-• 💎 최고 화질 보장
-• 🎵 선택적 오디오 녹음
-• 📱 모든 최신 브라우저 지원
+🎯 권한 선택 가이드:
+• 📌 "전체 화면" 선택 (권장)
+• 📌 "Chrome 탭" 선택 (브라우저만)
+• ❌ "창" 선택 시 화질 저하 가능
 
-🌟 지원 포맷:
-• MP4 (Chrome, Edge - 1순위)
-• WebM (Firefox, 기타 브라우저)
-• 자동으로 최적 포맷 선택
+🌟 지원 브라우저:
+• Chrome 72+ (권장)
+• Firefox 66+
+• Edge 79+
+• Safari 13+ (일부 제한)
 
-💡 품질 보장:
-• 8Mbps 초고화질 비트레이트
-• 30fps 부드러운 전환
-• AI 이미지 무손실 렌더링
-• 텍스트 선명도 최적화
+💡 최적 녹화 팁:
+• 전체화면으로 브라우저 확대
+• 다른 프로그램은 종료 권장
+• 안정적인 인터넷 연결 필요
+• 슬라이드 영역이 자동으로 최적화됨
 
-🎬 결과물:
-• 정확히 33초 길이
-• 1080×1920 해상도
-• 15-30MB 파일 크기
-• 바로 유튜브 쇼츠 업로드 가능
+🎬 완성 후:
+• WebM → MP4 변환 (필요시)
+• 유튜브 쇼츠에 바로 업로드
+• BGM이나 자막 추가 (선택사항)
 
-❗ 참고사항:
-• 화면 공유 창이 뜨지 않음
-• 권한 요청 최소화
-• 백그라운드에서 자동 생성`;
+❗ 문제 해결:
+• 권한 거부 시: 다시 시도하여 "공유" 클릭
+• 녹화 안됨: 다른 브라우저에서 시도
+• 화질 문제: "전체 화면" 선택 권장`;
             
             alert(guideText);
         }
@@ -2254,43 +2412,243 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
             }
         }
 
-        // 수동 녹화 모드 시작 (화면 공유 방식)
+        // 수동 녹화 모드 시작
         function startRecordingMode() {
             if (!slides || slides.length === 0) {
                 alert('❌ 먼저 슬라이드를 생성해주세요!');
                 return;
             }
 
-            alert('📱 수동 녹화 안내\n\n수동 녹화는 모바일/태블릿에서 화면 녹화 기능을 직접 사용하는 방식입니다.\n\n1. 모바일: 제어센터 → 화면 기록\n2. PC: OBS Studio, 반디캠 등 사용\n\n💡 권장: "🎬 PowerPoint 방식 MP4 생성"을 사용하세요!');
+            // 자동 슬라이드쇼 중지
+            if (autoSlideInterval) {
+                clearInterval(autoSlideInterval);
+            }
+
+            // 녹화 모드 활성화
+            const recordingMode = document.getElementById('recordingMode');
+            recordingMode.classList.add('active');
+            document.body.style.overflow = 'hidden';
+
+            // 슬라이드 복사
+            copySlideToRecordingMode();
+
+            // 카운트다운 시작
+            startCountdown();
         }
 
-        // 수동 녹화 가이드
+        // 슬라이드를 녹화 모드로 복사
+        function copySlideToRecordingMode() {
+            const recordingContainer = document.getElementById('recordingSlideContainer');
+            recordingContainer.innerHTML = '';
+
+            const colors = [
+                'linear-gradient(135deg, #667eea, #764ba2)',
+                'linear-gradient(135deg, #4ecdc4, #44a08d)', 
+                'linear-gradient(135deg, #ff6b6b, #ee5a6f)',
+                'linear-gradient(135deg, #feca57, #ff9ff3)',
+                'linear-gradient(135deg, #96ceb4, #ffecd2)',
+                'linear-gradient(135deg, #74b9ff, #0984e3)',
+                'linear-gradient(135deg, #fd79a8, #fdcb6e)',
+                'linear-gradient(135deg, #6c5ce7, #a29bfe)',
+                'linear-gradient(135deg, #e17055, #fdcb6e)',
+                'linear-gradient(135deg, #00b894, #00cec9)',
+                'linear-gradient(135deg, #e84393, #fd79a8)',
+                'linear-gradient(135deg, #fdcb6e, #e17055)',
+                'linear-gradient(135deg, #00cec9, #55efc4)',
+                'linear-gradient(135deg, #a29bfe, #6c5ce7)',
+                'linear-gradient(135deg, #fd79a8, #fdcb6e)'
+            ];
+
+            slides.forEach((slide, index) => {
+                const slideDiv = document.createElement('div');
+                slideDiv.className = 'slide';
+                slideDiv.style.background = colors[index % colors.length];
+                
+                // 이미지가 있으면 배경으로 사용
+                if (slideImages[index]) {
+                    slideDiv.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url(${slideImages[index]})`;
+                    slideDiv.style.backgroundSize = 'cover';
+                    slideDiv.style.backgroundPosition = 'center';
+                }
+                
+                slideDiv.innerHTML = `
+                    <div class="slide-icon" style="font-size: 4em; margin-bottom: 20px;">${slide.icon}</div>
+                    <div class="slide-title" style="font-size: 2.2em; font-weight: 900; margin-bottom: 15px; text-shadow: 2px 2px 8px rgba(0,0,0,0.8);">${slide.title}</div>
+                    <div class="slide-subtitle" style="font-size: 1.4em; opacity: 0.9; text-shadow: 1px 1px 4px rgba(0,0,0,0.8);">${slide.subtitle}</div>
+                    <div style="position: absolute; bottom: 15px; right: 15px; background: rgba(0,0,0,0.7); padding: 8px 15px; border-radius: 15px; font-size: 1em; font-weight: bold;">
+                        ${index + 1}/15
+                    </div>
+                `;
+                
+                if (index === 0) {
+                    slideDiv.classList.add('active');
+                } else {
+                    slideDiv.classList.add('hidden');
+                }
+                
+                recordingContainer.appendChild(slideDiv);
+            });
+        }
+
+        // 카운트다운 시작
+        function startCountdown() {
+            const countdownOverlay = document.getElementById('countdownOverlay');
+            const countdownNumber = document.getElementById('countdownNumber');
+            
+            countdownOverlay.style.display = 'flex';
+            
+            let count = 3;
+            const countdownInterval = setInterval(() => {
+                countdownNumber.textContent = count;
+                countdownNumber.style.animation = 'none';
+                setTimeout(() => {
+                    countdownNumber.style.animation = 'countdownPulse 1s ease-in-out';
+                }, 10);
+                
+                count--;
+                
+                if (count < 0) {
+                    clearInterval(countdownInterval);
+                    countdownOverlay.style.display = 'none';
+                    startManualRecordingSlideshow();
+                }
+            }, 1000);
+        }
+
+        // 수동 녹화용 슬라이드쇼 시작
+        function startManualRecordingSlideshow() {
+            const recordingOverlay = document.getElementById('recordingOverlay');
+            const recordingIndicator = document.getElementById('recordingIndicator');
+            
+            // 녹화 표시 활성화
+            recordingOverlay.style.display = 'block';
+            recordingIndicator.style.display = 'block';
+            
+            currentSlideIndex = 0;
+            
+            // 33초 동안 15장 재생 (각 슬라이드 2.2초)
+            const recordingInterval = setInterval(() => {
+                const nextIndex = (currentSlideIndex + 1) % slides.length;
+                showRecordingSlide(nextIndex);
+                
+                if (nextIndex === 0) {
+                    // 한 바퀴 완료
+                    clearInterval(recordingInterval);
+                    finishRecording();
+                }
+            }, 2200);
+            
+            // 모바일 녹화 안내
+            setTimeout(() => {
+                if (navigator.userAgent.match(/iPhone|iPad|iPod|Android/i)) {
+                    showMobileRecordingTip();
+                }
+            }, 1000);
+        }
+
+        // 녹화용 슬라이드 표시
+        function showRecordingSlide(index) {
+            const slideElements = document.querySelectorAll('#recordingSlideContainer .slide');
+            
+            slideElements.forEach((slide, i) => {
+                if (i === index) {
+                    slide.classList.remove('hidden');
+                    slide.classList.add('active');
+                } else {
+                    slide.classList.remove('active');
+                    slide.classList.add('hidden');
+                }
+            });
+            
+            currentSlideIndex = index;
+        }
+
+        // 녹화 완료
+        function finishRecording() {
+            const recordingOverlay = document.getElementById('recordingOverlay');
+            const recordingIndicator = document.getElementById('recordingIndicator');
+            
+            recordingOverlay.style.display = 'none';
+            recordingIndicator.style.display = 'none';
+            
+            // 완료 메시지
+            alert('🎉 녹화 완료!\n\n33초 영상이 완성되었습니다.\n휴대폰 갤러리에서 확인하세요!');
+        }
+
+        // 모바일 녹화 팁 표시
+        function showMobileRecordingTip() {
+            const tip = document.createElement('div');
+            tip.style.cssText = `
+                position: fixed;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: rgba(0, 0, 0, 0.9);
+                color: white;
+                padding: 15px 25px;
+                border-radius: 25px;
+                font-size: 1.1em;
+                font-weight: bold;
+                z-index: 20;
+                text-align: center;
+                border: 2px solid #4ecdc4;
+                animation: fadeInOut 4s ease-in-out;
+            `;
+            tip.innerHTML = '📱 화면 녹화를 시작하세요!<br><small>제어센터 → 화면 기록</small>';
+            
+            document.body.appendChild(tip);
+            
+            setTimeout(() => {
+                document.body.removeChild(tip);
+            }, 4000);
+        }
+
+        // 수동 녹화 모드 종료
+        function exitRecordingMode() {
+            const recordingMode = document.getElementById('recordingMode');
+            recordingMode.classList.remove('active');
+            document.body.style.overflow = 'auto';
+            
+            // 원래 슬라이드쇼 재시작
+            setTimeout(() => {
+                startAutoSlideshow();
+            }, 1000);
+        }
+
+        // 상세 녹화 가이드
         function showRecordingGuide() {
-            const guideText = `📱 수동 녹화 가이드
+            const guideText = `🎬 수동 녹화 완벽 가이드
 
-🎯 수동 녹화 방법:
+📱 모바일 녹화 (권장):
+1. "📹 수동 녹화 모드" 버튼 클릭
+2. 3-2-1 카운트다운 후 자동 재생 시작
+3. 제어센터에서 "화면 기록" 버튼 누르기
+4. 33초 자동 재생 완료까지 대기
+5. 제어센터에서 녹화 중지
+6. 갤러리에서 영상 확인
 
-📱 모바일/태블릿:
-1. 제어센터 열기 (아이폰) 또는 빠른 설정 (안드로이드)
-2. "화면 기록" 또는 "스크린 녹화" 버튼 찾기
-3. 녹화 시작 후 슬라이드 페이지로 이동
-4. 슬라이드 수동 조작하며 녹화
-5. 녹화 중지 후 갤러리에서 확인
+💻 PC 녹화:
+1. OBS Studio 또는 Bandicam 실행
+2. 1080x1920 해상도 설정
+3. "📹 수동 녹화 모드" 버튼 클릭
+4. 카운트다운과 함께 PC에서 녹화 시작
+5. 33초 재생 완료 후 녹화 중지
 
-💻 PC:
-1. OBS Studio, 반디캠, 곰캠 등 설치
-2. 1080×1920 해상도 설정 (9:16 비율)
-3. 브라우저 창 또는 특정 영역 선택
-4. 녹화 시작 후 슬라이드 조작
-5. 녹화 완료 후 편집
+📐 최적 설정:
+• 해상도: 1080x1920 (9:16 비율)
+• 프레임: 30fps 이상
+• 품질: 고화질
+• 오디오: 선택사항 (BGM 나중에 추가 가능)
 
-💡 권장사항:
-대신 "🎬 PowerPoint 방식 MP4 생성"을 사용하시면
-완전 자동으로 고화질 MP4가 생성됩니다!
+🎨 편집 팁:
+• CapCut, InShot 등으로 BGM 추가
+• 자막이나 효과는 선택사항
+• 유튜브 쇼츠에 바로 업로드 가능
 
-📊 품질 비교:
-• PowerPoint 방식: 1080×1920 완벽 화질
-• 수동 녹화: 기기/설정에 따라 다름`;
+🚀 성공 팁:
+• 업로드 시간: 오후 7-9시 권장
+• 해시태그: #영어교육 #AI #Sue_Reading_Club
+• 썸네일: 첫 번째 슬라이드 활용`;
             
             alert(guideText);
         }
@@ -2342,13 +2700,18 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
                 });
             }
             
-            // ESC 키로 전체화면 닫기 및 녹화 중지
+            // ESC 키로 전체화면 닫기
             document.addEventListener('keydown', function(e) {
                 if (e.key === 'Escape') {
                     closeFullscreen();
                     // 자동 녹화 중일 때 ESC로 중지
                     if (isRecording) {
                         stopAutoRecording();
+                    }
+                    // 전체화면 녹화 모드 종료
+                    const fullscreenRecording = document.getElementById('fullscreenRecordingMode');
+                    if (fullscreenRecording.classList.contains('active')) {
+                        exitFullscreenRecordingMode();
                     }
                 }
                 // 전체화면에서 방향키로 슬라이드 이동
@@ -2380,17 +2743,11 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
 
         // 브라우저 호환성 체크
         function checkBrowserCompatibility() {
-            // Canvas 녹화 지원 확인만
-            const hasCanvasCapture = HTMLCanvasElement.prototype.captureStream;
-            const hasMediaRecorder = window.MediaRecorder;
-            
-            if (hasCanvasCapture && hasMediaRecorder) {
-                console.log('✅ Canvas 기반 MP4 생성 지원');
-            } else {
-                console.warn('❌ Canvas MP4 생성 미지원');
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
+                console.warn('⚠️ 이 브라우저는 화면 녹화를 지원하지 않습니다.');
                 
                 // 자동 녹화 버튼 비활성화
-                const autoRecordBtn = document.querySelector('button[onclick="startAutoRecording()"]');
+                const autoRecordBtn = document.getElementById('autoRecordBtn');
                 if (autoRecordBtn) {
                     autoRecordBtn.disabled = true;
                     autoRecordBtn.innerHTML = '❌ 브라우저 미지원';
