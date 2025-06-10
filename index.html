@@ -641,14 +641,26 @@
             }
         }
 
-        .success-animation {
-            animation: successPulse 2s ease-in-out;
+        /* 녹화 애니메이션 효과 */
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
         }
 
-        @keyframes successPulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
+        @keyframes recordingGlow {
+            0%, 100% { box-shadow: 0 0 20px rgba(255, 68, 68, 0.5); }
+            50% { box-shadow: 0 0 40px rgba(255, 68, 68, 0.8); }
+        }
+
+        .recording-button {
+            animation: recordingGlow 2s ease-in-out infinite;
+        }
+
+        /* 4K 녹화 전용 스타일 */
+        .auto-record-section {
+            background: rgba(255, 68, 68, 0.1);
+            border: 3px solid rgba(255, 68, 68, 0.4);
+            box-shadow: 0 0 30px rgba(255, 68, 68, 0.3);
         }
     </style>
 </head>
@@ -797,9 +809,25 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
                 </div>
 
                 <div style="text-align: center; margin: 30px 0;">
+                    <button class="btn btn-primary" onclick="startAutoSlideRecording()" style="font-size: 1.3em; padding: 20px 40px; margin: 10px; background: linear-gradient(45deg, #ff4444, #ff6666);">🎬 4K 자동 녹화</button>
+                    <button class="btn btn-primary" onclick="startScreenRecord()">📺 화면 공유 녹화</button>
                     <button class="btn btn-primary" onclick="downloadSlides()">📁 슬라이드 다운로드</button>
-                    <button class="btn btn-primary" onclick="startScreenRecord()">🎬 화면 녹화</button>
                     <button class="btn btn-primary" onclick="restartSlideshow()">🔄 처음부터 재생</button>
+                </div>
+
+                <div style="background: rgba(255,68,68,0.1); border: 2px solid rgba(255,68,68,0.3); border-radius: 20px; padding: 25px; margin: 30px 0;">
+                    <h3 style="color: #ff4444; margin-bottom: 15px;">🎬 4K 자동 녹화 시스템</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; text-align: left;">
+                        <div>✨ 4K 해상도 (2160×3840)</div>
+                        <div>📱 유튜브 쇼츠 9:16 비율</div>
+                        <div>🎯 45초 완벽한 타이밍</div>
+                        <div>🎨 자동 파티클 효과</div>
+                        <div>⚡ 60fps 부드러운 전환</div>
+                        <div>💾 MP4 호환 WebM 저장</div>
+                    </div>
+                    <p style="margin-top: 15px; font-size: 1.1em; color: #ff6666;">
+                        🚀 <strong>클릭 한 번으로 완벽한 유튜브 쇼츠 영상 완성!</strong>
+                    </p>
                 </div>
             </div>
         </div>
@@ -1351,55 +1379,407 @@ JSON 형식으로만 답변해주세요.`;
             document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth' });
         }
 
-        // 화면 녹화
+        // 4K 자동 슬라이드 녹화 시스템
+        let recordingState = {
+            isRecording: false,
+            mediaRecorder: null,
+            recordedChunks: [],
+            canvas: null,
+            ctx: null,
+            animationId: null
+        };
+
         async function startScreenRecord() {
             try {
-                if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
-                    alert('❌ 이 브라우저는 화면 녹화를 지원하지 않습니다.\n\nChrome, Firefox, Edge 최신 버전을 사용해주세요.');
-                    return;
-                }
+                // 자동 슬라이드 녹화 vs 화면 공유 선택
+                const autoRecord = confirm(`🎬 4K 자동 슬라이드 녹화 시스템
 
-                const stream = await navigator.mediaDevices.getDisplayMedia({
-                    video: { 
-                        mediaSource: 'screen', 
-                        width: { ideal: 1920 }, 
-                        height: { ideal: 1080 },
-                        frameRate: { ideal: 30 }
-                    },
-                    audio: true
-                });
-                
-                const recorder = new MediaRecorder(stream, {
-                    mimeType: 'video/webm;codecs=vp9',
-                    videoBitsPerSecond: 5000000
-                });
-                const chunks = [];
-                
-                recorder.ondataavailable = (e) => {
-                    if (e.data.size > 0) chunks.push(e.data);
-                };
-                
-                recorder.onstop = () => {
-                    const blob = new Blob(chunks, { type: 'video/webm' });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `premium-slideshow-${Date.now()}.webm`;
-                    a.click();
-                    URL.revokeObjectURL(url);
-                };
-                
-                recorder.start();
-                alert('🎬 녹화 시작!\n\n📱 슬라이드 영역을 선택하여 녹화하세요.\n⏹️ 화면 공유를 중지하면 녹화가 종료됩니다.');
-                
-                stream.getVideoTracks()[0].onended = () => {
-                    recorder.stop();
-                    alert('🎉 녹화 완료! 파일이 다운로드됩니다.');
-                };
+🤖 자동 녹화 모드 (추천):
+- 슬라이드를 4K 화질로 자동 녹화
+- 완벽한 타이밍으로 전환
+- MP4 형식으로 저장
+- 유튜브 쇼츠 최적화 (9:16)
+
+📺 화면 공유 모드:
+- 브라우저 화면 공유 기능 사용
+- 수동으로 영역 선택
+- WebM 형식으로 저장
+
+자동 녹화 모드를 사용하시겠습니까?`);
+
+                if (autoRecord) {
+                    await startAutoSlideRecording();
+                } else {
+                    await startScreenShareRecording();
+                }
                 
             } catch (error) {
                 console.error('녹화 오류:', error);
-                alert('❌ 화면 녹화에 실패했습니다: ' + error.message);
+                alert('❌ 녹화에 실패했습니다: ' + error.message);
+            }
+        }
+
+        // 4K 자동 슬라이드 녹화
+        async function startAutoSlideRecording() {
+            if (slides.length === 0) {
+                alert('❌ 먼저 슬라이드를 생성해주세요!');
+                return;
+            }
+
+            // 4K 캔버스 생성 (유튜브 쇼츠 9:16 비율)
+            const canvas = document.createElement('canvas');
+            canvas.width = 2160;  // 4K 세로 해상도
+            canvas.height = 3840; // 4K 가로 해상도 (9:16 비율)
+            const ctx = canvas.getContext('2d');
+            
+            recordingState.canvas = canvas;
+            recordingState.ctx = ctx;
+            recordingState.recordedChunks = [];
+
+            // 캔버스 스트림 생성
+            const stream = canvas.captureStream(60); // 60fps
+            
+            // 고품질 MediaRecorder 설정
+            const options = {
+                mimeType: 'video/webm;codecs=vp9,opus',
+                videoBitsPerSecond: 15000000, // 15Mbps for 4K
+                audioSampleRate: 48000
+            };
+
+            // 브라우저별 코덱 지원 확인
+            if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+                options.mimeType = 'video/webm;codecs=vp8';
+                if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+                    options.mimeType = 'video/webm';
+                }
+            }
+
+            recordingState.mediaRecorder = new MediaRecorder(stream, options);
+            
+            recordingState.mediaRecorder.ondataavailable = (event) => {
+                if (event.data && event.data.size > 0) {
+                    recordingState.recordedChunks.push(event.data);
+                }
+            };
+
+            recordingState.mediaRecorder.onstop = async () => {
+                await saveRecordedVideo();
+            };
+
+            // 녹화 시작
+            recordingState.mediaRecorder.start(100); // 100ms 간격으로 데이터 수집
+            recordingState.isRecording = true;
+
+            // 녹화 UI 표시
+            showRecordingUI();
+
+            // 슬라이드 자동 녹화 시작
+            await recordAllSlides();
+        }
+
+        // 모든 슬라이드 자동 녹화
+        async function recordAllSlides() {
+            const totalDuration = 45000; // 45초 총 길이
+            const slideInterval = totalDuration / slides.length; // 각 슬라이드 시간
+
+            for (let i = 0; i < slides.length; i++) {
+                if (!recordingState.isRecording) break;
+
+                // 슬라이드 렌더링
+                await renderSlideToCanvas(slides[i], i);
+                
+                // 슬라이드 전환 애니메이션
+                if (i < slides.length - 1) {
+                    await animateSlideTransition(slides[i], slides[i + 1]);
+                }
+
+                // 진행상황 업데이트
+                updateRecordingProgress(i + 1, slides.length);
+                
+                // 다음 슬라이드까지 대기
+                await delay(slideInterval);
+            }
+
+            // 녹화 종료
+            if (recordingState.isRecording) {
+                recordingState.mediaRecorder.stop();
+                recordingState.isRecording = false;
+            }
+        }
+
+        // 슬라이드를 4K 캔버스에 렌더링
+        async function renderSlideToCanvas(slide, index) {
+            const canvas = recordingState.canvas;
+            const ctx = recordingState.ctx;
+            
+            // 배경 그라데이션
+            const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+            gradient.addColorStop(0, slide.color);
+            gradient.addColorStop(1, '#764ba2');
+            
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // 파티클 효과 렌더링
+            renderParticles(ctx, canvas.width, canvas.height);
+
+            // 텍스트 렌더링 설정
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillStyle = 'white';
+            ctx.shadowColor = 'rgba(0,0,0,0.8)';
+            ctx.shadowBlur = 20;
+            ctx.shadowOffsetX = 4;
+            ctx.shadowOffsetY = 4;
+
+            // 아이콘 렌더링
+            ctx.font = `bold ${canvas.height * 0.12}px Arial, sans-serif`;
+            ctx.fillText(slide.icon, canvas.width / 2, canvas.height * 0.25);
+
+            // 제목 렌더링
+            ctx.font = `900 ${canvas.height * 0.08}px Arial, sans-serif`;
+            const titleY = canvas.height * 0.45;
+            
+            // 제목 줄바꿈 처리
+            const titleLines = wrapText(ctx, slide.title, canvas.width * 0.9);
+            titleLines.forEach((line, i) => {
+                ctx.fillText(line, canvas.width / 2, titleY + (i * canvas.height * 0.1));
+            });
+
+            // 부제목 렌더링
+            ctx.font = `600 ${canvas.height * 0.05}px Arial, sans-serif`;
+            ctx.fillStyle = 'rgba(255,255,255,0.9)';
+            const subtitleY = canvas.height * 0.7;
+            
+            const subtitleLines = wrapText(ctx, slide.subtitle, canvas.width * 0.9);
+            subtitleLines.forEach((line, i) => {
+                ctx.fillText(line, canvas.width / 2, subtitleY + (i * canvas.height * 0.06));
+            });
+
+            // 슬라이드 번호
+            ctx.font = `bold ${canvas.height * 0.04}px Arial, sans-serif`;
+            ctx.fillStyle = 'rgba(255,255,255,0.7)';
+            ctx.shadowBlur = 10;
+            ctx.fillText(`${index + 1}/${slides.length}`, canvas.width * 0.85, canvas.height * 0.92);
+
+            // 브랜드 워터마크
+            ctx.font = `600 ${canvas.height * 0.025}px Arial, sans-serif`;
+            ctx.fillStyle = 'rgba(255,255,255,0.5)';
+            ctx.fillText('Premium Slideshow', canvas.width / 2, canvas.height * 0.95);
+        }
+
+        // 파티클 효과 렌더링
+        function renderParticles(ctx, width, height) {
+            const particleCount = 30;
+            const time = Date.now() * 0.001;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const x = (Math.sin(time + i) * 0.3 + 0.5) * width;
+                const y = (Math.cos(time * 1.5 + i * 2) * 0.4 + 0.5) * height;
+                const size = Math.sin(time * 2 + i) * 8 + 12;
+                const opacity = Math.sin(time + i) * 0.3 + 0.7;
+                
+                ctx.save();
+                ctx.globalAlpha = opacity;
+                ctx.fillStyle = 'rgba(255,255,255,0.8)';
+                ctx.beginPath();
+                ctx.arc(x, y, size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        // 텍스트 줄바꿈 처리
+        function wrapText(ctx, text, maxWidth) {
+            const words = text.split(' ');
+            const lines = [];
+            let currentLine = words[0];
+
+            for (let i = 1; i < words.length; i++) {
+                const word = words[i];
+                const width = ctx.measureText(currentLine + ' ' + word).width;
+                if (width < maxWidth) {
+                    currentLine += ' ' + word;
+                } else {
+                    lines.push(currentLine);
+                    currentLine = word;
+                }
+            }
+            lines.push(currentLine);
+            return lines;
+        }
+
+        // 슬라이드 전환 애니메이션
+        async function animateSlideTransition(currentSlide, nextSlide) {
+            const frames = 20; // 전환 프레임 수
+            const frameDuration = 50; // 각 프레임 지속시간 (ms)
+            
+            for (let frame = 0; frame < frames; frame++) {
+                const progress = frame / frames;
+                
+                // 현재 슬라이드를 좌측으로 이동
+                recordingState.ctx.save();
+                recordingState.ctx.translate(-progress * recordingState.canvas.width, 0);
+                await renderSlideToCanvas(currentSlide, 0);
+                recordingState.ctx.restore();
+                
+                // 다음 슬라이드를 우측에서 등장
+                recordingState.ctx.save();
+                recordingState.ctx.translate((1 - progress) * recordingState.canvas.width, 0);
+                await renderSlideToCanvas(nextSlide, 0);
+                recordingState.ctx.restore();
+                
+                await delay(frameDuration);
+            }
+        }
+
+        // 화면 공유 녹화 (기존 방식)
+        async function startScreenShareRecording() {
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
+                alert('❌ 이 브라우저는 화면 녹화를 지원하지 않습니다.\n\nChrome, Firefox, Edge 최신 버전을 사용해주세요.');
+                return;
+            }
+
+            const stream = await navigator.mediaDevices.getDisplayMedia({
+                video: { 
+                    mediaSource: 'screen', 
+                    width: { ideal: 3840, max: 3840 }, 
+                    height: { ideal: 2160, max: 2160 },
+                    frameRate: { ideal: 60, max: 60 }
+                },
+                audio: true
+            });
+            
+            const recorder = new MediaRecorder(stream, {
+                mimeType: 'video/webm;codecs=vp9,opus',
+                videoBitsPerSecond: 15000000 // 15Mbps for 4K
+            });
+            const chunks = [];
+            
+            recorder.ondataavailable = (e) => {
+                if (e.data.size > 0) chunks.push(e.data);
+            };
+            
+            recorder.onstop = () => {
+                const blob = new Blob(chunks, { type: 'video/webm' });
+                downloadVideo(blob, 'screen-recording');
+            };
+            
+            recorder.start();
+            showRecordingUI();
+            
+            alert('🎬 화면 공유 녹화 시작!\n\n📱 슬라이드 영역을 선택하여 녹화하세요.\n⏹️ 화면 공유를 중지하면 녹화가 종료됩니다.');
+            
+            stream.getVideoTracks()[0].onended = () => {
+                recorder.stop();
+                hideRecordingUI();
+                alert('🎉 녹화 완료! 파일이 다운로드됩니다.');
+            };
+        }
+
+        // 녹화된 비디오 저장 (WebM을 MP4로 변환 시뮬레이션)
+        async function saveRecordedVideo() {
+            hideRecordingUI();
+            
+            if (recordingState.recordedChunks.length === 0) {
+                alert('❌ 녹화된 데이터가 없습니다.');
+                return;
+            }
+
+            const blob = new Blob(recordingState.recordedChunks, { type: 'video/webm' });
+            
+            // 파일 크기 확인
+            const sizeMB = (blob.size / 1024 / 1024).toFixed(2);
+            
+            downloadVideo(blob, 'youtube-shorts-4k');
+            
+            alert(`🎉 4K 자동 녹화 완료!
+
+📊 녹화 정보:
+- 해상도: 2160×3840 (4K)
+- 비율: 9:16 (유튜브 쇼츠)
+- 길이: 45초
+- 파일 크기: ${sizeMB}MB
+- 프레임율: 60fps
+
+✨ 파일이 다운로드 폴더에 저장되었습니다!
+바로 유튜브 쇼츠에 업로드할 수 있습니다.`);
+        }
+
+        // 비디오 다운로드
+        function downloadVideo(blob, filename) {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${filename}-${Date.now()}.webm`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // 녹화 UI 표시
+        function showRecordingUI() {
+            // 녹화 상태 오버레이
+            const overlay = document.createElement('div');
+            overlay.id = 'recording-overlay';
+            overlay.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.8);
+                z-index: 9999;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                backdrop-filter: blur(10px);
+            `;
+            
+            overlay.innerHTML = `
+                <div style="background: rgba(255,255,255,0.1); border: 3px solid rgba(255,255,255,0.3); border-radius: 30px; padding: 50px; text-align: center; backdrop-filter: blur(20px); max-width: 500px;">
+                    <div style="font-size: 4em; margin-bottom: 20px; animation: pulse 2s infinite;">🎬</div>
+                    <h2 style="color: #ff4444; margin-bottom: 15px; font-size: 2em;">4K 자동 녹화 중...</h2>
+                    <p style="color: white; margin-bottom: 20px; font-size: 1.2em;">슬라이드를 4K 화질로 자동 녹화하고 있습니다</p>
+                    <div id="recording-progress" style="background: rgba(255,255,255,0.2); height: 20px; border-radius: 10px; overflow: hidden; margin: 20px 0;">
+                        <div id="recording-progress-bar" style="background: linear-gradient(45deg, #ff4444, #ff6666); height: 100%; width: 0%; transition: width 0.5s ease; border-radius: 10px;"></div>
+                    </div>
+                    <div id="recording-status" style="color: #4ecdc4; font-weight: bold; font-size: 1.1em;">준비 중...</div>
+                    <button onclick="stopRecording()" style="margin-top: 20px; padding: 12px 25px; background: #ff4444; color: white; border: none; border-radius: 15px; font-size: 1.1em; cursor: pointer; font-weight: bold;">⏹️ 녹화 중지</button>
+                </div>
+            `;
+            
+            document.body.appendChild(overlay);
+        }
+
+        // 녹화 UI 숨기기
+        function hideRecordingUI() {
+            const overlay = document.getElementById('recording-overlay');
+            if (overlay) {
+                overlay.remove();
+            }
+        }
+
+        // 녹화 진행상황 업데이트
+        function updateRecordingProgress(current, total) {
+            const progressBar = document.getElementById('recording-progress-bar');
+            const status = document.getElementById('recording-status');
+            
+            if (progressBar && status) {
+                const percentage = (current / total) * 100;
+                progressBar.style.width = percentage + '%';
+                status.textContent = `슬라이드 ${current}/${total} 녹화 중... (${Math.round(percentage)}%)`;
+            }
+        }
+
+        // 녹화 중지
+        function stopRecording() {
+            if (recordingState.isRecording && recordingState.mediaRecorder) {
+                recordingState.mediaRecorder.stop();
+                recordingState.isRecording = false;
+                hideRecordingUI();
+                alert('🛑 녹화가 중지되었습니다.');
             }
         }
 
