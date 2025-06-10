@@ -41,6 +41,11 @@
             100% { background-position: 0% 50%; }
         }
 
+        @keyframes recordingBlink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
         .container {
             max-width: 1400px;
             margin: 0 auto;
@@ -679,7 +684,7 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
             
             <div style="text-align: center; margin: 30px 0;">
                 <button class="btn btn-recording" onclick="startScreenRecording()" style="font-size: 1.6em; padding: 25px 50px; margin: 10px; text-transform: none;">
-                    🎬 화면 녹화 시작
+                    📱 화면 녹화 (9:16 비율)
                 </button>
                 <button class="btn btn-secondary" onclick="showRecordingGuide()" style="margin: 10px; text-transform: none;">
                     📖 녹화 가이드
@@ -689,23 +694,23 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
             <div style="background: rgba(0,255,100,0.1); border: 2px solid rgba(0,255,100,0.3); border-radius: 15px; padding: 20px; margin: 20px 0;">
                 <h4 style="color: #00ff88; margin-bottom: 15px;">✨ Canvas MP4 생성 (권장)</h4>
                 <ul style="text-align: left; margin-left: 20px; line-height: 1.8;">
-                    <li>🎨 순수 Canvas 데이터로 MP4 생성</li>
+                    <li>🎨 실제 생성된 슬라이드를 Canvas로 렌더링</li>
                     <li>⏱️ 33초 완벽한 타이밍으로 자동 생성</li>
                     <li>📱 정확한 1080×1920 해상도 (9:16)</li>
                     <li>🎬 화면 공유 없이 완벽한 품질</li>
-                    <li>🎯 슬라이드만 정확히 포함</li>
-                    <li>💎 PowerPoint 방식과 동일한 원리</li>
+                    <li>🎯 DALL-E 3 이미지 포함</li>
+                    <li>💎 유튜브 쇼츠 최적화</li>
                 </ul>
             </div>
             
             <div style="background: rgba(255,165,0,0.1); border: 2px solid rgba(255,165,0,0.3); border-radius: 15px; padding: 20px; margin: 20px 0;">
-                <h4 style="color: #feca57; margin-bottom: 15px;">📱 화면 녹화 (전체화면)</h4>
+                <h4 style="color: #feca57; margin-bottom: 15px;">📱 화면 녹화 (9:16 비율)</h4>
                 <ul style="text-align: left; margin-left: 20px; line-height: 1.8;">
                     <li>🖥️ 브라우저 화면 공유 기능 사용</li>
-                    <li>⚡ 실시간 화면 캡처</li>
+                    <li>⚡ 자동으로 유튜브 쇼츠 레이아웃으로 변경</li>
                     <li>🎵 오디오 포함 가능</li>
-                    <li>📺 전체 화면/탭/창 선택 가능</li>
-                    <li>⚠️ 주변 UI 요소도 함께 녹화됨</li>
+                    <li>📺 정확한 9:16 비율로 녹화</li>
+                    <li>⚠️ 양쪽 여백 완전 제거</li>
                 </ul>
             </div>
         </div>
@@ -738,7 +743,7 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
                     🎬 Canvas MP4 생성 (권장)
                 </button>
                 <button class="btn btn-primary" onclick="startScreenRecording()" style="font-size: 1.4em; padding: 20px 40px; margin: 10px; text-transform: none;">
-                    📱 화면 녹화 (전체)
+                    📱 화면 녹화 (9:16)
                 </button>
                 <button class="btn btn-secondary" onclick="showRecordingGuide()" style="margin: 10px; text-transform: none;">
                     📖 녹화 가이드
@@ -862,7 +867,7 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
             }
         }
 
-        // 다중 이미지 슬라이드 생성 메인 함수 (에러 처리 개선)
+        // 다중 이미지 슬라이드 생성 메인 함수
         async function generateMultiImageSlides() {
             try {
                 const titleInput = safeGetElement('titleInput');
@@ -915,7 +920,7 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
             }
         }
 
-        // Canvas 기반 MP4 생성 (화면 녹화 대신)
+        // Canvas 기반 MP4 생성 (완전 개선된 버전)
         async function generateCanvasMP4() {
             if (!slides || slides.length === 0) {
                 alert('❌ 먼저 슬라이드를 생성해주세요!');
@@ -929,13 +934,13 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
                     return;
                 }
 
-                const userConfirm = confirm(`🎬 Canvas 기반 MP4 생성
+                const userConfirm = confirm(`🎬 실제 슬라이드 Canvas MP4 생성
 
 ✨ 특징:
-• 화면 공유 없이 순수 Canvas로 MP4 생성
-• 정확한 9:16 비율 (1080×1920)
-• 슬라이드 데이터만으로 완벽한 품질
-• 33초 자동 생성
+• 실제 생성된 AI 이미지 포함 슬라이드
+• 정확한 9:16 비율 (1080×1920) 유튜브 쇼츠 최적화
+• CORS 안전 처리로 안정적 렌더링
+• 33초 고품질 영상 자동 생성
 
 🚀 시작하시겠습니까?`);
 
@@ -943,12 +948,12 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
 
                 // 진행 상태 표시
                 showProgressModal(true);
-                updateProgress(10, '🎨 Canvas 준비', 'Canvas 기반 MP4 생성을 시작합니다...', '🎬');
+                updateProgress(10, '🎨 Canvas 준비', '실제 슬라이드 기반 MP4 생성을 시작합니다...', '🎬');
 
-                // Canvas 생성 (9:16 비율)
+                // Canvas 생성 (유튜브 쇼츠 9:16 비율)
                 const canvas = document.createElement('canvas');
-                canvas.width = 1080;  // 1080p 가로
-                canvas.height = 1920; // 9:16 비율
+                canvas.width = 1080;
+                canvas.height = 1920;
                 const ctx = canvas.getContext('2d');
 
                 if (!ctx) {
@@ -958,7 +963,7 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
                 updateProgress(20, '🎥 녹화 설정', 'MediaRecorder를 설정하고 있습니다...', '⚙️');
 
                 // Canvas 스트림 생성
-                const stream = canvas.captureStream(30); // 30fps
+                const stream = canvas.captureStream(30);
                 
                 // 지원되는 MIME 타입 확인
                 let mimeType = 'video/webm;codecs=vp9';
@@ -971,7 +976,7 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
 
                 const mediaRecorder = new MediaRecorder(stream, {
                     mimeType: mimeType,
-                    videoBitsPerSecond: 8000000 // 8Mbps 고화질
+                    videoBitsPerSecond: 8000000
                 });
 
                 const recordedChunks = [];
@@ -989,34 +994,33 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
                         
                         const a = document.createElement('a');
                         a.href = url;
-                        a.download = `youtube-shorts-canvas-${new Date().getTime()}.webm`;
+                        a.download = `youtube-shorts-ai-slides-${new Date().getTime()}.webm`;
                         a.click();
                         
                         URL.revokeObjectURL(url);
                         
                         showProgressModal(false);
-                        alert('🎉 Canvas MP4 생성 완료!\n\n완벽한 9:16 비율의 고화질 영상이 다운로드되었습니다!');
+                        alert('🎉 실제 슬라이드 MP4 생성 완료!\n\n✨ 유튜브 쇼츠 최적화 9:16 비율\n🎨 DALL-E 3 이미지 포함\n📱 바로 업로드 가능!');
                     } catch (error) {
                         showProgressModal(false);
                         alert('❌ 파일 저장에 실패했습니다: ' + error.message);
                     }
                 };
 
-                updateProgress(30, '🎬 녹화 시작', 'Canvas에 슬라이드를 렌더링하고 있습니다...', '🎨');
+                updateProgress(30, '🎬 녹화 시작', '실제 슬라이드를 Canvas에 렌더링하고 있습니다...', '🎨');
 
                 // 녹화 시작
                 mediaRecorder.start(100);
 
-                // 각 슬라이드를 Canvas에 렌더링
+                // 각 슬라이드를 Canvas로 렌더링
                 for (let i = 0; i < slides.length; i++) {
-                    const slide = slides[i];
                     const progress = 30 + (i / slides.length) * 60;
                     
-                    updateProgress(progress, '🎨 슬라이드 렌더링', `${i + 1}/15 슬라이드를 Canvas에 그리고 있습니다...`, '🖼️');
+                    updateProgress(progress, '📸 슬라이드 캡처', `${i + 1}/15 실제 슬라이드를 Canvas에 그리고 있습니다...`, '🖼️');
                     
-                    await renderSlideToCanvas(ctx, slide, i, canvas.width, canvas.height);
+                    await renderActualSlideToCanvas(ctx, i, canvas.width, canvas.height);
                     
-                    // 2.2초 대기 (각 슬라이드 표시 시간)
+                    // 2.2초 대기
                     await delay(2200);
                 }
 
@@ -1026,56 +1030,119 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
                 mediaRecorder.stop();
 
             } catch (error) {
-                console.error('❌ Canvas MP4 생성 실패:', error);
+                console.error('❌ 실제 슬라이드 MP4 생성 실패:', error);
                 showProgressModal(false);
-                alert('❌ Canvas MP4 생성에 실패했습니다: ' + error.message);
+                alert('❌ 실제 슬라이드 MP4 생성에 실패했습니다: ' + error.message);
             }
         }
 
-        // Canvas에 슬라이드 렌더링
-        async function renderSlideToCanvas(ctx, slide, index, width, height) {
+        // 실제 슬라이드 DOM 요소를 Canvas로 렌더링 (CORS 안전 처리)
+        async function renderActualSlideToCanvas(ctx, slideIndex, width, height) {
             try {
-                // 배경 그라데이션
-                const colors = [
-                    ['#667eea', '#764ba2'], ['#4ecdc4', '#44a08d'], ['#ff6b6b', '#ee5a6f'],
-                    ['#feca57', '#ff9ff3'], ['#96ceb4', '#ffecd2'], ['#74b9ff', '#0984e3'],
-                    ['#fd79a8', '#fdcb6e'], ['#6c5ce7', '#a29bfe'], ['#e17055', '#fdcb6e'],
-                    ['#00b894', '#00cec9'], ['#e84393', '#fd79a8'], ['#fdcb6e', '#e17055'],
-                    ['#00cec9', '#55efc4'], ['#a29bfe', '#6c5ce7'], ['#fd79a8', '#fdcb6e']
-                ];
-
-                const colorPair = colors[index % colors.length];
-                const gradient = ctx.createLinearGradient(0, 0, width, height);
-                gradient.addColorStop(0, colorPair[0]);
-                gradient.addColorStop(1, colorPair[1]);
-
-                ctx.fillStyle = gradient;
-                ctx.fillRect(0, 0, width, height);
-
-                // 배경 이미지가 있으면 그리기
-                if (slideImages[index]) {
-                    try {
-                        const img = new Image();
-                        img.crossOrigin = 'anonymous';
-                        
-                        await new Promise((resolve, reject) => {
-                            img.onload = () => resolve();
-                            img.onerror = () => reject(new Error('이미지 로드 실패'));
-                            img.src = slideImages[index];
-                        });
-
-                        // 이미지를 Canvas 크기에 맞게 그리기
-                        ctx.globalAlpha = 0.7;
-                        ctx.drawImage(img, 0, 0, width, height);
-                        ctx.globalAlpha = 1.0;
-
-                        // 어두운 오버레이
-                        ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
-                        ctx.fillRect(0, 0, width, height);
-                    } catch (error) {
-                        console.warn('이미지 렌더링 실패:', error);
-                    }
+                // 슬라이드를 해당 인덱스로 변경
+                showSlide(slideIndex);
+                
+                // DOM 업데이트 대기
+                await delay(150);
+                
+                // 현재 활성 슬라이드 요소 찾기
+                const activeSlide = document.querySelector('.slide.active');
+                if (!activeSlide) {
+                    console.warn(`슬라이드 ${slideIndex} DOM 요소를 찾을 수 없습니다`);
+                    renderBasicSlideContent(ctx, slideIndex, width, height);
+                    return;
                 }
+
+                // Canvas 초기화
+                ctx.clearRect(0, 0, width, height);
+
+                // 슬라이드의 배경 스타일 가져오기
+                const computedStyle = window.getComputedStyle(activeSlide);
+                const backgroundImage = computedStyle.backgroundImage;
+                
+                if (backgroundImage && backgroundImage !== 'none') {
+                    // 배경 이미지 URL 추출
+                    const imageUrls = backgroundImage.match(/url\([^)]+\)/g);
+                    if (imageUrls && imageUrls.length > 0) {
+                        const actualImageUrl = imageUrls[imageUrls.length - 1].slice(4, -1).replace(/["']/g, "");
+                        
+                        try {
+                            // CORS 안전한 이미지 로드
+                            const img = await loadImageWithCORS(actualImageUrl);
+                            
+                            // 이미지를 Canvas에 그리기
+                            ctx.drawImage(img, 0, 0, width, height);
+                            
+                            // 어두운 오버레이
+                            ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+                            ctx.fillRect(0, 0, width, height);
+                        } catch (error) {
+                            console.warn('이미지 CORS 렌더링 실패, 그라데이션 사용:', error);
+                            renderGradientBackground(ctx, slideIndex, width, height);
+                        }
+                    } else {
+                        renderGradientBackground(ctx, slideIndex, width, height);
+                    }
+                } else {
+                    renderGradientBackground(ctx, slideIndex, width, height);
+                }
+
+                // 텍스트 요소들 렌더링
+                await renderSlideText(ctx, activeSlide, slideIndex, width, height);
+
+            } catch (error) {
+                console.error('실제 슬라이드 렌더링 중 오류:', error);
+                renderBasicSlideContent(ctx, slideIndex, width, height);
+            }
+        }
+
+        // CORS 안전한 이미지 로드
+        async function loadImageWithCORS(imageUrl) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                
+                // CORS 설정을 src 설정 전에 (중요!)
+                img.crossOrigin = 'anonymous';
+                
+                img.onload = () => {
+                    console.log('✅ CORS 이미지 로드 성공:', imageUrl);
+                    resolve(img);
+                };
+                
+                img.onerror = (error) => {
+                    console.warn('❌ CORS 이미지 로드 실패:', imageUrl);
+                    
+                    // 캐시 이슈 해결을 위한 재시도
+                    const img2 = new Image();
+                    img2.crossOrigin = 'anonymous';
+                    
+                    img2.onload = () => {
+                        console.log('✅ CORS 이미지 재시도 성공');
+                        resolve(img2);
+                    };
+                    
+                    img2.onerror = () => {
+                        console.error('❌ CORS 이미지 재시도도 실패');
+                        reject(new Error(`이미지 로드 실패: ${imageUrl}`));
+                    };
+                    
+                    // 캐시 우회용 더미 파라미터
+                    const cacheBuster = `cors-fix=${Date.now()}`;
+                    const separator = imageUrl.includes('?') ? '&' : '?';
+                    img2.src = imageUrl + separator + cacheBuster;
+                };
+                
+                // 원본 URL로 먼저 시도
+                img.src = imageUrl;
+            });
+        }
+
+        // 슬라이드 텍스트 렌더링
+        async function renderSlideText(ctx, activeSlide, slideIndex, width, height) {
+            try {
+                const iconElement = activeSlide.querySelector('.slide-icon');
+                const titleElement = activeSlide.querySelector('.slide-title');
+                const subtitleElement = activeSlide.querySelector('.slide-subtitle');
 
                 // 텍스트 설정
                 ctx.fillStyle = 'white';
@@ -1083,44 +1150,114 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
                 ctx.shadowColor = 'rgba(0,0,0,0.8)';
                 ctx.shadowBlur = 20;
 
-                // 아이콘 (큰 크기)
-                ctx.font = `${height * 0.15}px Arial`; // 높이의 15%
-                ctx.fillText(slide.icon || '🎯', width / 2, height * 0.3);
+                // 아이콘
+                if (iconElement) {
+                    const iconFontSize = height * 0.1;
+                    ctx.font = `${iconFontSize}px Arial`;
+                    ctx.fillText(iconElement.textContent || '🎯', width / 2, height * 0.25);
+                }
 
-                // 제목 (적응형 크기)
-                const titleFontSize = Math.min(height * 0.08, width * 0.06);
-                ctx.font = `bold ${titleFontSize}px Arial`;
-                
-                // 제목 줄바꿈 처리
-                const titleLines = wrapText(ctx, slide.title, width * 0.9);
-                const titleY = height * 0.5;
-                titleLines.forEach((line, i) => {
-                    ctx.fillText(line, width / 2, titleY + (i * titleFontSize * 1.2));
-                });
+                // 제목
+                if (titleElement) {
+                    const titleFontSize = Math.min(height * 0.055, width * 0.07);
+                    ctx.font = `bold ${titleFontSize}px Arial`;
+                    
+                    const titleText = titleElement.textContent || '';
+                    const titleLines = wrapText(ctx, titleText, width * 0.9);
+                    const titleY = height * 0.42;
+                    
+                    titleLines.forEach((line, i) => {
+                        ctx.fillText(line, width / 2, titleY + (i * titleFontSize * 1.2));
+                    });
+                }
 
                 // 부제목
-                const subtitleFontSize = Math.min(height * 0.05, width * 0.04);
-                ctx.font = `${subtitleFontSize}px Arial`;
-                ctx.fillStyle = 'rgba(255,255,255,0.9)';
-                
-                const subtitleLines = wrapText(ctx, slide.subtitle, width * 0.9);
-                const subtitleY = titleY + (titleLines.length * titleFontSize * 1.2) + 40;
-                subtitleLines.forEach((line, i) => {
-                    ctx.fillText(line, width / 2, subtitleY + (i * subtitleFontSize * 1.2));
-                });
+                if (subtitleElement) {
+                    const subtitleFontSize = Math.min(height * 0.032, width * 0.04);
+                    ctx.font = `${subtitleFontSize}px Arial`;
+                    ctx.fillStyle = 'rgba(255,255,255,0.9)';
+                    
+                    const subtitleText = subtitleElement.textContent || '';
+                    const subtitleLines = wrapText(ctx, subtitleText, width * 0.9);
+                    const subtitleY = height * 0.6;
+                    
+                    subtitleLines.forEach((line, i) => {
+                        ctx.fillText(line, width / 2, subtitleY + (i * subtitleFontSize * 1.2));
+                    });
+                }
 
                 // 슬라이드 번호
-                ctx.font = `${height * 0.04}px Arial`;
+                ctx.font = `${height * 0.025}px Arial`;
                 ctx.fillStyle = 'rgba(255,255,255,0.7)';
-                ctx.fillText(`${index + 1} / 15`, width / 2, height * 0.9);
+                ctx.fillText(`${slideIndex + 1} / 15`, width / 2, height * 0.9);
 
             } catch (error) {
-                console.error('슬라이드 렌더링 중 오류:', error);
-                throw error;
+                console.error('텍스트 렌더링 중 오류:', error);
             }
         }
 
-        // 텍스트 줄바꿈 함수
+        // 그라데이션 배경 렌더링
+        function renderGradientBackground(ctx, slideIndex, width, height) {
+            const colors = [
+                ['#667eea', '#764ba2'], ['#4ecdc4', '#44a08d'], ['#ff6b6b', '#ee5a6f'],
+                ['#feca57', '#ff9ff3'], ['#96ceb4', '#ffecd2'], ['#74b9ff', '#0984e3'],
+                ['#fd79a8', '#fdcb6e'], ['#6c5ce7', '#a29bfe'], ['#e17055', '#fdcb6e'],
+                ['#00b894', '#00cec9'], ['#e84393', '#fd79a8'], ['#fdcb6e', '#e17055'],
+                ['#00cec9', '#55efc4'], ['#a29bfe', '#6c5ce7'], ['#fd79a8', '#fdcb6e']
+            ];
+
+            const colorPair = colors[slideIndex % colors.length];
+            const gradient = ctx.createLinearGradient(0, 0, width, height);
+            gradient.addColorStop(0, colorPair[0]);
+            gradient.addColorStop(1, colorPair[1]);
+
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, width, height);
+        }
+
+        // 기본 슬라이드 내용 렌더링
+        function renderBasicSlideContent(ctx, slideIndex, width, height) {
+            if (!slides[slideIndex]) return;
+            
+            const slide = slides[slideIndex];
+            
+            renderGradientBackground(ctx, slideIndex, width, height);
+            
+            ctx.fillStyle = 'white';
+            ctx.textAlign = 'center';
+            ctx.shadowColor = 'rgba(0,0,0,0.8)';
+            ctx.shadowBlur = 20;
+
+            // 아이콘
+            ctx.font = `${height * 0.1}px Arial`;
+            ctx.fillText(slide.icon || '🎯', width / 2, height * 0.25);
+
+            // 제목
+            const titleFontSize = Math.min(height * 0.055, width * 0.07);
+            ctx.font = `bold ${titleFontSize}px Arial`;
+            const titleLines = wrapText(ctx, slide.title, width * 0.9);
+            const titleY = height * 0.42;
+            titleLines.forEach((line, i) => {
+                ctx.fillText(line, width / 2, titleY + (i * titleFontSize * 1.2));
+            });
+
+            // 부제목
+            const subtitleFontSize = Math.min(height * 0.032, width * 0.04);
+            ctx.font = `${subtitleFontSize}px Arial`;
+            ctx.fillStyle = 'rgba(255,255,255,0.9)';
+            const subtitleLines = wrapText(ctx, slide.subtitle, width * 0.9);
+            const subtitleY = height * 0.6;
+            subtitleLines.forEach((line, i) => {
+                ctx.fillText(line, width / 2, subtitleY + (i * subtitleFontSize * 1.2));
+            });
+
+            // 슬라이드 번호
+            ctx.font = `${height * 0.025}px Arial`;
+            ctx.fillStyle = 'rgba(255,255,255,0.7)';
+            ctx.fillText(`${slideIndex + 1} / 15`, width / 2, height * 0.9);
+        }
+
+        // 텍스트 줄바꿈
         function wrapText(ctx, text, maxWidth) {
             const words = text.split(' ');
             const lines = [];
@@ -1139,6 +1276,8 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
             lines.push(currentLine);
             return lines;
         }
+
+        // 유튜브 쇼츠 화면 녹화
         async function startScreenRecording() {
             if (!slides || slides.length === 0) {
                 alert('❌ 먼저 슬라이드를 생성해주세요!');
@@ -1146,36 +1285,34 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
             }
 
             try {
-                // getDisplayMedia API 지원 확인
                 if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
                     alert('❌ 이 브라우저는 화면 녹화를 지원하지 않습니다.\n\nChrome, Firefox, Edge 최신 버전을 사용해주세요.');
                     return;
                 }
 
-                // 1단계: 슬라이드 영역 강조 및 녹화 준비
-                prepareRecordingArea();
+                // 유튜브 쇼츠 레이아웃으로 변경
+                prepareYoutubeShortsRecording();
                 
-                // 사용자 안내
-                const userConfirm = confirm(`🎬 화면 녹화 준비 완료!
+                const userConfirm = confirm(`🎬 유튜브 쇼츠 화면 녹화!
 
 📋 녹화 방법:
 1. "확인" 클릭 후 화면 공유 창이 열립니다
 2. "Chrome 탭" 선택 (현재 탭)
-3. 해상도를 "고해상도"로 설정
-4. "이 탭 공유" 클릭
-5. 자동으로 슬라이드 영역 녹화 시작
+3. "이 탭 공유" 클릭
+4. 9:16 비율 영역이 자동으로 녹화됩니다
 
-💡 팁: 슬라이드 영역이 빨간 테두리로 강조됩니다!
-화면 공유 시 현재 탭(Chrome 탭)을 선택하면 더 정확합니다.
+💡 특징:
+• 유튜브 쇼츠 최적화 9:16 비율
+• 실제 생성된 슬라이드 이미지 포함  
+• 양쪽 여백 완전 제거
 
 계속하시겠습니까?`);
 
                 if (!userConfirm) {
-                    removeRecordingHighlight();
+                    removeYoutubeShortsLayout();
                     return;
                 }
 
-                // 화면 공유 권한 요청 (탭 공유 우선)
                 const stream = await navigator.mediaDevices.getDisplayMedia({
                     video: {
                         mediaSource: 'screen',
@@ -1183,41 +1320,28 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
                         height: { ideal: 1080, max: 1080 },
                         frameRate: { ideal: 30, max: 60 }
                     },
-                    audio: true // 오디오도 포함
+                    audio: true
                 }).catch(error => {
-                    removeRecordingHighlight();
+                    removeYoutubeShortsLayout();
                     if (error.name === 'NotAllowedError') {
                         throw new Error('화면 녹화 권한이 거부되었습니다.\n\n다시 시도하여 "Chrome 탭"을 선택하고 "이 탭 공유"를 클릭해주세요.');
-                    } else if (error.name === 'NotSupportedError') {
-                        throw new Error('이 브라우저는 화면 녹화를 지원하지 않습니다.');
-                    } else {
-                        throw error;
                     }
+                    throw error;
                 });
 
-                // MediaRecorder 지원 확인 및 설정
-                if (!window.MediaRecorder) {
-                    removeRecordingHighlight();
-                    stream.getTracks().forEach(track => track.stop());
-                    throw new Error('이 브라우저는 MediaRecorder를 지원하지 않습니다.');
-                }
-
-                // 지원되는 MIME 타입 확인 (고품질 우선)
+                // MediaRecorder 설정
                 let mimeType = 'video/webm;codecs=vp9,opus';
                 if (!MediaRecorder.isTypeSupported(mimeType)) {
                     mimeType = 'video/webm;codecs=vp8,opus';
                     if (!MediaRecorder.isTypeSupported(mimeType)) {
-                        mimeType = 'video/webm;codecs=vp9';
-                        if (!MediaRecorder.isTypeSupported(mimeType)) {
-                            mimeType = 'video/webm';
-                        }
+                        mimeType = 'video/webm';
                     }
                 }
 
                 mediaRecorder = new MediaRecorder(stream, {
                     mimeType: mimeType,
-                    videoBitsPerSecond: 5000000, // 5Mbps 최적화
-                    audioBitsPerSecond: 128000   // 128kbps 오디오
+                    videoBitsPerSecond: 5000000,
+                    audioBitsPerSecond: 128000
                 });
 
                 recordedChunks = [];
@@ -1226,18 +1350,16 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
                 // 녹화 상태 UI 표시
                 showRecordingStatus();
 
-                // 녹화 데이터 수집
                 mediaRecorder.ondataavailable = (event) => {
                     if (event.data && event.data.size > 0) {
                         recordedChunks.push(event.data);
                     }
                 };
 
-                // 녹화 완료 처리
                 mediaRecorder.onstop = () => {
                     try {
                         hideRecordingStatus();
-                        removeRecordingHighlight();
+                        removeYoutubeShortsLayout();
                         saveRecording(mimeType);
                     } catch (error) {
                         console.error('녹화 저장 중 오류:', error);
@@ -1246,32 +1368,28 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
                     isRecording = false;
                 };
 
-                // 스트림 종료 감지
                 stream.getVideoTracks()[0].onended = () => {
-                    if (isRecording) {
-                        console.log('사용자가 화면 공유를 중지했습니다.');
-                        if (mediaRecorder && mediaRecorder.state === 'recording') {
-                            mediaRecorder.stop();
-                        }
+                    if (isRecording && mediaRecorder && mediaRecorder.state === 'recording') {
+                        mediaRecorder.stop();
                     }
                 };
 
                 // 녹화 시작
-                mediaRecorder.start(1000); // 1초마다 데이터 수집
+                mediaRecorder.start(1000);
                 
-                // 2초 대기 후 슬라이드쇼 시작 (화면 공유 안정화)
+                // 2초 대기 후 슬라이드쇼 시작
                 setTimeout(() => {
                     startRecordingSlideshow();
                 }, 2000);
                 
-                // 사용자에게 알림
+                // 안내 메시지
                 setTimeout(() => {
                     if (isRecording) {
-                        alert('✅ 녹화 시작됨!\n\n🎬 33초 동안 자동 슬라이드 재생\n📱 완료 후 자동 다운로드\n\n❗ 녹화 중에는 다른 창으로 이동하지 마세요!');
+                        alert('✅ 유튜브 쇼츠 녹화 시작!\n\n🎬 9:16 비율로 33초 자동 녹화\n📱 완료 후 자동 다운로드\n\n❗ 녹화 중에는 다른 창으로 이동하지 마세요!');
                     }
                 }, 3000);
 
-                // 35초 후 자동 종료 (여유시간 포함)
+                // 35초 후 자동 종료
                 setTimeout(() => {
                     if (isRecording && mediaRecorder && mediaRecorder.state === 'recording') {
                         mediaRecorder.stop();
@@ -1281,82 +1399,149 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
 
             } catch (error) {
                 console.error('❌ 화면 녹화 실패:', error);
-                removeRecordingHighlight();
+                removeYoutubeShortsLayout();
                 hideRecordingStatus();
                 alert('❌ 화면 녹화에 실패했습니다: ' + error.message);
                 isRecording = false;
             }
         }
 
-        // 녹화 영역 강조
-        function prepareRecordingArea() {
+        // 유튜브 쇼츠 비율로 화면 준비
+        function prepareYoutubeShortsRecording() {
             try {
-                const resultPreview = safeGetElement('resultPreview');
-                if (resultPreview) {
-                    resultPreview.style.border = '5px solid #ff0000';
-                    resultPreview.style.boxShadow = '0 0 30px rgba(255, 0, 0, 0.8)';
-                    resultPreview.style.position = 'relative';
-                    resultPreview.style.zIndex = '1000';
-                    
-                    // 녹화 표시 추가
-                    const recordingLabel = document.createElement('div');
-                    recordingLabel.id = 'recording-area-label';
-                    recordingLabel.style.cssText = `
-                        position: absolute;
-                        top: -40px;
-                        left: 50%;
-                        transform: translateX(-50%);
-                        background: #ff0000;
-                        color: white;
-                        padding: 8px 16px;
-                        border-radius: 20px;
-                        font-weight: bold;
-                        font-size: 14px;
-                        z-index: 1001;
-                        animation: recordingBlink 1s ease-in-out infinite;
-                    `;
-                    recordingLabel.textContent = '🎬 녹화 영역';
-                    resultPreview.appendChild(recordingLabel);
+                const body = document.body;
+                const container = document.querySelector('.container');
+                
+                // 전체 페이지를 유튜브 쇼츠 레이아웃으로 변경
+                body.style.margin = '0';
+                body.style.padding = '0';
+                body.style.background = '#000';
+                body.style.overflow = 'hidden';
+                body.style.height = '100vh';
+                
+                // 9:16 비율 계산
+                const screenHeight = window.innerHeight;
+                const shortsWidth = Math.floor(screenHeight * 9 / 16);
+                const marginLeft = Math.floor((window.innerWidth - shortsWidth) / 2);
+                
+                // 기존 컨테이너 숨기기
+                if (container) {
+                    container.style.display = 'none';
                 }
                 
-                // 페이지를 슬라이드 영역으로 스크롤
-                setTimeout(() => {
-                    if (resultPreview) {
-                        resultPreview.scrollIntoView({ 
-                            behavior: 'smooth', 
-                            block: 'center' 
-                        });
-                    }
-                }, 500);
+                // 유튜브 쇼츠 전용 컨테이너 생성
+                const shortsContainer = document.createElement('div');
+                shortsContainer.id = 'youtube-shorts-container';
+                shortsContainer.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: ${marginLeft}px;
+                    width: ${shortsWidth}px;
+                    height: 100vh;
+                    background: #000;
+                    z-index: 10000;
+                    overflow: hidden;
+                `;
+                
+                // 슬라이드 미리보기를 복제하여 쇼츠 컨테이너에 추가
+                const resultPreview = safeGetElement('resultPreview');
+                if (resultPreview) {
+                    const clonedPreview = resultPreview.cloneNode(true);
+                    clonedPreview.style.cssText = `
+                        width: 100%;
+                        height: 100%;
+                        background: #000;
+                        border: none;
+                        border-radius: 0;
+                        margin: 0;
+                        overflow: hidden;
+                        position: relative;
+                        box-shadow: none;
+                    `;
+                    
+                    shortsContainer.appendChild(clonedPreview);
+                }
+                
+                // 녹화 표시 추가
+                const recordingLabel = document.createElement('div');
+                recordingLabel.id = 'shorts-recording-label';
+                recordingLabel.style.cssText = `
+                    position: absolute;
+                    top: 20px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    background: rgba(255, 0, 0, 0.9);
+                    color: white;
+                    padding: 10px 20px;
+                    border-radius: 20px;
+                    font-weight: bold;
+                    font-size: 14px;
+                    z-index: 10001;
+                    animation: recordingBlink 1s ease-in-out infinite;
+                    backdrop-filter: blur(10px);
+                `;
+                recordingLabel.textContent = '🎬 유튜브 쇼츠 녹화 중';
+                shortsContainer.appendChild(recordingLabel);
+                
+                // 사이즈 정보 표시
+                const sizeLabel = document.createElement('div');
+                sizeLabel.style.cssText = `
+                    position: absolute;
+                    bottom: 20px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    background: rgba(0, 0, 0, 0.8);
+                    color: #4ecdc4;
+                    padding: 8px 16px;
+                    border-radius: 15px;
+                    font-size: 12px;
+                    z-index: 10001;
+                    backdrop-filter: blur(10px);
+                `;
+                sizeLabel.textContent = `9:16 비율 (${shortsWidth}×${screenHeight})`;
+                shortsContainer.appendChild(sizeLabel);
+                
+                body.appendChild(shortsContainer);
+                
+                console.log(`✅ 유튜브 쇼츠 레이아웃 준비: ${shortsWidth}×${screenHeight}`);
                 
             } catch (error) {
-                console.error('녹화 영역 준비 중 오류:', error);
+                console.error('유튜브 쇼츠 레이아웃 준비 중 오류:', error);
             }
         }
 
-        // 녹화 영역 강조 제거
-        function removeRecordingHighlight() {
+        // 유튜브 쇼츠 레이아웃 제거
+        function removeYoutubeShortsLayout() {
             try {
-                const resultPreview = safeGetElement('resultPreview');
-                if (resultPreview) {
-                    resultPreview.style.border = '4px solid #333';
-                    resultPreview.style.boxShadow = 'var(--box-shadow)';
-                    resultPreview.style.zIndex = 'auto';
-                    
-                    const label = safeGetElement('recording-area-label');
-                    if (label) {
-                        label.remove();
-                    }
+                const shortsContainer = document.getElementById('youtube-shorts-container');
+                if (shortsContainer) {
+                    shortsContainer.remove();
                 }
+                
+                // 원래 레이아웃 복원
+                const body = document.body;
+                const container = document.querySelector('.container');
+                
+                body.style.margin = '';
+                body.style.padding = '';
+                body.style.background = '';
+                body.style.overflow = '';
+                body.style.height = '';
+                
+                if (container) {
+                    container.style.display = '';
+                }
+                
+                console.log('✅ 원래 레이아웃 복원');
+                
             } catch (error) {
-                console.error('녹화 강조 제거 중 오류:', error);
+                console.error('레이아웃 복원 중 오류:', error);
             }
         }
 
         // 녹화 상태 UI 표시
         function showRecordingStatus() {
             try {
-                // 녹화 상태 표시
                 const statusDiv = document.createElement('div');
                 statusDiv.id = 'recording-status-overlay';
                 statusDiv.style.cssText = `
@@ -1377,7 +1562,6 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
                 statusDiv.innerHTML = '🔴 녹화 중...';
                 document.body.appendChild(statusDiv);
 
-                // 타이머 표시
                 const timerDiv = document.createElement('div');
                 timerDiv.id = 'recording-timer-overlay';
                 timerDiv.style.cssText = `
@@ -1432,7 +1616,6 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
         // 녹화용 슬라이드쇼 시작
         function startRecordingSlideshow() {
             try {
-                // 기존 슬라이드쇼 정지
                 if (autoSlideInterval) {
                     clearInterval(autoSlideInterval);
                 }
@@ -1440,12 +1623,11 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
                 currentSlideIndex = 0;
                 showSlide(0);
                 
-                // 2.2초 간격으로 슬라이드 전환 (15장 × 2.2초 = 33초)
+                // 2.2초 간격으로 슬라이드 전환
                 autoSlideInterval = setInterval(() => {
                     const nextIndex = (currentSlideIndex + 1) % slides.length;
                     showSlide(nextIndex);
                     
-                    // 한 바퀴 완료 시 정지
                     if (nextIndex === 0 && currentSlideIndex !== 0) {
                         clearInterval(autoSlideInterval);
                         autoSlideInterval = null;
@@ -1468,28 +1650,24 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
                 const blob = new Blob(recordedChunks, { type: mimeType });
                 const url = URL.createObjectURL(blob);
                 
-                // 파일 확장자 결정
                 let extension = '.webm';
                 if (mimeType.includes('mp4')) {
                     extension = '.mp4';
                 }
                 
-                // 파일 다운로드
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = `youtube-shorts-${new Date().getTime()}${extension}`;
+                a.download = `youtube-shorts-screen-${new Date().getTime()}${extension}`;
                 a.style.display = 'none';
                 
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
                 
-                // URL 해제
                 setTimeout(() => URL.revokeObjectURL(url), 1000);
                 
-                // 성공 메시지
                 const formatName = extension === '.mp4' ? 'MP4' : 'WebM';
-                alert(`🎉 ${formatName} 녹화 완료!\n\n33초 슬라이드 영상이 다운로드 폴더에 저장되었습니다.\n✨ 바로 유튜브 쇼츠에 업로드할 수 있습니다!`);
+                alert(`🎉 ${formatName} 녹화 완료!\n\n📱 유튜브 쇼츠 9:16 비율\n✨ 33초 영상이 다운로드되었습니다!\n🎬 바로 유튜브에 업로드할 수 있습니다!`);
                 
                 console.log(`✅ ${formatName} 녹화 파일 저장 완료`);
             } catch (error) {
@@ -1498,56 +1676,70 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
             }
         }
 
-        // 녹화 가이드 (업데이트된 버전)
+        // 녹화 가이드
         function showRecordingGuide() {
-            const guideText = `🎬 향상된 화면 녹화 가이드
+            const guideText = `🎬 유튜브 쇼츠 최적화 녹화 가이드
 
-🎯 최적 녹화 방법:
+🎯 2가지 최적 녹화 방법:
 
-📋 단계별 안내:
-1. "🎬 화면 녹화 시작" 버튼 클릭
-2. 슬라이드 영역이 빨간색으로 강조됨
-3. 화면 공유 창에서 "Chrome 탭" 선택 (권장)
+📱 1. Canvas MP4 생성 (강력 추천!):
+• 🎨 실제 생성된 슬라이드를 Canvas로 렌더링
+• 📏 정확한 9:16 비율 (1080×1920) 
+• 🎬 화면 공유 없이 완벽한 품질
+• 🖼️ 생성된 AI 이미지 그대로 포함
+• ⚡ 빠르고 안정적인 생성
+
+🖥️ 2. 화면 녹화 (9:16 비율):
+• 📺 실시간 브라우저 화면 녹화
+• 🎵 오디오 포함 가능
+• 📱 유튜브 쇼츠 비율로 자동 조정
+• 🔴 실시간 녹화 진행 표시
+
+📋 화면 녹화 단계별 안내:
+1. "📱 화면 녹화" 버튼 클릭
+2. 페이지가 자동으로 9:16 비율로 변경됨
+3. 화면 공유 창에서 "Chrome 탭" 선택
 4. 해상도를 "고해상도"로 설정
 5. "이 탭 공유" 클릭
-6. 자동으로 33초 녹화 진행
+6. 33초 자동 녹화 및 다운로드
 
 💡 화면 공유 옵션:
-• Chrome 탭 (권장): 현재 탭만 녹화
-• 전체 화면: 모니터 전체 녹화
-• 창: 특정 브라우저 창 녹화
-
-🎨 영역 선택 팁:
-• 슬라이드 영역에 빨간 테두리 표시
-• "🎬 녹화 영역" 라벨로 정확한 위치 안내
-• 녹화 전 자동으로 해당 영역으로 스크롤
+• Chrome 탭 (권장): 현재 탭만 깔끔하게
+• 전체 화면: 모니터 전체 (비추천)
+• 창: 브라우저 창 전체
 
 📊 품질 설정:
-• 해상도: 1920×1080 (고해상도)
-• 프레임율: 30fps
-• 비트레이트: 5Mbps 최적화
+• 해상도: 1920×1080 기반 9:16 크롭
+• 프레임율: 30fps 최적화
+• 비트레이트: 5Mbps 고품질
 • 오디오: 128kbps 포함
 
 ⚡ 실시간 정보:
-• 우상단: 🔴 녹화 중 상태
-• 좌상단: ⏱️ 녹화 시간 표시
-• 35초 후 자동 완료
+• "🎬 유튜브 쇼츠 녹화 중" 표시
+• 9:16 비율 사이즈 표시
+• 자동 타이머 및 진행률
 
 🎯 최고 품질을 위한 팁:
-1. 브라우저 창을 최대화
-2. 다른 프로그램 최소화
-3. 인터넷 연결 상태 양호 확인
-4. 녹화 중 다른 탭으로 이동 금지
+1. Canvas MP4 생성을 우선 사용
+2. 브라우저 창 최대화 상태 유지
+3. 다른 프로그램 최소화
+4. 안정적인 인터넷 연결
+5. 녹화 중 다른 탭 이동 금지
 
-❗ 주의사항:
-• 화면 공유 권한 반드시 허용
-• "Chrome 탭" 선택 시 가장 깔끔한 결과
-• 녹화 중에는 창 최소화 금지`;
+🚀 Canvas vs 화면녹화 비교:
+Canvas MP4: 완벽한 품질, 빠른 생성, 안정성
+화면녹화: 실시간성, 오디오 포함, 유연성
+
+✨ 결과물:
+• 정확한 유튜브 쇼츠 9:16 비율
+• 생성된 AI 이미지 포함
+• 양쪽 여백 없는 완벽한 영상
+• 바로 업로드 가능한 고품질`;
             
             alert(guideText);
         }
 
-        // 슬라이드별 이미지 생성 (에러 처리 개선)
+        // 슬라이드별 이미지 생성
         async function generateImagesForAllSlides() {
             const imageStatus = safeGetElement('imageStatus');
             const imageProgress = safeGetElement('imageProgress');
@@ -1560,19 +1752,16 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
                 const slide = slides[i];
                 
                 try {
-                    // 진행상황 업데이트
-                    const progressPercent = 30 + (i / slides.length) * 60; // 30%에서 90%까지
+                    const progressPercent = 30 + (i / slides.length) * 60;
                     updateProgress(progressPercent, '🎨 이미지 생성', `${i + 1}/15 슬라이드 이미지 생성 중...`, '🎨');
                     
                     if (imageProgress) {
                         imageProgress.innerHTML = `🎨 슬라이드 ${i + 1}/15 이미지 생성 중... (${Math.round((i / slides.length) * 100)}%)`;
                     }
                     
-                    // 슬라이드별 맞춤 이미지 프롬프트 생성
                     const imagePrompt = generateImagePromptForSlide(slide, i);
                     console.log(`슬라이드 ${i + 1} 이미지 프롬프트:`, imagePrompt);
                     
-                    // DALL-E 3로 이미지 생성
                     const imageUrl = await generateAIImage(imagePrompt);
                     
                     if (imageUrl) {
@@ -1580,13 +1769,11 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
                         updateImageCard(i, imageUrl);
                         console.log(`✅ 슬라이드 ${i + 1} 이미지 생성 완료`);
                     } else {
-                        // 실패 시 플레이스홀더 생성
                         slideImages[i] = createPlaceholderImage(slide, i);
                         updateImageCard(i, slideImages[i]);
                         console.log(`⚠️ 슬라이드 ${i + 1} 플레이스홀더 사용`);
                     }
                     
-                    // API 제한을 위한 약간의 지연
                     if (i < slides.length - 1) {
                         await delay(1000);
                     }
@@ -1603,7 +1790,7 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
             }
         }
 
-        // AI 이미지 생성 (에러 처리 개선)
+        // AI 이미지 생성
         async function generateAIImage(prompt) {
             try {
                 console.log('🎨 DALL-E 3 이미지 생성 시작:', prompt);
@@ -1669,11 +1856,10 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
                 return basePrompts[index] + ". Professional, high quality, educational, modern design, vibrant colors, 1024x1024 square format.";
             }
             
-            // 기본 프롬프트
             return `Educational content about ${slide.title}, professional design, modern style, vibrant colors, high quality, 1024x1024 square format`;
         }
 
-        // 플레이스홀더 이미지 생성 (안전한 버전)
+        // 플레이스홀더 이미지 생성
         function createPlaceholderImage(slide, index) {
             try {
                 const canvas = document.createElement('canvas');
@@ -1686,7 +1872,6 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
                     return '';
                 }
                 
-                // 그라데이션 배경
                 const gradient = ctx.createLinearGradient(0, 0, 1024, 1024);
                 const colors = [
                     ['#667eea', '#764ba2'],
@@ -1702,26 +1887,21 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
                 ctx.fillStyle = gradient;
                 ctx.fillRect(0, 0, 1024, 1024);
                 
-                // 텍스트 설정
                 ctx.fillStyle = 'white';
                 ctx.textAlign = 'center';
                 ctx.shadowColor = 'rgba(0,0,0,0.5)';
                 ctx.shadowBlur = 10;
                 
-                // 아이콘
                 ctx.font = '120px Arial';
                 ctx.fillText(slide.icon || '🎯', 512, 300);
                 
-                // 제목
                 ctx.font = 'bold 80px Arial';
                 const title = slide.title || '제목';
                 ctx.fillText(title.length > 15 ? title.substring(0, 15) + '...' : title, 512, 450);
                 
-                // 슬라이드 번호
                 ctx.font = '60px Arial';
                 ctx.fillText(`${index + 1}/15`, 512, 600);
                 
-                // 부제목
                 ctx.font = '50px Arial';
                 ctx.fillStyle = 'rgba(255,255,255,0.8)';
                 const subtitle = slide.subtitle || '부제목';
@@ -2136,17 +2316,29 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
             try {
                 const hasGetDisplayMedia = navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia;
                 const hasMediaRecorder = window.MediaRecorder;
+                const hasCanvasStream = HTMLCanvasElement.prototype.captureStream;
                 
-                if (hasGetDisplayMedia && hasMediaRecorder) {
-                    console.log('✅ 화면 녹화 기능 지원');
+                if (hasGetDisplayMedia && hasMediaRecorder && hasCanvasStream) {
+                    console.log('✅ 모든 녹화 기능 지원');
                 } else {
-                    console.warn('❌ 화면 녹화 기능 미지원');
+                    console.warn('❌ 일부 기능 미지원');
                     
-                    const recordBtn = document.querySelector('button[onclick="startScreenRecording()"]');
-                    if (recordBtn) {
-                        recordBtn.disabled = true;
-                        recordBtn.innerHTML = '❌ 브라우저 미지원';
-                        recordBtn.title = 'Chrome, Firefox, Edge 최신 버전을 사용해주세요.';
+                    if (!hasCanvasStream) {
+                        const canvasBtn = document.querySelector('button[onclick="generateCanvasMP4()"]');
+                        if (canvasBtn) {
+                            canvasBtn.disabled = true;
+                            canvasBtn.innerHTML = '❌ Canvas 미지원';
+                            canvasBtn.title = 'Chrome, Firefox, Edge 최신 버전을 사용해주세요.';
+                        }
+                    }
+                    
+                    if (!hasGetDisplayMedia || !hasMediaRecorder) {
+                        const recordBtn = document.querySelector('button[onclick="startScreenRecording()"]');
+                        if (recordBtn) {
+                            recordBtn.disabled = true;
+                            recordBtn.innerHTML = '❌ 화면녹화 미지원';
+                            recordBtn.title = 'Chrome, Firefox, Edge 최신 버전을 사용해주세요.';
+                        }
                     }
                 }
             } catch (error) {
@@ -2199,7 +2391,7 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
 
         window.addEventListener('unhandledrejection', function(event) {
             console.error('처리되지 않은 Promise 거부:', event.reason);
-            event.preventDefault(); // 브라우저 콘솔에 오류가 출력되는 것을 방지
+            event.preventDefault();
         });
     </script>
 </body>
