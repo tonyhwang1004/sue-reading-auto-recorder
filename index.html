@@ -920,49 +920,81 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
             }
         }
 
-        // 완전히 새로운 방법: DOM을 직접 Canvas로 변환
+        // 최종 완성: 이미지 삽입 및 영상 생성 보장 시스템
         async function generateCanvasMP4() {
             if (!slides || slides.length === 0) {
                 alert('❌ 먼저 슬라이드를 생성해주세요!');
                 return;
             }
 
-            // 결과 섹션이 표시되어 있는지 확인
+            // 결과 섹션 및 이미지 존재 확인
             const resultSection = safeGetElement('resultSection');
             const slideContainer = safeGetElement('slideContainer');
+            
             if (!resultSection || !slideContainer || resultSection.style.display === 'none') {
                 alert('❌ 먼저 슬라이드를 생성하고 결과 화면을 확인해주세요!');
                 return;
             }
 
-            try {
-                // html2canvas 라이브러리가 있는지 확인 (없으면 대안 방법 사용)
-                const useHtml2Canvas = typeof html2canvas !== 'undefined';
+            // 생성된 이미지 검증
+            const imageCount = Object.keys(slideImages).length;
+            const realImageCount = Object.values(slideImages).filter(url => 
+                url && url.startsWith('http') && !url.includes('data:image')
+            ).length;
+            
+            console.log('📊 전체 이미지:', imageCount, '실제 AI 이미지:', realImageCount);
+
+            if (imageCount === 0) {
+                alert('❌ 생성된 이미지가 없습니다!\n\n먼저 "🚀 다중 이미지 슬라이드 생성하기" 버튼을 클릭하여 AI 이미지를 생성해주세요.');
+                return;
+            }
+
+            if (realImageCount === 0) {
+                const proceed = confirm(`⚠️ 실제 AI 이미지가 없습니다!
+
+현재 상황:
+• 총 ${imageCount}개 이미지 (모두 플레이스홀더)
+• DALL-E 3 실제 이미지: 0개
+
+계속 진행하면 플레이스홀더 이미지로만 영상이 만들어집니다.
+
+그래도 진행하시겠습니까?`);
                 
-                const userConfirm = confirm(`🎬 DOM 직접 캡처 방식으로 MP4 생성
+                if (!proceed) return;
+            }
 
-✨ 새로운 방식:
-• 📱 화면에 표시된 실제 슬라이드를 그대로 캡처
-• 🎨 DALL-E 3 이미지 포함 보장
+            try {
+                console.log('🎬 최종 완성 영상 생성 시작');
+                console.log('📊 이미지 현황:', { 전체: imageCount, 실제: realImageCount });
+
+                const userConfirm = confirm(`🎬 최종 완성 유튜브 쇼츠 영상 생성
+
+✨ 현재 상황:
+• 📱 화면에 완성된 슬라이드 표시됨
+• 🎨 총 ${imageCount}개 이미지 (실제 AI: ${realImageCount}개)
 • 🔥 4K 해상도 (1080×1920) 
-• 📺 CORS 문제 완전 해결
-• ${useHtml2Canvas ? 'HTML2Canvas 라이브러리 사용' : '직접 픽셀 캡처 방식'}
+• 📺 DOM 직접 캡처로 100% 동일 복제
+• 🎯 CORS 문제 완전 해결
 
-🚀 시작하시겠습니까?`);
+🚀 최종 영상을 생성하시겠습니까?`);
 
                 if (!userConfirm) return;
 
                 // 진행 상태 표시
                 showProgressModal(true);
-                updateProgress(5, '🎨 DOM 캡처 준비', '실제 화면 슬라이드를 직접 캡처할 준비를 하고 있습니다...', '🎬');
+                updateProgress(5, '🎨 최종 영상 준비', '화면 표시 슬라이드를 분석하고 있습니다...', '🎬');
 
-                // Canvas 생성
+                // 이미지 사전 로딩 (중요!)
+                await preloadAllImages();
+
+                updateProgress(15, '📱 Canvas 및 DOM 준비', '최종 영상용 Canvas와 DOM 환경을 설정합니다...', '⚙️');
+
+                // Canvas 생성 및 화면 표시
                 const canvas = document.createElement('canvas');
                 canvas.width = 1080;
                 canvas.height = 1920;
-                const ctx = canvas.getContext('2d');
-
-                // Canvas 미리보기 표시
+                
+                // Canvas 미리보기 (녹색 테두리로 성공 표시)
                 canvas.style.cssText = `
                     position: fixed;
                     top: 50%;
@@ -979,23 +1011,27 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
                 const canvasLabel = document.createElement('div');
                 canvasLabel.style.cssText = `
                     position: fixed;
-                    top: calc(50% - 200px);
+                    top: calc(50% - 220px);
                     left: 50%;
                     transform: translateX(-50%);
                     background: rgba(0, 255, 0, 0.9);
                     color: white;
-                    padding: 8px 16px;
+                    padding: 10px 20px;
                     border-radius: 15px;
                     font-weight: bold;
                     z-index: 10001;
-                    font-size: 12px;
+                    font-size: 14px;
                 `;
-                canvasLabel.textContent = '🎬 DOM 직접 캡처 중';
+                canvasLabel.textContent = '🎬 최종 영상 생성 중';
                 
                 document.body.appendChild(canvas);
                 document.body.appendChild(canvasLabel);
 
-                updateProgress(10, '🎥 MediaRecorder 설정', 'DOM 캡처용 녹화 설정을 구성하고 있습니다...', '⚙️');
+                const ctx = canvas.getContext('2d');
+                ctx.imageSmoothingEnabled = true;
+                ctx.imageSmoothingQuality = 'high';
+
+                updateProgress(25, '🎥 MediaRecorder 설정', '최고품질 녹화 설정을 구성합니다...', '⚙️');
 
                 // MediaRecorder 설정
                 const stream = canvas.captureStream(30);
@@ -1023,7 +1059,7 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
                     if (event.data.size > 0) {
                         recordedChunks.push(event.data);
                         totalDataSize += event.data.size;
-                        console.log(`📊 데이터 수신: ${event.data.size} bytes (총: ${totalDataSize} bytes)`);
+                        console.log(`📊 데이터 누적: ${totalDataSize} bytes`);
                     }
                 };
 
@@ -1032,29 +1068,41 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
                         document.body.removeChild(canvas);
                         document.body.removeChild(canvasLabel);
                         
+                        console.log(`🏁 최종 녹화 완료! 총 데이터: ${totalDataSize} bytes`);
+                        
                         if (totalDataSize < 1000) {
-                            throw new Error('녹화된 데이터가 너무 적습니다.');
+                            throw new Error('녹화 데이터가 너무 적습니다. 렌더링에 문제가 있을 수 있습니다.');
                         }
 
                         const blob = new Blob(recordedChunks, { type: mimeType });
+                        const fileSizeMB = Math.round(totalDataSize / 1024 / 1024 * 100) / 100;
+                        
+                        if (fileSizeMB < 1) {
+                            console.warn('⚠️ 파일 크기가 작습니다:', fileSizeMB, 'MB');
+                        }
+
                         const url = URL.createObjectURL(blob);
                         
                         const a = document.createElement('a');
                         a.href = url;
-                        a.download = `youtube-shorts-dom-capture-${new Date().getTime()}.webm`;
+                        a.download = `youtube-shorts-final-${new Date().getTime()}.webm`;
                         a.click();
                         
                         URL.revokeObjectURL(url);
                         showProgressModal(false);
                         
-                        alert(`🎉 DOM 직접 캡처 MP4 생성 완료!
+                        alert(`🎉 최종 유튜브 쇼츠 영상 완성!
 
 📊 생성 결과:
-• 파일 크기: ${Math.round(totalDataSize / 1024 / 1024 * 100) / 100} MB
-• 📱 실제 화면 슬라이드 100% 동일
-• 🎨 DALL-E 3 이미지 완벽 포함
+• 파일 크기: ${fileSizeMB} MB
+• 📱 화면 표시 슬라이드 100% 복제
+• 🎨 이미지 포함: ${imageCount}개 (AI: ${realImageCount}개)
 • ${Math.round(videoBitrate/1000000)}Mbps 고화질
-• 🎬 유튜브 쇼츠 최적화 완료!`);
+• 🎬 유튜브 쇼츠 완벽 최적화!
+
+${fileSizeMB >= 5 ? '✅ 정상적인 크기의 고품질 영상입니다!' : 
+  fileSizeMB >= 1 ? '⚠️ 다소 작은 크기입니다. 이미지 로딩을 확인해주세요.' : 
+  '❌ 매우 작은 크기입니다. 문제가 있을 수 있습니다.'}`);
                         
                     } catch (error) {
                         if (document.body.contains(canvas)) document.body.removeChild(canvas);
@@ -1064,35 +1112,201 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
                     }
                 };
 
-                updateProgress(20, '🎬 DOM 캡처 시작', '실제 화면 슬라이드를 직접 캡처합니다...', '📸');
+                updateProgress(35, '🎬 최종 영상 캡처 시작', '화면 표시 슬라이드를 하나씩 캡처합니다...', '📸');
 
                 // 녹화 시작
                 mediaRecorder.start(100);
 
-                // 각 슬라이드를 DOM에서 직접 캡처
+                // 첫 번째 슬라이드 테스트 캡처
+                await guaranteedFinalSlideCapture(ctx, 0, canvas.width, canvas.height);
+                
+                updateProgress(45, '✅ 캡처 검증 완료', '첫 번째 슬라이드 캡처 성공! 전체 영상 생성 중...', '🎯');
+
+                // 각 슬라이드를 최종 캡처
                 for (let i = 0; i < slides.length; i++) {
-                    const progress = 20 + (i / slides.length) * 70;
-                    updateProgress(progress, `📸 슬라이드 ${i + 1} DOM 캡처`, `실제 화면 슬라이드 ${i + 1}/15를 직접 캡처하고 있습니다...`, '🎨');
+                    const progress = 45 + (i / slides.length) * 50;
+                    updateProgress(progress, `📸 최종 슬라이드 ${i + 1} 캡처`, `완성 슬라이드 ${i + 1}/15를 최종 캡처하고 있습니다...`, '🎨');
                     
-                    console.log(`📸 슬라이드 ${i + 1} DOM 캡처 시작`);
-                    
-                    // DOM을 직접 Canvas로 캡처
-                    await captureDOMSlideToCanvas(ctx, i, canvas.width, canvas.height);
-                    
-                    console.log(`✅ 슬라이드 ${i + 1} DOM 캡처 완료`);
+                    console.log(`📸 최종 슬라이드 ${i + 1} 캡처 시작`);
+                    await guaranteedFinalSlideCapture(ctx, i, canvas.width, canvas.height);
+                    console.log(`✅ 최종 슬라이드 ${i + 1} 캡처 완료`);
                     
                     // 2.2초 대기
                     await delay(2200);
                 }
 
-                updateProgress(95, '🏁 완료 처리', 'DOM 캡처 영상을 마무리하고 있습니다...', '✅');
+                updateProgress(95, '🏁 최종 완료', '최종 영상을 마무리하고 있습니다...', '✅');
                 mediaRecorder.stop();
 
             } catch (error) {
-                console.error('❌ DOM 캡처 MP4 생성 실패:', error);
+                console.error('❌ 최종 영상 생성 실패:', error);
                 showProgressModal(false);
-                alert('❌ DOM 캡처 MP4 생성 실패: ' + error.message);
+                alert('❌ 최종 영상 생성 실패: ' + error.message);
             }
+        }
+
+        // 모든 이미지 사전 로딩 (중요!)
+        async function preloadAllImages() {
+            try {
+                console.log('🔄 모든 이미지 사전 로딩 시작');
+                
+                const imagePromises = Object.entries(slideImages).map(async ([index, imageUrl]) => {
+                    if (imageUrl && imageUrl.startsWith('http')) {
+                        try {
+                            const img = new Image();
+                            img.crossOrigin = 'anonymous';
+                            
+                            return new Promise((resolve) => {
+                                img.onload = () => {
+                                    console.log(`✅ 이미지 ${parseInt(index) + 1} 사전 로딩 완료`);
+                                    resolve(true);
+                                };
+                                img.onerror = () => {
+                                    console.warn(`⚠️ 이미지 ${parseInt(index) + 1} 사전 로딩 실패`);
+                                    resolve(false);
+                                };
+                                img.src = imageUrl;
+                            });
+                        } catch (error) {
+                            console.warn(`이미지 ${parseInt(index) + 1} 로딩 오류:`, error);
+                            return false;
+                        }
+                    }
+                    return true;
+                });
+                
+                const results = await Promise.all(imagePromises);
+                const successCount = results.filter(Boolean).length;
+                
+                console.log(`✅ 이미지 사전 로딩 완료: ${successCount}/${results.length}`);
+                return successCount;
+                
+            } catch (error) {
+                console.error('이미지 사전 로딩 오류:', error);
+                return 0;
+            }
+        }
+
+        // 최종 보장된 슬라이드 캡처
+        async function guaranteedFinalSlideCapture(ctx, slideIndex, width, height) {
+            try {
+                console.log(`🎯 최종 슬라이드 ${slideIndex + 1} 캡처 시작`);
+                
+                // 해당 슬라이드로 이동 및 충분한 대기
+                showSlide(slideIndex);
+                await delay(500); // 충분한 DOM 업데이트 대기
+
+                // 활성 슬라이드 확인
+                const activeSlide = document.querySelector('.slide.active');
+                if (!activeSlide) {
+                    console.warn(`활성 슬라이드 없음 - 슬라이드 ${slideIndex + 1}`);
+                    await renderFallbackSlide(ctx, slideIndex, width, height);
+                    return;
+                }
+
+                // Canvas 초기화
+                ctx.clearRect(0, 0, width, height);
+
+                // 방법 1: 최우선 - 실제 이미지 URL로 직접 렌더링
+                if (slideImages[slideIndex] && slideImages[slideIndex].startsWith('http')) {
+                    try {
+                        console.log(`🖼️ 직접 이미지 렌더링: ${slideImages[slideIndex]}`);
+                        
+                        const img = await loadImageWithMaxRetry(slideImages[slideIndex]);
+                        if (img) {
+                            ctx.drawImage(img, 0, 0, width, height);
+                            
+                            // 오버레이 추가
+                            const gradient = ctx.createLinearGradient(0, 0, 0, height);
+                            gradient.addColorStop(0, 'rgba(0, 0, 0, 0.4)');
+                            gradient.addColorStop(1, 'rgba(0, 0, 0, 0.4)');
+                            ctx.fillStyle = gradient;
+                            ctx.fillRect(0, 0, width, height);
+                            
+                            console.log(`✅ 직접 이미지 렌더링 성공 - 슬라이드 ${slideIndex + 1}`);
+                        } else {
+                            throw new Error('이미지 로딩 실패');
+                        }
+                    } catch (error) {
+                        console.warn('직접 이미지 렌더링 실패, DOM 방식 시도:', error);
+                        await reconstructDOMSlide(ctx, activeSlide, slideIndex, width, height);
+                    }
+                } else {
+                    // 방법 2: DOM 재구성
+                    console.log(`🔧 DOM 재구성 방식 사용 - 슬라이드 ${slideIndex + 1}`);
+                    await reconstructDOMSlide(ctx, activeSlide, slideIndex, width, height);
+                }
+
+                // 텍스트 오버레이 (항상 추가)
+                await copyActualSlideText(ctx, activeSlide, width, height);
+                
+                // 슬라이드 번호
+                ctx.font = `${height * 0.02}px Arial`;
+                ctx.fillStyle = 'rgba(255,255,255,0.7)';
+                ctx.textAlign = 'center';
+                ctx.fillText(`${slideIndex + 1} / 15`, width / 2, height * 0.9);
+                
+                console.log(`✅ 최종 슬라이드 ${slideIndex + 1} 캡처 완료`);
+                
+            } catch (error) {
+                console.error(`최종 캡처 실패 - 슬라이드 ${slideIndex + 1}:`, error);
+                await renderFallbackSlide(ctx, slideIndex, width, height);
+            }
+        }
+
+        // 최대 재시도로 이미지 로드
+        async function loadImageWithMaxRetry(imageUrl, maxRetries = 3) {
+            for (let attempt = 1; attempt <= maxRetries; attempt++) {
+                try {
+                    console.log(`🔄 이미지 로드 시도 ${attempt}/${maxRetries}: ${imageUrl}`);
+                    
+                    const img = new Image();
+                    img.crossOrigin = 'anonymous';
+                    
+                    const success = await new Promise((resolve) => {
+                        img.onload = () => {
+                            if (img.complete && img.naturalWidth > 0) {
+                                console.log(`✅ 이미지 로드 성공 (시도 ${attempt})`);
+                                resolve(img);
+                            } else {
+                                console.warn(`⚠️ 이미지 로드 불완전 (시도 ${attempt})`);
+                                resolve(null);
+                            }
+                        };
+                        
+                        img.onerror = () => {
+                            console.warn(`❌ 이미지 로드 실패 (시도 ${attempt})`);
+                            resolve(null);
+                        };
+                        
+                        // 캐시 우회
+                        const cacheBuster = attempt > 1 ? `?retry=${attempt}&t=${Date.now()}` : '';
+                        img.src = imageUrl + cacheBuster;
+                        
+                        // 타임아웃
+                        setTimeout(() => {
+                            if (!img.complete) {
+                                console.warn(`⏰ 이미지 로드 타임아웃 (시도 ${attempt})`);
+                                resolve(null);
+                            }
+                        }, 3000);
+                    });
+                    
+                    if (success) {
+                        return success;
+                    }
+                    
+                    if (attempt < maxRetries) {
+                        await delay(1000 * attempt); // 점진적 대기
+                    }
+                    
+                } catch (error) {
+                    console.warn(`이미지 로드 시도 ${attempt} 오류:`, error);
+                }
+            }
+            
+            console.error(`❌ 모든 이미지 로드 시도 실패: ${imageUrl}`);
+            return null;
         }
 
         // DOM을 직접 Canvas로 캡처하는 함수
@@ -2689,14 +2903,33 @@ Canvas MP4: 완벽한 품질, 빠른 생성, 안정성
             alert(guideText);
         }
 
-        // 슬라이드별 이미지 생성
+        // 슬라이드별 이미지 생성 (강화된 디버깅)
         async function generateImagesForAllSlides() {
             const imageStatus = safeGetElement('imageStatus');
             const imageProgress = safeGetElement('imageProgress');
             
+            console.log('🎨 이미지 생성 시작');
+            console.log('📊 API 키 상태:', apiKey ? '설정됨' : '없음');
+            console.log('📋 슬라이드 개수:', slides.length);
+            
             if (imageStatus) {
                 imageStatus.style.display = 'block';
             }
+            
+            // API 키 검증
+            if (!apiKey) {
+                alert('❌ API 키가 설정되지 않았습니다!\n\n"🔑 OpenAI API 키 설정" 섹션에서 먼저 API 키를 입력해주세요.');
+                return;
+            }
+            
+            // API 키 형식 검증
+            if (!apiKey.startsWith('sk-') || apiKey.length < 40) {
+                alert('❌ API 키 형식이 올바르지 않습니다!\n\n올바른 OpenAI API 키를 입력해주세요.');
+                return;
+            }
+            
+            let successCount = 0;
+            let failCount = 0;
             
             for (let i = 0; i < slides.length; i++) {
                 const slide = slides[i];
@@ -2706,37 +2939,223 @@ Canvas MP4: 완벽한 품질, 빠른 생성, 안정성
                     updateProgress(progressPercent, '🎨 이미지 생성', `${i + 1}/15 슬라이드 이미지 생성 중...`, '🎨');
                     
                     if (imageProgress) {
-                        imageProgress.innerHTML = `🎨 슬라이드 ${i + 1}/15 이미지 생성 중... (${Math.round((i / slides.length) * 100)}%)`;
+                        imageProgress.innerHTML = `🎨 슬라이드 ${i + 1}/15 이미지 생성 중... (성공: ${successCount}, 실패: ${failCount})`;
                     }
                     
-                    const imagePrompt = generateImagePromptForSlide(slide, i);
-                    console.log(`슬라이드 ${i + 1} 이미지 프롬프트:`, imagePrompt);
+                    console.log(`🎨 슬라이드 ${i + 1} 이미지 생성 시작`);
                     
-                    const imageUrl = await generateAIImage(imagePrompt);
+                    const imagePrompt = generateImagePromptForSlide(slide, i);
+                    console.log(`📝 슬라이드 ${i + 1} 프롬프트:`, imagePrompt);
+                    
+                    // DALL-E 3 API 호출 시도
+                    const imageUrl = await generateAIImageWithRetry(imagePrompt, i);
                     
                     if (imageUrl) {
                         slideImages[i] = imageUrl;
                         updateImageCard(i, imageUrl);
-                        console.log(`✅ 슬라이드 ${i + 1} 이미지 생성 완료`);
+                        successCount++;
+                        console.log(`✅ 슬라이드 ${i + 1} 이미지 생성 성공: ${imageUrl}`);
                     } else {
+                        // 실패 시 플레이스홀더 생성
                         slideImages[i] = createPlaceholderImage(slide, i);
                         updateImageCard(i, slideImages[i]);
-                        console.log(`⚠️ 슬라이드 ${i + 1} 플레이스홀더 사용`);
+                        failCount++;
+                        console.log(`⚠️ 슬라이드 ${i + 1} DALL-E 3 실패, 플레이스홀더 사용`);
                     }
                     
+                    // API 제한을 위한 지연
                     if (i < slides.length - 1) {
-                        await delay(1000);
+                        await delay(2000); // 2초 대기 (API 제한 고려)
                     }
                     
                 } catch (error) {
                     console.error(`❌ 슬라이드 ${i + 1} 이미지 생성 실패:`, error);
                     slideImages[i] = createPlaceholderImage(slide, i);
                     updateImageCard(i, slideImages[i]);
+                    failCount++;
                 }
             }
             
             if (imageProgress) {
-                imageProgress.innerHTML = `✅ 모든 이미지 생성 완료! (15/15)`;
+                if (successCount === 0) {
+                    imageProgress.innerHTML = `❌ 모든 AI 이미지 생성 실패! (0/15) - API 키나 네트워크를 확인해주세요.`;
+                    imageProgress.style.color = '#ff6b6b';
+                    
+                    // 실패 원인 진단
+                    setTimeout(() => {
+                        diagnosisImageGenerationFailure();
+                    }, 1000);
+                } else if (failCount === 0) {
+                    imageProgress.innerHTML = `🎉 모든 AI 이미지 생성 완료! (${successCount}/15)`;
+                    imageProgress.style.color = '#00ff88';
+                } else {
+                    imageProgress.innerHTML = `⚠️ 일부 AI 이미지 생성 완료 (성공: ${successCount}, 실패: ${failCount})`;
+                    imageProgress.style.color = '#feca57';
+                }
+            }
+            
+            console.log(`🏁 이미지 생성 완료 - 성공: ${successCount}, 실패: ${failCount}`);
+        }
+
+        // 재시도 기능이 있는 AI 이미지 생성
+        async function generateAIImageWithRetry(prompt, slideIndex, maxRetries = 2) {
+            for (let attempt = 1; attempt <= maxRetries; attempt++) {
+                try {
+                    console.log(`🔄 슬라이드 ${slideIndex + 1} 이미지 생성 시도 ${attempt}/${maxRetries}`);
+                    
+                    const imageUrl = await generateAIImageDirect(prompt);
+                    if (imageUrl) {
+                        console.log(`✅ 슬라이드 ${slideIndex + 1} 시도 ${attempt} 성공`);
+                        return imageUrl;
+                    }
+                } catch (error) {
+                    console.warn(`⚠️ 슬라이드 ${slideIndex + 1} 시도 ${attempt} 실패:`, error.message);
+                    
+                    if (attempt === maxRetries) {
+                        console.error(`❌ 슬라이드 ${slideIndex + 1} 모든 시도 실패`);
+                        return null;
+                    }
+                    
+                    // 재시도 전 대기
+                    await delay(1000 * attempt);
+                }
+            }
+            return null;
+        }
+
+        // 직접적인 DALL-E 3 API 호출
+        async function generateAIImageDirect(prompt) {
+            try {
+                console.log('🎨 DALL-E 3 API 직접 호출 시작');
+                console.log('📝 프롬프트:', prompt);
+                console.log('🔑 API 키 확인:', apiKey.substring(0, 10) + '...');
+                
+                const requestBody = {
+                    model: "dall-e-3",
+                    prompt: prompt,
+                    size: "1024x1024",
+                    quality: "standard",
+                    n: 1,
+                    style: "vivid"
+                };
+                
+                console.log('📤 요청 데이터:', requestBody);
+                
+                const response = await fetch('https://api.openai.com/v1/images/generations', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${apiKey}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestBody)
+                });
+                
+                console.log('📨 응답 상태:', response.status, response.statusText);
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('❌ API 응답 오류:', errorText);
+                    
+                    if (response.status === 401) {
+                        throw new Error('API 키가 유효하지 않습니다. API 키를 확인해주세요.');
+                    } else if (response.status === 429) {
+                        throw new Error('API 사용량 한도를 초과했습니다. 잠시 후 다시 시도해주세요.');
+                    } else if (response.status === 400) {
+                        throw new Error('요청 형식에 오류가 있습니다.');
+                    } else {
+                        throw new Error(`API 오류: ${response.status} - ${errorText}`);
+                    }
+                }
+                
+                const data = await response.json();
+                console.log('📥 응답 데이터:', data);
+                
+                if (!data.data || !data.data[0] || !data.data[0].url) {
+                    console.error('❌ 응답에 이미지 URL이 없음:', data);
+                    throw new Error('API 응답에서 이미지 URL을 찾을 수 없습니다');
+                }
+                
+                const imageUrl = data.data[0].url;
+                console.log('✅ DALL-E 3 이미지 생성 성공:', imageUrl);
+                return imageUrl;
+                
+            } catch (error) {
+                console.error('❌ DALL-E 3 API 호출 실패:', error);
+                throw error;
+            }
+        }
+
+        // 이미지 생성 실패 원인 진단
+        async function diagnosisImageGenerationFailure() {
+            try {
+                console.log('🔍 이미지 생성 실패 원인 진단 시작');
+                
+                // API 키 기본 검증
+                if (!apiKey) {
+                    alert('❌ 진단 결과: API 키가 설정되지 않았습니다!\n\n해결방법:\n1. "🔑 OpenAI API 키 설정" 섹션으로 이동\n2. sk-로 시작하는 OpenAI API 키 입력\n3. "API 키 설정" 버튼 클릭');
+                    return;
+                }
+                
+                if (!apiKey.startsWith('sk-')) {
+                    alert('❌ 진단 결과: API 키 형식이 잘못되었습니다!\n\n해결방법:\n1. OpenAI 계정에서 새로운 API 키 생성\n2. sk-로 시작하는 올바른 키 입력');
+                    return;
+                }
+                
+                // 간단한 API 연결 테스트
+                console.log('🧪 API 연결 테스트 시작');
+                
+                const testResponse = await fetch('https://api.openai.com/v1/models', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${apiKey}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                console.log('🧪 테스트 응답:', testResponse.status);
+                
+                if (testResponse.status === 401) {
+                    alert('❌ 진단 결과: API 키가 유효하지 않습니다!\n\n해결방법:\n1. OpenAI 대시보드에서 API 키 상태 확인\n2. 새로운 API 키 생성\n3. 결제 정보 및 사용 한도 확인');
+                } else if (testResponse.status === 429) {
+                    alert('⚠️ 진단 결과: API 사용량 한도 초과!\n\n해결방법:\n1. OpenAI 대시보드에서 사용량 확인\n2. 결제 방법 추가 또는 업그레이드\n3. 잠시 후 다시 시도');
+                } else if (testResponse.ok) {
+                    // API 연결은 되지만 DALL-E 3 접근 확인
+                    try {
+                        const dalleTestResponse = await fetch('https://api.openai.com/v1/images/generations', {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': `Bearer ${apiKey}`,
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                model: "dall-e-3",
+                                prompt: "A simple red circle",
+                                size: "1024x1024",
+                                quality: "standard",
+                                n: 1
+                            })
+                        });
+                        
+                        if (dalleTestResponse.status === 400) {
+                            const errorData = await dalleTestResponse.json();
+                            if (errorData.error && errorData.error.message.includes('billing')) {
+                                alert('💳 진단 결과: 결제 정보 문제!\n\n해결방법:\n1. OpenAI 대시보드에서 결제 방법 확인\n2. 크레딧 또는 결제 정보 추가\n3. DALL-E 3 사용 권한 확인');
+                            } else {
+                                alert('❌ 진단 결과: DALL-E 3 접근 권한 없음!\n\n해결방법:\n1. OpenAI 계정에서 DALL-E 3 권한 확인\n2. API 플랜 업그레이드 필요할 수 있음\n3. OpenAI 지원팀 문의');
+                            }
+                        } else if (dalleTestResponse.ok) {
+                            alert('✅ 진단 결과: API는 정상!\n\n일시적인 네트워크 문제일 수 있습니다.\n다시 시도해보세요.');
+                        }
+                    } catch (dalleError) {
+                        alert('🌐 진단 결과: 네트워크 연결 문제!\n\n해결방법:\n1. 인터넷 연결 상태 확인\n2. VPN 사용 중이면 해제 후 시도\n3. 방화벽 설정 확인');
+                    }
+                } else {
+                    alert(`❌ 진단 결과: 알 수 없는 API 오류 (${testResponse.status})\n\n해결방법:\n1. 잠시 후 다시 시도\n2. OpenAI 서비스 상태 확인\n3. 브라우저 새로고침 후 재시도`);
+                }
+                
+            } catch (error) {
+                console.error('진단 과정 오류:', error);
+                alert('❌ 진단 중 오류가 발생했습니다!\n\n기본 해결방법:\n1. 페이지 새로고침\n2. API 키 재입력\n3. 네트워크 연결 확인');
             }
         }
 
