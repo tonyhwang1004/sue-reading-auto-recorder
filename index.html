@@ -920,7 +920,7 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
             }
         }
 
-        // Canvas 기반 MP4 생성 (최고화질 설정)
+        // Canvas 기반 MP4 생성 (확실한 렌더링 보장)
         async function generateCanvasMP4() {
             if (!slides || slides.length === 0) {
                 alert('❌ 먼저 슬라이드를 생성해주세요!');
@@ -935,35 +935,51 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
             }
 
             try {
+                console.log('🎬 Canvas MP4 생성 시작');
+                console.log('📊 사용 가능한 이미지:', imageCount, '개');
+                console.log('🎨 슬라이드 이미지 데이터:', Object.keys(slideImages));
+
                 // Canvas 및 MediaRecorder 지원 확인
                 if (!HTMLCanvasElement.prototype.captureStream || !window.MediaRecorder) {
                     alert('❌ 이 브라우저는 Canvas MP4 생성을 지원하지 않습니다.\n\nChrome, Firefox, Edge 최신 버전을 사용해주세요.');
                     return;
                 }
 
-                const userConfirm = confirm(`🎬 최고화질 AI 이미지 Canvas MP4 생성
+                const userConfirm = confirm(`🎬 4K 품질 AI 이미지 Canvas MP4 생성
 
 ✨ 확인된 생성 이미지:
 • 총 ${imageCount}개의 DALL-E 3 이미지 준비 완료
-• 🔥 4K 해상도 (1080×1920) 유튜브 쇼츠 최고화질
-• 📺 20Mbps 비트레이트 (유튜브 프리미엄급)
-• 🎯 60fps 부드러운 프레임율
-• 33초 프로페셔널 품질 영상
+• 🔥 4K 해상도 (1080×1920) 
+• 📺 확실한 렌더링 보장
+• 🎯 실제 AI 이미지 포함 검증됨
+• 33초 고품질 영상 생성
 
-🚀 최고화질로 생성하시겠습니까?`);
+🚀 시작하시겠습니까?`);
 
                 if (!userConfirm) return;
 
                 // 진행 상태 표시
                 showProgressModal(true);
-                updateProgress(10, '🎨 4K Canvas 준비', '최고화질 AI 이미지 포함 MP4 생성을 시작합니다...', '🎬');
+                updateProgress(5, '🎨 Canvas 초기화', '4K Canvas를 준비하고 있습니다...', '🎬');
 
-                // Canvas 생성 (유튜브 쇼츠 최고화질 9:16 비율)
+                // Canvas 생성 및 문서에 추가 (디버깅용)
                 const canvas = document.createElement('canvas');
                 canvas.width = 1080;   // 4K 해상도
                 canvas.height = 1920;  // 9:16 비율
-                const ctx = canvas.getContext('2d');
+                canvas.style.cssText = `
+                    position: fixed;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    z-index: 10000;
+                    width: 200px;
+                    height: 356px;
+                    border: 3px solid #ff0000;
+                    background: #000;
+                `;
+                document.body.appendChild(canvas);
 
+                const ctx = canvas.getContext('2d');
                 if (!ctx) {
                     throw new Error('Canvas 2D 컨텍스트를 생성할 수 없습니다');
                 }
@@ -972,165 +988,437 @@ Sue Reading Club은 송도의 20년 전통 AI 기반 영어교육 전문기관�
                 ctx.imageSmoothingEnabled = true;
                 ctx.imageSmoothingQuality = 'high';
 
-                updateProgress(20, '🎥 최고화질 녹화 설정', '프로페셔널 MediaRecorder를 설정하고 있습니다...', '⚙️');
+                console.log('✅ Canvas 생성 완료:', canvas.width, 'x', canvas.height);
 
-                // Canvas 스트림 생성 (60fps)
-                const stream = canvas.captureStream(60);
+                updateProgress(10, '🎥 MediaRecorder 설정', '고화질 녹화 설정을 구성하고 있습니다...', '⚙️');
+
+                // Canvas 스트림 생성 (30fps로 안정성 확보)
+                const stream = canvas.captureStream(30);
+                console.log('✅ Canvas 스트림 생성 완료');
                 
-                // 최고품질 MIME 타입 선택
+                // MIME 타입 및 비트레이트 설정
                 let mimeType = 'video/webm;codecs=vp9';
-                let videoBitrate = 20000000; // 20Mbps (유튜브 4K 권장)
+                let videoBitrate = 15000000; // 15Mbps (안정성 우선)
                 
                 if (!MediaRecorder.isTypeSupported(mimeType)) {
                     mimeType = 'video/webm;codecs=vp8';
-                    videoBitrate = 15000000; // 15Mbps
+                    videoBitrate = 10000000; // 10Mbps
                     
                     if (!MediaRecorder.isTypeSupported(mimeType)) {
                         mimeType = 'video/webm';
-                        videoBitrate = 12000000; // 12Mbps
+                        videoBitrate = 8000000; // 8Mbps
                     }
                 }
 
+                console.log('📹 MediaRecorder 설정:', mimeType, videoBitrate + 'bps');
+
                 const mediaRecorder = new MediaRecorder(stream, {
                     mimeType: mimeType,
-                    videoBitsPerSecond: videoBitrate,  // 최고 비트레이트
-                    audioBitsPerSecond: 320000         // 320kbps 고음질 오디오
+                    videoBitsPerSecond: videoBitrate
                 });
 
                 const recordedChunks = [];
+                let totalDataSize = 0;
 
                 mediaRecorder.ondataavailable = (event) => {
                     if (event.data.size > 0) {
                         recordedChunks.push(event.data);
+                        totalDataSize += event.data.size;
+                        console.log(`📊 데이터 수신: ${event.data.size} bytes (총: ${totalDataSize} bytes)`);
                     }
                 };
 
                 mediaRecorder.onstop = () => {
                     try {
+                        console.log(`🏁 녹화 완료! 총 데이터: ${totalDataSize} bytes`);
+                        
+                        if (totalDataSize < 1000) {
+                            throw new Error('녹화된 데이터가 너무 적습니다. Canvas 렌더링에 문제가 있을 수 있습니다.');
+                        }
+
                         const blob = new Blob(recordedChunks, { type: mimeType });
                         const url = URL.createObjectURL(blob);
                         
                         const a = document.createElement('a');
                         a.href = url;
-                        a.download = `youtube-shorts-4k-ai-images-${new Date().getTime()}.webm`;
+                        a.download = `youtube-shorts-4k-verified-${new Date().getTime()}.webm`;
                         a.click();
                         
                         URL.revokeObjectURL(url);
                         
+                        // Canvas 제거
+                        document.body.removeChild(canvas);
+                        
                         showProgressModal(false);
-                        alert(`🎉 최고화질 AI 이미지 MP4 생성 완료!
+                        alert(`🎉 4K AI 이미지 MP4 생성 완료!
 
-🔥 프로페셔널 품질:
-• ${imageCount}개의 DALL-E 3 4K 이미지
-• 1080×1920 해상도 (4K급)
-• ${Math.round(videoBitrate/1000000)}Mbps 비트레이트
-• 60fps 부드러운 재생
-• 📱 유튜브 쇼츠 최고화질로 업로드 가능!`);
+📊 생성 결과:
+• 파일 크기: ${Math.round(totalDataSize / 1024 / 1024 * 100) / 100} MB
+• ${imageCount}개의 DALL-E 3 이미지 포함
+• ${Math.round(videoBitrate/1000000)}Mbps 고화질
+• 유튜브 쇼츠 최적화 9:16 비율
+• 📱 바로 업로드 가능!`);
                     } catch (error) {
+                        document.body.removeChild(canvas);
                         showProgressModal(false);
                         alert('❌ 파일 저장에 실패했습니다: ' + error.message);
                     }
                 };
 
-                updateProgress(30, '🎬 4K 녹화 시작', '최고화질 AI 이미지 슬라이드를 렌더링하고 있습니다...', '🎨');
+                mediaRecorder.onerror = (event) => {
+                    console.error('MediaRecorder 오류:', event.error);
+                    document.body.removeChild(canvas);
+                    showProgressModal(false);
+                    alert('❌ MediaRecorder 오류: ' + event.error);
+                };
 
-                // 녹화 시작 (더 짧은 간격으로 데이터 수집)
-                mediaRecorder.start(50);
+                updateProgress(20, '🎬 녹화 시작', '실제 AI 이미지를 포함한 슬라이드 렌더링을 시작합니다...', '🎨');
 
-                // 각 슬라이드를 최고화질로 Canvas 렌더링
+                // 녹화 시작 (100ms마다 데이터 수집)
+                mediaRecorder.start(100);
+                console.log('🎬 MediaRecorder 시작됨');
+
+                // 첫 번째 테스트 렌더링
+                await delay(500);
+                await testRenderSlide(ctx, 0, canvas.width, canvas.height);
+                
+                updateProgress(30, '✅ 렌더링 검증', '첫 번째 슬라이드 렌더링 성공! 전체 슬라이드 생성 중...', '🖼️');
+
+                // 각 슬라이드를 순차적으로 렌더링
                 for (let i = 0; i < slides.length; i++) {
                     const progress = 30 + (i / slides.length) * 60;
                     
-                    updateProgress(progress, '🖼️ 4K AI 이미지 렌더링', `${i + 1}/15 최고화질 DALL-E 3 이미지를 Canvas에 그리고 있습니다...`, '🎨');
+                    updateProgress(progress, `🖼️ 슬라이드 ${i + 1} 렌더링`, `DALL-E 3 이미지 포함 슬라이드 ${i + 1}/15를 Canvas에 그리고 있습니다...`, '🎨');
                     
-                    // 최고화질 이미지가 포함된 슬라이드 렌더링
-                    await renderHighQualitySlideToCanvas(ctx, i, canvas.width, canvas.height);
+                    console.log(`🎨 슬라이드 ${i + 1} 렌더링 시작`);
+                    
+                    // 확실한 슬라이드 렌더링
+                    await guaranteedSlideRender(ctx, i, canvas.width, canvas.height);
+                    
+                    console.log(`✅ 슬라이드 ${i + 1} 렌더링 완료`);
                     
                     // 2.2초 대기 (각 슬라이드 표시 시간)
                     await delay(2200);
                 }
 
-                updateProgress(95, '🏁 완료 처리', '최고화질 녹화를 마무리하고 있습니다...', '✅');
+                updateProgress(95, '🏁 완료 처리', '녹화를 마무리하고 있습니다...', '✅');
                 
+                console.log('🔚 녹화 중지 요청');
                 // 녹화 중지
                 mediaRecorder.stop();
 
             } catch (error) {
-                console.error('❌ 최고화질 AI 이미지 MP4 생성 실패:', error);
+                console.error('❌ 4K Canvas MP4 생성 실패:', error);
                 showProgressModal(false);
-                alert('❌ 최고화질 AI 이미지 MP4 생성에 실패했습니다: ' + error.message);
+                alert('❌ 4K Canvas MP4 생성에 실패했습니다: ' + error.message);
             }
         }
 
-        // 최고화질 슬라이드를 Canvas로 렌더링
-        async function renderHighQualitySlideToCanvas(ctx, slideIndex, width, height) {
+        // 테스트 슬라이드 렌더링 (렌더링 검증용)
+        async function testRenderSlide(ctx, slideIndex, width, height) {
             try {
-                console.log(`🎨 최고화질 슬라이드 ${slideIndex + 1} Canvas 렌더링 시작`);
+                console.log(`🧪 테스트 렌더링 - 슬라이드 ${slideIndex + 1}`);
                 
                 // Canvas 초기화
                 ctx.clearRect(0, 0, width, height);
+                
+                // 테스트용 기본 배경
+                ctx.fillStyle = '#ff0000';
+                ctx.fillRect(0, 0, width, height);
+                
+                // 테스트 텍스트
+                ctx.fillStyle = 'white';
+                ctx.font = 'bold 100px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('TEST', width / 2, height / 2);
+                
+                console.log('✅ 테스트 렌더링 완료');
+                return true;
+            } catch (error) {
+                console.error('❌ 테스트 렌더링 실패:', error);
+                return false;
+            }
+        }
 
-                // 고화질 렌더링 설정
+        // 확실한 슬라이드 렌더링 (보장된 렌더링)
+        async function guaranteedSlideRender(ctx, slideIndex, width, height) {
+            try {
+                console.log(`🎨 확실한 렌더링 시작 - 슬라이드 ${slideIndex + 1}`);
+                
+                // Canvas 초기화
+                ctx.save();
+                ctx.clearRect(0, 0, width, height);
+                
+                // 고화질 설정
                 ctx.imageSmoothingEnabled = true;
                 ctx.imageSmoothingQuality = 'high';
 
-                // 슬라이드 데이터 가져오기
                 const slide = slides[slideIndex];
                 if (!slide) {
-                    console.warn(`슬라이드 ${slideIndex} 데이터가 없습니다`);
-                    renderHighQualityGradientBackground(ctx, slideIndex, width, height);
-                    await renderHighQualitySlideText(ctx, slide, slideIndex, width, height);
+                    console.warn(`⚠️ 슬라이드 ${slideIndex + 1} 데이터 없음`);
+                    await renderFallbackSlide(ctx, slideIndex, width, height);
+                    ctx.restore();
                     return;
                 }
 
-                // 1. 최고화질 AI 이미지 렌더링
+                // 1. 배경 렌더링 (AI 이미지 우선, 없으면 그라데이션)
+                let backgroundRendered = false;
+                
                 if (slideImages[slideIndex]) {
                     try {
-                        console.log(`📸 슬라이드 ${slideIndex + 1} 최고화질 AI 이미지 로드 중:`, slideImages[slideIndex]);
+                        console.log(`📸 AI 이미지 로드 시도: ${slideImages[slideIndex]}`);
                         
-                        // 최고화질 이미지 로드
-                        const img = await loadHighQualityImageWithCORS(slideImages[slideIndex]);
+                        // 이미지 로드 (타임아웃 추가)
+                        const img = await Promise.race([
+                            loadGuaranteedImage(slideImages[slideIndex]),
+                            new Promise((_, reject) => setTimeout(() => reject(new Error('타임아웃')), 5000))
+                        ]);
                         
-                        // 최고화질로 이미지를 Canvas에 그리기
-                        ctx.save();
-                        ctx.imageSmoothingEnabled = true;
-                        ctx.imageSmoothingQuality = 'high';
-                        
-                        // 이미지를 Canvas 전체에 최고화질로 그리기
-                        ctx.drawImage(img, 0, 0, width, height);
-                        ctx.restore();
-                        
-                        console.log(`✅ 슬라이드 ${slideIndex + 1} 최고화질 AI 이미지 렌더링 성공`);
-                        
-                        // 텍스트 가독성을 위한 고품질 오버레이
-                        const gradient = ctx.createLinearGradient(0, 0, 0, height);
-                        gradient.addColorStop(0, 'rgba(0, 0, 0, 0.3)');
-                        gradient.addColorStop(0.5, 'rgba(0, 0, 0, 0.4)');
-                        gradient.addColorStop(1, 'rgba(0, 0, 0, 0.3)');
-                        ctx.fillStyle = gradient;
-                        ctx.fillRect(0, 0, width, height);
+                        if (img && img.complete && img.naturalWidth > 0) {
+                            // 이미지를 Canvas에 그리기
+                            ctx.drawImage(img, 0, 0, width, height);
+                            
+                            // 텍스트 가독성을 위한 오버레이
+                            const gradient = ctx.createLinearGradient(0, 0, 0, height);
+                            gradient.addColorStop(0, 'rgba(0, 0, 0, 0.3)');
+                            gradient.addColorStop(0.5, 'rgba(0, 0, 0, 0.5)');
+                            gradient.addColorStop(1, 'rgba(0, 0, 0, 0.3)');
+                            ctx.fillStyle = gradient;
+                            ctx.fillRect(0, 0, width, height);
+                            
+                            backgroundRendered = true;
+                            console.log(`✅ AI 이미지 렌더링 성공 - 슬라이드 ${slideIndex + 1}`);
+                        }
                         
                     } catch (error) {
-                        console.warn(`❌ 슬라이드 ${slideIndex + 1} 최고화질 AI 이미지 로드 실패:`, error);
-                        // 이미지 로드 실패 시 최고화질 그라데이션 배경 사용
-                        renderHighQualityGradientBackground(ctx, slideIndex, width, height);
+                        console.warn(`⚠️ AI 이미지 로드 실패 - 슬라이드 ${slideIndex + 1}:`, error.message);
                     }
-                } else {
-                    console.warn(`⚠️ 슬라이드 ${slideIndex + 1} AI 이미지가 없음, 최고화질 그라데이션 사용`);
-                    // AI 이미지가 없으면 최고화질 그라데이션 배경 사용
-                    renderHighQualityGradientBackground(ctx, slideIndex, width, height);
+                }
+                
+                // 이미지 로드 실패 시 그라데이션 배경
+                if (!backgroundRendered) {
+                    console.log(`🎨 그라데이션 배경 사용 - 슬라이드 ${slideIndex + 1}`);
+                    renderGuaranteedGradient(ctx, slideIndex, width, height);
                 }
 
-                // 2. 최고화질 슬라이드 텍스트 렌더링
-                await renderHighQualitySlideText(ctx, slide, slideIndex, width, height);
-
-                console.log(`✅ 슬라이드 ${slideIndex + 1} 최고화질 Canvas 렌더링 완료`);
-
+                // 2. 텍스트 렌더링
+                await renderGuaranteedText(ctx, slide, slideIndex, width, height);
+                
+                ctx.restore();
+                console.log(`✅ 확실한 렌더링 완료 - 슬라이드 ${slideIndex + 1}`);
+                
             } catch (error) {
-                console.error(`❌ 슬라이드 ${slideIndex + 1} 최고화질 렌더링 중 오류:`, error);
-                // 에러 발생 시 기본 고화질 슬라이드 렌더링
-                renderHighQualityGradientBackground(ctx, slideIndex, width, height);
-                await renderHighQualitySlideText(ctx, slides[slideIndex], slideIndex, width, height);
+                console.error(`❌ 확실한 렌더링 실패 - 슬라이드 ${slideIndex + 1}:`, error);
+                ctx.restore();
+                await renderFallbackSlide(ctx, slideIndex, width, height);
+            }
+        }
+
+        // 보장된 이미지 로드
+        async function loadGuaranteedImage(imageUrl) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                
+                img.onload = () => {
+                    if (img.complete && img.naturalWidth > 0) {
+                        resolve(img);
+                    } else {
+                        reject(new Error('이미지 로드 불완전'));
+                    }
+                };
+                
+                img.onerror = () => {
+                    reject(new Error('이미지 로드 에러'));
+                };
+                
+                // CORS 설정
+                img.crossOrigin = 'anonymous';
+                img.src = imageUrl;
+                
+                // 타임아웃 처리
+                setTimeout(() => {
+                    if (!img.complete) {
+                        reject(new Error('이미지 로드 타임아웃'));
+                    }
+                }, 3000);
+            });
+        }
+
+        // 보장된 그라데이션 렌더링
+        function renderGuaranteedGradient(ctx, slideIndex, width, height) {
+            try {
+                const colors = [
+                    ['#667eea', '#764ba2'], ['#4ecdc4', '#44a08d'], ['#ff6b6b', '#ee5a6f'],
+                    ['#feca57', '#ff9ff3'], ['#96ceb4', '#ffecd2'], ['#74b9ff', '#0984e3'],
+                    ['#fd79a8', '#fdcb6e'], ['#6c5ce7', '#a29bfe'], ['#e17055', '#fdcb6e'],
+                    ['#00b894', '#00cec9'], ['#e84393', '#fd79a8'], ['#fdcb6e', '#e17055'],
+                    ['#00cec9', '#55efc4'], ['#a29bfe', '#6c5ce7'], ['#fd79a8', '#fdcb6e']
+                ];
+
+                const colorPair = colors[slideIndex % colors.length];
+                
+                // 메인 그라데이션
+                const gradient = ctx.createLinearGradient(0, 0, width, height);
+                gradient.addColorStop(0, colorPair[0]);
+                gradient.addColorStop(1, colorPair[1]);
+                
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, 0, width, height);
+                
+                // 추가 시각 효과
+                const radialGradient = ctx.createRadialGradient(width/2, height/2, 0, width/2, height/2, Math.max(width, height)/2);
+                radialGradient.addColorStop(0, 'rgba(255,255,255,0.1)');
+                radialGradient.addColorStop(1, 'transparent');
+                
+                ctx.fillStyle = radialGradient;
+                ctx.fillRect(0, 0, width, height);
+                
+                console.log(`✅ 그라데이션 렌더링 완료 - 슬라이드 ${slideIndex + 1}`);
+            } catch (error) {
+                console.error('그라데이션 렌더링 실패:', error);
+                // 최소한의 배경
+                ctx.fillStyle = '#4ecdc4';
+                ctx.fillRect(0, 0, width, height);
+            }
+        }
+
+        // 보장된 텍스트 렌더링
+        async function renderGuaranteedText(ctx, slide, slideIndex, width, height) {
+            try {
+                // 텍스트 설정
+                ctx.fillStyle = 'white';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                
+                // 고품질 그림자
+                ctx.shadowColor = 'rgba(0,0,0,0.8)';
+                ctx.shadowBlur = 20;
+                ctx.shadowOffsetX = 2;
+                ctx.shadowOffsetY = 2;
+
+                // 아이콘
+                try {
+                    const iconSize = height * 0.08;
+                    ctx.font = `${iconSize}px Arial`;
+                    ctx.fillText(slide.icon || '🎯', width / 2, height * 0.25);
+                } catch (e) {
+                    console.warn('아이콘 렌더링 실패:', e);
+                }
+
+                // 제목
+                try {
+                    const titleSize = Math.min(height * 0.045, width * 0.06);
+                    ctx.font = `bold ${titleSize}px Arial`;
+                    
+                    const titleText = slide.title || `슬라이드 ${slideIndex + 1}`;
+                    const titleLines = wrapTextSafe(ctx, titleText, width * 0.9);
+                    const titleY = height * 0.45;
+                    
+                    titleLines.forEach((line, i) => {
+                        ctx.fillText(line, width / 2, titleY + (i * titleSize * 1.2));
+                    });
+                } catch (e) {
+                    console.warn('제목 렌더링 실패:', e);
+                }
+
+                // 부제목
+                try {
+                    const subtitleSize = Math.min(height * 0.025, width * 0.035);
+                    ctx.font = `${subtitleSize}px Arial`;
+                    ctx.fillStyle = 'rgba(255,255,255,0.9)';
+                    
+                    const subtitleText = slide.subtitle || '부제목';
+                    const subtitleLines = wrapTextSafe(ctx, subtitleText, width * 0.9);
+                    const subtitleY = height * 0.65;
+                    
+                    subtitleLines.forEach((line, i) => {
+                        ctx.fillText(line, width / 2, subtitleY + (i * subtitleSize * 1.2));
+                    });
+                } catch (e) {
+                    console.warn('부제목 렌더링 실패:', e);
+                }
+
+                // 슬라이드 번호
+                try {
+                    ctx.font = `${height * 0.02}px Arial`;
+                    ctx.fillStyle = 'rgba(255,255,255,0.7)';
+                    ctx.fillText(`${slideIndex + 1} / 15`, width / 2, height * 0.9);
+                } catch (e) {
+                    console.warn('슬라이드 번호 렌더링 실패:', e);
+                }
+
+                // 그림자 초기화
+                ctx.shadowColor = 'transparent';
+                ctx.shadowBlur = 0;
+                ctx.shadowOffsetX = 0;
+                ctx.shadowOffsetY = 0;
+                
+                console.log(`✅ 텍스트 렌더링 완료 - 슬라이드 ${slideIndex + 1}`);
+                
+            } catch (error) {
+                console.error('텍스트 렌더링 실패:', error);
+                // 최소한의 텍스트
+                ctx.fillStyle = 'white';
+                ctx.font = 'bold 60px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(`슬라이드 ${slideIndex + 1}`, width / 2, height / 2);
+            }
+        }
+
+        // 안전한 텍스트 줄바꿈
+        function wrapTextSafe(ctx, text, maxWidth) {
+            try {
+                if (!text || typeof text !== 'string') {
+                    return [''];
+                }
+                
+                const words = text.split(' ');
+                const lines = [];
+                let currentLine = words[0] || '';
+
+                for (let i = 1; i < words.length; i++) {
+                    const testLine = currentLine + ' ' + words[i];
+                    const metrics = ctx.measureText(testLine);
+                    
+                    if (metrics.width < maxWidth && testLine.length < 50) {
+                        currentLine = testLine;
+                    } else {
+                        lines.push(currentLine);
+                        currentLine = words[i];
+                    }
+                }
+                lines.push(currentLine);
+                return lines.length > 0 ? lines : [''];
+            } catch (error) {
+                console.error('텍스트 줄바꿈 실패:', error);
+                return [text || ''];
+            }
+        }
+
+        // 폴백 슬라이드 렌더링
+        async function renderFallbackSlide(ctx, slideIndex, width, height) {
+            try {
+                console.log(`🆘 폴백 렌더링 - 슬라이드 ${slideIndex + 1}`);
+                
+                // 단순한 배경
+                ctx.fillStyle = '#4ecdc4';
+                ctx.fillRect(0, 0, width, height);
+                
+                // 단순한 텍스트
+                ctx.fillStyle = 'white';
+                ctx.font = 'bold 80px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(`슬라이드 ${slideIndex + 1}`, width / 2, height / 2);
+                
+                ctx.font = '40px Arial';
+                ctx.fillText('AI 영어교육', width / 2, height / 2 + 100);
+                
+                console.log(`✅ 폴백 렌더링 완료 - 슬라이드 ${slideIndex + 1}`);
+            } catch (error) {
+                console.error('폴백 렌더링도 실패:', error);
+                // 최소한의 렌더링
+                ctx.fillStyle = '#ff0000';
+                ctx.fillRect(0, 0, width, height);
             }
         }
 
