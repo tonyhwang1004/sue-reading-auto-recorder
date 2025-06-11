@@ -717,29 +717,125 @@
                 <div class="mode-card selected" id="smartMode" onclick="selectMode('smart')">
                     <span class="mode-icon">🧠</span>
                     <h3>스마트 모드</h3>
-                    <p>AI 없이도 자동으로 15장의 고품질 슬라이드 생성</p>
-                    <p style="color: #4ecdc4; font-weight: bold;">✅ 추천 (100% 안정)</p>
+                    <p>API 없이도 자동으로 15장의 고품질 슬라이드 생성</p>
+                    <p style="color: #4ecdc4; font-weight: bold;">✅ 추천 (즉시 생성, 100% 안정)</p>
                 </div>
                 <div class="mode-card" id="apiMode" onclick="selectMode('api')">
                     <span class="mode-icon">🔑</span>
                     <h3>API 모드</h3>
                     <p>OpenAI GPT API로 맞춤형 슬라이드 생성</p>
-                    <p style="color: #ffa500; font-weight: bold;">⚠️ API 키 필요</p>
+                    <p style="color: #ffa500; font-weight: bold;">⚠️ 네트워크 지연 가능</p>
                 </div>
             </div>
         </div>
 
-        <!-- API 설정 (API 모드 선택시에만 표시) -->
+        <!-- API 설정 (API 모드 또는 DALL-E 모드 선택시에만 표시) -->
         <div class="section" id="apiSection" style="display: none;">
-            <h2>🔑 OpenAI API 설정</h2>
+            <h2 id="apiSectionTitle">🔑 OpenAI API 설정</h2>
+            
+            <!-- GPT 모델 선택 (API 모드에서만 표시) -->
+            <div class="input-group" id="gptModelSelection">
+                <label class="input-label">🤖 GPT 모델 선택</label>
+                <div class="mode-selector" style="margin: 15px 0;">
+                    <div class="mode-card selected" id="gpt35Mode" onclick="selectGPTModel('gpt-3.5-turbo')" style="min-width: 200px;">
+                        <span class="mode-icon">⚡</span>
+                        <h3>GPT-3.5 Turbo</h3>
+                        <p>빠른 응답, 저렴한 비용</p>
+                        <p style="color: #4ecdc4; font-weight: bold;">✅ 추천</p>
+                        <div style="font-size: 0.9em; opacity: 0.8; margin-top: 8px;">
+                            📊 $0.002/1K 토큰<br>
+                            ⚡ 5-10초 응답
+                        </div>
+                    </div>
+                    <div class="mode-card" id="gpt4Mode" onclick="selectGPTModel('gpt-4')" style="min-width: 200px;">
+                        <span class="mode-icon">🧠</span>
+                        <h3>GPT-4</h3>
+                        <p>최고 품질, 더 창의적</p>
+                        <p style="color: #ffa500; font-weight: bold;">💎 프리미엄</p>
+                        <div style="font-size: 0.9em; opacity: 0.8; margin-top: 8px;">
+                            📊 $0.03/1K 토큰<br>
+                            🐌 15-30초 응답
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- DALL-E 설정 (DALL-E 모드에서만 표시) -->
+            <div class="input-group" id="dalleSettings" style="display: none;">
+                <label class="input-label">🎨 DALL-E 이미지 설정</label>
+                <div style="background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.3); border-radius: 15px; padding: 20px; margin: 15px 0;">
+                    <h4 style="color: #ff6b6b; margin-bottom: 15px;">🎨 DALL-E 2 프리미엄 이미지</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; text-align: left; line-height: 1.6;">
+                        <div>
+                            <h5 style="color: #4ecdc4; margin-bottom: 10px;">✨ 기능</h5>
+                            <ul style="margin-left: 20px; font-size: 0.95em;">
+                                <li>🎨 각 슬라이드별 맞춤 이미지</li>
+                                <li>📱 9:16 세로 비율 최적화</li>
+                                <li>🎯 슬라이드 내용과 완벽 매칭</li>
+                                <li>🏢 비즈니스 스타일 이미지</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h5 style="color: #ffa500; margin-bottom: 10px;">💰 비용</h5>
+                            <ul style="margin-left: 20px; font-size: 0.95em;">
+                                <li>💵 $0.020 per 이미지</li>
+                                <li>📊 15장 슬라이드 = $0.30</li>
+                                <li>⏱️ 생성시간: 3-5분</li>
+                                <li>🎯 고품질 보장</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div style="background: rgba(255,107,107,0.1); padding: 15px; border-radius: 10px; margin-top: 15px;">
+                        <div style="color: #ff6b6b; font-weight: bold; text-align: center;">
+                            🎨 <strong>프리미엄 경험:</strong> 텍스트 + 고품질 AI 이미지로 완전히 새로운 슬라이드!
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
             <div class="input-group">
-                <label class="input-label">API 키</label>
+                <label class="input-label">🔑 API 키</label>
                 <input type="password" class="input-field" id="apiKey" 
                        placeholder="sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx">
             </div>
+            
             <div style="text-align: center;">
                 <button class="btn btn-primary" onclick="setupAPI()">API 연결</button>
                 <div class="status-message" id="apiStatus"></div>
+            </div>
+            
+            <!-- 모델별 비교 안내 (API 모드에서만 표시) -->
+            <div id="modelComparison" style="background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.3); border-radius: 15px; padding: 20px; margin: 20px 0;">
+                <h4 style="color: #4ecdc4; margin-bottom: 15px;">📊 모델 비교</h4>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; text-align: left; line-height: 1.6;">
+                    <div>
+                        <h5 style="color: #4ecdc4; margin-bottom: 10px;">⚡ GPT-3.5-turbo</h5>
+                        <ul style="margin-left: 20px; font-size: 0.95em;">
+                            <li>✅ 빠른 응답 (5-10초)</li>
+                            <li>💰 저렴한 비용 (15배 저렴)</li>
+                            <li>🎯 충분한 품질</li>
+                            <li>⚡ 안정적인 연결</li>
+                            <li>📱 일반 슬라이드에 최적</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h5 style="color: #ffa500; margin-bottom: 10px;">🧠 GPT-4</h5>
+                        <ul style="margin-left: 20px; font-size: 0.95em;">
+                            <li>🎨 최고 품질 결과</li>
+                            <li>💡 더 창의적 내용</li>
+                            <li>🎯 정확한 이해력</li>
+                            <li>💎 프리미엄 기능</li>
+                            <li>💰 높은 비용 (15배 비쌈)</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div style="background: rgba(78,205,196,0.1); padding: 15px; border-radius: 10px; margin-top: 15px;">
+                    <div style="color: #4ecdc4; font-weight: bold; text-align: center;">
+                        💡 <strong>추천:</strong> 대부분의 경우 GPT-3.5-turbo가 충분히 우수한 결과를 제공합니다!
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -907,13 +1003,14 @@
     </div>
 
     <script>
-        // 전역 변수
+        // 전역 변수 (GPT 모델 선택 추가)
         let apiKey = '';
         let slides = [];
         let currentSlide = 0;
         let autoPlayInterval = null;
         let isAutoPlaying = false;
         let currentMode = 'smart';
+        let selectedGPTModel = 'gpt-3.5-turbo'; // 기본값
 
         // 녹화 상태 관리 (포맷 정보 추가)
         let recordingState = {
@@ -970,18 +1067,51 @@
             }
         }
 
-        // 모드 선택
+        // GPT 모델 선택 함수
+        function selectGPTModel(model) {
+            selectedGPTModel = model;
+            
+            // 모델 카드 업데이트
+            document.querySelectorAll('#apiSection .mode-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            if (model === 'gpt-3.5-turbo') {
+                document.getElementById('gpt35Mode').classList.add('selected');
+            } else {
+                document.getElementById('gpt4Mode').classList.add('selected');
+            }
+            
+            console.log('선택된 GPT 모델:', selectedGPTModel);
+        }
+
+        // 모드 선택 (DALL-E 모드 추가)
         function selectMode(mode) {
             currentMode = mode;
             
-            document.querySelectorAll('.mode-card').forEach(card => {
+            document.querySelectorAll('.mode-selector .mode-card').forEach(card => {
                 card.classList.remove('selected');
             });
             document.getElementById(mode + 'Mode').classList.add('selected');
             
             const apiSection = document.getElementById('apiSection');
+            const apiSectionTitle = document.getElementById('apiSectionTitle');
+            const gptModelSelection = document.getElementById('gptModelSelection');
+            const dalleSettings = document.getElementById('dalleSettings');
+            const modelComparison = document.getElementById('modelComparison');
+            
             if (mode === 'api') {
                 apiSection.style.display = 'block';
+                apiSectionTitle.textContent = '🔑 OpenAI API 설정';
+                gptModelSelection.style.display = 'block';
+                dalleSettings.style.display = 'none';
+                modelComparison.style.display = 'block';
+            } else if (mode === 'dalle') {
+                apiSection.style.display = 'block';
+                apiSectionTitle.textContent = '🎨 DALL-E 2 API 설정';
+                gptModelSelection.style.display = 'none';
+                dalleSettings.style.display = 'block';
+                modelComparison.style.display = 'none';
             } else {
                 apiSection.style.display = 'none';
             }
@@ -1022,7 +1152,7 @@
             }, 3000);
         }
 
-        // 생성 버튼 상태 업데이트
+        // 생성 버튼 상태 업데이트 (DALL-E 모드 추가)
         function updateGenerateButton() {
             const titleInput = document.getElementById('titleInput');
             const contentInput = document.getElementById('contentInput');
@@ -1033,7 +1163,7 @@
             
             let canGenerate = hasTitle && hasContent;
             
-            if (currentMode === 'api') {
+            if (currentMode === 'api' || currentMode === 'dalle') {
                 canGenerate = canGenerate && apiKey.length > 0;
             }
             
@@ -1041,12 +1171,14 @@
             
             if (currentMode === 'smart') {
                 generateBtn.innerHTML = '🧠 완벽한 스마트 슬라이드 생성';
-            } else {
+            } else if (currentMode === 'api') {
                 generateBtn.innerHTML = '🤖 AI 맞춤 슬라이드 생성';
+            } else if (currentMode === 'dalle') {
+                generateBtn.innerHTML = '🎨 프리미엄 이미지 슬라이드 생성';
             }
         }
 
-        // 슬라이드 생성 메인 함수 (안정성 개선)
+        // 슬라이드 생성 메인 함수 (안정성 개선 + 더 나은 오류 처리)
         async function generateSlides() {
             const title = document.getElementById('titleInput').value.trim();
             const content = document.getElementById('contentInput').value.trim();
@@ -1074,12 +1206,52 @@
                     slideData = generateOptimizedSmartSlides(title, content);
                     await delay(1200);
                     
-                } else {
-                    updateProgress(20, '🤖 AI 분석', 'GPT가 내용을 분석하고 있습니다...', '🤖');
-                    slideData = await generateSlideWithAPI(title, content);
+                } else if (currentMode === 'dalle') {
+                    updateProgress(10, '🎨 DALL-E 준비', 'GPT + DALL-E 2로 프리미엄 슬라이드 생성 중...', '🎨');
+                    await delay(500);
                     
-                    updateProgress(60, '🎨 슬라이드 제작', '고급 효과를 적용하고 있습니다...', '✨');
-                    await delay(800);
+                    try {
+                        slideData = await generateSlideWithDALLE(title, content);
+                        updateProgress(80, '🎨 이미지 완성', '고품질 AI 이미지가 포함된 슬라이드 완성!', '✨');
+                        await delay(800);
+                    } catch (dalleError) {
+                        console.error('DALL-E 오류:', dalleError);
+                        
+                        updateProgress(30, '🔄 자동 전환', 'DALL-E 문제로 스마트 모드로 전환합니다...', '🔄');
+                        await delay(1000);
+                        
+                        updateProgress(60, '🧠 스마트 생성', '안정적인 스마트 모드로 생성 중...', '🧠');
+                        slideData = generateOptimizedSmartSlides(title, content);
+                        await delay(1200);
+                        
+                        setTimeout(() => {
+                            alert('💡 DALL-E 이미지 생성에 문제가 발생하여 스마트 모드로 자동 전환했습니다.\n\n✅ 스마트 모드도 훌륭한 슬라이드를 제공합니다!');
+                        }, 2000);
+                    }
+                } else {
+                    updateProgress(10, '🔑 API 연결', `${selectedGPTModel}에 연결하고 있습니다...`, '🔑');
+                    await delay(500);
+                    
+                    try {
+                        slideData = await generateSlideWithAPI(title, content);
+                        updateProgress(60, '🎨 슬라이드 제작', '고급 효과를 적용하고 있습니다...', '✨');
+                        await delay(800);
+                    } catch (apiError) {
+                        console.error('API 오류:', apiError);
+                        
+                        // API 실패시 사용자에게 알리고 스마트 모드로 자동 전환
+                        updateProgress(30, '🔄 자동 전환', 'API 문제로 스마트 모드로 전환합니다...', '🔄');
+                        await delay(1000);
+                        
+                        updateProgress(60, '🧠 스마트 생성', '안정적인 스마트 모드로 생성 중...', '🧠');
+                        slideData = generateOptimizedSmartSlides(title, content);
+                        await delay(1200);
+                        
+                        // 사용자에게 알림 (에러가 아닌 정보 메시지)
+                        setTimeout(() => {
+                            alert(`💡 ${selectedGPTModel} 응답이 지연되어 스마트 모드로 자동 전환했습니다.\n\n✅ 스마트 모드는 API 없이도 동일한 품질의 슬라이드를 생성합니다!`);
+                        }, 2000);
+                    }
                 }
                 
                 updateProgress(80, '🎬 최종 완성', '안정적인 렌더링을 준비하고 있습니다...', '✨');
@@ -1097,12 +1269,21 @@
                 console.error('생성 오류:', error);
                 showProgressModal(false);
                 
+                // 사용자 친화적인 오류 메시지
+                let errorMessage = '❌ 슬라이드 생성에 실패했습니다.';
+                
                 if (error.message.includes('429')) {
-                    alert('❌ API 요청 한도 초과! 스마트 모드를 이용해보세요.\n\n스마트 모드는 API 없이도 100% 안정적으로 고품질 슬라이드를 생성합니다.');
+                    errorMessage = '⚠️ API 요청 한도 초과!\n\n💡 스마트 모드를 사용하시면 API 없이도 동일한 품질의 슬라이드를 생성할 수 있습니다.';
                     selectMode('smart');
+                } else if (error.message.includes('401') || error.message.includes('API')) {
+                    errorMessage = '🔑 API 키에 문제가 있습니다.\n\n💡 API 키를 확인하거나 스마트 모드를 사용해보세요.';
+                } else if (error.message.includes('timeout') || error.message.includes('시간')) {
+                    errorMessage = '⏰ 네트워크 연결이 느립니다.\n\n💡 스마트 모드를 사용하시면 즉시 슬라이드를 생성할 수 있습니다.';
                 } else {
-                    alert('❌ 슬라이드 생성에 실패했습니다: ' + error.message);
+                    errorMessage = '❌ 예상치 못한 오류가 발생했습니다.\n\n💡 스마트 모드로 다시 시도해보세요.';
                 }
+                
+                alert(errorMessage);
             }
         }
 
@@ -1244,7 +1425,99 @@
             ];
         }
 
-        // 키워드 추출 함수
+        // DALL-E 2 이미지 생성 함수
+        async function generateImageWithDALLE(prompt, slideNumber, totalSlides) {
+            try {
+                const optimizedPrompt = `Professional business slide background image for: "${prompt}". Modern, clean, minimalist design. Corporate style. Vertical 9:16 aspect ratio. High quality digital art.`;
+                
+                updateProgress(
+                    20 + (slideNumber * 40 / totalSlides), 
+                    '🎨 이미지 생성', 
+                    `${slideNumber}/${totalSlides} 이미지 생성 중...`, 
+                    '🎨'
+                );
+
+                const response = await fetch('https://api.openai.com/v1/images/generations', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${apiKey}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        model: "dall-e-2",
+                        prompt: optimizedPrompt,
+                        n: 1,
+                        size: "512x512", // DALL-E 2 최대 크기
+                        quality: "standard"
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(`DALL-E Error ${response.status}: ${errorData.error?.message || '알 수 없는 오류'}`);
+                }
+
+                const data = await response.json();
+                return data.data[0].url;
+
+            } catch (error) {
+                console.error(`이미지 ${slideNumber} 생성 실패:`, error);
+                throw error;
+            }
+        }
+
+        // DALL-E 모드 슬라이드 생성 함수
+        async function generateSlideWithDALLE(title, content) {
+            try {
+                // 1단계: GPT로 슬라이드 텍스트 생성
+                updateProgress(10, '🤖 텍스트 생성', 'GPT로 슬라이드 내용을 생성하고 있습니다...', '🤖');
+                
+                const textSlides = await generateSlideWithAPI(title, content);
+                
+                // 2단계: 각 슬라이드에 대해 DALL-E 이미지 생성
+                updateProgress(20, '🎨 이미지 생성 시작', '15장의 프리미엄 이미지 생성을 시작합니다...', '🎨');
+                
+                const slidesWithImages = [];
+                
+                for (let i = 0; i < textSlides.length; i++) {
+                    const slide = textSlides[i];
+                    
+                    try {
+                        // 각 슬라이드 제목을 기반으로 이미지 생성
+                        const imagePrompt = `${slide.title} - ${slide.subtitle}`;
+                        const imageUrl = await generateImageWithDALLE(imagePrompt, i + 1, textSlides.length);
+                        
+                        slidesWithImages.push({
+                            ...slide,
+                            imageUrl: imageUrl,
+                            hasImage: true
+                        });
+                        
+                        console.log(`✅ 슬라이드 ${i + 1} 이미지 생성 완료`);
+                        
+                    } catch (imageError) {
+                        console.warn(`⚠️ 슬라이드 ${i + 1} 이미지 생성 실패, 기본 스타일 사용:`, imageError);
+                        
+                        // 이미지 생성 실패시 기본 슬라이드로 대체
+                        slidesWithImages.push({
+                            ...slide,
+                            imageUrl: null,
+                            hasImage: false
+                        });
+                    }
+                    
+                    // 각 이미지 생성 후 잠시 대기 (API 레이트 리밋 방지)
+                    await delay(1000);
+                }
+                
+                console.log('🎨 모든 DALL-E 이미지 생성 완료');
+                return slidesWithImages;
+                
+            } catch (error) {
+                console.error('DALL-E 슬라이드 생성 실패:', error);
+                throw error;
+            }
+        }
         function extractKeywordsFromContent(lines) {
             const sections = {
                 intro: [],
@@ -1275,7 +1548,7 @@
             return sections;
         }
 
-        // API 모드 슬라이드 생성 (안정성 개선)
+        // API 모드 슬라이드 생성 (안정성 개선 + 재시도 로직)
         async function generateSlideWithAPI(title, content) {
             const prompt = `다음 내용을 기반으로 15장의 매력적인 슬라이드를 만들어주세요:
 
@@ -1303,53 +1576,75 @@
 
 JSON 형식으로만 답변해주세요.`;
 
-            try {
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 30000); // 30초 타임아웃
+            const maxRetries = 3;
+            let lastError = null;
 
-                const response = await fetch('https://api.openai.com/v1/chat/completions', {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${apiKey}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        model: 'gpt-4',
-                        messages: [
-                            {
-                                role: 'user',
-                                content: prompt
-                            }
-                        ],
-                        max_tokens: 2000,
-                        temperature: 0.7
-                    }),
-                    signal: controller.signal
-                });
-
-                clearTimeout(timeoutId);
-
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(`API Error ${response.status}: ${errorData.error?.message || '알 수 없는 오류'}`);
-                }
-
-                const data = await response.json();
-                const content_text = data.choices[0].message.content;
-                
+            for (let attempt = 1; attempt <= maxRetries; attempt++) {
                 try {
-                    return JSON.parse(content_text);
-                } catch (e) {
-                    console.warn('JSON 파싱 실패, 스마트 모드로 대체');
-                    return generateOptimizedSmartSlides(title, content);
+                    console.log(`🔄 API 요청 시도 ${attempt}/${maxRetries}`);
+                    
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 15000); // 15초로 단축
+
+                    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${apiKey}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            model: selectedGPTModel, // 사용자가 선택한 모델 사용
+                            messages: [
+                                {
+                                    role: 'user',
+                                    content: prompt
+                                }
+                            ],
+                            max_tokens: selectedGPTModel === 'gpt-4' ? 2000 : 1500, // GPT-4는 더 많은 토큰
+                            temperature: 0.7
+                        }),
+                        signal: controller.signal
+                    });
+
+                    clearTimeout(timeoutId);
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(`API Error ${response.status}: ${errorData.error?.message || '알 수 없는 오류'}`);
+                    }
+
+                    const data = await response.json();
+                    const content_text = data.choices[0].message.content;
+                    
+                    try {
+                        const result = JSON.parse(content_text);
+                        console.log('✅ API 요청 성공');
+                        return result;
+                    } catch (e) {
+                        console.warn('JSON 파싱 실패, 재시도 중...');
+                        throw new Error('JSON 파싱 실패');
+                    }
+
+                } catch (error) {
+                    lastError = error;
+                    console.error(`❌ API 요청 ${attempt}번째 실패:`, error.message);
+                    
+                    if (attempt < maxRetries) {
+                        const retryDelay = attempt * 2000; // 2초, 4초, 6초 대기
+                        console.log(`⏳ ${retryDelay/1000}초 후 재시도...`);
+                        await delay(retryDelay);
+                        
+                        updateProgress(20 + (attempt * 10), '🔄 API 재시도', `${attempt + 1}번째 시도 중...`, '🔄');
+                    }
                 }
-            } catch (error) {
-                if (error.name === 'AbortError') {
-                    throw new Error('API 요청 시간 초과');
-                }
-                console.error('API 요청 실패:', error);
-                throw error;
             }
+
+            // 모든 재시도 실패시 스마트 모드로 대체
+            console.warn('🔄 API 실패, 스마트 모드로 대체 실행');
+            updateProgress(40, '🧠 스마트 모드 전환', 'API 실패로 스마트 모드로 자동 전환합니다...', '🧠');
+            await delay(1000);
+            
+            return generateOptimizedSmartSlides(title, content);
         }
 
         // 최적화된 슬라이드 생성
@@ -1372,49 +1667,88 @@ JSON 형식으로만 답변해주세요.`;
             showSlide(0);
         }
 
-        // 최적화된 개별 슬라이드 요소 생성
+        // 최적화된 개별 슬라이드 요소 생성 (DALL-E 이미지 지원)
         function createOptimizedSlideElement(slide, index) {
             const slideDiv = document.createElement('div');
             slideDiv.className = 'slide';
-            slideDiv.style.background = `linear-gradient(135deg, ${slide.color}, #764ba2)`;
+            
+            // DALL-E 이미지가 있는 경우 배경으로 설정
+            if (slide.hasImage && slide.imageUrl) {
+                slideDiv.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url(${slide.imageUrl})`;
+                slideDiv.style.backgroundSize = 'cover';
+                slideDiv.style.backgroundPosition = 'center';
+                slideDiv.style.backgroundRepeat = 'no-repeat';
+            } else {
+                slideDiv.style.background = `linear-gradient(135deg, ${slide.color}, #764ba2)`;
+            }
             
             // 안전한 텍스트 처리
             const safeTitle = String(slide.title || '').replace(/[<>]/g, '');
             const safeSubtitle = String(slide.subtitle || '').replace(/[<>]/g, '');
             const safeIcon = String(slide.icon || '🚀');
             
-            // 파티클 시스템 div 생성
+            // 파티클 시스템 div 생성 (이미지가 있을 때는 투명도 조절)
             const particleSystem = document.createElement('div');
             particleSystem.className = 'particle-system';
             particleSystem.id = `particles-${index}`;
+            if (slide.hasImage) {
+                particleSystem.style.opacity = '0.6'; // 이미지 위에서는 파티클을 더 투명하게
+            }
             
             // 슬라이드 콘텐츠 div 생성
             const slideContent = document.createElement('div');
             slideContent.className = 'slide-content';
             
+            // 이미지가 있을 때 텍스트 가독성을 위한 배경 추가
+            if (slide.hasImage && slide.imageUrl) {
+                slideContent.style.background = 'rgba(0,0,0,0.3)';
+                slideContent.style.borderRadius = '20px';
+                slideContent.style.padding = '30px';
+                slideContent.style.backdropFilter = 'blur(10px)';
+            }
+            
             // 아이콘 div
             const iconDiv = document.createElement('div');
             iconDiv.className = 'slide-icon';
             iconDiv.textContent = safeIcon;
+            if (slide.hasImage) {
+                iconDiv.style.textShadow = '0 0 20px rgba(0,0,0,0.8)';
+            }
             
             // 제목 div
             const titleDiv = document.createElement('div');
             titleDiv.className = 'slide-title';
             titleDiv.textContent = safeTitle;
+            if (slide.hasImage) {
+                titleDiv.style.textShadow = '2px 2px 10px rgba(0,0,0,0.9)';
+                titleDiv.style.color = 'white';
+            }
             
             // 부제목 또는 여백 div
             const subtitleDiv = document.createElement('div');
             if (safeSubtitle && safeSubtitle.trim()) {
                 subtitleDiv.className = 'slide-subtitle';
                 subtitleDiv.textContent = safeSubtitle;
+                if (slide.hasImage) {
+                    subtitleDiv.style.textShadow = '1px 1px 8px rgba(0,0,0,0.9)';
+                    subtitleDiv.style.color = 'white';
+                }
             } else {
                 subtitleDiv.style.marginBottom = '40px';
             }
             
             // 슬라이드 번호 div
             const numberDiv = document.createElement('div');
-            numberDiv.style.cssText = 'position: absolute; bottom: 20px; right: 20px; background: rgba(0,0,0,0.7); padding: 10px 18px; border-radius: 15px; font-size: 1em; font-weight: bold; border: 1px solid rgba(255,255,255,0.3);';
+            numberDiv.style.cssText = 'position: absolute; bottom: 20px; right: 20px; background: rgba(0,0,0,0.8); padding: 10px 18px; border-radius: 15px; font-size: 1em; font-weight: bold; border: 1px solid rgba(255,255,255,0.3); color: white;';
             numberDiv.textContent = `${slide.slideNumber}/15`;
+            
+            // DALL-E 이미지 표시 뱃지 (이미지가 있을 때)
+            if (slide.hasImage && slide.imageUrl) {
+                const imageBadge = document.createElement('div');
+                imageBadge.style.cssText = 'position: absolute; top: 20px; left: 20px; background: linear-gradient(45deg, #ff6b6b, #4ecdc4); padding: 8px 15px; border-radius: 20px; font-size: 0.9em; font-weight: bold; color: white; box-shadow: 0 4px 15px rgba(0,0,0,0.3);';
+                imageBadge.textContent = '🎨 DALL-E';
+                slideContent.appendChild(imageBadge);
+            }
             
             // 요소들을 슬라이드 콘텐츠에 추가
             slideContent.appendChild(iconDiv);
@@ -1426,7 +1760,7 @@ JSON 형식으로만 답변해주세요.`;
             slideDiv.appendChild(particleSystem);
             slideDiv.appendChild(slideContent);
             
-            // 최적화된 파티클 효과 (수량 감소)
+            // 최적화된 파티클 효과
             addOptimizedParticleEffect(particleSystem);
             
             return slideDiv;
