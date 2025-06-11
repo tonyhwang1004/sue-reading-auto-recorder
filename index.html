@@ -1378,25 +1378,56 @@ JSON 형식으로만 답변해주세요.`;
             slideDiv.className = 'slide';
             slideDiv.style.background = `linear-gradient(135deg, ${slide.color}, #764ba2)`;
             
-            slideDiv.innerHTML = `
-                <div class="particle-system" id="particles-${index}"></div>
-                <div class="slide-content">
-                    <div class="slide-icon">${slide.icon}</div>
-                    <div class="slide-title">${slide.title}</div>
-                    // 부제목 (글자가 있을 때만 표시)
-            if (slide.subtitle && slide.subtitle.trim()) {
-                <div class="slide-subtitle">${slide.subtitle}</div>
+            // 안전한 텍스트 처리
+            const safeTitle = String(slide.title || '').replace(/[<>]/g, '');
+            const safeSubtitle = String(slide.subtitle || '').replace(/[<>]/g, '');
+            const safeIcon = String(slide.icon || '🚀');
+            
+            // 파티클 시스템 div 생성
+            const particleSystem = document.createElement('div');
+            particleSystem.className = 'particle-system';
+            particleSystem.id = `particles-${index}`;
+            
+            // 슬라이드 콘텐츠 div 생성
+            const slideContent = document.createElement('div');
+            slideContent.className = 'slide-content';
+            
+            // 아이콘 div
+            const iconDiv = document.createElement('div');
+            iconDiv.className = 'slide-icon';
+            iconDiv.textContent = safeIcon;
+            
+            // 제목 div
+            const titleDiv = document.createElement('div');
+            titleDiv.className = 'slide-title';
+            titleDiv.textContent = safeTitle;
+            
+            // 부제목 또는 여백 div
+            const subtitleDiv = document.createElement('div');
+            if (safeSubtitle && safeSubtitle.trim()) {
+                subtitleDiv.className = 'slide-subtitle';
+                subtitleDiv.textContent = safeSubtitle;
             } else {
-                <div style="margin-bottom: 40px;"></div>
+                subtitleDiv.style.marginBottom = '40px';
             }
-                    <div style="position: absolute; bottom: 20px; right: 20px; background: rgba(0,0,0,0.7); padding: 10px 18px; border-radius: 15px; font-size: 1em; font-weight: bold; border: 1px solid rgba(255,255,255,0.3);">
-                        ${slide.slideNumber}/15
-                    </div>
-                </div>
-            `;
+            
+            // 슬라이드 번호 div
+            const numberDiv = document.createElement('div');
+            numberDiv.style.cssText = 'position: absolute; bottom: 20px; right: 20px; background: rgba(0,0,0,0.7); padding: 10px 18px; border-radius: 15px; font-size: 1em; font-weight: bold; border: 1px solid rgba(255,255,255,0.3);';
+            numberDiv.textContent = `${slide.slideNumber}/15`;
+            
+            // 요소들을 슬라이드 콘텐츠에 추가
+            slideContent.appendChild(iconDiv);
+            slideContent.appendChild(titleDiv);
+            slideContent.appendChild(subtitleDiv);
+            slideContent.appendChild(numberDiv);
+            
+            // 슬라이드에 파티클 시스템과 콘텐츠 추가
+            slideDiv.appendChild(particleSystem);
+            slideDiv.appendChild(slideContent);
             
             // 최적화된 파티클 효과 (수량 감소)
-            addOptimizedParticleEffect(slideDiv.querySelector('.particle-system'));
+            addOptimizedParticleEffect(particleSystem);
             
             return slideDiv;
         }
