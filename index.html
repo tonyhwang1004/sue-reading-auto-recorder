@@ -829,7 +829,7 @@
 - 토요일: 오전 9시 ~ 오후 6시
 - 24시간 온라인 상담 가능
 
-📞 연락처
+📞 연락처 및 특별혜택
 - 대표전화: 010-4602-1953
 - 카카오톡: @suereading
 - 이메일: info@suereading.co.kr
@@ -1740,12 +1740,13 @@ JSON 형식으로만 답변해주세요.`;
                 ctx.font = `bold ${canvas.height * 0.12}px Arial, sans-serif`;
                 ctx.fillText(slide.icon, canvas.width / 2, canvas.height * 0.25);
 
-                // 제목
+                // 제목 (안전한 텍스트 렌더링)
                 ctx.font = `900 ${canvas.height * 0.08}px Arial, sans-serif`;
                 ctx.fillStyle = 'white';
                 
                 const titleY = canvas.height * 0.45;
-                const titleLines = wrapTextOptimized(ctx, slide.title, canvas.width * 0.9);
+                const safeTitle = String(slide.title || '').replace(/[{}()]/g, ''); // 특수문자 제거
+                const titleLines = wrapTextOptimized(ctx, safeTitle, canvas.width * 0.9);
                 titleLines.forEach((line, i) => {
                     ctx.fillText(line, canvas.width / 2, titleY + (i * canvas.height * 0.09));
                 });
@@ -1756,7 +1757,8 @@ JSON 형식으로만 답변해주세요.`;
                     ctx.fillStyle = 'rgba(255,255,255,0.95)';
                     
                     const subtitleY = canvas.height * 0.7;
-                    const subtitleLines = wrapTextOptimized(ctx, slide.subtitle, canvas.width * 0.9);
+                    const safeSubtitle = String(slide.subtitle || '').replace(/[{}()]/g, ''); // 특수문자 제거
+                    const subtitleLines = wrapTextOptimized(ctx, safeSubtitle, canvas.width * 0.9);
                     subtitleLines.forEach((line, i) => {
                         ctx.fillText(line, canvas.width / 2, subtitleY + (i * canvas.height * 0.06));
                     });
