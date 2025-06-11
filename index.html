@@ -1659,60 +1659,95 @@ JSON 형식으로만 답변해주세요.`;
             }
         }
 
-        // 🎥 혁신적인 실시간 DOM 캡처 녹화 (모든 효과 포함)
+        // 🎥 혁신적인 실시간 DOM 캡처 녹화 (정확한 45초 타이밍)
         async function recordRealSlidesWithAllEffects() {
-            const totalDuration = 45000; // 45초 총 길이
-            const slideInterval = totalDuration / slides.length; // 각 슬라이드당 시간
-            const transitionDuration = 800; // 전환 애니메이션 시간
+            const TOTAL_DURATION = 45000; // 정확히 45초
+            const SLIDE_COUNT = slides.length;
+            const TRANSITION_DURATION = 600; // 전환 시간 단축
+            const SLIDE_DISPLAY_TIME = (TOTAL_DURATION - (SLIDE_COUNT - 1) * TRANSITION_DURATION) / SLIDE_COUNT;
+            
+            console.log(`🎬 녹화 설정: 총 ${TOTAL_DURATION/1000}초, 슬라이드 ${SLIDE_COUNT}개`);
+            console.log(`📊 각 슬라이드 표시시간: ${SLIDE_DISPLAY_TIME/1000}초, 전환시간: ${TRANSITION_DURATION/1000}초`);
+
+            // 정확한 타이밍을 위한 시작 시간 기록
+            const recordingStartTime = Date.now();
+            let currentElapsed = 0;
 
             // 자동 재생 모드로 전환
             if (isAutoPlaying) toggleAutoPlay();
             showSlide(0); // 첫 슬라이드부터 시작
             
-            // 각 슬라이드를 실시간으로 캡처
+            // 각 슬라이드를 정확한 타이밍으로 캡처
             for (let i = 0; i < slides.length; i++) {
                 if (!recordingState.isRecording) break;
 
                 // 현재 슬라이드 표시
                 showSlide(i);
-                await delay(300); // DOM 업데이트 대기
+                await delay(200); // DOM 업데이트 대기 (단축)
                 
-                // 🎨 실제 DOM을 4K로 캡처 (모든 효과와 애니메이션 포함)
-                const captureStartTime = Date.now();
-                const slideDisplayTime = slideInterval - transitionDuration;
+                // 🎨 실제 DOM을 4K로 캡처 (정확한 시간 관리)
+                const slideStartTime = Date.now();
+                const targetSlideEndTime = recordingStartTime + currentElapsed + SLIDE_DISPLAY_TIME;
                 
-                // 슬라이드 표시 시간 동안 연속 캡처
-                while (Date.now() - captureStartTime < slideDisplayTime && recordingState.isRecording) {
+                // 슬라이드 표시 시간 동안 정확한 타이밍으로 캡처
+                while (Date.now() < targetSlideEndTime && recordingState.isRecording) {
                     await captureCurrentSlideToCanvas();
-                    await delay(16); // ~60fps 캡처
+                    
+                    // 60fps 유지를 위한 정확한 딜레이 계산
+                    const frameTime = 16.67; // 1000ms / 60fps
+                    const nextFrameTime = Math.max(1, frameTime - (Date.now() - slideStartTime) % frameTime);
+                    await delay(nextFrameTime);
                 }
                 
-                // 다음 슬라이드로 부드러운 전환 (실제 CSS 애니메이션 캡처)
+                // 경과 시간 업데이트
+                currentElapsed += SLIDE_DISPLAY_TIME;
+                
+                // 다음 슬라이드로 부드러운 전환 (정확한 타이밍)
                 if (i < slides.length - 1) {
                     const nextIndex = i + 1;
+                    const transitionStartTime = Date.now();
+                    const targetTransitionEndTime = recordingStartTime + currentElapsed + TRANSITION_DURATION;
                     
-                    // CSS 전환 애니메이션을 실시간 캡처
-                    const transitionFrames = Math.floor(transitionDuration / 16); // 60fps 기준
-                    for (let frame = 0; frame < transitionFrames; frame++) {
-                        if (!recordingState.isRecording) break;
+                    // 전환 애니메이션을 정확한 시간 내에 완료
+                    const transitionFrames = Math.floor(TRANSITION_DURATION / 16.67); // 60fps 기준
+                    
+                    for (let frame = 0; frame < transitionFrames && recordingState.isRecording; frame++) {
+                        const currentTime = Date.now();
+                        if (currentTime >= targetTransitionEndTime) break;
                         
-                        // 전환 진행도에 따라 다음 슬라이드 표시
-                        const progress = frame / transitionFrames;
+                        // 실제 경과 시간 기반 진행도 계산
+                        const actualElapsed = currentTime - transitionStartTime;
+                        const progress = Math.min(1, actualElapsed / TRANSITION_DURATION);
+                        
                         await animateSlideTransitionDOM(i, nextIndex, progress);
                         await captureCurrentSlideToCanvas();
-                        await delay(16);
+                        
+                        // 정확한 프레임 타이밍 유지
+                        await delay(16.67);
                     }
+                    
+                    // 전환 시간 업데이트
+                    currentElapsed += TRANSITION_DURATION;
                 }
 
-                // 진행상황 업데이트
-                updateRecordingProgress(i + 1, slides.length);
+                // 진행상황 업데이트 (실제 경과 시간 기반)
+                const actualElapsed = Date.now() - recordingStartTime;
+                const progressPercentage = Math.min(100, (actualElapsed / TOTAL_DURATION) * 100);
+                updateRecordingProgressWithTime(i + 1, slides.length, progressPercentage, actualElapsed);
             }
 
-            // 마지막 프레임 캡처
-            await captureCurrentSlideToCanvas();
+            // 정확히 45초가 될 때까지 마지막 슬라이드 유지
+            const finalTargetTime = recordingStartTime + TOTAL_DURATION;
+            while (Date.now() < finalTargetTime && recordingState.isRecording) {
+                await captureCurrentSlideToCanvas();
+                await delay(16.67);
+            }
             
             // 녹화 종료
             if (recordingState.isRecording) {
+                const finalDuration = Date.now() - recordingStartTime;
+                console.log(`✅ 녹화 완료: 실제 ${(finalDuration/1000).toFixed(2)}초`);
+                
                 recordingState.mediaRecorder.stop();
                 recordingState.isRecording = false;
             }
@@ -2294,6 +2329,10 @@ JSON 형식으로만 답변해주세요.`;
                                 <div style="color: white;">실제 DOM 완벽 캡처</div>
                             </div>
                             <div>
+                                <div style="color: #feca57; font-weight: bold; font-size: 1.1em;">목표 시간</div>
+                                <div style="color: #4ecdc4; font-weight: bold;">정확히 45초</div>
+                            </div>
+                            <div>
                                 <div style="color: #feca57; font-weight: bold; font-size: 1.1em;">해상도</div>
                                 <div style="color: white;">4K (2160×3840)</div>
                             </div>
@@ -2301,9 +2340,12 @@ JSON 형식으로만 답변해주세요.`;
                                 <div style="color: #feca57; font-weight: bold; font-size: 1.1em;">프레임율</div>
                                 <div style="color: white;">60 FPS</div>
                             </div>
-                            <div>
-                                <div style="color: #feca57; font-weight: bold; font-size: 1.1em;">품질</div>
-                                <div style="color: white;">바이럴 Premium</div>
+                        </div>
+                        
+                        <!-- 실시간 타이머 -->
+                        <div style="margin-top: 15px; padding: 15px; background: rgba(78,205,196,0.1); border-radius: 10px; border: 1px solid rgba(78,205,196,0.3);">
+                            <div style="color: #4ecdc4; font-weight: bold; text-align: center; font-size: 1.2em;">
+                                ⏱️ 정밀 타이밍 제어 시스템 활성화
                             </div>
                         </div>
                     </div>
@@ -2340,25 +2382,28 @@ JSON 형식으로만 답변해주세요.`;
             }
         }
 
-        // 🎯 향상된 녹화 진행상황 업데이트
-        function updateRecordingProgress(current, total) {
+        // 🎯 정확한 시간 기반 녹화 진행상황 업데이트
+        function updateRecordingProgressWithTime(current, total, percentage, elapsedMs) {
             const progressBar = document.getElementById('recording-progress-bar');
             const status = document.getElementById('recording-status');
             
             if (progressBar && status) {
-                const percentage = (current / total) * 100;
                 progressBar.style.width = percentage + '%';
                 
-                // 단계별 상태 메시지
+                // 실제 경과 시간 표시
+                const elapsedSeconds = (elapsedMs / 1000).toFixed(1);
+                const remainingSeconds = (45 - elapsedSeconds).toFixed(1);
+                
+                // 단계별 상태 메시지 (시간 정보 포함)
                 let statusMessage = '';
                 if (percentage < 20) {
-                    statusMessage = `🎬 슬라이드 ${current}/${total} DOM 캡처 중... (${Math.round(percentage)}%)`;
+                    statusMessage = `🎬 슬라이드 ${current}/${total} DOM 캡처 중... ${elapsedSeconds}초/${45}초`;
                 } else if (percentage < 50) {
-                    statusMessage = `✨ 실시간 파티클 효과 캡처 중... (${Math.round(percentage)}%)`;
+                    statusMessage = `✨ 실시간 파티클 효과 캡처 중... ${elapsedSeconds}초/${45}초`;
                 } else if (percentage < 80) {
-                    statusMessage = `🎨 4K 고화질 렌더링 중... (${Math.round(percentage)}%)`;
+                    statusMessage = `🎨 4K 고화질 렌더링 중... ${elapsedSeconds}초/${45}초`;
                 } else {
-                    statusMessage = `🚀 바이럴 최적화 마무리 중... (${Math.round(percentage)}%)`;
+                    statusMessage = `🚀 바이럴 최적화 마무리 중... ${elapsedSeconds}초/${45}초`;
                 }
                 
                 status.textContent = statusMessage;
@@ -2368,6 +2413,13 @@ JSON 형식으로만 답변해주세요.`;
                     progressBar.style.background = 'linear-gradient(45deg, #43e97b, #38f9d7)';
                 } else if (percentage > 50) {
                     progressBar.style.background = 'linear-gradient(45deg, #feca57, #ff9ff3)';
+                }
+                
+                // 남은 시간이 5초 이하일 때 특별 표시
+                if (remainingSeconds <= 5 && remainingSeconds > 0) {
+                    status.innerHTML = `🏁 마무리 중... <span style="color: #ff6666; font-weight: 900;">${remainingSeconds}초 남음!</span>`;
+                    progressBar.style.background = 'linear-gradient(45deg, #ff6b6b, #4ecdc4)';
+                    progressBar.style.animation = 'pulse 0.5s ease-in-out infinite';
                 }
             }
         }
