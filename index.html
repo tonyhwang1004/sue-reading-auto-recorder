@@ -1124,7 +1124,7 @@
                     slideNumber: 1,
                     icon: '🚀',
                     title: title,
-                    subtitle: '혁신적인 교육의 시작',
+                    subtitle: '',
                     color: colors[0],
                     keywords: ['브랜드', '시작', '혁신']
                 },
@@ -1382,7 +1382,12 @@ JSON 형식으로만 답변해주세요.`;
                 <div class="slide-content">
                     <div class="slide-icon">${slide.icon}</div>
                     <div class="slide-title">${slide.title}</div>
-                    <div class="slide-subtitle">${slide.subtitle}</div>
+                    // 부제목 (글자가 있을 때만 표시)
+            if (slide.subtitle && slide.subtitle.trim()) {
+                <div class="slide-subtitle">${slide.subtitle}</div>
+            } else {
+                <div style="margin-bottom: 40px;"></div>
+            }
                     <div style="position: absolute; bottom: 20px; right: 20px; background: rgba(0,0,0,0.7); padding: 10px 18px; border-radius: 15px; font-size: 1em; font-weight: bold; border: 1px solid rgba(255,255,255,0.3);">
                         ${slide.slideNumber}/15
                     </div>
@@ -1564,9 +1569,12 @@ JSON 형식으로만 답변해주세요.`;
             
             const startTime = Date.now();
             
+            // 모든 슬라이드를 확실히 녹화 (<=에서 <로 변경하여 마지막 슬라이드 포함)
             for (let i = 0; i < slides.length && recordingState.isRecording; i++) {
                 const slideStartTime = Date.now();
                 const targetEndTime = startTime + (i + 1) * SLIDE_DURATION;
+                
+                console.log(`📸 슬라이드 ${i + 1}/${slides.length} 녹화 시작`);
                 
                 // 슬라이드 표시
                 showSlide(i);
@@ -1584,12 +1592,21 @@ JSON 형식으로만 답변해주세요.`;
                     // 30fps 유지
                     await delay(33); // 1000ms / 30fps = 33ms
                 }
+                
+                console.log(`✅ 슬라이드 ${i + 1}/${slides.length} 녹화 완료`);
+            }
+            
+            // 마지막 몇 프레임 추가로 안전하게 녹화
+            console.log('🎬 마지막 프레임들 추가 녹화...');
+            for (let extraFrames = 0; extraFrames < 10 && recordingState.isRecording; extraFrames++) {
+                await captureCurrentSlideOptimized();
+                await delay(33);
             }
             
             // 녹화 완료
             if (recordingState.isRecording) {
                 const actualDuration = Date.now() - startTime;
-                console.log(`✅ 녹화 완료: ${(actualDuration/1000).toFixed(2)}초`);
+                console.log(`✅ 전체 녹화 완료: ${(actualDuration/1000).toFixed(2)}초, 총 ${slides.length}개 슬라이드`);
                 
                 recordingState.mediaRecorder.stop();
                 recordingState.isRecording = false;
@@ -1638,15 +1655,17 @@ JSON 형식으로만 답변해주세요.`;
                     ctx.fillText(line, canvas.width / 2, titleY + (i * canvas.height * 0.09));
                 });
 
-                // 부제목
-                ctx.font = `600 ${canvas.height * 0.05}px Arial, sans-serif`;
-                ctx.fillStyle = 'rgba(255,255,255,0.95)';
-                
-                const subtitleY = canvas.height * 0.7;
-                const subtitleLines = wrapTextOptimized(ctx, slide.subtitle, canvas.width * 0.9);
-                subtitleLines.forEach((line, i) => {
-                    ctx.fillText(line, canvas.width / 2, subtitleY + (i * canvas.height * 0.06));
-                });
+                // 부제목 (글자가 있을 때만 표시)
+                if (slide.subtitle && slide.subtitle.trim()) {
+                    ctx.font = `600 ${canvas.height * 0.05}px Arial, sans-serif`;
+                    ctx.fillStyle = 'rgba(255,255,255,0.95)';
+                    
+                    const subtitleY = canvas.height * 0.7;
+                    const subtitleLines = wrapTextOptimized(ctx, slide.subtitle, canvas.width * 0.9);
+                    subtitleLines.forEach((line, i) => {
+                        ctx.fillText(line, canvas.width / 2, subtitleY + (i * canvas.height * 0.06));
+                    });
+                }
 
                 // 슬라이드 번호
                 ctx.font = `bold ${canvas.height * 0.04}px Arial, sans-serif`;
