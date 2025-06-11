@@ -1460,16 +1460,10 @@ JSON 형식으로만 응답해주세요.`;
                 subtitleDiv.style.marginBottom = '40px';
             }
             
-            // 슬라이드 번호 div
-            const numberDiv = document.createElement('div');
-            numberDiv.style.cssText = 'position: absolute; bottom: 20px; right: 20px; background: rgba(0,0,0,0.8); padding: 10px 18px; border-radius: 15px; font-size: 1em; font-weight: bold; border: 1px solid rgba(255,255,255,0.3); color: white;';
-            numberDiv.textContent = `${slide.slideNumber}/15`;
-            
             // 요소들을 슬라이드 콘텐츠에 추가
             slideContent.appendChild(iconDiv);
             slideContent.appendChild(titleDiv);
             slideContent.appendChild(subtitleDiv);
-            slideContent.appendChild(numberDiv);
             
             // 슬라이드에 파티클 시스템과 콘텐츠 추가
             slideDiv.appendChild(particleSystem);
@@ -1819,9 +1813,10 @@ JSON 형식으로만 응답해주세요.`;
                     });
                 }
 
-                ctx.font = `bold ${canvas.height * 0.04}px Arial, sans-serif`;
-                ctx.fillStyle = 'rgba(255,255,255,0.8)';
-                ctx.fillText(`${currentSlide + 1}/${slides.length}`, canvas.width * 0.85, canvas.height * 0.92);
+                // 슬라이드 번호는 녹화시에는 제거 (유튜브 영상용)
+                // ctx.font = `bold ${canvas.height * 0.04}px Arial, sans-serif`;
+                // ctx.fillStyle = 'rgba(255,255,255,0.8)';
+                // ctx.fillText(`${currentSlide + 1}/${slides.length}`, canvas.width * 0.85, canvas.height * 0.92);
 
                 recordingState.frameCount++;
                 
