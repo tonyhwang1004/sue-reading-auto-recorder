@@ -967,8 +967,10 @@
 
                 <div style="text-align: center; margin: 30px 0;">
                     <button class="btn btn-primary recording-button" onclick="startOptimizedRecording()" style="font-size: 1.4em; padding: 22px 45px; margin: 10px; background: linear-gradient(45deg, #ff4444, #ff6666);">🎬 완벽한 영상 녹화</button>
+                    <button class="btn btn-primary" onclick="openYouTubeUpload()" style="font-size: 1.4em; padding: 22px 45px; margin: 10px; background: linear-gradient(45deg, #ff0000, #ff4444);">📺 유튜브에 바로 업로드</button>
                     <button class="btn btn-primary" onclick="downloadSlides()">📁 슬라이드 다운로드</button>
                     <button class="btn btn-primary" onclick="restartSlideshow()">🔄 처음부터 재생</button>
+                    <button class="btn btn-primary" onclick="copyOptimizedMetadata()" style="background: linear-gradient(45deg, #4ecdc4, #44a08d);">📋 업로드 정보 복사</button>
                 </div>
 
                 <div style="background: rgba(255,68,68,0.1); border: 2px solid rgba(255,68,68,0.3); border-radius: 20px; padding: 25px; margin: 30px 0;">
@@ -1425,7 +1427,7 @@
             ];
         }
 
-        // DALL-E 2 이미지 생성 함수
+        // 키워드 추출 함수
         async function generateImageWithDALLE(prompt, slideNumber, totalSlides) {
             try {
                 const optimizedPrompt = `Professional business slide background image for: "${prompt}". Modern, clean, minimalist design. Corporate style. Vertical 9:16 aspect ratio. High quality digital art.`;
@@ -2602,6 +2604,190 @@ JSON 형식으로만 답변해주세요.`;
         }
 
         // 유틸리티 함수
+        function openYouTubeUpload() {
+            // 1. 유튜브 스튜디오 열기
+            window.open('https://studio.youtube.com/channel/upload', '_blank');
+            
+            // 2. 최적화된 메타데이터 자동 복사
+            copyOptimizedMetadata();
+            
+            // 3. 사용자 안내
+            setTimeout(() => {
+                showYouTubeUploadGuide();
+            }, 1000);
+        }
+
+        // 최적화된 메타데이터 생성 및 복사
+        function copyOptimizedMetadata() {
+            const title = document.getElementById('titleInput').value.trim();
+            const content = document.getElementById('contentInput').value.trim();
+            
+            // 바이럴 최적화 제목 생성
+            const viralTitles = [
+                `🤖 AI가 ${title}를 3초만에 바꿨다고?`,
+                `😱 이걸 AI로 만들었다는게 믿어지시나요? (결과 충격)`,
+                `🚀 AI 혁신! ${title}의 놀라운 변화`,
+                `💯 이 AI 기술 보고 깜짝 놀랐습니다`,
+                `⚡ 3초만에 완성된 ${title} 프레젠테이션`
+            ];
+            
+            const selectedTitle = viralTitles[Math.floor(Math.random() * viralTitles.length)];
+            
+            // 최적화된 설명 생성
+            const description = `🎯 ${title}
+
+✨ 이 영상의 특별함:
+• AI 기술로 자동 생성된 전문 슬라이드
+• 15장의 완벽한 구성
+• 실제 비즈니스에서 사용 가능한 품질
+
+📊 주요 내용:
+${content.split('\n').slice(0, 5).map(line => line.trim()).filter(line => line).join('\n')}
+
+🔥 이런 분들께 추천:
+• 프레젠테이션 제작이 필요한 분
+• AI 기술에 관심 있는 분  
+• 효율적인 업무 방법을 찾는 분
+
+#AI #프레젠테이션 #자동화 #혁신기술 #비즈니스 #효율성
+#유튜브쇼츠 #Shorts #AI기술 #미래기술 #생산성향상
+
+⚡ 구독과 좋아요는 더 좋은 콘텐츠 제작에 큰 힘이 됩니다!`;
+
+            // 해시태그 생성
+            const hashtags = `#Shorts #AI #프레젠테이션 #자동화 #혁신기술 #비즈니스 #효율성 #생산성 #미래기술 #스타트업`;
+            
+            // 전체 메타데이터
+            const metadata = `📺 유튜브 쇼츠 최적화 정보
+
+🏷️ 제목:
+${selectedTitle}
+
+📝 설명:
+${description}
+
+🏷️ 태그:
+${hashtags}
+
+📱 카테고리: 과학 기술
+🎯 연령 제한: 없음
+💡 썸네일: 자동 생성 권장 (첫 프레임)
+
+⏰ 최적 업로드 시간:
+• 평일: 오후 6-9시
+• 주말: 오후 2-5시
+
+🎬 업로드 완료 후:
+1. 첫 1시간 내 가족/친구 공유
+2. SNS 동시 업로드  
+3. 댓글 적극 응답`;
+
+            // 클립보드에 복사
+            navigator.clipboard.writeText(metadata).then(() => {
+                showSuccessNotification('📋 업로드 정보가 클립보드에 복사되었습니다!');
+            }).catch(() => {
+                // 복사 실패시 텍스트 영역에 표시
+                showMetadataModal(metadata);
+            });
+        }
+
+        // 메타데이터 모달 표시
+        function showMetadataModal(metadata) {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.9);
+                z-index: 10000;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                backdrop-filter: blur(15px);
+                font-family: 'Segoe UI', sans-serif;
+            `;
+            
+            modal.innerHTML = `
+                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: 3px solid rgba(255,255,255,0.3); border-radius: 30px; padding: 40px; text-align: center; backdrop-filter: blur(25px); max-width: 800px; max-height: 80vh; overflow-y: auto; margin: 20px; color: white;">
+                    
+                    <h2 style="margin-bottom: 25px; font-size: 2.5em; font-weight: 900;">📋 유튜브 업로드 정보</h2>
+                    
+                    <textarea readonly style="width: 100%; height: 400px; background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.3); border-radius: 15px; padding: 20px; color: white; font-family: monospace; font-size: 0.9em; line-height: 1.4; resize: vertical;">${metadata}</textarea>
+                    
+                    <div style="margin: 20px 0; display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <button onclick="navigator.clipboard.writeText(\`${metadata.replace(/`/g, '\\`')}\`).then(() => alert('복사완료!'))" style="padding: 15px 25px; background: linear-gradient(45deg, #4ecdc4, #44a08d); color: white; border: none; border-radius: 15px; font-size: 1.1em; cursor: pointer; font-weight: bold;">
+                            📋 복사하기
+                        </button>
+                        <button onclick="this.parentElement.parentElement.parentElement.remove()" style="padding: 15px 25px; background: linear-gradient(45deg, #ff6b6b, #ee5a52); color: white; border: none; border-radius: 15px; font-size: 1.1em; cursor: pointer; font-weight: bold;">
+                            ✅ 확인
+                        </button>
+                    </div>
+                    
+                    <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 15px; text-align: left; line-height: 1.6;">
+                        <h4 style="color: #4ecdc4; margin-bottom: 10px;">💡 사용법:</h4>
+                        <ol style="margin-left: 20px;">
+                            <li>위 텍스트를 복사하세요</li>
+                            <li>유튜브 스튜디오에서 영상 업로드</li>
+                            <li>제목, 설명, 태그에 붙여넣기</li>
+                            <li>썸네일은 자동 생성된 것 사용</li>
+                        </ol>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+
+        // 유튜브 업로드 가이드 표시
+        function showYouTubeUploadGuide() {
+            const guide = document.createElement('div');
+            guide.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: linear-gradient(135deg, #ff0000, #ff4444);
+                color: white;
+                padding: 25px;
+                border-radius: 20px;
+                font-weight: bold;
+                box-shadow: 0 15px 35px rgba(255,0,0,0.4);
+                z-index: 9999;
+                max-width: 350px;
+                font-family: 'Segoe UI', sans-serif;
+                border: 2px solid rgba(255,255,255,0.3);
+            `;
+            
+            guide.innerHTML = `
+                <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                    <div style="font-size: 2em; margin-right: 10px;">📺</div>
+                    <div style="font-size: 1.3em; font-weight: 900;">유튜브 업로드 가이드</div>
+                </div>
+                
+                <div style="line-height: 1.6; margin-bottom: 15px;">
+                    <div style="margin-bottom: 8px;">✅ 업로드 정보 복사 완료</div>
+                    <div style="margin-bottom: 8px;">📱 유튜브 스튜디오 열림</div>
+                    <div style="margin-bottom: 8px;">🎬 영상 파일 드래그 앤 드롭</div>
+                    <div style="margin-bottom: 8px;">📋 복사된 정보 붙여넣기</div>
+                </div>
+                
+                <button onclick="this.parentElement.remove()" style="background: rgba(255,255,255,0.2); color: white; border: 2px solid white; padding: 10px 20px; border-radius: 10px; cursor: pointer; font-weight: bold; width: 100%;">
+                    ✅ 확인
+                </button>
+            `;
+            
+            document.body.appendChild(guide);
+            
+            // 10초 후 자동 제거
+            setTimeout(() => {
+                if (guide.parentElement) {
+                    guide.style.opacity = '0';
+                    guide.style.transition = 'opacity 1s ease';
+                    setTimeout(() => guide.remove(), 1000);
+                }
+            }, 10000);
+        }
         function delay(ms) {
             return new Promise(resolve => setTimeout(resolve, ms));
         }
