@@ -597,6 +597,201 @@
             }
         }
 
+        /* 🎨 10가지 배경 효과 */
+        .bg-wave::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+            background-size: 30px 30px;
+            animation: waveMove 3s linear infinite;
+        }
+
+        .bg-cosmic::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 30% 20%, rgba(255,0,255,0.2) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 80%, rgba(0,255,255,0.2) 0%, transparent 50%);
+            animation: cosmicPulse 4s ease-in-out infinite;
+        }
+
+        .bg-aurora::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(0,255,127,0.1), rgba(255,0,255,0.1), rgba(0,191,255,0.1));
+            background-size: 200% 200%;
+            animation: auroraShift 6s ease-in-out infinite;
+        }
+
+        .bg-matrix::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0,255,0,0.03) 2px,
+                rgba(0,255,0,0.03) 4px
+            );
+            animation: matrixRain 2s linear infinite;
+        }
+
+        .bg-quantum::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(255,255,0,0.1) 2px, transparent 2px),
+                radial-gradient(circle at 80% 70%, rgba(255,0,255,0.1) 1px, transparent 1px);
+            background-size: 50px 50px, 30px 30px;
+            animation: quantumFlicker 3s ease-in-out infinite;
+        }
+
+        .bg-neural::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(90deg, transparent 49%, rgba(0,255,255,0.1) 50%, transparent 51%),
+                linear-gradient(0deg, transparent 49%, rgba(255,0,255,0.1) 50%, transparent 51%);
+            background-size: 80px 80px;
+            animation: neuralPulse 4s ease-in-out infinite;
+        }
+
+        .bg-plasma::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(ellipse at top left, rgba(255,0,128,0.2) 0%, transparent 70%),
+                radial-gradient(ellipse at bottom right, rgba(0,255,255,0.2) 0%, transparent 70%);
+            animation: plasmaFlow 5s ease-in-out infinite;
+        }
+
+        .bg-crystal::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(120deg, transparent 25%, rgba(255,255,255,0.1) 26%, rgba(255,255,255,0.1) 27%, transparent 28%),
+                linear-gradient(60deg, transparent 25%, rgba(0,255,255,0.1) 26%, rgba(0,255,255,0.1) 27%, transparent 28%);
+            background-size: 40px 40px;
+            animation: crystalShine 3s linear infinite;
+        }
+
+        .bg-hologram::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                repeating-linear-gradient(
+                    45deg,
+                    transparent,
+                    transparent 10px,
+                    rgba(0,255,255,0.05) 10px,
+                    rgba(0,255,255,0.05) 11px
+                );
+            animation: hologramScan 2s linear infinite;
+        }
+
+        .bg-energy::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                conic-gradient(from 0deg at 50% 50%, 
+                    transparent 0deg, rgba(255,255,0,0.1) 60deg, transparent 120deg,
+                    rgba(255,0,255,0.1) 180deg, transparent 240deg, rgba(0,255,255,0.1) 300deg, transparent 360deg);
+            animation: energyRotate 8s linear infinite;
+        }
+
+        @keyframes waveMove {
+            0% { transform: translateX(-30px); }
+            100% { transform: translateX(0px); }
+        }
+
+        @keyframes cosmicPulse {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.1); }
+        }
+
+        @keyframes auroraShift {
+            0% { background-position: 0% 0%; }
+            50% { background-position: 100% 100%; }
+            100% { background-position: 0% 0%; }
+        }
+
+        @keyframes matrixRain {
+            0% { transform: translateY(-4px); }
+            100% { transform: translateY(0px); }
+        }
+
+        @keyframes quantumFlicker {
+            0%, 100% { opacity: 0.2; }
+            25% { opacity: 0.8; }
+            50% { opacity: 0.3; }
+            75% { opacity: 0.9; }
+        }
+
+        @keyframes neuralPulse {
+            0%, 100% { opacity: 0.2; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.05); }
+        }
+
+        @keyframes plasmaFlow {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.1); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+
+        @keyframes crystalShine {
+            0% { transform: translateX(-40px); }
+            100% { transform: translateX(0px); }
+        }
+
+        @keyframes hologramScan {
+            0% { transform: translateX(-40px) rotateZ(0deg); }
+            100% { transform: translateX(40px) rotateZ(360deg); }
+        }
+
+        @keyframes energyRotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
         /* 파티클 시스템 */
         .particle-system {
             position: absolute;
@@ -669,43 +864,42 @@
             animation: particleLightning 1.5s ease-in-out infinite;
         }
 
+        /* 🌟 새로운 5가지 파티클 효과 추가 */
         .particle-spiral {
             width: 4px;
             height: 4px;
-            background: radial-gradient(circle, rgba(255,0,255,0.8), rgba(128,0,255,0.4));
-            border-radius: 50%;
-            animation: particleSpiral 3.5s ease-in-out infinite;
+            background: rgba(255,0,255,0.8);
+            animation: particleSpiral 4s ease-in-out infinite;
         }
 
         .particle-magic {
             width: 6px;
             height: 6px;
-            background: conic-gradient(rgba(255,255,255,1), rgba(255,0,255,1), rgba(0,255,255,1), rgba(255,255,0,1), rgba(255,255,255,1));
-            border-radius: 50%;
-            animation: particleMagic 2.8s ease-in-out infinite;
+            background: radial-gradient(circle, rgba(255,255,0,0.9), rgba(255,0,255,0.5));
+            animation: particleMagic 3.5s ease-in-out infinite;
         }
 
         .particle-rainbow {
-            width: 8px;
-            height: 2px;
-            background: linear-gradient(90deg, #ff0000, #ff8000, #ffff00, #80ff00, #00ff00, #00ff80, #00ffff, #0080ff);
-            border-radius: 20px;
-            animation: particleRainbow 3.2s ease-in-out infinite;
+            width: 5px;
+            height: 5px;
+            background: linear-gradient(45deg, #ff0000, #ff8000, #ffff00, #00ff00, #0000ff, #8000ff);
+            background-size: 300% 300%;
+            animation: particleRainbow 2.5s linear infinite;
         }
 
         .particle-comet {
-            width: 3px;
-            height: 8px;
-            background: linear-gradient(to bottom, rgba(255,255,255,1), rgba(0,150,255,0.8), transparent);
+            width: 8px;
+            height: 3px;
+            background: linear-gradient(90deg, rgba(0,255,255,1), rgba(0,255,255,0));
             border-radius: 50%;
-            animation: particleComet 2.5s linear infinite;
+            animation: particleComet 3s linear infinite;
         }
 
         .particle-snowflake {
             width: 6px;
             height: 6px;
             background: rgba(255,255,255,0.9);
-            clip-path: polygon(50% 0%, 38% 25%, 0% 38%, 25% 50%, 0% 62%, 38% 75%, 50% 100%, 62% 75%, 100% 62%, 75% 50%, 100% 38%, 62% 25%);
+            clip-path: polygon(50% 0%, 60% 40%, 100% 50%, 60% 60%, 50% 100%, 40% 60%, 0% 50%, 40% 40%);
             animation: particleSnowflake 4s ease-in-out infinite;
         }
 
@@ -804,61 +998,48 @@
         @keyframes particleSpiral {
             0% {
                 transform: rotate(0deg) translateX(0px) scale(1);
-                opacity: 0.8;
+                opacity: 0;
             }
-            50% {
-                transform: rotate(180deg) translateX(20px) scale(1.2);
+            25% {
                 opacity: 1;
             }
             100% {
-                transform: rotate(360deg) translateX(0px) scale(1);
-                opacity: 0.8;
+                transform: rotate(1080deg) translateX(30px) scale(0.5);
+                opacity: 0;
             }
         }
 
         @keyframes particleMagic {
             0%, 100% {
-                transform: rotate(0deg) scale(1);
-                opacity: 0.9;
+                transform: scale(1) rotate(0deg);
+                opacity: 0.7;
                 filter: hue-rotate(0deg);
             }
-            25% {
-                transform: rotate(90deg) scale(1.3);
-                opacity: 1;
-                filter: hue-rotate(90deg);
-            }
             50% {
-                transform: rotate(180deg) scale(0.8);
-                opacity: 0.7;
-                filter: hue-rotate(180deg);
-            }
-            75% {
-                transform: rotate(270deg) scale(1.1);
+                transform: scale(1.5) rotate(180deg);
                 opacity: 1;
-                filter: hue-rotate(270deg);
+                filter: hue-rotate(180deg);
             }
         }
 
         @keyframes particleRainbow {
             0% {
-                transform: translateX(-100px) rotate(0deg);
-                opacity: 0;
+                background-position: 0% 0%;
+                transform: translateY(0px) scale(1);
             }
-            20% {
-                opacity: 1;
-            }
-            80% {
-                opacity: 1;
+            50% {
+                background-position: 100% 100%;
+                transform: translateY(-10px) scale(1.2);
             }
             100% {
-                transform: translateX(100px) rotate(360deg);
-                opacity: 0;
+                background-position: 200% 200%;
+                transform: translateY(0px) scale(1);
             }
         }
 
         @keyframes particleComet {
             0% {
-                transform: translateY(100px) translateX(-50px) rotate(45deg);
+                transform: translateX(-100px) translateY(100px) rotate(-45deg);
                 opacity: 0;
             }
             20% {
@@ -868,24 +1049,24 @@
                 opacity: 1;
             }
             100% {
-                transform: translateY(-100px) translateX(50px) rotate(45deg);
+                transform: translateX(100px) translateY(-100px) rotate(-45deg);
                 opacity: 0;
             }
         }
 
         @keyframes particleSnowflake {
             0% {
-                transform: translateY(-20px) rotate(0deg) scale(0.8);
+                transform: translateY(-100px) rotate(0deg) scale(1);
                 opacity: 0;
             }
-            10% {
+            20% {
                 opacity: 1;
             }
-            90% {
+            80% {
                 opacity: 1;
             }
             100% {
-                transform: translateY(100px) rotate(360deg) scale(1.2);
+                transform: translateY(100px) rotate(360deg) scale(0.8);
                 opacity: 0;
             }
         }
@@ -1097,7 +1278,7 @@
             }
         }
 
-        /* 🎨 20가지 한국어 글꼴 + 6가지 그라데이션 텍스트 효과 + 10가지 배경 효과 */
+        /* 🎨 20가지 한국어 글꼴 + 6가지 그라데이션 텍스트 효과 */
         .slide-title {
             margin-bottom: 15px;
             text-shadow: 2px 2px 8px rgba(0,0,0,0.7);
@@ -1319,207 +1500,6 @@
             50% { background-position: 100% 50%; }
         }
 
-        /* 🌈 10가지 혁신적 배경 효과 */
-        .bg-wave::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
-            animation: waveMove 3s ease-in-out infinite;
-            z-index: 1;
-        }
-
-        .bg-geometric::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-image: 
-                conic-gradient(at 20% 50%, transparent 0deg, rgba(255,255,255,0.1) 60deg, transparent 120deg),
-                conic-gradient(at 80% 50%, transparent 0deg, rgba(255,255,255,0.1) 60deg, transparent 120deg);
-            animation: geometricRotate 8s linear infinite;
-            z-index: 1;
-        }
-
-        .bg-cosmic::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: 
-                radial-gradient(circle at 30% 40%, rgba(255,0,150,0.3) 0%, transparent 50%),
-                radial-gradient(circle at 70% 60%, rgba(0,255,255,0.3) 0%, transparent 50%),
-                radial-gradient(circle at 50% 20%, rgba(255,255,0,0.2) 0%, transparent 30%);
-            animation: cosmicPulse 6s ease-in-out infinite;
-            z-index: 1;
-        }
-
-        .bg-aurora::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(90deg, rgba(0,255,100,0.3), rgba(0,150,255,0.3), rgba(255,0,150,0.3), rgba(255,255,0,0.3));
-            background-size: 400% 100%;
-            animation: auroraFlow 5s ease-in-out infinite;
-            z-index: 1;
-        }
-
-        .bg-matrix::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-image: 
-                linear-gradient(90deg, rgba(0,255,0,0.1) 1px, transparent 1px),
-                linear-gradient(180deg, rgba(0,255,0,0.1) 1px, transparent 1px);
-            background-size: 20px 20px;
-            animation: matrixScroll 4s linear infinite;
-            z-index: 1;
-        }
-
-        .bg-plasma::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: 
-                radial-gradient(ellipse at center, rgba(255,0,255,0.4) 0%, transparent 70%),
-                radial-gradient(ellipse at 30% 30%, rgba(0,255,255,0.4) 0%, transparent 70%),
-                radial-gradient(ellipse at 70% 70%, rgba(255,255,0,0.4) 0%, transparent 70%);
-            animation: plasmaMove 7s ease-in-out infinite;
-            z-index: 1;
-        }
-
-        .bg-crystal::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: 
-                conic-gradient(from 0deg at 50% 50%, rgba(255,255,255,0.2) 0deg, transparent 60deg, rgba(255,255,255,0.1) 120deg, transparent 180deg);
-            animation: crystalRotate 10s linear infinite;
-            z-index: 1;
-        }
-
-        .bg-neural::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: 
-                radial-gradient(circle at 25% 25%, rgba(0,150,255,0.3) 2px, transparent 2px),
-                radial-gradient(circle at 75% 75%, rgba(255,150,0,0.3) 2px, transparent 2px),
-                radial-gradient(circle at 25% 75%, rgba(150,255,0,0.3) 2px, transparent 2px),
-                radial-gradient(circle at 75% 25%, rgba(255,0,150,0.3) 2px, transparent 2px);
-            background-size: 50px 50px;
-            animation: neuralPulse 4s ease-in-out infinite;
-            z-index: 1;
-        }
-
-        .bg-electric::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: 
-                linear-gradient(45deg, rgba(255,255,0,0.3) 25%, transparent 25%, transparent 75%, rgba(255,255,0,0.3) 75%),
-                linear-gradient(-45deg, rgba(0,255,255,0.3) 25%, transparent 25%, transparent 75%, rgba(0,255,255,0.3) 75%);
-            background-size: 30px 30px;
-            animation: electricFlow 3s linear infinite;
-            z-index: 1;
-        }
-
-        .bg-quantum::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: 
-                conic-gradient(from 0deg at 20% 20%, rgba(255,0,255,0.4) 0deg, transparent 90deg),
-                conic-gradient(from 90deg at 80% 80%, rgba(0,255,255,0.4) 0deg, transparent 90deg),
-                conic-gradient(from 180deg at 20% 80%, rgba(255,255,0,0.4) 0deg, transparent 90deg),
-                conic-gradient(from 270deg at 80% 20%, rgba(255,150,0,0.4) 0deg, transparent 90deg);
-            animation: quantumShift 6s ease-in-out infinite;
-            z-index: 1;
-        }
-
-        /* 배경 효과 애니메이션 */
-        @keyframes waveMove {
-            0%, 100% { transform: translateX(-100%); }
-            50% { transform: translateX(100%); }
-        }
-
-        @keyframes geometricRotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        @keyframes cosmicPulse {
-            0%, 100% { transform: scale(1); opacity: 0.8; }
-            50% { transform: scale(1.2); opacity: 1; }
-        }
-
-        @keyframes auroraFlow {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-        }
-
-        @keyframes matrixScroll {
-            from { transform: translateY(-20px); }
-            to { transform: translateY(20px); }
-        }
-
-        @keyframes plasmaMove {
-            0%, 100% { transform: translate(0%, 0%) scale(1); }
-            25% { transform: translate(10%, 10%) scale(1.1); }
-            50% { transform: translate(-5%, 15%) scale(0.9); }
-            75% { transform: translate(-10%, -5%) scale(1.05); }
-        }
-
-        @keyframes crystalRotate {
-            from { transform: rotate(0deg) scale(1); }
-            to { transform: rotate(360deg) scale(1); }
-        }
-
-        @keyframes neuralPulse {
-            0%, 100% { opacity: 0.6; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.1); }
-        }
-
-        @keyframes electricFlow {
-            from { background-position: 0 0, 0 0; }
-            to { background-position: 30px 30px, -30px -30px; }
-        }
-
-        @keyframes quantumShift {
-            0%, 100% { transform: rotate(0deg) scale(1); filter: hue-rotate(0deg); }
-            25% { transform: rotate(90deg) scale(1.1); filter: hue-rotate(90deg); }
-            50% { transform: rotate(180deg) scale(0.9); filter: hue-rotate(180deg); }
-            75% { transform: rotate(270deg) scale(1.05); filter: hue-rotate(270deg); }
-        }
-
         .slide-subtitle {
             font-size: 1.3em;
             opacity: 0.95;
@@ -1663,39 +1643,128 @@
             box-shadow: 0 0 25px rgba(255,165,0,0.3);
         }
 
+        /* 무한 다양성 통계 박스 */
+        .diversity-stats {
+            background: rgba(255,255,255,0.05);
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 30px 0;
+            backdrop-filter: blur(15px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .diversity-stats::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(255,0,255,0.1), rgba(0,255,255,0.1));
+            animation: diversityGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes diversityGlow {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.7; }
+        }
+
+        .diversity-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: 900;
+            color: #4ecdc4;
+            margin-bottom: 5px;
+            text-shadow: 0 0 15px rgba(78, 205, 196, 0.5);
+        }
+
+        .stat-label {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .combination-calculator {
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 25px 0;
+            text-align: center;
+        }
+
+        .combination-number {
+            font-size: 3em;
+            font-weight: 900;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57);
+            background-size: 400% 400%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: textShimmer 3s ease infinite;
+            margin: 15px 0;
+        }
+
         /* 반응형 디자인 */
         @media (max-width: 768px) {
             .container {
                 padding: 15px;
             }
-            
+           
             .hero {
                 padding: 50px 20px;
             }
-            
+           
             .section {
                 padding: 30px 20px;
             }
-            
+           
             .slide-title {
                 font-size: 1.8em;
             }
-            
+           
             .slide-subtitle {
                 font-size: 1.1em;
             }
-            
+           
             .mode-selector {
                 grid-template-columns: 1fr;
             }
-            
+           
             .slide-navigation {
                 gap: 15px;
             }
-            
+           
             .nav-btn {
                 padding: 12px 20px;
                 font-size: 1em;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .combination-number {
+                font-size: 2em;
             }
         }
 
@@ -1741,13 +1810,8 @@
         <div class="hero">
             <h1>🎬 완벽한 슬라이드 영상 생성기</h1>
             <p class="hero-subtitle">AI가 분석해서 만드는 맞춤형 슬라이드 영상</p>
-            
+           
             <div class="hero-features">
-                <div class="feature-card">
-                    <div style="font-size: 2em; margin-bottom: 10px;">🤖</div>
-                    <h3>GPT 실제 분석</h3>
-                    <p>내용을 분석해서 적절한 슬라이드 생성</p>
-                </div>
                 <div class="feature-card">
                     <div style="font-size: 2em; margin-bottom: 10px;">🎥</div>
                     <h3>최적화된 캡처</h3>
@@ -1757,6 +1821,73 @@
                     <div style="font-size: 2em; margin-bottom: 10px;">🚀</div>
                     <h3>바이럴 최적화</h3>
                     <p>유튜브 쇼츠 완벽 최적화 타이밍</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 🚀 무한 다양성 시스템 통계 -->
+        <div class="diversity-stats">
+            <div class="diversity-content">
+                <h2 style="text-align: center; margin-bottom: 25px;">🚀 완성된 무한 다양성 슬라이드 생성기 특징</h2>
+                
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-number">20</div>
+                        <div class="stat-label">🎭 한국어 글꼴</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">12</div>
+                        <div class="stat-label">⚡ 슬라이드 애니메이션</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">10</div>
+                        <div class="stat-label">🎪 아이콘 애니메이션</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">12</div>
+                        <div class="stat-label">🌟 파티클 효과</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">6</div>
+                        <div class="stat-label">🌈 그라데이션 텍스트</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">10</div>
+                        <div class="stat-label">🎨 배경 효과</div>
+                    </div>
+                </div>
+
+                <div class="combination-calculator">
+                    <h3 style="color: #4ecdc4; margin-bottom: 15px;">✨ 매번 완전히 다른 경험</h3>
+                    <p>동일한 내용으로 100번 생성해도</p>
+                    <div class="combination-number" id="combinationNumber">138,240,000</div>
+                    <p style="font-size: 1.2em; font-weight: bold;">가지 조합으로 매번 완전히 다른 스타일!</p>
+                </div>
+
+                <div style="background: rgba(0,255,100,0.1); border: 2px solid rgba(0,255,100,0.3); border-radius: 20px; padding: 25px; margin: 25px 0;">
+                    <h3 style="color: #00ff88; margin-bottom: 15px; text-align: center;">🤖 AI 분석 기능</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; text-align: left;">
+                        <div>🧠 GPT-4o & GPT-3.5 Turbo 지원</div>
+                        <div>📊 실제 내용 분석으로 맞춤형 생성</div>
+                        <div>🚀 API 없이도 작동하는 스마트 모드</div>
+                        <div>⚡ 자동 최적화 알고리즘</div>
+                    </div>
+                </div>
+
+                <div style="background: rgba(255,0,255,0.1); border: 2px solid rgba(255,0,255,0.3); border-radius: 20px; padding: 25px; margin: 25px 0;">
+                    <h3 style="color: #ff6b9d; margin-bottom: 15px; text-align: center;">🎬 프로급 기능들</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; text-align: left;">
+                        <div>📱 유튜브 쇼츠 최적화 (9:16)</div>
+                        <div>🚀 바이럴 최적화 타이밍 (3초)</div>
+                        <div>📋 메타데이터 자동 생성</div>
+                        <div>🎥 영상 녹화 가이드</div>
+                        <div>📁 슬라이드 다운로드</div>
+                        <div>🎯 스마트 글자 크기 조절</div>
+                    </div>
+                </div>
+
+                <div style="text-align: center; font-size: 1.3em; color: #4ecdc4; font-weight: bold; margin-top: 25px;">
+                    🎬 세계 최고 수준의 무한 다양성 슬라이드 생성기 완성! 🚀✨
                 </div>
             </div>
         </div>
@@ -1783,7 +1914,7 @@
         <!-- API 설정 -->
         <div class="section" id="apiSection">
             <h2>🔑 OpenAI API 설정</h2>
-            
+           
             <!-- GPT 모델 선택 -->
             <div class="input-group">
                 <label class="input-label">🤖 GPT 모델 선택</label>
@@ -1802,13 +1933,13 @@
                     </div>
                 </div>
             </div>
-            
+           
             <div class="input-group">
                 <label class="input-label">🔑 API 키</label>
-                <input type="password" class="input-field" id="apiKey" 
+                <input type="password" class="input-field" id="apiKey"
                        placeholder="sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx">
             </div>
-            
+           
             <div style="text-align: center;">
                 <button class="btn btn-primary" onclick="setupAPI()">API 연결</button>
                 <div class="status-message" id="apiStatus"></div>
@@ -1818,16 +1949,16 @@
         <!-- 콘텐츠 입력 -->
         <div class="section">
             <h2>✏️ 콘텐츠 입력</h2>
-            
+           
             <div class="input-group">
                 <label class="input-label">📝 제목</label>
-                <input type="text" class="input-field" id="titleInput" 
+                <input type="text" class="input-field" id="titleInput"
                        placeholder="슬라이드 제목을 입력하세요">
             </div>
 
             <div class="input-group">
                 <label class="input-label">📄 내용</label>
-                <textarea class="input-field textarea-field" id="contentInput" 
+                <textarea class="input-field textarea-field" id="contentInput"
                           placeholder="슬라이드에 포함할 내용을 상세히 입력하세요..."></textarea>
             </div>
 
@@ -1840,7 +1971,7 @@
         <div id="resultSection" style="display: none;">
             <div class="section">
                 <h2>🎉 완성된 프리미엄 슬라이드</h2>
-                
+               
                 <div class="slideshow-container" id="slideshowContainer">
                     <!-- 슬라이드들이 여기에 동적으로 생성됩니다 -->
                 </div>
@@ -1864,7 +1995,6 @@
                         <div>📐 스마트 글자 크기 조절</div>
                         <div>📱 유튜브 쇼츠 최적화 (9:16)</div>
                         <div>🚀 바이럴 최적화 타이밍</div>
-                        <div>✨ 매번 완전히 다른 스타일</div>
                     </div>
                 </div>
 
@@ -1931,25 +2061,17 @@
             'anim-magnetic', 'anim-orbit'
         ];
 
+        // 🌟 업데이트: 12가지 파티클 타입 (기존 7개 + 새로운 5개)
         const PARTICLE_TYPES = [
             'particle-float', 'particle-spark', 'particle-bubble', 'particle-star',
-            'particle-diamond', 'particle-heart', 'particle-lightning', 'particle-spiral',
-            'particle-magic', 'particle-rainbow', 'particle-comet', 'particle-snowflake'
+            'particle-diamond', 'particle-heart', 'particle-lightning', 
+            'particle-spiral', 'particle-magic', 'particle-rainbow', 'particle-comet', 'particle-snowflake'
         ];
 
+        // 🎨 새로운 10가지 배경 효과
         const BACKGROUND_EFFECTS = [
-            'bg-wave', 'bg-geometric', 'bg-cosmic', 'bg-aurora', 'bg-matrix',
-            'bg-plasma', 'bg-crystal', 'bg-neural', 'bg-electric', 'bg-quantum'
-        ];
-
-        const SLIDE_FILTERS = [
-            'filter-glow', 'filter-crystal', 'filter-neon', 'filter-vintage',
-            'filter-hologram', 'filter-mirror', 'filter-frost', 'filter-fire'
-        ];
-
-        const ADVANCED_ANIMATIONS = [
-            'anim-morph', 'anim-glitch', 'anim-portal', 'anim-quantum',
-            'anim-hologram', 'anim-dimension', 'anim-time-warp', 'anim-cosmic'
+            'bg-wave', 'bg-cosmic', 'bg-aurora', 'bg-matrix', 'bg-quantum',
+            'bg-neural', 'bg-plasma', 'bg-crystal', 'bg-hologram', 'bg-energy'
         ];
 
         // 🎨 랜덤 스타일 선택 함수들
@@ -1977,16 +2099,9 @@
             return PARTICLE_TYPES[Math.floor(Math.random() * PARTICLE_TYPES.length)];
         }
 
+        // 🎨 새로운 배경 효과 선택 함수
         function getRandomBackgroundEffect() {
             return BACKGROUND_EFFECTS[Math.floor(Math.random() * BACKGROUND_EFFECTS.length)];
-        }
-
-        function getRandomSlideFilter() {
-            return SLIDE_FILTERS[Math.floor(Math.random() * SLIDE_FILTERS.length)];
-        }
-
-        function getRandomAdvancedAnimation() {
-            return ADVANCED_ANIMATIONS[Math.floor(Math.random() * ADVANCED_ANIMATIONS.length)];
         }
 
         // 🚀 스마트한 크기 선택 (글자 길이에 따라 자동 최적화)
@@ -2000,14 +2115,45 @@
             return 'text-md';
         }
 
+        // 📊 조합 계산 함수
+        function calculateCombinations() {
+            const fonts = FONT_CLASSES.length; // 20
+            const textSizes = TEXT_SIZES.length; // 8
+            const gradients = TEXT_GRADIENTS.length; // 6
+            const slideAnims = SLIDE_ANIMATIONS.length; // 12
+            const iconAnims = ICON_ANIMATIONS.length; // 10
+            const particles = PARTICLE_TYPES.length; // 12
+            const backgrounds = BACKGROUND_EFFECTS.length; // 10
+            
+            const totalCombinations = fonts * textSizes * gradients * slideAnims * iconAnims * particles * backgrounds;
+            return totalCombinations;
+        }
+
+        // 📊 조합 카운터 애니메이션
+        function animateCombinationCounter() {
+            const target = calculateCombinations();
+            const element = document.getElementById('combinationNumber');
+            let current = 0;
+            const increment = target / 100;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(timer);
+                }
+                element.textContent = Math.floor(current).toLocaleString();
+            }, 20);
+        }
+
         // 페이지 로드 시 초기화
         document.addEventListener('DOMContentLoaded', function() {
             updateGenerateButton();
-            
+            animateCombinationCounter();
+           
             // 입력 필드 이벤트
             document.getElementById('titleInput').addEventListener('input', updateGenerateButton);
             document.getElementById('contentInput').addEventListener('input', updateGenerateButton);
-            
+           
             // 키보드 단축키
             document.addEventListener('keydown', function(e) {
                 if (slides.length > 0) {
@@ -2030,11 +2176,11 @@
         // GPT 모델 선택 함수
         function selectGPTModel(model) {
             selectedGPTModel = model;
-            
+           
             document.querySelectorAll('#gpt4oMode, #gpt35Mode').forEach(card => {
                 card.classList.remove('selected');
             });
-            
+           
             if (model === 'gpt-4o') {
                 document.getElementById('gpt4oMode').classList.add('selected');
             } else {
@@ -2045,32 +2191,32 @@
         // 모드 선택
         function selectMode(mode) {
             currentMode = mode;
-            
+           
             document.querySelectorAll('#apiMode, #smartMode').forEach(card => {
                 card.classList.remove('selected');
             });
             document.getElementById(mode + 'Mode').classList.add('selected');
-            
+           
             const apiSection = document.getElementById('apiSection');
             apiSection.style.display = mode === 'api' ? 'block' : 'none';
-            
+           
             updateGenerateButton();
         }
 
         // API 설정
         function setupAPI() {
             const key = document.getElementById('apiKey').value.trim();
-            
+           
             if (!key) {
                 showStatus('❌ API 키를 입력해주세요.', 'error');
                 return;
             }
-            
+           
             if (!key.startsWith('sk-') || key.length < 40) {
                 showStatus('❌ 올바른 API 키 형식이 아닙니다.', 'error');
                 return;
             }
-            
+           
             apiKey = key;
             document.getElementById('apiSection').classList.add('connected');
             showStatus('✅ API 연결 성공!', 'success');
@@ -2083,7 +2229,7 @@
             status.textContent = message;
             status.className = `status-message ${type}`;
             status.style.display = 'block';
-            
+           
             setTimeout(() => {
                 status.style.display = 'none';
             }, 3000);
@@ -2094,14 +2240,14 @@
             const title = document.getElementById('titleInput').value.trim();
             const content = document.getElementById('contentInput').value.trim();
             const generateBtn = document.getElementById('generateBtn');
-            
+           
             const hasContent = title.length > 0 && content.length > 0;
             const canGenerate = currentMode === 'smart' ? hasContent : hasContent && apiKey.length > 0;
-            
+           
             generateBtn.disabled = !canGenerate;
-            
-            generateBtn.innerHTML = currentMode === 'api' ? 
-                '🤖 AI 실제 분석해서 슬라이드 생성' : 
+           
+            generateBtn.innerHTML = currentMode === 'api' ?
+                '🤖 AI 실제 분석해서 슬라이드 생성' :
                 '🧠 스마트 모드로 슬라이드 생성';
         }
 
@@ -2109,38 +2255,38 @@
         async function generateSlides() {
             const title = document.getElementById('titleInput').value.trim();
             const content = document.getElementById('contentInput').value.trim();
-            
+           
             if (!title || !content) {
                 alert('❌ 제목과 내용을 모두 입력해주세요!');
                 return;
             }
-            
+           
             if (currentMode === 'api' && !apiKey) {
                 alert('❌ API 모드에서는 API 키가 필요합니다!');
                 return;
             }
-            
+           
             showProgressModal(true);
-            
+           
             try {
                 let slideData;
-                
+               
                 if (currentMode === 'api') {
                     updateProgress(10, '🤖 GPT 연결 중', `${selectedGPTModel}에 연결하여 실제 분석을 시작합니다...`, '🤖');
                     await delay(500);
-                    
+                   
                     try {
                         slideData = await generateSlideWithAPI(title, content);
                         updateProgress(70, '✨ 분석 완료', '내용 분석이 완료되어 슬라이드를 구성하고 있습니다...', '✨');
                         await delay(800);
                     } catch (apiError) {
                         console.error('API 오류:', apiError);
-                        
+                       
                         updateProgress(30, '🔄 자동 전환', 'API 문제로 스마트 모드로 전환합니다...', '🔄');
                         await delay(1000);
-                        
+                       
                         slideData = generateSmartSlides(title, content);
-                        
+                       
                         setTimeout(() => {
                             alert(`💡 ${selectedGPTModel} 응답이 지연되어 스마트 모드로 자동 전환했습니다.\n\n✅ 스마트 모드도 훌륭한 슬라이드를 제공합니다!`);
                         }, 2000);
@@ -2148,21 +2294,21 @@
                 } else {
                     updateProgress(20, '🧠 스마트 분석', '안정적인 슬라이드 분석 중...', '🧠');
                     await delay(800);
-                    
+                   
                     slideData = generateSmartSlides(title, content);
                 }
-                
+               
                 updateProgress(80, '🎬 최종 완성', '안정적인 렌더링을 준비하고 있습니다...', '✨');
                 createSlides(slideData);
                 await delay(500);
-                
+               
                 updateProgress(100, '🎉 완성!', '완벽한 슬라이드가 준비되었습니다!', '🎬');
                 await delay(800);
-                
+               
                 showProgressModal(false);
                 showResults();
                 showSuccessNotification();
-                
+               
             } catch (error) {
                 console.error('생성 오류:', error);
                 showProgressModal(false);
@@ -2227,16 +2373,16 @@ JSON 형식으로 응답해주세요:
 
             const data = await response.json();
             const content_text = data.choices[0].message.content;
-            
+           
             // JSON 추출
             let jsonText = content_text;
             const jsonMatch = content_text.match(/```(?:json)?\s*(\{[\s\S]*\})\s*```/);
             if (jsonMatch) {
                 jsonText = jsonMatch[1];
             }
-            
+           
             const result = JSON.parse(jsonText);
-            
+           
             if (result.slides && Array.isArray(result.slides)) {
                 // 15장 보장
                 while (result.slides.length < 15) {
@@ -2248,11 +2394,11 @@ JSON 형식으로 응답해주세요:
                         color: '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0')
                     });
                 }
-                
+               
                 if (result.slides.length > 15) {
                     result.slides = result.slides.slice(0, 15);
                 }
-                
+               
                 return result.slides;
             } else {
                 throw new Error('Invalid slide data');
@@ -2266,9 +2412,9 @@ JSON 형식으로 응답해주세요:
                 '#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57',
                 '#ff9ff3', '#54a0ff', '#5f27cd', '#00d2d3', '#ff9f43'
             ];
-            
+           
             const icons = ['🚀', '🏆', '🤖', '📚', '⚡', '💬', '🎯', '👑', '📖', '🧠', '📊', '🎁', '📍', '📅', '📞'];
-            
+           
             return [
                 { slideNumber: 1, icon: '🚀', title: title, subtitle: '프레젠테이션 시작', color: colors[0] },
                 { slideNumber: 2, icon: '🎯', title: '주요 목표', subtitle: '달성하고자 하는 목표', color: colors[1] },
@@ -2293,12 +2439,12 @@ JSON 형식으로 응답해주세요:
             slides = slideData;
             const container = document.getElementById('slideshowContainer');
             container.innerHTML = '';
-            
+           
             slideData.forEach((slide, index) => {
                 const slideElement = createDynamicSlideElement(slide, index);
                 container.appendChild(slideElement);
             });
-            
+           
             currentSlide = 0;
             showSlide(0);
         }
@@ -2308,92 +2454,92 @@ JSON 형식으로 응답해주세요:
             const slideDiv = document.createElement('div');
             slideDiv.className = 'slide';
             slideDiv.style.background = `linear-gradient(135deg, ${slide.color}, #764ba2)`;
-            
+           
             // 🚀 랜덤 슬라이드 애니메이션 추가
             const slideAnimation = getRandomSlideAnimation();
             slideDiv.classList.add(slideAnimation);
-            
-            // 🌈 랜덤 배경 효과 추가
+
+            // 🎨 랜덤 배경 효과 추가
             const backgroundEffect = getRandomBackgroundEffect();
             slideDiv.classList.add(backgroundEffect);
-            
+           
             // 안전한 텍스트 처리
             const safeTitle = String(slide.title || '').replace(/[<>]/g, '');
             const safeSubtitle = String(slide.subtitle || '').replace(/[<>]/g, '');
             const safeIcon = String(slide.icon || '🚀');
-            
+           
             // 🌟 파티클 시스템 div 생성 (랜덤 타입)
             const particleSystem = document.createElement('div');
             particleSystem.className = 'particle-system';
             addDynamicParticleEffect(particleSystem);
-            
+           
             // 슬라이드 콘텐츠 div 생성
             const slideContent = document.createElement('div');
             slideContent.className = 'slide-content';
-            
+           
             // 🎪 아이콘 div (랜덤 애니메이션)
             const iconDiv = document.createElement('div');
             const iconAnimation = getRandomIconAnimation();
             iconDiv.className = `slide-icon ${iconAnimation}`;
             iconDiv.textContent = safeIcon;
-            
+           
             // 🎭 제목 div (랜덤 글꼴, 크기, 그라데이션 효과)
             const titleDiv = document.createElement('div');
             const titleFont = getRandomFont();
             const titleSize = getSmartTextSize(safeTitle);
             const titleGradient = getRandomTextGradient();
-            
+           
             titleDiv.className = `slide-title ${titleFont} ${titleSize} ${titleGradient}`;
             titleDiv.textContent = safeTitle;
-            
+           
             // 🎨 부제목 div (다른 스타일)
             const subtitleDiv = document.createElement('div');
             if (safeSubtitle && safeSubtitle.trim()) {
                 const subtitleFont = getRandomFont();
                 const subtitleSize = getSmartTextSize(safeSubtitle);
-                
+               
                 subtitleDiv.className = `slide-subtitle ${subtitleFont} ${subtitleSize}`;
                 subtitleDiv.textContent = safeSubtitle;
             } else {
                 subtitleDiv.style.marginBottom = '40px';
             }
-            
+           
             // 요소들을 슬라이드 콘텐츠에 추가
             slideContent.appendChild(iconDiv);
             slideContent.appendChild(titleDiv);
             slideContent.appendChild(subtitleDiv);
-            
+           
             // 슬라이드에 파티클 시스템과 콘텐츠 추가
             slideDiv.appendChild(particleSystem);
             slideDiv.appendChild(slideContent);
-            
+           
             return slideDiv;
         }
 
         // 🌟 역동적 파티클 효과 (매번 다른 타입 조합)
         function addDynamicParticleEffect(particleSystem) {
             const particleCount = 15 + Math.floor(Math.random() * 20); // 15-35개 파티클
-            
+           
             for (let i = 0; i < particleCount; i++) {
                 const particle = document.createElement('div');
-                
+               
                 // 🎨 랜덤하게 파티클 타입 선택
                 const particleType = getRandomParticleType();
                 particle.className = `particle ${particleType}`;
-                
+               
                 // 랜덤 위치
                 particle.style.left = Math.random() * 100 + '%';
                 particle.style.top = Math.random() * 100 + '%';
-                
+               
                 // 랜덤 애니메이션 딜레이와 지속시간
                 particle.style.animationDelay = Math.random() * 3 + 's';
                 particle.style.animationDuration = (2 + Math.random() * 3) + 's';
-                
+               
                 // 일부 파티클에 특별 효과 추가
                 if (Math.random() > 0.7) {
                     particle.style.filter = `hue-rotate(${Math.random() * 360}deg)`;
                 }
-                
+               
                 particleSystem.appendChild(particle);
             }
         }
@@ -2408,7 +2554,7 @@ JSON 형식으로 응답해주세요:
                     slide.classList.remove('active');
                 }
             });
-            
+           
             currentSlide = index;
             updateSlideCounter();
         }
@@ -2437,7 +2583,7 @@ JSON 형식으로 응답해주세요:
         // 자동 재생
         function toggleAutoPlay() {
             const autoPlayBtn = document.getElementById('autoPlayBtn');
-            
+           
             if (isAutoPlaying) {
                 clearInterval(autoPlayInterval);
                 isAutoPlaying = false;
@@ -2458,7 +2604,7 @@ JSON 형식으로 응답해주세요:
             showSlide(0);
         }
 
-        // 영상 녹화 시작 (간단한 버전)
+        // 영상 녹화 시작 (기존 내용 그대로 유지)
         function startRecording() {
             alert('🎬 녹화 기능은 브라우저의 MediaRecorder API를 사용하여 구현할 수 있습니다.\n\n현재는 화면 캡처 도구나 OBS Studio 등을 사용하여 녹화해주세요.');
         }
@@ -2472,7 +2618,7 @@ JSON 형식으로 응답해주세요:
                 generatedAt: new Date().toISOString(),
                 mode: currentMode
             };
-            
+           
             const dataStr = JSON.stringify(slidesData, null, 2);
             const blob = new Blob([dataStr], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
@@ -2509,7 +2655,7 @@ JSON 형식으로 응답해주세요:
             notification.className = 'success-notification';
             notification.innerHTML = '🎉 AI 분석 완료! 완벽한 슬라이드가 생성되었습니다!';
             document.body.appendChild(notification);
-            
+           
             setTimeout(() => notification.classList.add('show'), 100);
             setTimeout(() => {
                 notification.classList.remove('show');
@@ -2527,7 +2673,7 @@ JSON 형식으로 응답해주세요:
         function copyMetadata() {
             const title = document.getElementById('titleInput').value.trim();
             const content = document.getElementById('contentInput').value.trim();
-            
+           
             const metadata = `📺 유튜브 쇼츠 최적화 정보
 
 🏷️ 제목:
@@ -2562,4 +2708,4 @@ ${content.split('\n').slice(0, 3).map(line => line.trim()).filter(line => line).
         selectMode('smart');
     </script>
 </body>
-</html>
+</html> 
