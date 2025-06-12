@@ -2376,6 +2376,7 @@
         </div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script>
         // 전역 변수
         let apiKey = '';
@@ -2975,7 +2976,7 @@ JSON 형식으로 응답해주세요:
             showSlide(0);
         }
 
-        // 🎬 영상 녹화 시스템 (슬라이드 직접 캡처)
+        // 🎬 완성된 프리미엄 슬라이드 영상 녹화 시스템
         let mediaRecorder = null;
         let recordedChunks = [];
         let isRecording = false;
@@ -2983,7 +2984,7 @@ JSON 형식으로 응답해주세요:
         let recordingContext = null;
         let canvasStream = null;
 
-        // 영상 녹화 시작 (슬라이드 컨테이너 직접 캡처)
+        // 영상 녹화 시작 (실제 프리미엄 슬라이드 캡처)
         async function startRecording() {
             if (slides.length === 0) {
                 alert('❌ 먼저 슬라이드를 생성해주세요!');
@@ -3006,7 +3007,7 @@ JSON 형식으로 응답해주세요:
                 // MediaRecorder 설정
                 const options = {
                     mimeType: 'video/webm;codecs=vp9',
-                    videoBitsPerSecond: 8000000 // 8Mbps 고품질
+                    videoBitsPerSecond: 12000000 // 12Mbps 초고화질
                 };
 
                 if (!MediaRecorder.isTypeSupported(options.mimeType)) {
@@ -3031,14 +3032,14 @@ JSON 형식으로 응답해주세요:
                 };
 
                 // 녹화 시작
-                mediaRecorder.start(1000); // 1초마다 데이터 청크 생성
+                mediaRecorder.start(100); // 0.1초마다 데이터 청크 생성 (더 부드러운 녹화)
                 isRecording = true;
 
                 // UI 업데이트
                 updateRecordingUI(true);
 
                 // 자동 슬라이드쇼 시작
-                await startAutoSlideshow();
+                await startPremiumSlideshow();
 
             } catch (error) {
                 console.error('녹화 시작 오류:', error);
@@ -3046,223 +3047,90 @@ JSON 형식으로 응답해주세요:
             }
         }
 
-        // 슬라이드를 캔버스에 그리기
-        async function captureSlideToCanvas(slideIndex) {
+        // 실제 프리미엄 슬라이드를 html2canvas로 캡처
+        async function captureRealSlideToCanvas(slideIndex) {
             if (!recordingCanvas || !recordingContext) return;
 
             try {
                 // 슬라이드 컨테이너 가져오기
                 const slideContainer = document.getElementById('slideshowContainer');
-                const currentSlide = slideContainer.querySelector('.slide.active');
                 
-                if (!currentSlide) return;
+                if (!slideContainer) return;
 
-                // 캔버스 클리어
+                // html2canvas로 실제 렌더링된 슬라이드 캡처
+                const canvas = await html2canvas(slideContainer, {
+                    width: 600,  // 원본 슬라이드 크기
+                    height: 1067, // 9:16 비율 유지
+                    scale: 3, // 3배 확대로 고화질
+                    useCORS: true,
+                    allowTaint: true,
+                    backgroundColor: null,
+                    removeContainer: false,
+                    imageTimeout: 0,
+                    logging: false
+                });
+
+                // 캡처된 이미지를 녹화 캔버스에 그리기
                 recordingContext.fillStyle = '#000000';
                 recordingContext.fillRect(0, 0, recordingCanvas.width, recordingCanvas.height);
-
-                // 슬라이드 배경 그라데이션 그리기
-                const slideData = slides[slideIndex];
-                if (slideData && slideData.color) {
-                    const gradient = recordingContext.createLinearGradient(0, 0, recordingCanvas.width, recordingCanvas.height);
-                    gradient.addColorStop(0, slideData.color);
-                    gradient.addColorStop(1, '#764ba2');
-                    recordingContext.fillStyle = gradient;
-                    recordingContext.fillRect(0, 0, recordingCanvas.width, recordingCanvas.height);
-                }
-
-                // 배경 효과 그리기 (간단한 패턴)
-                await drawBackgroundEffect(recordingContext, slideIndex);
-
-                // 파티클 효과 그리기
-                await drawParticleEffect(recordingContext, slideIndex);
-
-                // 텍스트 콘텐츠 그리기
-                await drawSlideContent(recordingContext, slideData, slideIndex);
+                
+                // 캡처된 슬라이드를 중앙에 맞춰서 그리기
+                const sourceWidth = canvas.width;
+                const sourceHeight = canvas.height;
+                const targetWidth = recordingCanvas.width;
+                const targetHeight = recordingCanvas.height;
+                
+                // 비율 유지하면서 캔버스에 맞추기
+                const scale = Math.min(targetWidth / sourceWidth, targetHeight / sourceHeight);
+                const scaledWidth = sourceWidth * scale;
+                const scaledHeight = sourceHeight * scale;
+                const x = (targetWidth - scaledWidth) / 2;
+                const y = (targetHeight - scaledHeight) / 2;
+                
+                recordingContext.drawImage(canvas, x, y, scaledWidth, scaledHeight);
 
             } catch (error) {
                 console.error('슬라이드 캡처 오류:', error);
-            }
-        }
-
-        // 배경 효과 그리기
-        async function drawBackgroundEffect(ctx, slideIndex) {
-            const effects = ['wave', 'cosmic', 'dots', 'lines'];
-            const effect = effects[slideIndex % effects.length];
-            
-            ctx.save();
-            ctx.globalAlpha = 0.1;
-            
-            switch (effect) {
-                case 'wave':
-                    // 웨이브 패턴
-                    ctx.strokeStyle = 'rgba(255,255,255,0.3)';
-                    ctx.lineWidth = 2;
-                    for (let i = 0; i < 10; i++) {
-                        ctx.beginPath();
-                        for (let x = 0; x < ctx.canvas.width; x += 10) {
-                            const y = Math.sin((x + i * 100) * 0.01) * 50 + ctx.canvas.height / 2;
-                            if (x === 0) ctx.moveTo(x, y);
-                            else ctx.lineTo(x, y);
-                        }
-                        ctx.stroke();
-                    }
-                    break;
-                    
-                case 'cosmic':
-                    // 코스믹 원들
-                    for (let i = 0; i < 20; i++) {
-                        const x = Math.random() * ctx.canvas.width;
-                        const y = Math.random() * ctx.canvas.height;
-                        const radius = Math.random() * 100 + 20;
-                        const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius);
-                        gradient.addColorStop(0, 'rgba(255,0,255,0.2)');
-                        gradient.addColorStop(1, 'transparent');
-                        ctx.fillStyle = gradient;
-                        ctx.beginPath();
-                        ctx.arc(x, y, radius, 0, Math.PI * 2);
-                        ctx.fill();
-                    }
-                    break;
-                    
-                case 'dots':
-                    // 도트 패턴
-                    ctx.fillStyle = 'rgba(255,255,255,0.1)';
-                    for (let x = 0; x < ctx.canvas.width; x += 50) {
-                        for (let y = 0; y < ctx.canvas.height; y += 50) {
-                            ctx.beginPath();
-                            ctx.arc(x, y, 2, 0, Math.PI * 2);
-                            ctx.fill();
-                        }
-                    }
-                    break;
-                    
-                case 'lines':
-                    // 라인 패턴
-                    ctx.strokeStyle = 'rgba(0,255,255,0.2)';
-                    ctx.lineWidth = 1;
-                    for (let i = 0; i < 20; i++) {
-                        ctx.beginPath();
-                        ctx.moveTo(Math.random() * ctx.canvas.width, 0);
-                        ctx.lineTo(Math.random() * ctx.canvas.width, ctx.canvas.height);
-                        ctx.stroke();
-                    }
-                    break;
-            }
-            
-            ctx.restore();
-        }
-
-        // 파티클 효과 그리기
-        async function drawParticleEffect(ctx, slideIndex) {
-            ctx.save();
-            ctx.globalAlpha = 0.7;
-            
-            // 랜덤 파티클들
-            for (let i = 0; i < 30; i++) {
-                const x = Math.random() * ctx.canvas.width;
-                const y = Math.random() * ctx.canvas.height;
-                const size = Math.random() * 8 + 2;
-                const hue = Math.random() * 360;
                 
-                ctx.fillStyle = `hsla(${hue}, 70%, 60%, 0.8)`;
-                ctx.beginPath();
-                ctx.arc(x, y, size, 0, Math.PI * 2);
-                ctx.fill();
+                // 오류 발생 시 기본 검은 화면
+                recordingContext.fillStyle = '#000000';
+                recordingContext.fillRect(0, 0, recordingCanvas.width, recordingCanvas.height);
                 
-                // 글로우 효과
-                ctx.shadowColor = ctx.fillStyle;
-                ctx.shadowBlur = 10;
-                ctx.fill();
-                ctx.shadowBlur = 0;
+                // 오류 메시지 표시
+                recordingContext.fillStyle = '#ffffff';
+                recordingContext.font = 'bold 48px Arial';
+                recordingContext.textAlign = 'center';
+                recordingContext.fillText('슬라이드 처리 중...', recordingCanvas.width / 2, recordingCanvas.height / 2);
             }
-            
-            ctx.restore();
         }
 
-        // 슬라이드 콘텐츠 그리기
-        async function drawSlideContent(ctx, slideData, slideIndex) {
-            if (!slideData) return;
-            
-            ctx.save();
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            
-            const centerX = ctx.canvas.width / 2;
-            const centerY = ctx.canvas.height / 2;
-            
-            // 아이콘 그리기
-            ctx.font = 'bold 200px Arial';
-            ctx.fillStyle = '#ffffff';
-            ctx.shadowColor = 'rgba(0,0,0,0.5)';
-            ctx.shadowBlur = 10;
-            ctx.fillText(slideData.icon || '🚀', centerX, centerY - 300);
-            
-            // 제목 그리기
-            const title = slideData.title || '';
-            const titleFontSize = Math.max(60, Math.min(120, 1200 / title.length));
-            ctx.font = `bold ${titleFontSize}px Arial`;
-            
-            // 그라데이션 텍스트 효과
-            const titleGradient = ctx.createLinearGradient(0, centerY - 100, ctx.canvas.width, centerY - 100);
-            titleGradient.addColorStop(0, '#ff6b6b');
-            titleGradient.addColorStop(0.3, '#4ecdc4');
-            titleGradient.addColorStop(0.6, '#45b7d1');
-            titleGradient.addColorStop(1, '#96ceb4');
-            
-            ctx.fillStyle = titleGradient;
-            ctx.shadowColor = 'rgba(0,0,0,0.7)';
-            ctx.shadowBlur = 15;
-            
-            // 긴 제목의 경우 두 줄로 나누기
-            if (title.length > 15) {
-                const words = title.split(' ');
-                const midPoint = Math.ceil(words.length / 2);
-                const firstLine = words.slice(0, midPoint).join(' ');
-                const secondLine = words.slice(midPoint).join(' ');
-                
-                ctx.fillText(firstLine, centerX, centerY - 50);
-                ctx.fillText(secondLine, centerX, centerY + 50);
-            } else {
-                ctx.fillText(title, centerX, centerY);
-            }
-            
-            // 부제목 그리기
-            if (slideData.subtitle) {
-                ctx.font = 'normal 60px Arial';
-                ctx.fillStyle = 'rgba(255,255,255,0.9)';
-                ctx.shadowBlur = 8;
-                ctx.fillText(slideData.subtitle, centerX, centerY + 200);
-            }
-            
-            ctx.restore();
-        }
-
-        // 자동 슬라이드쇼 실행 (캔버스 캡처 버전)
-        async function startAutoSlideshow() {
+        // 프리미엄 슬라이드쇼 실행 (실제 슬라이드 캡처)
+        async function startPremiumSlideshow() {
             // 첫 번째 슬라이드로 이동
             showSlide(0);
             
             // 녹화 진행 상황 모달 표시
             showRecordingProgress();
             
-            // 각 슬라이드를 3초씩 표시하며 캔버스에 캡처
+            // 각 슬라이드를 3초씩 표시하며 실제 슬라이드 캡처
             for (let i = 0; i < slides.length; i++) {
+                if (!isRecording) break;
+                
                 updateRecordingProgress(i + 1, slides.length, slides[i].title);
                 showSlide(i);
                 
-                // 슬라이드를 캔버스에 캡처
-                await captureSlideToCanvas(i);
+                // 슬라이드 전환 애니메이션 완료까지 대기
+                await delay(500);
                 
-                // 3초 동안 같은 프레임을 유지 (30fps * 3초 = 90프레임)
+                // 3초 동안 30fps로 같은 슬라이드를 캡처 (총 90프레임)
                 for (let frame = 0; frame < 90; frame++) {
                     if (!isRecording) break;
-                    await delay(33); // 약 30fps
                     
-                    // 애니메이션 효과를 위해 파티클 위치 조금씩 변경
-                    if (frame % 10 === 0) {
-                        await captureSlideToCanvas(i);
-                    }
+                    // 매 프레임마다 실제 슬라이드 캡처
+                    await captureRealSlideToCanvas(i);
+                    
+                    // 33ms 대기 (30fps)
+                    await delay(33);
                 }
                 
                 if (!isRecording) break;
@@ -3344,14 +3212,14 @@ JSON 형식으로 응답해주세요:
                 progressModal.innerHTML = `
                     <div class="progress-content">
                         <div class="progress-icon" style="color: #ff4444;">🎬</div>
-                        <h3 id="recordingProgressTitle">슬라이드 영상 녹화 중...</h3>
-                        <p id="recordingProgressDesc">고화질로 슬라이드를 자동 녹화하고 있습니다.</p>
+                        <h3 id="recordingProgressTitle">프리미엄 슬라이드 영상 녹화 중...</h3>
+                        <p id="recordingProgressDesc">완성된 슬라이드를 초고화질로 캡처하고 있습니다.</p>
                         <div class="progress-bar">
                             <div class="progress-fill" id="recordingProgressFill"></div>
                         </div>
                         <div id="recordingProgressText" style="font-size: 1.2em; font-weight: bold; color: #ff4444;">0 / ${slides.length}</div>
                         <div style="margin-top: 15px; font-size: 0.9em; opacity: 0.8;">
-                            📱 1080x1920 고해상도 • 🎯 30fps • 🚀 바이럴 최적화
+                            📱 1080x1920 초고화질 • 🎯 30fps • 🚀 12Mbps • ✨ 실제 슬라이드 캡처
                         </div>
                         <button class="btn btn-primary" onclick="stopRecording()" style="margin-top: 20px; background: linear-gradient(45deg, #ff0000, #ff4444);">⏹️ 녹화 중지</button>
                     </div>
@@ -3372,7 +3240,7 @@ JSON 형식으로 응답해주세요:
                 const percent = (current / total) * 100;
                 progressFill.style.width = percent + '%';
                 progressText.textContent = `${current} / ${total}`;
-                progressDesc.textContent = `현재 녹화 중: ${slideTitle}`;
+                progressDesc.textContent = `현재 캡처 중: ${slideTitle}`;
             }
         }
 
@@ -3398,23 +3266,26 @@ JSON 형식으로 응답해주세요:
             const notification = document.createElement('div');
             notification.className = 'success-notification';
             notification.innerHTML = `
-                <div style="font-size: 1.1em; font-weight: bold; margin-bottom: 8px;">
-                    🎬 고화질 영상 녹화 완료!
+                <div style="font-size: 1.2em; font-weight: bold; margin-bottom: 10px;">
+                    🎉 프리미엄 슬라이드 영상 완성!
                 </div>
-                <div style="font-size: 0.9em; opacity: 0.9;">
-                    📱 1080x1920 • 🎯 30fps • 📁 WebM 포맷
+                <div style="font-size: 0.95em; opacity: 0.95; line-height: 1.4;">
+                    ✨ 실제 렌더링된 슬라이드 캡처<br>
+                    📱 1080x1920 초고화질 • 🎯 30fps • 🚀 12Mbps
                 </div>
             `;
             notification.style.background = 'linear-gradient(135deg, #ff4444 0%, #ff6666 100%)';
-            notification.style.padding = '25px 35px';
-            notification.style.borderRadius = '20px';
+            notification.style.padding = '30px 40px';
+            notification.style.borderRadius = '25px';
+            notification.style.maxWidth = '400px';
+            notification.style.lineHeight = '1.5';
             document.body.appendChild(notification);
            
             setTimeout(() => notification.classList.add('show'), 100);
             setTimeout(() => {
                 notification.classList.remove('show');
                 setTimeout(() => notification.remove(), 500);
-            }, 5000);
+            }, 6000);
         }
 
         // 슬라이드 다운로드
