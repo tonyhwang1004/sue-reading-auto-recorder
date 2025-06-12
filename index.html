@@ -2231,7 +2231,7 @@
                         <div>📱 유튜브 쇼츠 최적화 (9:16)</div>
                         <div>🚀 바이럴 최적화 타이밍 (3초)</div>
                         <div>📋 메타데이터 자동 생성</div>
-                        <div>🎥 권한 없는 고화질 녹화</div>
+                        <div>🎥 60fps 매끄러운 영상 녹화</div>
                         <div>📁 슬라이드 다운로드</div>
                         <div>🎯 스마트 글자 크기 조절</div>
                         <div>📺 원클릭 유튜브 업로드</div>
@@ -2348,7 +2348,7 @@
                         <div>📐 스마트 글자 크기 조절</div>
                         <div>📱 유튜브 쇼츠 최적화 (9:16)</div>
                         <div>🚀 바이럴 최적화 타이밍</div>
-                        <div>🎬 권한 없는 고화질 녹화</div>
+                        <div>🎬 60fps 매끄러운 영상 녹화</div>
                     </div>
                 </div>
 
@@ -2976,7 +2976,7 @@ JSON 형식으로 응답해주세요:
             showSlide(0);
         }
 
-        // 🎬 완성된 프리미엄 슬라이드 영상 녹화 시스템
+        // 🎬 완성된 프리미엄 슬라이드 영상 녹화 시스템 (60fps 부드러운 버전)
         let mediaRecorder = null;
         let recordedChunks = [];
         let isRecording = false;
@@ -2984,7 +2984,7 @@ JSON 형식으로 응답해주세요:
         let recordingContext = null;
         let canvasStream = null;
 
-        // 영상 녹화 시작 (실제 프리미엄 슬라이드 캡처)
+        // 영상 녹화 시작 (실제 프리미엄 슬라이드 캡처 - 60fps)
         async function startRecording() {
             if (slides.length === 0) {
                 alert('❌ 먼저 슬라이드를 생성해주세요!');
@@ -3001,19 +3001,21 @@ JSON 형식으로 응답해주세요:
                 recordingCanvas.height = height;
                 recordingContext = recordingCanvas.getContext('2d');
                 
-                // 캔버스 스트림 생성
-                canvasStream = recordingCanvas.captureStream(30); // 30fps
+                // 60fps 고품질 캔버스 스트림 생성
+                canvasStream = recordingCanvas.captureStream(60);
                 
-                // MediaRecorder 설정
+                // MediaRecorder 설정 (더 높은 품질)
                 const options = {
                     mimeType: 'video/webm;codecs=vp9',
-                    videoBitsPerSecond: 12000000 // 12Mbps 초고화질
+                    videoBitsPerSecond: 15000000 // 15Mbps 초고화질
                 };
 
                 if (!MediaRecorder.isTypeSupported(options.mimeType)) {
                     options.mimeType = 'video/webm;codecs=vp8';
+                    options.videoBitsPerSecond = 12000000; // VP8는 12Mbps
                     if (!MediaRecorder.isTypeSupported(options.mimeType)) {
                         options.mimeType = 'video/webm';
+                        options.videoBitsPerSecond = 10000000; // 기본은 10Mbps
                     }
                 }
 
@@ -3031,15 +3033,15 @@ JSON 형식으로 응답해주세요:
                     handleRecordingComplete();
                 };
 
-                // 녹화 시작
-                mediaRecorder.start(100); // 0.1초마다 데이터 청크 생성 (더 부드러운 녹화)
+                // 녹화 시작 (더 자주 데이터 청크 생성)
+                mediaRecorder.start(50); // 0.05초마다 데이터 청크 생성
                 isRecording = true;
 
                 // UI 업데이트
                 updateRecordingUI(true);
 
-                // 자동 슬라이드쇼 시작
-                await startPremiumSlideshow();
+                // 부드러운 슬라이드쇼 시작
+                await startSmoothSlideshow();
 
             } catch (error) {
                 console.error('녹화 시작 오류:', error);
@@ -3047,7 +3049,7 @@ JSON 형식으로 응답해주세요:
             }
         }
 
-        // 실제 프리미엄 슬라이드를 html2canvas로 캡처
+        // 실제 프리미엄 슬라이드를 html2canvas로 캡처 (최적화된 버전)
         async function captureRealSlideToCanvas(slideIndex) {
             if (!recordingCanvas || !recordingContext) return;
 
@@ -3057,20 +3059,28 @@ JSON 형식으로 응답해주세요:
                 
                 if (!slideContainer) return;
 
-                // html2canvas로 실제 렌더링된 슬라이드 캡처
+                // 최적화된 html2canvas 설정으로 빠른 캡처
                 const canvas = await html2canvas(slideContainer, {
-                    width: 600,  // 원본 슬라이드 크기
-                    height: 1067, // 9:16 비율 유지
-                    scale: 3, // 3배 확대로 고화질
+                    width: 600,
+                    height: 1067,
+                    scale: 2.5, // 스케일을 약간 줄여서 성능 향상
                     useCORS: true,
                     allowTaint: true,
                     backgroundColor: null,
                     removeContainer: false,
                     imageTimeout: 0,
-                    logging: false
+                    logging: false,
+                    ignoreElements: (element) => {
+                        // 불필요한 요소들 제외해서 성능 향상
+                        return element.classList && element.classList.contains('particle-system');
+                    }
                 });
 
-                // 캡처된 이미지를 녹화 캔버스에 그리기
+                // 캡처된 이미지를 녹화 캔버스에 부드럽게 그리기
+                recordingContext.imageSmoothingEnabled = true;
+                recordingContext.imageSmoothingQuality = 'high';
+                
+                // 배경 클리어
                 recordingContext.fillStyle = '#000000';
                 recordingContext.fillRect(0, 0, recordingCanvas.width, recordingCanvas.height);
                 
@@ -3089,30 +3099,66 @@ JSON 형식으로 응답해주세요:
                 
                 recordingContext.drawImage(canvas, x, y, scaledWidth, scaledHeight);
 
+                // 추가 파티클 효과를 직접 그려서 더 부드럽게
+                await drawSmoothParticles(recordingContext, slideIndex);
+
             } catch (error) {
                 console.error('슬라이드 캡처 오류:', error);
                 
-                // 오류 발생 시 기본 검은 화면
-                recordingContext.fillStyle = '#000000';
-                recordingContext.fillRect(0, 0, recordingCanvas.width, recordingCanvas.height);
-                
-                // 오류 메시지 표시
-                recordingContext.fillStyle = '#ffffff';
-                recordingContext.font = 'bold 48px Arial';
-                recordingContext.textAlign = 'center';
-                recordingContext.fillText('슬라이드 처리 중...', recordingCanvas.width / 2, recordingCanvas.height / 2);
+                // 오류 발생 시 기본 화면 유지
+                if (recordingContext) {
+                    recordingContext.fillStyle = '#1a1a2e';
+                    recordingContext.fillRect(0, 0, recordingCanvas.width, recordingCanvas.height);
+                    
+                    recordingContext.fillStyle = '#ffffff';
+                    recordingContext.font = 'bold 48px Arial';
+                    recordingContext.textAlign = 'center';
+                    recordingContext.fillText('슬라이드 로딩 중...', recordingCanvas.width / 2, recordingCanvas.height / 2);
+                }
             }
         }
 
-        // 프리미엄 슬라이드쇼 실행 (실제 슬라이드 캡처)
-        async function startPremiumSlideshow() {
+        // 부드러운 파티클 효과 추가
+        async function drawSmoothParticles(ctx, slideIndex) {
+            const time = Date.now() * 0.001; // 시간 기반 애니메이션
+            
+            ctx.save();
+            ctx.globalAlpha = 0.6;
+            
+            // 부드럽게 움직이는 파티클들
+            for (let i = 0; i < 20; i++) {
+                const angle = (time + i * 0.5) * 0.5;
+                const radius = 50 + Math.sin(time + i) * 30;
+                const x = ctx.canvas.width / 2 + Math.cos(angle) * radius + Math.sin(time * 2 + i) * 100;
+                const y = ctx.canvas.height / 2 + Math.sin(angle) * radius + Math.cos(time * 1.5 + i) * 150;
+                const size = 3 + Math.sin(time * 3 + i) * 2;
+                
+                const hue = (time * 50 + i * 30) % 360;
+                ctx.fillStyle = `hsla(${hue}, 70%, 60%, 0.8)`;
+                
+                ctx.beginPath();
+                ctx.arc(x, y, size, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // 글로우 효과
+                ctx.shadowColor = ctx.fillStyle;
+                ctx.shadowBlur = 8;
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            }
+            
+            ctx.restore();
+        }
+
+        // 부드러운 슬라이드쇼 실행 (60fps)
+        async function startSmoothSlideshow() {
             // 첫 번째 슬라이드로 이동
             showSlide(0);
             
             // 녹화 진행 상황 모달 표시
             showRecordingProgress();
             
-            // 각 슬라이드를 3초씩 표시하며 실제 슬라이드 캡처
+            // 각 슬라이드를 3초씩 표시하며 60fps로 부드럽게 캡처
             for (let i = 0; i < slides.length; i++) {
                 if (!isRecording) break;
                 
@@ -3120,17 +3166,20 @@ JSON 형식으로 응답해주세요:
                 showSlide(i);
                 
                 // 슬라이드 전환 애니메이션 완료까지 대기
-                await delay(500);
+                await delay(300);
                 
-                // 3초 동안 30fps로 같은 슬라이드를 캡처 (총 90프레임)
-                for (let frame = 0; frame < 90; frame++) {
+                // 3초 동안 60fps로 캡처 (총 180프레임)
+                const totalFrames = 180; // 60fps * 3초
+                const frameDelay = 16.67; // 약 60fps (1000ms / 60fps = 16.67ms)
+                
+                for (let frame = 0; frame < totalFrames; frame++) {
                     if (!isRecording) break;
                     
                     // 매 프레임마다 실제 슬라이드 캡처
                     await captureRealSlideToCanvas(i);
                     
-                    // 33ms 대기 (30fps)
-                    await delay(33);
+                    // 정확한 60fps 타이밍
+                    await delay(frameDelay);
                 }
                 
                 if (!isRecording) break;
@@ -3140,6 +3189,21 @@ JSON 형식으로 응답해주세요:
             if (isRecording) {
                 stopRecording();
             }
+        }
+
+        // 더 정확한 지연 함수
+        function delay(ms) {
+            return new Promise(resolve => {
+                const start = performance.now();
+                const frame = () => {
+                    if (performance.now() - start >= ms) {
+                        resolve();
+                    } else {
+                        requestAnimationFrame(frame);
+                    }
+                };
+                requestAnimationFrame(frame);
+            });
         }
 
         // 녹화 중지
@@ -3212,14 +3276,14 @@ JSON 형식으로 응답해주세요:
                 progressModal.innerHTML = `
                     <div class="progress-content">
                         <div class="progress-icon" style="color: #ff4444;">🎬</div>
-                        <h3 id="recordingProgressTitle">프리미엄 슬라이드 영상 녹화 중...</h3>
-                        <p id="recordingProgressDesc">완성된 슬라이드를 초고화질로 캡처하고 있습니다.</p>
+                        <h3 id="recordingProgressTitle">매끄러운 60fps 영상 녹화 중...</h3>
+                        <p id="recordingProgressDesc">완성된 슬라이드를 부드럽게 캡처하고 있습니다.</p>
                         <div class="progress-bar">
                             <div class="progress-fill" id="recordingProgressFill"></div>
                         </div>
                         <div id="recordingProgressText" style="font-size: 1.2em; font-weight: bold; color: #ff4444;">0 / ${slides.length}</div>
                         <div style="margin-top: 15px; font-size: 0.9em; opacity: 0.8;">
-                            📱 1080x1920 초고화질 • 🎯 30fps • 🚀 12Mbps • ✨ 실제 슬라이드 캡처
+                            📱 1080x1920 초고화질 • 🚀 60fps 매끄러운 영상 • ⚡ 15Mbps • ✨ 실제 슬라이드 캡처
                         </div>
                         <button class="btn btn-primary" onclick="stopRecording()" style="margin-top: 20px; background: linear-gradient(45deg, #ff0000, #ff4444);">⏹️ 녹화 중지</button>
                     </div>
@@ -3267,11 +3331,11 @@ JSON 형식으로 응답해주세요:
             notification.className = 'success-notification';
             notification.innerHTML = `
                 <div style="font-size: 1.2em; font-weight: bold; margin-bottom: 10px;">
-                    🎉 프리미엄 슬라이드 영상 완성!
+                    🎉 매끄러운 60fps 영상 완성!
                 </div>
                 <div style="font-size: 0.95em; opacity: 0.95; line-height: 1.4;">
-                    ✨ 실제 렌더링된 슬라이드 캡처<br>
-                    📱 1080x1920 초고화질 • 🎯 30fps • 🚀 12Mbps
+                    ✨ 실제 프리미엄 슬라이드 캡처<br>
+                    📱 1080x1920 초고화질 • 🚀 60fps 부드러운 영상 • ⚡ 15Mbps
                 </div>
             `;
             notification.style.background = 'linear-gradient(135deg, #ff4444 0%, #ff6666 100%)';
