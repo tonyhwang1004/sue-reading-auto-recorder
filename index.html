@@ -2118,6 +2118,22 @@
             animation: recordingGlow 2s ease-in-out infinite;
         }
 
+        .recording-button.recording-active {
+            animation: recordingPulse 1s ease-in-out infinite;
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.8);
+        }
+
+        @keyframes recordingPulse {
+            0%, 100% { 
+                transform: scale(1); 
+                box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+            }
+            50% { 
+                transform: scale(1.05); 
+                box-shadow: 0 0 40px rgba(255, 0, 0, 0.9);
+            }
+        }
+
         /* 성공 알림 스타일 */
         .success-notification {
             position: fixed;
@@ -2215,9 +2231,11 @@
                         <div>📱 유튜브 쇼츠 최적화 (9:16)</div>
                         <div>🚀 바이럴 최적화 타이밍 (3초)</div>
                         <div>📋 메타데이터 자동 생성</div>
-                        <div>🎥 영상 녹화 가이드</div>
+                        <div>🎥 자동 영상 녹화 시스템</div>
                         <div>📁 슬라이드 다운로드</div>
                         <div>🎯 스마트 글자 크기 조절</div>
+                        <div>📺 원클릭 유튜브 업로드</div>
+                        <div>🔄 실시간 프리뷰</div>
                     </div>
                 </div>
 
@@ -2330,11 +2348,12 @@
                         <div>📐 스마트 글자 크기 조절</div>
                         <div>📱 유튜브 쇼츠 최적화 (9:16)</div>
                         <div>🚀 바이럴 최적화 타이밍</div>
+                        <div>🎬 자동 영상 녹화 시스템</div>
                     </div>
                 </div>
 
                 <div style="text-align: center; margin: 30px 0;">
-                    <button class="btn btn-primary recording-button" onclick="startRecording()" style="font-size: 1.4em; padding: 22px 45px; margin: 10px; background: linear-gradient(45deg, #ff4444, #ff6666);">🎬 완벽한 영상 녹화</button>
+                    <button class="btn btn-primary recording-button" onclick="handleRecordingClick()" style="font-size: 1.4em; padding: 22px 45px; margin: 10px; background: linear-gradient(45deg, #ff4444, #ff6666);">🎬 완벽한 영상 녹화</button>
                     <button class="btn btn-primary" onclick="openYouTubeUpload()" style="font-size: 1.4em; padding: 22px 45px; margin: 10px; background: linear-gradient(45deg, #ff0000, #ff4444);">📺 유튜브에 바로 업로드</button>
                     <button class="btn btn-primary" onclick="downloadSlides()">📁 슬라이드 다운로드</button>
                     <button class="btn btn-primary" onclick="restartSlideshow()">🔄 처음부터 재생</button>
@@ -2956,9 +2975,220 @@ JSON 형식으로 응답해주세요:
             showSlide(0);
         }
 
-        // 영상 녹화 시작 (기존 내용 그대로 유지)
-        function startRecording() {
-            alert('🎬 녹화 기능은 브라우저의 MediaRecorder API를 사용하여 구현할 수 있습니다.\n\n현재는 화면 캡처 도구나 OBS Studio 등을 사용하여 녹화해주세요.');
+        // 🎬 영상 녹화 시스템
+        let mediaRecorder = null;
+        let recordedChunks = [];
+        let isRecording = false;
+        let recordingProgress = null;
+
+        // 영상 녹화 시작
+        async function startRecording() {
+            if (slides.length === 0) {
+                alert('❌ 먼저 슬라이드를 생성해주세요!');
+                return;
+            }
+
+            try {
+                // 화면 캡처 권한 요청
+                const stream = await navigator.mediaDevices.getDisplayMedia({
+                    video: {
+                        mediaSource: 'screen',
+                        width: { ideal: 1080 },
+                        height: { ideal: 1920 },
+                        frameRate: { ideal: 30 }
+                    },
+                    audio: false
+                });
+
+                // MediaRecorder 설정
+                const options = {
+                    mimeType: 'video/webm;codecs=vp9',
+                    videoBitsPerSecond: 8000000 // 8Mbps 고품질
+                };
+
+                if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+                    options.mimeType = 'video/webm;codecs=vp8';
+                }
+
+                mediaRecorder = new MediaRecorder(stream, options);
+                recordedChunks = [];
+
+                // 녹화 이벤트 처리
+                mediaRecorder.ondataavailable = (event) => {
+                    if (event.data.size > 0) {
+                        recordedChunks.push(event.data);
+                    }
+                };
+
+                mediaRecorder.onstop = () => {
+                    handleRecordingComplete();
+                };
+
+                // 녹화 시작
+                mediaRecorder.start(1000); // 1초마다 데이터 청크 생성
+                isRecording = true;
+
+                // UI 업데이트
+                updateRecordingUI(true);
+
+                // 자동 슬라이드쇼 시작
+                await startAutoSlideshow();
+
+            } catch (error) {
+                console.error('녹화 시작 오류:', error);
+                
+                if (error.name === 'NotAllowedError') {
+                    alert('❌ 화면 녹화 권한이 거부되었습니다.\n\n브라우저에서 화면 공유를 허용해주세요.');
+                } else if (error.name === 'NotSupportedError') {
+                    alert('❌ 이 브라우저는 화면 녹화를 지원하지 않습니다.\n\n최신 Chrome, Firefox, Edge를 사용해주세요.');
+                } else {
+                    alert(`❌ 녹화 시작에 실패했습니다: ${error.message}`);
+                }
+            }
+        }
+
+        // 자동 슬라이드쇼 실행
+        async function startAutoSlideshow() {
+            // 첫 번째 슬라이드로 이동
+            showSlide(0);
+            
+            // 녹화 진행 상황 모달 표시
+            showRecordingProgress();
+            
+            // 각 슬라이드를 3초씩 표시
+            for (let i = 0; i < slides.length; i++) {
+                updateRecordingProgress(i + 1, slides.length, slides[i].title);
+                showSlide(i);
+                
+                // 3초 대기 (바이럴 최적화 타이밍)
+                await delay(3000);
+            }
+            
+            // 녹화 완료
+            stopRecording();
+        }
+
+        // 녹화 중지
+        function stopRecording() {
+            if (mediaRecorder && isRecording) {
+                mediaRecorder.stop();
+                isRecording = false;
+                
+                // 스트림 중지
+                mediaRecorder.stream.getTracks().forEach(track => track.stop());
+                
+                updateRecordingUI(false);
+                hideRecordingProgress();
+            }
+        }
+
+        // 녹화 완료 처리
+        function handleRecordingComplete() {
+            const blob = new Blob(recordedChunks, { type: 'video/webm' });
+            const url = URL.createObjectURL(blob);
+            
+            // 다운로드 링크 생성
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `slide-video-${Date.now()}.webm`;
+            a.style.display = 'none';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            
+            // 메모리 정리
+            URL.revokeObjectURL(url);
+            
+            // 성공 메시지
+            showVideoCompleteNotification();
+        }
+
+        // 녹화 UI 업데이트
+        function updateRecordingUI(recording) {
+            const recordBtn = document.querySelector('.recording-button');
+            if (recordBtn) {
+                if (recording) {
+                    recordBtn.innerHTML = '⏹️ 녹화 중지';
+                    recordBtn.style.background = 'linear-gradient(45deg, #ff0000, #ff4444)';
+                    recordBtn.classList.add('recording-active');
+                } else {
+                    recordBtn.innerHTML = '🎬 완벽한 영상 녹화';
+                    recordBtn.style.background = 'linear-gradient(45deg, #ff4444, #ff6666)';
+                    recordBtn.classList.remove('recording-active');
+                }
+            }
+        }
+
+        // 녹화 진행 상황 표시
+        function showRecordingProgress() {
+            let progressModal = document.getElementById('recordingProgressModal');
+            
+            if (!progressModal) {
+                progressModal = document.createElement('div');
+                progressModal.id = 'recordingProgressModal';
+                progressModal.className = 'progress-modal';
+                progressModal.innerHTML = `
+                    <div class="progress-content">
+                        <div class="progress-icon" style="color: #ff4444;">🎬</div>
+                        <h3 id="recordingProgressTitle">영상 녹화 중...</h3>
+                        <p id="recordingProgressDesc">자동으로 슬라이드를 넘기며 녹화하고 있습니다.</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="recordingProgressFill"></div>
+                        </div>
+                        <div id="recordingProgressText" style="font-size: 1.2em; font-weight: bold; color: #ff4444;">0 / ${slides.length}</div>
+                        <button class="btn btn-primary" onclick="stopRecording()" style="margin-top: 20px; background: linear-gradient(45deg, #ff0000, #ff4444);">⏹️ 녹화 중지</button>
+                    </div>
+                `;
+                document.body.appendChild(progressModal);
+            }
+            
+            progressModal.classList.add('show');
+        }
+
+        // 녹화 진행 상황 업데이트
+        function updateRecordingProgress(current, total, slideTitle) {
+            const progressFill = document.getElementById('recordingProgressFill');
+            const progressText = document.getElementById('recordingProgressText');
+            const progressDesc = document.getElementById('recordingProgressDesc');
+            
+            if (progressFill && progressText && progressDesc) {
+                const percent = (current / total) * 100;
+                progressFill.style.width = percent + '%';
+                progressText.textContent = `${current} / ${total}`;
+                progressDesc.textContent = `현재 슬라이드: ${slideTitle}`;
+            }
+        }
+
+        // 녹화 진행 상황 숨기기
+        function hideRecordingProgress() {
+            const progressModal = document.getElementById('recordingProgressModal');
+            if (progressModal) {
+                progressModal.classList.remove('show');
+            }
+        }
+
+        // 녹화 버튼 클릭 핸들러
+        function handleRecordingClick() {
+            if (isRecording) {
+                stopRecording();
+            } else {
+                startRecording();
+            }
+        }
+
+        // 영상 완성 알림
+        function showVideoCompleteNotification() {
+            const notification = document.createElement('div');
+            notification.className = 'success-notification';
+            notification.innerHTML = '🎬 영상 녹화 완료! 파일이 다운로드되었습니다!';
+            notification.style.background = 'linear-gradient(135deg, #ff4444 0%, #ff6666 100%)';
+            document.body.appendChild(notification);
+           
+            setTimeout(() => notification.classList.add('show'), 100);
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => notification.remove(), 500);
+            }, 4000);
         }
 
         // 슬라이드 다운로드
