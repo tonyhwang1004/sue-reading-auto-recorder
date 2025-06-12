@@ -607,7 +607,7 @@
             overflow: hidden;
         }
 
-        /* 🎨 7가지 파티클 효과 */
+        /* 🎨 12가지 파티클 효과 */
         .particle {
             position: absolute;
             border-radius: 50%;
@@ -667,6 +667,46 @@
             background: linear-gradient(to bottom, rgba(255,255,0,1), rgba(255,200,0,0.5));
             clip-path: polygon(0% 0%, 100% 20%, 30% 50%, 100% 100%, 0% 80%, 70% 50%);
             animation: particleLightning 1.5s ease-in-out infinite;
+        }
+
+        .particle-spiral {
+            width: 4px;
+            height: 4px;
+            background: radial-gradient(circle, rgba(255,0,255,0.8), rgba(128,0,255,0.4));
+            border-radius: 50%;
+            animation: particleSpiral 3.5s ease-in-out infinite;
+        }
+
+        .particle-magic {
+            width: 6px;
+            height: 6px;
+            background: conic-gradient(rgba(255,255,255,1), rgba(255,0,255,1), rgba(0,255,255,1), rgba(255,255,0,1), rgba(255,255,255,1));
+            border-radius: 50%;
+            animation: particleMagic 2.8s ease-in-out infinite;
+        }
+
+        .particle-rainbow {
+            width: 8px;
+            height: 2px;
+            background: linear-gradient(90deg, #ff0000, #ff8000, #ffff00, #80ff00, #00ff00, #00ff80, #00ffff, #0080ff);
+            border-radius: 20px;
+            animation: particleRainbow 3.2s ease-in-out infinite;
+        }
+
+        .particle-comet {
+            width: 3px;
+            height: 8px;
+            background: linear-gradient(to bottom, rgba(255,255,255,1), rgba(0,150,255,0.8), transparent);
+            border-radius: 50%;
+            animation: particleComet 2.5s linear infinite;
+        }
+
+        .particle-snowflake {
+            width: 6px;
+            height: 6px;
+            background: rgba(255,255,255,0.9);
+            clip-path: polygon(50% 0%, 38% 25%, 0% 38%, 25% 50%, 0% 62%, 38% 75%, 50% 100%, 62% 75%, 100% 62%, 75% 50%, 100% 38%, 62% 25%);
+            animation: particleSnowflake 4s ease-in-out infinite;
         }
 
         @keyframes particleFloat {
@@ -758,6 +798,95 @@
                 transform: scale(1.3) translateY(-5px);
                 opacity: 0.8;
                 filter: brightness(2);
+            }
+        }
+
+        @keyframes particleSpiral {
+            0% {
+                transform: rotate(0deg) translateX(0px) scale(1);
+                opacity: 0.8;
+            }
+            50% {
+                transform: rotate(180deg) translateX(20px) scale(1.2);
+                opacity: 1;
+            }
+            100% {
+                transform: rotate(360deg) translateX(0px) scale(1);
+                opacity: 0.8;
+            }
+        }
+
+        @keyframes particleMagic {
+            0%, 100% {
+                transform: rotate(0deg) scale(1);
+                opacity: 0.9;
+                filter: hue-rotate(0deg);
+            }
+            25% {
+                transform: rotate(90deg) scale(1.3);
+                opacity: 1;
+                filter: hue-rotate(90deg);
+            }
+            50% {
+                transform: rotate(180deg) scale(0.8);
+                opacity: 0.7;
+                filter: hue-rotate(180deg);
+            }
+            75% {
+                transform: rotate(270deg) scale(1.1);
+                opacity: 1;
+                filter: hue-rotate(270deg);
+            }
+        }
+
+        @keyframes particleRainbow {
+            0% {
+                transform: translateX(-100px) rotate(0deg);
+                opacity: 0;
+            }
+            20% {
+                opacity: 1;
+            }
+            80% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateX(100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes particleComet {
+            0% {
+                transform: translateY(100px) translateX(-50px) rotate(45deg);
+                opacity: 0;
+            }
+            20% {
+                opacity: 1;
+            }
+            80% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) translateX(50px) rotate(45deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes particleSnowflake {
+            0% {
+                transform: translateY(-20px) rotate(0deg) scale(0.8);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100px) rotate(360deg) scale(1.2);
+                opacity: 0;
             }
         }
 
@@ -968,7 +1097,7 @@
             }
         }
 
-        /* 🎨 20가지 한국어 글꼴 + 6가지 그라데이션 텍스트 효과 */
+        /* 🎨 20가지 한국어 글꼴 + 6가지 그라데이션 텍스트 효과 + 10가지 배경 효과 */
         .slide-title {
             margin-bottom: 15px;
             text-shadow: 2px 2px 8px rgba(0,0,0,0.7);
@@ -1188,6 +1317,207 @@
         @keyframes neonShift {
             0%, 100% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
+        }
+
+        /* 🌈 10가지 혁신적 배경 효과 */
+        .bg-wave::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+            animation: waveMove 3s ease-in-out infinite;
+            z-index: 1;
+        }
+
+        .bg-geometric::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                conic-gradient(at 20% 50%, transparent 0deg, rgba(255,255,255,0.1) 60deg, transparent 120deg),
+                conic-gradient(at 80% 50%, transparent 0deg, rgba(255,255,255,0.1) 60deg, transparent 120deg);
+            animation: geometricRotate 8s linear infinite;
+            z-index: 1;
+        }
+
+        .bg-cosmic::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 30% 40%, rgba(255,0,150,0.3) 0%, transparent 50%),
+                radial-gradient(circle at 70% 60%, rgba(0,255,255,0.3) 0%, transparent 50%),
+                radial-gradient(circle at 50% 20%, rgba(255,255,0,0.2) 0%, transparent 30%);
+            animation: cosmicPulse 6s ease-in-out infinite;
+            z-index: 1;
+        }
+
+        .bg-aurora::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, rgba(0,255,100,0.3), rgba(0,150,255,0.3), rgba(255,0,150,0.3), rgba(255,255,0,0.3));
+            background-size: 400% 100%;
+            animation: auroraFlow 5s ease-in-out infinite;
+            z-index: 1;
+        }
+
+        .bg-matrix::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                linear-gradient(90deg, rgba(0,255,0,0.1) 1px, transparent 1px),
+                linear-gradient(180deg, rgba(0,255,0,0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+            animation: matrixScroll 4s linear infinite;
+            z-index: 1;
+        }
+
+        .bg-plasma::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(ellipse at center, rgba(255,0,255,0.4) 0%, transparent 70%),
+                radial-gradient(ellipse at 30% 30%, rgba(0,255,255,0.4) 0%, transparent 70%),
+                radial-gradient(ellipse at 70% 70%, rgba(255,255,0,0.4) 0%, transparent 70%);
+            animation: plasmaMove 7s ease-in-out infinite;
+            z-index: 1;
+        }
+
+        .bg-crystal::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                conic-gradient(from 0deg at 50% 50%, rgba(255,255,255,0.2) 0deg, transparent 60deg, rgba(255,255,255,0.1) 120deg, transparent 180deg);
+            animation: crystalRotate 10s linear infinite;
+            z-index: 1;
+        }
+
+        .bg-neural::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 25% 25%, rgba(0,150,255,0.3) 2px, transparent 2px),
+                radial-gradient(circle at 75% 75%, rgba(255,150,0,0.3) 2px, transparent 2px),
+                radial-gradient(circle at 25% 75%, rgba(150,255,0,0.3) 2px, transparent 2px),
+                radial-gradient(circle at 75% 25%, rgba(255,0,150,0.3) 2px, transparent 2px);
+            background-size: 50px 50px;
+            animation: neuralPulse 4s ease-in-out infinite;
+            z-index: 1;
+        }
+
+        .bg-electric::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                linear-gradient(45deg, rgba(255,255,0,0.3) 25%, transparent 25%, transparent 75%, rgba(255,255,0,0.3) 75%),
+                linear-gradient(-45deg, rgba(0,255,255,0.3) 25%, transparent 25%, transparent 75%, rgba(0,255,255,0.3) 75%);
+            background-size: 30px 30px;
+            animation: electricFlow 3s linear infinite;
+            z-index: 1;
+        }
+
+        .bg-quantum::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                conic-gradient(from 0deg at 20% 20%, rgba(255,0,255,0.4) 0deg, transparent 90deg),
+                conic-gradient(from 90deg at 80% 80%, rgba(0,255,255,0.4) 0deg, transparent 90deg),
+                conic-gradient(from 180deg at 20% 80%, rgba(255,255,0,0.4) 0deg, transparent 90deg),
+                conic-gradient(from 270deg at 80% 20%, rgba(255,150,0,0.4) 0deg, transparent 90deg);
+            animation: quantumShift 6s ease-in-out infinite;
+            z-index: 1;
+        }
+
+        /* 배경 효과 애니메이션 */
+        @keyframes waveMove {
+            0%, 100% { transform: translateX(-100%); }
+            50% { transform: translateX(100%); }
+        }
+
+        @keyframes geometricRotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes cosmicPulse {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.2); opacity: 1; }
+        }
+
+        @keyframes auroraFlow {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        @keyframes matrixScroll {
+            from { transform: translateY(-20px); }
+            to { transform: translateY(20px); }
+        }
+
+        @keyframes plasmaMove {
+            0%, 100% { transform: translate(0%, 0%) scale(1); }
+            25% { transform: translate(10%, 10%) scale(1.1); }
+            50% { transform: translate(-5%, 15%) scale(0.9); }
+            75% { transform: translate(-10%, -5%) scale(1.05); }
+        }
+
+        @keyframes crystalRotate {
+            from { transform: rotate(0deg) scale(1); }
+            to { transform: rotate(360deg) scale(1); }
+        }
+
+        @keyframes neuralPulse {
+            0%, 100% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.1); }
+        }
+
+        @keyframes electricFlow {
+            from { background-position: 0 0, 0 0; }
+            to { background-position: 30px 30px, -30px -30px; }
+        }
+
+        @keyframes quantumShift {
+            0%, 100% { transform: rotate(0deg) scale(1); filter: hue-rotate(0deg); }
+            25% { transform: rotate(90deg) scale(1.1); filter: hue-rotate(90deg); }
+            50% { transform: rotate(180deg) scale(0.9); filter: hue-rotate(180deg); }
+            75% { transform: rotate(270deg) scale(1.05); filter: hue-rotate(270deg); }
         }
 
         .slide-subtitle {
@@ -1528,11 +1858,13 @@
                         <div>🎭 매번 다른 20가지 글꼴</div>
                         <div>⚡ 12가지 역동적 애니메이션</div>
                         <div>🎪 10가지 아이콘 애니메이션</div>
-                        <div>🌟 7가지 파티클 효과</div>
+                        <div>🌟 12가지 파티클 효과</div>
                         <div>🌈 6가지 그라데이션 텍스트</div>
+                        <div>🎨 10가지 배경 효과</div>
                         <div>📐 스마트 글자 크기 조절</div>
                         <div>📱 유튜브 쇼츠 최적화 (9:16)</div>
                         <div>🚀 바이럴 최적화 타이밍</div>
+                        <div>✨ 매번 완전히 다른 스타일</div>
                     </div>
                 </div>
 
@@ -1601,7 +1933,23 @@
 
         const PARTICLE_TYPES = [
             'particle-float', 'particle-spark', 'particle-bubble', 'particle-star',
-            'particle-diamond', 'particle-heart', 'particle-lightning'
+            'particle-diamond', 'particle-heart', 'particle-lightning', 'particle-spiral',
+            'particle-magic', 'particle-rainbow', 'particle-comet', 'particle-snowflake'
+        ];
+
+        const BACKGROUND_EFFECTS = [
+            'bg-wave', 'bg-geometric', 'bg-cosmic', 'bg-aurora', 'bg-matrix',
+            'bg-plasma', 'bg-crystal', 'bg-neural', 'bg-electric', 'bg-quantum'
+        ];
+
+        const SLIDE_FILTERS = [
+            'filter-glow', 'filter-crystal', 'filter-neon', 'filter-vintage',
+            'filter-hologram', 'filter-mirror', 'filter-frost', 'filter-fire'
+        ];
+
+        const ADVANCED_ANIMATIONS = [
+            'anim-morph', 'anim-glitch', 'anim-portal', 'anim-quantum',
+            'anim-hologram', 'anim-dimension', 'anim-time-warp', 'anim-cosmic'
         ];
 
         // 🎨 랜덤 스타일 선택 함수들
@@ -1627,6 +1975,18 @@
 
         function getRandomParticleType() {
             return PARTICLE_TYPES[Math.floor(Math.random() * PARTICLE_TYPES.length)];
+        }
+
+        function getRandomBackgroundEffect() {
+            return BACKGROUND_EFFECTS[Math.floor(Math.random() * BACKGROUND_EFFECTS.length)];
+        }
+
+        function getRandomSlideFilter() {
+            return SLIDE_FILTERS[Math.floor(Math.random() * SLIDE_FILTERS.length)];
+        }
+
+        function getRandomAdvancedAnimation() {
+            return ADVANCED_ANIMATIONS[Math.floor(Math.random() * ADVANCED_ANIMATIONS.length)];
         }
 
         // 🚀 스마트한 크기 선택 (글자 길이에 따라 자동 최적화)
@@ -1952,6 +2312,10 @@ JSON 형식으로 응답해주세요:
             // 🚀 랜덤 슬라이드 애니메이션 추가
             const slideAnimation = getRandomSlideAnimation();
             slideDiv.classList.add(slideAnimation);
+            
+            // 🌈 랜덤 배경 효과 추가
+            const backgroundEffect = getRandomBackgroundEffect();
+            slideDiv.classList.add(backgroundEffect);
             
             // 안전한 텍스트 처리
             const safeTitle = String(slide.title || '').replace(/[<>]/g, '');
