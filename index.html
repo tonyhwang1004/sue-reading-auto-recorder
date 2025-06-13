@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎬 완벽한 슬라이드 영상 생성기 Ultimate V2.1</title>
+    <title>🎬 완벽한 슬라이드 영상 생성기 Ultimate V2.2</title>
     <style>
         * {
             margin: 0;
@@ -129,6 +129,7 @@
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255,255,255,0.2);
             transition: all 0.3s ease;
+            position: relative;
         }
 
         .feature-card:hover {
@@ -339,25 +340,6 @@
             transition: all 0.5s ease;
         }
 
-        .preview-slide .slide-icon {
-            font-size: 2.5em;
-            margin-bottom: 15px;
-            animation: iconFloat 2s ease-in-out infinite;
-        }
-
-        .preview-slide .slide-title {
-            font-size: 1.2em;
-            font-weight: 900;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 8px rgba(0,0,0,0.7);
-        }
-
-        .preview-slide .slide-subtitle {
-            font-size: 0.9em;
-            opacity: 0.9;
-            text-shadow: 1px 1px 4px rgba(0,0,0,0.7);
-        }
-
         /* 입력 필드 */
         .input-group {
             margin: 25px 0;
@@ -470,142 +452,6 @@
             transform: none;
         }
 
-        /* 슬라이드 편집기 */
-        .slide-editor {
-            background: rgba(0,0,0,0.3);
-            border-radius: 20px;
-            padding: 30px;
-            margin: 30px 0;
-            border: 2px solid rgba(255,255,255,0.2);
-        }
-
-        .slide-list {
-            display: grid;
-            gap: 15px;
-            max-height: 600px;
-            overflow-y: auto;
-            padding-right: 10px;
-        }
-
-        .slide-item {
-            background: rgba(255,255,255,0.1);
-            border: 2px solid rgba(255,255,255,0.2);
-            border-radius: 15px;
-            padding: 20px;
-            cursor: move;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .slide-item:hover {
-            transform: translateX(5px);
-            border-color: #4ecdc4;
-        }
-
-        .slide-item.dragging {
-            opacity: 0.5;
-            transform: rotate(5deg);
-        }
-
-        .slide-item-header {
-            display: flex;
-            align-items: center;
-            justify-content: between;
-            margin-bottom: 15px;
-        }
-
-        .slide-number {
-            background: #4ecdc4;
-            color: white;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            margin-right: 15px;
-        }
-
-        .slide-controls {
-            display: flex;
-            gap: 10px;
-            margin-left: auto;
-        }
-
-        .slide-control-btn {
-            background: rgba(255,255,255,0.2);
-            border: none;
-            color: white;
-            padding: 8px 12px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 0.9em;
-        }
-
-        .slide-control-btn:hover {
-            background: rgba(255,255,255,0.3);
-            transform: scale(1.1);
-        }
-
-        .slide-content-editor {
-            display: grid;
-            grid-template-columns: auto 1fr auto;
-            gap: 15px;
-            align-items: center;
-        }
-
-        .slide-icon-picker {
-            font-size: 2em;
-            cursor: pointer;
-            padding: 10px;
-            border-radius: 10px;
-            border: 2px solid transparent;
-            transition: all 0.3s ease;
-        }
-
-        .slide-icon-picker:hover {
-            border-color: #4ecdc4;
-            background: rgba(78, 205, 196, 0.1);
-        }
-
-        .slide-text-inputs {
-            display: grid;
-            gap: 10px;
-        }
-
-        .slide-mini-input {
-            background: rgba(255,255,255,0.1);
-            border: 1px solid rgba(255,255,255,0.3);
-            border-radius: 8px;
-            padding: 10px 15px;
-            color: white;
-            font-size: 1em;
-            transition: all 0.3s ease;
-        }
-
-        .slide-mini-input:focus {
-            outline: none;
-            border-color: #4ecdc4;
-            background: rgba(255,255,255,0.15);
-        }
-
-        .color-picker {
-            width: 50px;
-            height: 50px;
-            border: none;
-            border-radius: 50%;
-            cursor: pointer;
-            overflow: hidden;
-            transition: all 0.3s ease;
-        }
-
-        .color-picker:hover {
-            transform: scale(1.1);
-            box-shadow: 0 0 20px rgba(255,255,255,0.3);
-        }
-
         /* 애니메이션 선택기 */
         .animation-selector {
             display: grid;
@@ -673,96 +519,11 @@
             box-shadow: 0 0 10px rgba(78, 205, 196, 0.5);
         }
 
-        .timing-slider::-moz-range-thumb {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: #4ecdc4;
-            cursor: pointer;
-            border: none;
-            box-shadow: 0 0 10px rgba(78, 205, 196, 0.5);
-        }
-
         .timing-display {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-top: 10px;
-        }
-
-        /* 이모지 카테고리 */
-        .emoji-categories {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 20px;
-            justify-content: center;
-        }
-
-        .emoji-category-btn {
-            background: rgba(255,255,255,0.1);
-            border: 2px solid rgba(255,255,255,0.3);
-            color: white;
-            padding: 8px 15px;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 0.9em;
-        }
-
-        .emoji-category-btn.active {
-            background: rgba(78, 205, 196, 0.3);
-            border-color: #4ecdc4;
-        }
-
-        .emoji-category-btn:hover {
-            background: rgba(255,255,255,0.2);
-        }
-
-        /* 전체화면 모드 */
-        .fullscreen-btn {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: rgba(0,0,0,0.7);
-            color: white;
-            border: none;
-            padding: 15px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 1.2em;
-            z-index: 1000;
-            transition: all 0.3s ease;
-            display: none;
-        }
-
-        .fullscreen-btn:hover {
-            background: rgba(0,0,0,0.9);
-            transform: scale(1.1);
-        }
-
-        .fullscreen-active .fullscreen-btn {
-            display: block;
-        }
-
-        .fullscreen-active {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: #000;
-            z-index: 999;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .fullscreen-active .slideshow-container {
-            max-width: none;
-            width: 90vmin;
-            height: 90vmin;
-            max-height: 90vh;
         }
 
         /* 슬라이드쇼 컨테이너 */
@@ -795,88 +556,6 @@
             align-items: center;
             text-align: center;
             padding: 40px 30px;
-        }
-
-        /* 애니메이션 효과들 */
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px) scale(0.98);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @keyframes slideLeft {
-            from { transform: translateX(100%); }
-            to { transform: translateX(0); }
-        }
-
-        @keyframes slideRight {
-            from { transform: translateX(-100%); }
-            to { transform: translateX(0); }
-        }
-
-        @keyframes zoomIn {
-            from { transform: scale(0.8); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
-
-        @keyframes rotateIn {
-            from { transform: rotate(-10deg) scale(0.8); opacity: 0; }
-            to { transform: rotate(0deg) scale(1); opacity: 1; }
-        }
-
-        @keyframes bounceIn {
-            0% { transform: scale(0.3); opacity: 0; }
-            50% { transform: scale(1.1); }
-            70% { transform: scale(0.9); }
-            100% { transform: scale(1); opacity: 1; }
-        }
-
-        .slide.active.anim-slide { animation: slideIn 0.8s ease; }
-        .slide.active.anim-fade { animation: fadeIn 0.6s ease; }
-        .slide.active.anim-slideLeft { animation: slideLeft 0.7s ease; }
-        .slide.active.anim-slideRight { animation: slideRight 0.7s ease; }
-        .slide.active.anim-zoom { animation: zoomIn 0.8s ease; }
-        .slide.active.anim-rotate { animation: rotateIn 0.9s ease; }
-        .slide.active.anim-bounce { animation: bounceIn 1s ease; }
-
-        /* 파티클 시스템 */
-        .particle-system {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-            pointer-events: none;
-            overflow: hidden;
-        }
-
-        .particle {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background: rgba(255,255,255,0.7);
-            border-radius: 50%;
-            animation: particleFloat 3s ease-in-out infinite;
-        }
-
-        @keyframes particleFloat {
-            0%, 100% {
-                transform: translateY(0) translateX(0) scale(1);
-                opacity: 0.7;
-            }
-            50% {
-                transform: translateY(-20px) translateX(10px) scale(1.2);
-                opacity: 1;
-            }
         }
 
         .slide-content {
@@ -962,53 +641,56 @@
             border: 2px solid rgba(78, 205, 196, 0.3);
         }
 
-        /* 아이콘 선택 모달 */
-        .icon-selector-modal {
+        /* 녹화 상태 표시 */
+        .recording-status {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.9);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            backdrop-filter: blur(15px);
-        }
-
-        .icon-selector-content {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 0, 0, 0.9);
+            color: white;
+            padding: 15px 25px;
             border-radius: 20px;
-            padding: 40px;
-            max-width: 600px;
-            max-height: 80vh;
-            overflow-y: auto;
-            border: 2px solid rgba(255,255,255,0.3);
+            font-weight: bold;
+            display: none;
+            z-index: 10000;
+            box-shadow: 0 10px 30px rgba(255, 0, 0, 0.3);
+            animation: recordingPulse 1s infinite;
         }
 
-        .icon-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-            gap: 15px;
-            margin-top: 20px;
+        @keyframes recordingPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
         }
 
-        .icon-option {
-            background: rgba(255,255,255,0.1);
-            border: 2px solid rgba(255,255,255,0.3);
+        .recording-progress {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 15px 30px;
             border-radius: 15px;
-            padding: 20px;
+            display: none;
+            z-index: 10000;
+            min-width: 300px;
             text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 2em;
         }
 
-        .icon-option:hover {
-            background: rgba(255,255,255,0.2);
-            transform: scale(1.1);
-            border-color: #4ecdc4;
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4ecdc4, #44a08d);
+            width: 0%;
+            transition: width 0.3s ease;
         }
 
         /* 반응형 디자인 */
@@ -1054,46 +736,6 @@
             .color-presets {
                 grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
             }
-
-            .emoji-categories {
-                gap: 8px;
-            }
-
-            .emoji-category-btn {
-                padding: 6px 12px;
-                font-size: 0.8em;
-            }
-        }
-
-        /* 추가 효과 */
-        .floating-elements {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1;
-        }
-
-        .floating-element {
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 50%;
-            animation: floatUpDown 6s ease-in-out infinite;
-        }
-
-        @keyframes floatUpDown {
-            0%, 100% {
-                transform: translateY(0) rotate(0deg);
-                opacity: 0.3;
-            }
-            50% {
-                transform: translateY(-100px) rotate(180deg);
-                opacity: 0.8;
-            }
         }
 
         @keyframes pulse {
@@ -1101,83 +743,137 @@
             50% { transform: scale(1.1); opacity: 0.8; }
         }
 
-        /* 로딩 애니메이션 */
-        .loading-preview {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            opacity: 0.7;
+        /* 애니메이션 효과들 */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.98);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
         }
 
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid rgba(255,255,255,0.3);
-            border-left-color: #4ecdc4;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 15px;
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        @keyframes slideLeft {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
         }
 
-        /* 성공 알림 스타일 */
-        .success-notification {
+        @keyframes slideRight {
+            from { transform: translateX(-100%); }
+            to { transform: translateX(0); }
+        }
+
+        @keyframes zoomIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes rotateIn {
+            from { transform: rotate(-10deg) scale(0.8); opacity: 0; }
+            to { transform: rotate(0deg) scale(1); opacity: 1; }
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.1); }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .slide.active.anim-slide { animation: slideIn 0.8s ease; }
+        .slide.active.anim-fade { animation: fadeIn 0.6s ease; }
+        .slide.active.anim-slideLeft { animation: slideLeft 0.7s ease; }
+        .slide.active.anim-slideRight { animation: slideRight 0.7s ease; }
+        .slide.active.anim-zoom { animation: zoomIn 0.8s ease; }
+        .slide.active.anim-rotate { animation: rotateIn 0.9s ease; }
+        .slide.active.anim-bounce { animation: bounceIn 1s ease; }
+
+        /* 녹화 설정 모달 */
+        .recording-modal {
             position: fixed;
-            top: 20px;
-            right: 20px;
-            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-            color: white;
-            padding: 20px 30px;
-            border-radius: 15px;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            backdrop-filter: blur(15px);
+        }
+
+        .recording-modal-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .modal-section {
+            margin: 20px 0;
+        }
+
+        .modal-label {
+            color: #4ecdc4;
             font-weight: bold;
-            box-shadow: 0 10px 30px rgba(67, 233, 123, 0.3);
-            transform: translateX(400px);
-            transition: transform 0.5s ease;
-            z-index: 3000;
+            margin-bottom: 10px;
+            display: block;
         }
 
-        .success-notification.show {
-            transform: translateX(0);
+        .modal-select, .modal-input {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 10px;
+            color: white;
+            font-size: 1em;
         }
 
+        .modal-select option {
+            background: #333;
+            color: white;
+        }
     </style>
 </head>
 <body>
-    <!-- 떠다니는 요소들 -->
-    <div class="floating-elements" id="floatingElements"></div>
-
     <div class="container">
         <!-- 헤더 -->
         <div class="hero">
-            <div class="version-badge">🚀 V2.1 - 1단계 업그레이드 완료!</div>
+            <div class="version-badge">🚀 V2.2 - 실제 영상 녹화 기능 추가!</div>
             <h1>🎬 완벽한 슬라이드 영상 생성기</h1>
-            <p class="hero-subtitle">실시간 미리보기 + 색상 프리셋 + 확장 이모지 + 시간 조절 + 전체화면</p>
+            <p class="hero-subtitle">실시간 미리보기 + 실제 영상 녹화 + 색상 프리셋 + 전체화면</p>
             
             <div class="hero-features">
-                <div class="feature-card new" style="position: relative;">
-                    <div style="font-size: 2em; margin-bottom: 10px;">🎨</div>
-                    <h3>6가지 색상 프리셋</h3>
-                    <p>오션, 선셋, 포레스트 등 다양한 테마</p>
+                <div class="feature-card new">
+                    <div style="font-size: 2em; margin-bottom: 10px;">🎬</div>
+                    <h3>실제 영상 녹화</h3>
+                    <p>MediaRecorder API로 진짜 영상 제작</p>
                 </div>
-                <div class="feature-card new" style="position: relative;">
-                    <div style="font-size: 2em; margin-bottom: 10px;">😊</div>
-                    <h3>8개 이모지 카테고리</h3>
-                    <p>비즈니스, 테크, 자연 등 카테고리별 분류</p>
+                <div class="feature-card new">
+                    <div style="font-size: 2em; margin-bottom: 10px;">⚙️</div>
+                    <h3>고급 녹화 설정</h3>
+                    <p>화질, 시간, 비율 세부 조정 가능</p>
                 </div>
-                <div class="feature-card new" style="position: relative;">
-                    <div style="font-size: 2em; margin-bottom: 10px;">⏱️</div>
-                    <h3>슬라이드 시간 조절</h3>
-                    <p>1~10초까지 자유롭게 설정</p>
+                <div class="feature-card new">
+                    <div style="font-size: 2em; margin-bottom: 10px;">📱</div>
+                    <h3>다양한 영상 비율</h3>
+                    <p>유튜브 쇼츠, 인스타그램 등 지원</p>
                 </div>
-                <div class="feature-card new" style="position: relative;">
-                    <div style="font-size: 2em; margin-bottom: 10px;">🔍</div>
-                    <h3>전체화면 모드</h3>
-                    <p>몰입도 높은 프레젠테이션 경험</p>
+                <div class="feature-card new">
+                    <div style="font-size: 2em; margin-bottom: 10px;">💾</div>
+                    <h3>자동 다운로드</h3>
+                    <p>WebM 형식으로 즉시 저장</p>
                 </div>
             </div>
         </div>
@@ -1360,14 +1056,20 @@
                 <div class="input-group">
                     <label class="input-label">📝 제목</label>
                     <input type="text" class="input-field" id="titleInput" 
-                           placeholder="슬라이드 제목을 입력하세요"
+                           placeholder="예: AI 혁신의 미래"
                            oninput="updateLivePreview()">
                 </div>
 
                 <div class="input-group">
                     <label class="input-label">📄 내용</label>
                     <textarea class="input-field textarea-field" id="contentInput" 
-                              placeholder="슬라이드에 포함할 내용을 상세히 입력하세요..."
+                              placeholder="내용을 입력하면 자동으로 슬라이드가 생성됩니다.
+
+예시:
+- 인공지능의 발전
+- 머신러닝 기술 혁신
+- 딥러닝 응용 분야
+- 미래 전망과 기회"
                               oninput="updateLivePreview()"></textarea>
                 </div>
 
@@ -1380,9 +1082,9 @@
                 <h3 style="text-align: center; margin-bottom: 20px; color: #4ecdc4;">👁️ 실시간 미리보기</h3>
                 <div class="preview-container">
                     <div class="preview-slide" id="livePreviewSlide">
-                        <div class="loading-preview">
-                            <div class="spinner"></div>
-                            <div>콘텐츠를 입력하면<br>실시간으로 미리보기가<br>표시됩니다</div>
+                        <div style="text-align: center; padding: 40px 20px;">
+                            <div style="font-size: 3em; margin-bottom: 20px;">🎬</div>
+                            <div style="font-size: 1.2em; opacity: 0.8;">콘텐츠를 입력하면<br>실시간으로 미리보기가<br>표시됩니다</div>
                         </div>
                     </div>
                 </div>
@@ -1394,31 +1096,9 @@
             </div>
         </div>
 
-        <!-- 슬라이드 편집기 -->
-        <div id="slideEditorSection" style="display: none;">
-            <div class="section">
-                <h2>🖱️ 드래그 앤 드롭 슬라이드 편집기</h2>
-                <p style="text-align: center; margin-bottom: 20px; opacity: 0.9;">
-                    슬라이드를 드래그해서 순서를 변경하고, 개별 요소를 클릭해서 편집하세요
-                </p>
-                
-                <div class="slide-editor">
-                    <div class="slide-list" id="slideList">
-                        <!-- 슬라이드 아이템들이 여기에 동적으로 생성됩니다 -->
-                    </div>
-                </div>
-                
-                <div style="text-align: center; margin-top: 20px;">
-                    <button class="btn btn-primary" onclick="applyEditorChanges()">✅ 편집 내용 적용</button>
-                    <button class="btn btn-primary" onclick="resetSlides()">🔄 원래대로 복구</button>
-                    <button class="btn btn-primary" onclick="addNewSlide()">➕ 슬라이드 추가</button>
-                </div>
-            </div>
-        </div>
-
         <!-- 슬라이드쇼 결과 -->
         <div id="resultSection" style="display: none;">
-            <div class="section success-animation">
+            <div class="section">
                 <h2>🎉 완성된 프리미엄 슬라이드</h2>
                 
                 <div class="slideshow-container" id="slideshowContainer">
@@ -1427,62 +1107,89 @@
 
                 <div class="slide-navigation">
                     <button class="nav-btn" onclick="prevSlide()">⬅️ 이전</button>
-                    <span class="slide-counter" id="slideCounter">1 / 15</span>
+                    <span class="slide-counter" id="slideCounter">1 / 1</span>
                     <button class="nav-btn" onclick="nextSlide()">다음 ➡️</button>
                     <button class="nav-btn" onclick="toggleAutoPlay()" id="autoPlayBtn">▶️ 자동재생</button>
                     <button class="nav-btn" onclick="toggleFullscreen()" id="fullscreenBtn">🔍 전체화면</button>
                 </div>
 
-                <div style="background: rgba(0,255,100,0.1); border: 2px solid rgba(0,255,100,0.3); border-radius: 20px; padding: 25px; margin: 30px 0;">
-                    <h3 style="color: #00ff88; margin-bottom: 15px;">✨ V2.1 새로운 특징</h3>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; text-align: left;">
-                        <div>🎨 6가지 색상 프리셋</div>
-                        <div>😊 8개 이모지 카테고리</div>
-                        <div>⏱️ 슬라이드 시간 조절 (1-10초)</div>
-                        <div>🔍 전체화면 모드</div>
-                        <div>⌨️ 키보드 단축키 지원</div>
-                        <div>📱 모바일 반응형 최적화</div>
-                    </div>
-                </div>
-
                 <div style="text-align: center; margin: 30px 0;">
-                    <button class="btn btn-primary" onclick="openSlideEditor()" style="font-size: 1.4em; padding: 22px 45px; margin: 10px; background: linear-gradient(45deg, #4ecdc4, #44a08d);">🖱️ 슬라이드 편집하기</button>
-                    <button class="btn btn-primary recording-button" onclick="startOptimizedRecording()" style="font-size: 1.4em; padding: 22px 45px; margin: 10px; background: linear-gradient(45deg, #ff4444, #ff6666);">🎬 완벽한 영상 녹화</button>
-                    <button class="btn btn-primary" onclick="downloadSlides()">📁 슬라이드 다운로드</button>
+                    <button class="btn btn-primary" onclick="startQuickRecording()" style="font-size: 1.4em; padding: 22px 45px; margin: 10px; background: linear-gradient(45deg, #ff4444, #ff6666);">🎬 빠른 영상 녹화</button>
+                    <button class="btn btn-primary" onclick="openAdvancedRecording()" style="font-size: 1.4em; padding: 22px 45px; margin: 10px; background: linear-gradient(45deg, #8e44ad, #3498db);">🎥 고급 영상 녹화</button>
                     <button class="btn btn-primary" onclick="restartSlideshow()">🔄 처음부터 재생</button>
                 </div>
+
+                <div style="background: rgba(255,215,0,0.1); border: 2px solid rgba(255,215,0,0.3); border-radius: 20px; padding: 25px; margin: 30px 0;">
+                    <h3 style="color: #FFD700; margin-bottom: 15px;">🎬 영상 녹화 안내</h3>
+                    <div style="text-align: left; line-height: 1.6;">
+                        <div style="margin-bottom: 10px;"><strong>🎬 빠른 녹화:</strong> 3초 간격, 기본 설정으로 즉시 녹화</div>
+                        <div style="margin-bottom: 10px;"><strong>🎥 고급 녹화:</strong> 시간/화질/비율 맞춤 설정 가능</div>
+                        <div style="margin-bottom: 10px;"><strong>📱 지원 형식:</strong> WebM 형식으로 다운로드</div>
+                        <div style="margin-bottom: 10px;"><strong>💡 사용법:</strong> 녹화 버튼 클릭 → 화면 공유 허용 → 자동 녹화 진행</div>
+                        <div><strong>🔧 브라우저:</strong> Chrome, Edge, Firefox 지원 (Safari 제한적)</div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- 아이콘 선택 모달 -->
-    <div class="icon-selector-modal" id="iconSelectorModal">
-        <div class="icon-selector-content">
-            <h3 style="color: white; text-align: center; margin-bottom: 20px;">🎨 아이콘 선택</h3>
-            
-            <!-- 이모지 카테고리 -->
-            <div class="emoji-categories">
-                <button class="emoji-category-btn active" onclick="selectEmojiCategory('all')">전체</button>
-                <button class="emoji-category-btn" onclick="selectEmojiCategory('business')">비즈니스</button>
-                <button class="emoji-category-btn" onclick="selectEmojiCategory('tech')">테크</button>
-                <button class="emoji-category-btn" onclick="selectEmojiCategory('nature')">자연</button>
-                <button class="emoji-category-btn" onclick="selectEmojiCategory('emotion')">감정</button>
-                <button class="emoji-category-btn" onclick="selectEmojiCategory('transport')">교통</button>
-                <button class="emoji-category-btn" onclick="selectEmojiCategory('food')">음식</button>
-                <button class="emoji-category-btn" onclick="selectEmojiCategory('activity')">활동</button>
-            </div>
-            
-            <div class="icon-grid" id="iconGrid">
-                <!-- 아이콘들이 여기에 동적으로 생성됩니다 -->
-            </div>
-            <div style="text-align: center; margin-top: 20px;">
-                <button class="btn btn-primary" onclick="closeIconSelector()">❌ 닫기</button>
-            </div>
+    <!-- 녹화 상태 표시 -->
+    <div class="recording-status" id="recordingStatus">
+        🔴 녹화 중... <span id="recordingTimer">00:00</span>
+    </div>
+
+    <!-- 녹화 진행률 표시 -->
+    <div class="recording-progress" id="recordingProgress">
+        <div id="progressText">녹화 진행 중...</div>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
         </div>
     </div>
 
-    <!-- 전체화면 종료 버튼 -->
-    <button class="fullscreen-btn" id="exitFullscreenBtn" onclick="exitFullscreen()">❌</button>
+    <!-- 고급 녹화 설정 모달 -->
+    <div class="recording-modal" id="recordingModal">
+        <div class="recording-modal-content">
+            <h3 style="color: white; text-align: center; margin-bottom: 30px;">🎥 고급 녹화 설정</h3>
+            
+            <div class="modal-section">
+                <label class="modal-label">📹 영상 화질</label>
+                <select class="modal-select" id="videoQuality">
+                    <option value="720">HD (720p)</option>
+                    <option value="1080" selected>Full HD (1080p)</option>
+                    <option value="1440">2K (1440p)</option>
+                    <option value="2160">4K (2160p)</option>
+                </select>
+            </div>
+
+            <div class="modal-section">
+                <label class="modal-label">⏱️ 슬라이드당 시간 (초)</label>
+                <input type="number" class="modal-input" id="recordingTiming" value="3" min="1" max="20">
+            </div>
+
+            <div class="modal-section">
+                <label class="modal-label">📱 영상 비율</label>
+                <select class="modal-select" id="videoAspectRatio">
+                    <option value="9:16" selected>세로형 (9:16) - 쇼츠/릴스</option>
+                    <option value="16:9">가로형 (16:9) - 유튜브</option>
+                    <option value="1:1">정사각형 (1:1) - 인스타그램</option>
+                    <option value="4:5">세로형 (4:5) - 인스타그램</option>
+                </select>
+            </div>
+
+            <div class="modal-section">
+                <label class="modal-label">🎵 오디오 포함</label>
+                <select class="modal-select" id="includeAudio">
+                    <option value="false" selected>비디오만</option>
+                    <option value="true">오디오 포함</option>
+                </select>
+            </div>
+
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="btn btn-primary" onclick="startAdvancedRecording()" style="margin: 5px;">🎬 녹화 시작</button>
+                <button class="btn" onclick="closeRecordingModal()" style="background: rgba(255,255,255,0.2); margin: 5px;">❌ 취소</button>
+            </div>
+        </div>
+    </div>
 
     <script>
         // 전역 변수
@@ -1492,273 +1199,126 @@
         let isAutoPlaying = false;
         let selectedTemplate = 'business';
         let selectedAnimation = 'slide';
-        let originalSlides = []; // 편집 전 원본 저장
-        let draggedElement = null;
-        let livePreviewTimeout = null;
-        let slideTiming = 3; // 슬라이드 타이밍 (초)
+        let slideTiming = 3;
         let selectedColorPreset = null;
-        let currentEmojiCategory = 'all';
+
+        // 영상 녹화 관련 변수
+        let mediaRecorder = null;
+        let recordedChunks = [];
+        let recordingStream = null;
+        let isRecording = false;
+        let recordingStartTime = 0;
 
         // 색상 프리셋 정의
         const COLOR_PRESETS = {
             ocean: {
                 name: '오션',
-                colors: ['#667eea', '#764ba2', '#4facfe', '#00f2fe', '#667eea'],
+                colors: ['#667eea', '#764ba2', '#4facfe', '#00f2fe'],
                 gradient: 'linear-gradient(135deg, #667eea, #764ba2)'
             },
             sunset: {
                 name: '선셋',
-                colors: ['#ff9a9e', '#fecfef', '#ff6b6b', '#ee5a24', '#ff9a9e'],
+                colors: ['#ff9a9e', '#fecfef', '#ff6b6b', '#ee5a24'],
                 gradient: 'linear-gradient(135deg, #ff9a9e, #fecfef)'
             },
             forest: {
                 name: '포레스트',
-                colors: ['#134e5e', '#71b280', '#2d5016', '#a8e6cf', '#134e5e'],
+                colors: ['#134e5e', '#71b280', '#2d5016', '#a8e6cf'],
                 gradient: 'linear-gradient(135deg, #134e5e, #71b280)'
             },
             space: {
                 name: '스페이스',
-                colors: ['#2c3e50', '#4a69bd', '#1e3799', '#6c5ce7', '#2c3e50'],
+                colors: ['#2c3e50', '#4a69bd', '#1e3799', '#6c5ce7'],
                 gradient: 'linear-gradient(135deg, #2c3e50, #4a69bd)'
             },
             candy: {
                 name: '캔디',
-                colors: ['#fd79a8', '#fdcb6e', '#e17055', '#a29bfe', '#fd79a8'],
+                colors: ['#fd79a8', '#fdcb6e', '#e17055', '#a29bfe'],
                 gradient: 'linear-gradient(135deg, #fd79a8, #fdcb6e)'
             },
             emerald: {
                 name: '에메랄드',
-                colors: ['#00b894', '#00cec9', '#55a3ff', '#0984e3', '#00b894'],
+                colors: ['#00b894', '#00cec9', '#55a3ff', '#0984e3'],
                 gradient: 'linear-gradient(135deg, #00b894, #00cec9)'
             }
         };
 
-        // 카테고리별 이모지 라이브러리
-        const EMOJI_CATEGORIES = {
-            all: ['🚀', '💡', '🎯', '📊', '📈', '💼', '🏆', '⚡', '🌟', '💰', '🔥', '💎', '🎨', '🎵', '🎬', '📱', '💻', '🤖', '🔮', '🌈', '🎉', '🎊', '🌺', '🦋', '🌸', '🎭', '🎪', '🎮', '⚙️', '🔧', '📚', '🎓', '🔬', '📝', '🧠', '🌱', '📖', '✏️', '🔍', '📋'],
-            business: ['💼', '📊', '📈', '💰', '🏆', '🎯', '📋', '💡', '🚀', '⚡', '🌟', '✅', '📞', '💻', '📱', '🖥️', '🗂️', '📁', '📄', '📊'],
-            tech: ['🤖', '💻', '⚡', '🔮', '🚀', '🌐', '📱', '⚙️', '🔧', '💡', '🎯', '📊', '🔬', '🎮', '⭐', '🖥️', '💾', '🔌', '📡', '🛰️'],
-            nature: ['🌱', '🌿', '🌸', '🌺', '🦋', '🌈', '🌟', '💫', '☀️', '🌙', '⭐', '🌊', '🏔️', '🌲', '🌳', '🍃', '🌾', '🌻', '🌼', '🌷'],
-            emotion: ['😊', '😍', '🤩', '😎', '🤗', '😘', '😉', '😋', '🤔', '😮', '😲', '🤯', '😴', '😊', '🥳', '🤓', '😇', '🙃', '😌', '☺️'],
-            transport: ['🚗', '🚕', '🚙', '🚌', '🚎', '🏎️', '🚓', '🚑', '🚒', '🚐', '🛻', '🚚', '🚛', '🚜', '🏍️', '🛵', '🚲', '🛴', '✈️', '🚁'],
-            food: ['🍎', '🍌', '🍇', '🍓', '🫐', '🍈', '🍒', '🥭', '🍑', '🥝', '🍅', '🫒', '🥑', '🍆', '🥔', '🥕', '🌽', '🥒', '🥬', '🥦'],
-            activity: ['⚽', '🏀', '🏈', '⚾', '🎾', '🏐', '🏉', '🎱', '🏓', '🏸', '🥅', '⛳', '🪁', '🏹', '🎣', '🤿', '🥊', '🥋', '🎽', '🛹']
-        };
-
-        // 템플릿 정의
+        // 템플릿 설정
         const TEMPLATES = {
             business: {
                 name: '비즈니스',
-                colors: ['#2E4A97', '#4A90E2', '#1B365D', '#5A9BD4', '#2C5282'],
-                icons: ['💼', '📊', '📈', '🏢', '💰', '🎯', '📋', '⚡', '🚀', '💡', '🔍', '📱', '💻', '🌟', '✅'],
-                gradient: 'linear-gradient(135deg, #2E4A97, #4A90E2)'
+                colors: ['#2E4A97', '#4A90E2', '#5DADE2', '#85C1E9'],
+                gradient: 'linear-gradient(135deg, #2E4A97, #4A90E2)',
+                icons: ['💼', '📊', '📈', '💰', '🏢', '📋', '📑', '💡', '🎯', '⚡']
             },
             education: {
                 name: '교육',
-                colors: ['#27AE60', '#3498DB', '#2ECC71', '#5DADE2', '#1E8449'],
-                icons: ['📚', '🎓', '💡', '🔬', '📝', '🧠', '🎯', '📊', '🌱', '⭐', '🏆', '📖', '✏️', '🔍', '💫'],
-                gradient: 'linear-gradient(135deg, #27AE60, #3498DB)'
+                colors: ['#27AE60', '#3498DB', '#58D68D', '#5DADE2'],
+                gradient: 'linear-gradient(135deg, #27AE60, #3498DB)',
+                icons: ['📚', '🎓', '✏️', '📝', '🧠', '💡', '🔍', '📖', '🎯', '⭐']
             },
             creative: {
                 name: '크리에이티브',
-                colors: ['#E74C3C', '#F39C12', '#FF6B6B', '#FFA500', '#C0392B'],
-                icons: ['🎨', '✨', '🚀', '🌈', '🎭', '🎪', '🎵', '🎬', '🎯', '💥', '⚡', '🔥', '🌟', '💎', '🎉'],
-                gradient: 'linear-gradient(135deg, #E74C3C, #F39C12)'
+                colors: ['#E74C3C', '#F39C12', '#F1948A', '#F8C471'],
+                gradient: 'linear-gradient(135deg, #E74C3C, #F39C12)',
+                icons: ['🎨', '✨', '🌟', '🎭', '🎪', '🎵', '🎬', '📷', '🖼️', '🎪']
             },
             tech: {
                 name: '테크',
-                colors: ['#8E44AD', '#3498DB', '#9B59B6', '#5DADE2', '#6C3483'],
-                icons: ['🤖', '💻', '⚡', '🔮', '🚀', '🌐', '📱', '⚙️', '🔧', '💡', '🎯', '📊', '🔬', '🎮', '⭐'],
-                gradient: 'linear-gradient(135deg, #8E44AD, #3498DB)'
+                colors: ['#8E44AD', '#3498DB', '#BB8FCE', '#85C1E9'],
+                gradient: 'linear-gradient(135deg, #8E44AD, #3498DB)',
+                icons: ['🤖', '💻', '⚡', '🔬', '🚀', '🌐', '📱', '⚙️', '🔧', '💡']
             },
             minimal: {
                 name: '미니멀',
-                colors: ['#34495E', '#95A5A6', '#2C3E50', '#BDC3C7', '#5D6D7E'],
-                icons: ['⚪', '◾', '▫️', '🔘', '⭕', '🔹', '🔸', '💫', '⚡', '✨', '🌟', '💎', '🎯', '📍', '🔍'],
-                gradient: 'linear-gradient(135deg, #34495E, #95A5A6)'
+                colors: ['#34495E', '#95A5A6', '#5D6D7E', '#AEB6BF'],
+                gradient: 'linear-gradient(135deg, #34495E, #95A5A6)',
+                icons: ['⚪', '⚫', '🔘', '🔲', '🔳', '◼️', '◻️', '▫️', '▪️', '⬜']
             },
             vibrant: {
                 name: '생동감',
-                colors: ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FECA57'],
-                icons: ['🌈', '🎉', '🎊', '🌺', '🦋', '🌸', '🎯', '⚡', '💥', '🔥', '✨', '🌟', '💫', '🎨', '🚀'],
-                gradient: 'linear-gradient(135deg, #FF6B6B, #4ECDC4)'
+                colors: ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4'],
+                gradient: 'linear-gradient(135deg, #FF6B6B, #4ECDC4)',
+                icons: ['🌈', '🎉', '🎊', '✨', '🌟', '💫', '🔥', '⚡', '🌸', '🦋']
             }
         };
 
-        // 아이콘 라이브러리
-        const ICON_LIBRARY = EMOJI_CATEGORIES.all;
-
-        // 페이지 로드 시 초기화
+        // 초기화
         document.addEventListener('DOMContentLoaded', function() {
-            createFloatingElements();
-            initializeIconSelector();
             updateLivePreview();
-            
-            // 입력 필드 이벤트
-            document.getElementById('titleInput').addEventListener('input', updateGenerateButton);
-            document.getElementById('contentInput').addEventListener('input', updateGenerateButton);
-            
-            // 키보드 단축키
-            document.addEventListener('keydown', function(e) {
-                if (slides.length > 0) {
-                    if (e.key === 'ArrowLeft') {
-                        e.preventDefault();
-                        prevSlide();
-                    }
-                    if (e.key === 'ArrowRight') {
-                        e.preventDefault();
-                        nextSlide();
-                    }
-                    if (e.key === ' ') {
-                        e.preventDefault();
-                        toggleAutoPlay();
-                    }
-                    if (e.key === 'f' || e.key === 'F') {
-                        e.preventDefault();
-                        toggleFullscreen();
-                    }
-                    if (e.key === 'Escape') {
-                        exitFullscreen();
-                    }
-                }
-            });
-
-            updateGenerateButton();
         });
 
-        // 떠다니는 요소 생성
-        function createFloatingElements() {
-            const container = document.getElementById('floatingElements');
-            for (let i = 0; i < 10; i++) {
-                const element = document.createElement('div');
-                element.className = 'floating-element';
-                element.style.left = Math.random() * 100 + '%';
-                element.style.animationDelay = Math.random() * 6 + 's';
-                element.style.animationDuration = (4 + Math.random() * 4) + 's';
-                container.appendChild(element);
-            }
-        }
-
-        // 아이콘 선택기 초기화
-        function initializeIconSelector() {
-            updateIconGrid();
-        }
-
-        // 색상 프리셋 선택
-        function selectColorPreset(presetId) {
-            selectedColorPreset = presetId;
-            
-            // 선택된 프리셋 표시 업데이트
-            document.querySelectorAll('.color-preset-card').forEach(card => {
-                card.classList.remove('selected');
-            });
-            document.getElementById(`preset-${presetId}`).classList.add('selected');
-            
-            // 선택된 템플릿에 색상 적용
-            const preset = COLOR_PRESETS[presetId];
-            if (preset && TEMPLATES[selectedTemplate]) {
-                TEMPLATES[selectedTemplate].colors = preset.colors;
-                TEMPLATES[selectedTemplate].gradient = preset.gradient;
-            }
-            
-            // 프리셋 이름 업데이트
-            document.getElementById('selectedColorPresetName').textContent = preset.name;
-            
-            // 실시간 미리보기 업데이트
-            updateLivePreview();
-            
-            showSuccessNotification(`🎨 ${preset.name} 색상 테마가 적용되었습니다!`);
-        }
-
-        // 이모지 카테고리 선택
-        function selectEmojiCategory(category) {
-            currentEmojiCategory = category;
-            
-            // 선택된 카테고리 표시 업데이트
-            document.querySelectorAll('.emoji-category-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            event.target.classList.add('active');
-            
-            // 아이콘 그리드 업데이트
-            updateIconGrid();
-        }
-
-        // 아이콘 그리드 업데이트
-        function updateIconGrid() {
-            const iconGrid = document.getElementById('iconGrid');
-            iconGrid.innerHTML = '';
-            
-            const icons = EMOJI_CATEGORIES[currentEmojiCategory] || EMOJI_CATEGORIES.all;
-            
-            icons.forEach(icon => {
-                const iconOption = document.createElement('div');
-                iconOption.className = 'icon-option';
-                iconOption.textContent = icon;
-                iconOption.onclick = () => selectIcon(icon);
-                iconGrid.appendChild(iconOption);
-            });
-        }
-
-        // 슬라이드 타이밍 업데이트
-        function updateSlideTiming(value) {
-            slideTiming = parseFloat(value);
-            document.getElementById('currentTiming').textContent = `${slideTiming}초`;
-            
-            // 자동재생 중이면 간격 업데이트
-            if (isAutoPlaying) {
-                toggleAutoPlay(); // 중지
-                toggleAutoPlay(); // 새로운 타이밍으로 재시작
-            }
-        }
-
-        // 전체화면 모드 토글
-        function toggleFullscreen() {
-            const resultSection = document.getElementById('resultSection');
-            const slideshowContainer = document.getElementById('slideshowContainer');
-            
-            if (!resultSection.classList.contains('fullscreen-active')) {
-                resultSection.classList.add('fullscreen-active');
-                showSuccessNotification('🔍 전체화면 모드 (ESC로 종료)');
-            } else {
-                exitFullscreen();
-            }
-        }
-
-        // 전체화면 종료
-        function exitFullscreen() {
-            const resultSection = document.getElementById('resultSection');
-            resultSection.classList.remove('fullscreen-active');
-        }
-
         // 템플릿 선택
-        function selectTemplate(templateId) {
-            selectedTemplate = templateId;
+        function selectTemplate(template) {
+            selectedTemplate = template;
             
-            // 선택된 템플릿 표시 업데이트
+            // 모든 템플릿 카드에서 selected 클래스 제거
             document.querySelectorAll('.template-card').forEach(card => {
                 card.classList.remove('selected');
             });
-            document.getElementById(`template-${templateId}`).classList.add('selected');
             
-            // 템플릿 이름 업데이트
-            document.getElementById('selectedTemplateName').textContent = TEMPLATES[templateId].name;
+            // 선택된 템플릿에 selected 클래스 추가
+            document.getElementById(`template-${template}`).classList.add('selected');
             
-            // 실시간 미리보기 업데이트
+            // 선택된 템플릿 이름 업데이트
+            document.getElementById('selectedTemplateName').textContent = TEMPLATES[template].name;
+            
             updateLivePreview();
         }
 
         // 애니메이션 선택
-        function selectAnimation(animationId) {
-            selectedAnimation = animationId;
+        function selectAnimation(animation) {
+            selectedAnimation = animation;
             
-            // 선택된 애니메이션 표시 업데이트
+            // 모든 애니메이션 카드에서 selected 클래스 제거
             document.querySelectorAll('.animation-card').forEach(card => {
                 card.classList.remove('selected');
             });
-            document.getElementById(`anim-${animationId}`).classList.add('selected');
             
-            // 애니메이션 이름 업데이트
+            // 선택된 애니메이션에 selected 클래스 추가
+            document.getElementById(`anim-${animation}`).classList.add('selected');
+            
+            // 선택된 애니메이션 이름 업데이트
             const animationNames = {
                 slide: '슬라이드',
                 fade: '페이드',
@@ -1768,662 +1328,596 @@
                 rotate: '회전',
                 bounce: '바운스'
             };
-            document.getElementById('selectedAnimationName').textContent = animationNames[animationId];
+            document.getElementById('selectedAnimationName').textContent = animationNames[animation];
+        }
+
+        // 색상 프리셋 선택
+        function selectColorPreset(preset) {
+            selectedColorPreset = preset;
+            
+            // 모든 색상 프리셋 카드에서 selected 클래스 제거
+            document.querySelectorAll('.color-preset-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // 선택된 프리셋에 selected 클래스 추가
+            document.getElementById(`preset-${preset}`).classList.add('selected');
+            
+            // 선택된 색상 테마 이름 업데이트
+            document.getElementById('selectedColorPresetName').textContent = COLOR_PRESETS[preset].name;
+            
+            updateLivePreview();
+        }
+
+        // 슬라이드 타이밍 업데이트
+        function updateSlideTiming(value) {
+            slideTiming = parseFloat(value);
+            document.getElementById('currentTiming').textContent = `${slideTiming}초`;
         }
 
         // 실시간 미리보기 업데이트
         function updateLivePreview() {
-            clearTimeout(livePreviewTimeout);
-            livePreviewTimeout = setTimeout(() => {
-                const title = document.getElementById('titleInput').value.trim();
-                const content = document.getElementById('contentInput').value.trim();
-                const template = TEMPLATES[selectedTemplate];
-                
-                const previewSlide = document.getElementById('livePreviewSlide');
-                
-                if (title || content) {
-                    // 템플릿 스타일 적용
-                    previewSlide.style.background = template.gradient;
-                    
-                    // 파티클 효과 추가
-                    let particleSystem = previewSlide.querySelector('.particle-system');
-                    if (!particleSystem) {
-                        particleSystem = document.createElement('div');
-                        particleSystem.className = 'particle-system';
-                        previewSlide.appendChild(particleSystem);
-                        addOptimizedParticleEffect(particleSystem);
-                    }
-                    
-                    // 콘텐츠 업데이트
-                    const icon = template.icons[0];
-                    const displayTitle = title || '제목을 입력하세요';
-                    const displaySubtitle = content ? content.split('\n')[0].substring(0, 50) + (content.length > 50 ? '...' : '') : '내용을 입력하세요';
-                    
-                    previewSlide.innerHTML = `
-                        ${particleSystem.outerHTML}
-                        <div class="slide-content">
-                            <div class="slide-icon">${icon}</div>
-                            <div class="slide-title">${displayTitle}</div>
-                            <div class="slide-subtitle">${displaySubtitle}</div>
-                        </div>
-                    `;
-                } else {
-                    previewSlide.innerHTML = `
-                        <div class="loading-preview">
-                            <div class="spinner"></div>
-                            <div>콘텐츠를 입력하면<br>실시간으로 미리보기가<br>표시됩니다</div>
-                        </div>
-                    `;
-                }
-            }, 300);
+            const title = document.getElementById('titleInput').value;
+            const content = document.getElementById('contentInput').value;
+            const previewSlide = document.getElementById('livePreviewSlide');
+            
+            if (!title && !content) {
+                previewSlide.innerHTML = `
+                    <div style="text-align: center; padding: 40px 20px;">
+                        <div style="font-size: 3em; margin-bottom: 20px;">🎬</div>
+                        <div style="font-size: 1.2em; opacity: 0.8;">콘텐츠를 입력하면<br>실시간으로 미리보기가<br>표시됩니다</div>
+                    </div>
+                `;
+                return;
+            }
+
+            const template = TEMPLATES[selectedTemplate];
+            const colorPreset = selectedColorPreset ? COLOR_PRESETS[selectedColorPreset] : null;
+            const gradient = colorPreset ? colorPreset.gradient : template.gradient;
+            
+            const icon = template.icons[0];
+            const previewTitle = title || '제목 입력';
+            const previewContent = content ? content.split('\n')[0].substring(0, 50) + '...' : '내용 입력';
+
+            previewSlide.style.background = gradient;
+            previewSlide.innerHTML = `
+                <div class="slide-content">
+                    <div class="slide-icon">${icon}</div>
+                    <div class="slide-title">${previewTitle}</div>
+                    <div class="slide-subtitle">${previewContent}</div>
+                </div>
+            `;
         }
 
-        // 생성 버튼 상태 업데이트
-        function updateGenerateButton() {
-            const titleInput = document.getElementById('titleInput');
-            const contentInput = document.getElementById('contentInput');
-            const generateBtn = document.getElementById('generateBtn');
-            
-            const hasTitle = titleInput.value.trim().length > 0;
-            const hasContent = contentInput.value.trim().length > 0;
-            
-            generateBtn.disabled = !(hasTitle && hasContent);
-        }
-
-        // 슬라이드 생성 메인 함수
-        async function generateSlides() {
+        // 슬라이드 생성
+        function generateSlides() {
             const title = document.getElementById('titleInput').value.trim();
             const content = document.getElementById('contentInput').value.trim();
             
-            if (!title || !content) {
-                alert('❌ 제목과 내용을 모두 입력해주세요!');
+            if (!title && !content) {
+                alert('제목 또는 내용을 입력해주세요.');
                 return;
             }
-            
-            // 선택된 템플릿을 기반으로 스마트 슬라이드 생성
-            const slideData = generateTemplateBasedSlides(title, content, selectedTemplate);
-            originalSlides = JSON.parse(JSON.stringify(slideData)); // 원본 저장
-            
-            await createOptimizedSlides(slideData);
-            showResults();
-            showSuccessNotification('🎉 완벽한 슬라이드가 생성되었습니다!');
-        }
 
-        // 템플릿 기반 슬라이드 생성
-        function generateTemplateBasedSlides(title, content, templateId) {
-            const template = TEMPLATES[templateId];
-            const contentLines = content.split('\n').filter(line => line.trim());
+            const template = TEMPLATES[selectedTemplate];
+            const colorPreset = selectedColorPreset ? COLOR_PRESETS[selectedColorPreset] : null;
+            const colors = colorPreset ? colorPreset.colors : template.colors;
             
-            // 콘텐츠 분석해서 적절한 슬라이드 구성
-            const slides = [
-                {
-                    slideNumber: 1,
+            slides = [];
+
+            // 제목 슬라이드
+            if (title) {
+                slides.push({
                     icon: template.icons[0],
                     title: title,
-                    subtitle: '시작합니다',
-                    color: template.colors[0]
-                }
-            ];
-
-            // 콘텐츠 기반으로 슬라이드 생성
-            const keyPoints = extractKeyPoints(content);
-            keyPoints.forEach((point, index) => {
-                slides.push({
-                    slideNumber: index + 2,
-                    icon: template.icons[(index + 1) % template.icons.length],
-                    title: point.title,
-                    subtitle: point.subtitle,
-                    color: template.colors[(index + 1) % template.colors.length]
-                });
-            });
-
-            // 15장까지 채우기
-            while (slides.length < 15) {
-                const index = slides.length - 1;
-                slides.push({
-                    slideNumber: slides.length + 1,
-                    icon: template.icons[index % template.icons.length],
-                    title: `추가 내용 ${slides.length - 1}`,
-                    subtitle: '세부 정보',
-                    color: template.colors[index % template.colors.length]
+                    subtitle: '프레젠테이션 시작',
+                    background: `linear-gradient(135deg, ${colors[0]}, ${colors[1]})`
                 });
             }
 
-            // 마지막 슬라이드는 항상 마무리
-            slides[14] = {
-                slideNumber: 15,
+            // 내용 슬라이드들
+            if (content) {
+                const lines = content.split('\n').filter(line => line.trim());
+                
+                lines.forEach((line, index) => {
+                    const cleanLine = line.replace(/^[-•*]\s*/, '').trim();
+                    if (cleanLine) {
+                        const colorIndex = (index + 1) % colors.length;
+                        const iconIndex = (index + 1) % template.icons.length;
+                        
+                        slides.push({
+                            icon: template.icons[iconIndex],
+                            title: cleanLine,
+                            subtitle: `핵심 포인트 ${index + 1}`,
+                            background: `linear-gradient(135deg, ${colors[colorIndex]}, ${colors[(colorIndex + 1) % colors.length]})`
+                        });
+                    }
+                });
+            }
+
+            // 마무리 슬라이드
+            slides.push({
                 icon: '🎉',
                 title: '감사합니다',
-                subtitle: title + ' 완료',
-                color: template.colors[4]
-            };
-
-            return slides;
-        }
-
-        // 콘텐츠에서 핵심 포인트 추출
-        function extractKeyPoints(content) {
-            const lines = content.split('\n').filter(line => line.trim());
-            const points = [];
-            
-            lines.forEach((line, index) => {
-                if (line.trim()) {
-                    const words = line.trim().split(' ');
-                    const title = words.slice(0, 3).join(' ') || `포인트 ${index + 1}`;
-                    const subtitle = words.length > 3 ? words.slice(3, 8).join(' ') : line.substring(0, 30);
-                    
-                    points.push({ title, subtitle });
-                }
+                subtitle: '질문이 있으시면 언제든지 말씀해주세요',
+                background: `linear-gradient(135deg, ${colors[0]}, ${colors[2]})`
             });
 
-            // 최소 12개 포인트 보장
-            while (points.length < 12) {
-                points.push({
-                    title: `핵심 내용 ${points.length + 1}`,
-                    subtitle: content.split(' ').slice(points.length * 2, (points.length + 1) * 2).join(' ') || '상세한 내용'
-                });
-            }
-
-            return points.slice(0, 12); // 최대 12개만 반환
-        }
-
-        // 최적화된 슬라이드 생성
-        async function createOptimizedSlides(slideData) {
-            slides = slideData;
-            const container = document.getElementById('slideshowContainer');
-            container.innerHTML = '';
-            
-            // 한 번에 모든 슬라이드 생성
-            const fragment = document.createDocumentFragment();
-            
-            slideData.forEach((slide, index) => {
-                const slideElement = createOptimizedSlideElement(slide, index);
-                fragment.appendChild(slideElement);
-            });
-            
-            container.appendChild(fragment);
-            
             currentSlide = 0;
-            showSlide(0);
-            
-            // 슬라이드 편집기 생성
-            createSlideEditor(slideData);
-        }
-
-        // 최적화된 개별 슬라이드 요소 생성
-        function createOptimizedSlideElement(slide, index) {
-            const slideDiv = document.createElement('div');
-            slideDiv.className = `slide anim-${selectedAnimation}`;
-            slideDiv.style.background = `linear-gradient(135deg, ${slide.color}, #764ba2)`;
-            
-            // 안전한 텍스트 처리
-            const safeTitle = String(slide.title || '').replace(/[<>]/g, '');
-            const safeSubtitle = String(slide.subtitle || '').replace(/[<>]/g, '');
-            const safeIcon = String(slide.icon || '🚀');
-            
-            // 파티클 시스템
-            const particleSystem = document.createElement('div');
-            particleSystem.className = 'particle-system';
-            particleSystem.id = `particles-${index}`;
-            
-            // 슬라이드 콘텐츠
-            const slideContent = document.createElement('div');
-            slideContent.className = 'slide-content';
-            
-            const iconDiv = document.createElement('div');
-            iconDiv.className = 'slide-icon';
-            iconDiv.textContent = safeIcon;
-            
-            const titleDiv = document.createElement('div');
-            titleDiv.className = 'slide-title';
-            titleDiv.textContent = safeTitle;
-            
-            const subtitleDiv = document.createElement('div');
-            if (safeSubtitle && safeSubtitle.trim()) {
-                subtitleDiv.className = 'slide-subtitle';
-                subtitleDiv.textContent = safeSubtitle;
-            } else {
-                subtitleDiv.style.marginBottom = '40px';
-            }
-            
-            slideContent.appendChild(iconDiv);
-            slideContent.appendChild(titleDiv);
-            slideContent.appendChild(subtitleDiv);
-            
-            slideDiv.appendChild(particleSystem);
-            slideDiv.appendChild(slideContent);
-            
-            addOptimizedParticleEffect(particleSystem);
-            
-            return slideDiv;
-        }
-
-        // 최적화된 파티클 효과
-        function addOptimizedParticleEffect(particleSystem) {
-            for (let i = 0; i < 15; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                particle.style.left = Math.random() * 100 + '%';
-                particle.style.top = Math.random() * 100 + '%';
-                particle.style.animationDelay = Math.random() * 3 + 's';
-                particle.style.animationDuration = (2 + Math.random() * 2) + 's';
-                particleSystem.appendChild(particle);
-            }
-        }
-
-        // 슬라이드 편집기 생성
-        function createSlideEditor(slideData) {
-            const slideList = document.getElementById('slideList');
-            slideList.innerHTML = '';
-            
-            slideData.forEach((slide, index) => {
-                const slideItem = createSlideEditorItem(slide, index);
-                slideList.appendChild(slideItem);
-            });
-            
-            // 드래그 앤 드롭 이벤트 설정
-            initializeDragAndDrop();
-        }
-
-        // 개별 슬라이드 편집 아이템 생성
-        function createSlideEditorItem(slide, index) {
-            const slideItem = document.createElement('div');
-            slideItem.className = 'slide-item';
-            slideItem.draggable = true;
-            slideItem.dataset.index = index;
-            
-            slideItem.innerHTML = `
-                <div class="slide-item-header">
-                    <div class="slide-number">${index + 1}</div>
-                    <div class="slide-controls">
-                        <button class="slide-control-btn" onclick="duplicateSlide(${index})" title="복제">📋</button>
-                        <button class="slide-control-btn" onclick="deleteSlide(${index})" title="삭제">🗑️</button>
-                    </div>
-                </div>
-                <div class="slide-content-editor">
-                    <div class="slide-icon-picker" onclick="openIconSelector(${index})" title="아이콘 변경">
-                        ${slide.icon}
-                    </div>
-                    <div class="slide-text-inputs">
-                        <input type="text" class="slide-mini-input" placeholder="제목" 
-                               value="${slide.title}" onchange="updateSlideTitle(${index}, this.value)">
-                        <input type="text" class="slide-mini-input" placeholder="부제목" 
-                               value="${slide.subtitle || ''}" onchange="updateSlideSubtitle(${index}, this.value)">
-                    </div>
-                    <input type="color" class="color-picker" value="${slide.color}" 
-                           onchange="updateSlideColor(${index}, this.value)" title="색상 변경">
-                </div>
-            `;
-            
-            return slideItem;
-        }
-
-        // 드래그 앤 드롭 초기화
-        function initializeDragAndDrop() {
-            const slideItems = document.querySelectorAll('.slide-item');
-            
-            slideItems.forEach(item => {
-                item.addEventListener('dragstart', handleDragStart);
-                item.addEventListener('dragover', handleDragOver);
-                item.addEventListener('drop', handleDrop);
-                item.addEventListener('dragend', handleDragEnd);
-            });
-        }
-
-        // 드래그 이벤트 핸들러들
-        function handleDragStart(e) {
-            draggedElement = this;
-            this.classList.add('dragging');
-            e.dataTransfer.effectAllowed = 'move';
-        }
-
-        function handleDragOver(e) {
-            e.preventDefault();
-            e.dataTransfer.dropEffect = 'move';
-        }
-
-        function handleDrop(e) {
-            e.preventDefault();
-            
-            if (draggedElement !== this) {
-                const draggedIndex = parseInt(draggedElement.dataset.index);
-                const targetIndex = parseInt(this.dataset.index);
-                
-                // 슬라이드 순서 변경
-                const temp = slides[draggedIndex];
-                slides[draggedIndex] = slides[targetIndex];
-                slides[targetIndex] = temp;
-                
-                // 편집기 UI 업데이트
-                createSlideEditor(slides);
-                
-                showSuccessNotification('📋 슬라이드 순서가 변경되었습니다!');
-            }
-        }
-
-        function handleDragEnd(e) {
-            this.classList.remove('dragging');
-            draggedElement = null;
-        }
-
-        // 슬라이드 편집 함수들
-        function updateSlideTitle(index, newTitle) {
-            slides[index].title = newTitle;
-        }
-
-        function updateSlideSubtitle(index, newSubtitle) {
-            slides[index].subtitle = newSubtitle;
-        }
-
-        function updateSlideColor(index, newColor) {
-            slides[index].color = newColor;
-        }
-
-        function updateSlideIcon(index, newIcon) {
-            slides[index].icon = newIcon;
-            createSlideEditor(slides); // UI 새로고침
-        }
-
-        function duplicateSlide(index) {
-            const slideCopy = { ...slides[index] };
-            slideCopy.slideNumber = slides.length + 1;
-            slideCopy.title += ' (복사본)';
-            slides.splice(index + 1, 0, slideCopy);
-            
-            // 슬라이드 번호 재정렬
-            slides.forEach((slide, i) => {
-                slide.slideNumber = i + 1;
-            });
-            
-            createSlideEditor(slides);
-            showSuccessNotification('📋 슬라이드가 복제되었습니다!');
-        }
-
-        function deleteSlide(index) {
-            if (slides.length <= 3) {
-                alert('❌ 최소 3장의 슬라이드가 필요합니다!');
-                return;
-            }
-            
-            if (confirm('정말로 이 슬라이드를 삭제하시겠습니까?')) {
-                slides.splice(index, 1);
-                
-                // 슬라이드 번호 재정렬
-                slides.forEach((slide, i) => {
-                    slide.slideNumber = i + 1;
-                });
-                
-                createSlideEditor(slides);
-                showSuccessNotification('🗑️ 슬라이드가 삭제되었습니다!');
-            }
-        }
-
-        function addNewSlide() {
-            const template = TEMPLATES[selectedTemplate];
-            const newSlide = {
-                slideNumber: slides.length + 1,
-                icon: template.icons[slides.length % template.icons.length],
-                title: '새 슬라이드',
-                subtitle: '내용을 입력하세요',
-                color: template.colors[slides.length % template.colors.length]
-            };
-            
-            slides.push(newSlide);
-            createSlideEditor(slides);
-            showSuccessNotification('➕ 새 슬라이드가 추가되었습니다!');
-        }
-
-        // 아이콘 선택기 관련 함수들
-        let currentEditingSlideIndex = -1;
-
-        function openIconSelector(slideIndex) {
-            currentEditingSlideIndex = slideIndex;
-            document.getElementById('iconSelectorModal').style.display = 'flex';
-        }
-
-        function closeIconSelector() {
-            document.getElementById('iconSelectorModal').style.display = 'none';
-            currentEditingSlideIndex = -1;
-        }
-
-        function selectIcon(icon) {
-            if (currentEditingSlideIndex >= 0) {
-                updateSlideIcon(currentEditingSlideIndex, icon);
-            }
-            closeIconSelector();
-        }
-
-        // 슬라이드 편집기 열기/닫기
-        function openSlideEditor() {
-            document.getElementById('slideEditorSection').style.display = 'block';
-            document.getElementById('slideEditorSection').scrollIntoView({ behavior: 'smooth' });
-        }
-
-        function applyEditorChanges() {
-            // 편집된 내용을 실제 슬라이드쇼에 적용
-            createOptimizedSlides(slides);
-            showSuccessNotification('✅ 편집 내용이 적용되었습니다!');
-            
-            // 슬라이드쇼로 스크롤
+            renderSlideshow();
+            document.getElementById('resultSection').style.display = 'block';
             document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth' });
         }
 
-        function resetSlides() {
-            if (confirm('편집 내용을 모두 되돌리시겠습니까?')) {
-                slides = JSON.parse(JSON.stringify(originalSlides));
-                createSlideEditor(slides);
-                createOptimizedSlides(slides);
-                showSuccessNotification('🔄 원래 상태로 복구되었습니다!');
-            }
+        // 슬라이드쇼 렌더링
+        function renderSlideshow() {
+            const container = document.getElementById('slideshowContainer');
+            container.innerHTML = '';
+
+            slides.forEach((slide, index) => {
+                const slideElement = document.createElement('div');
+                slideElement.className = `slide ${index === 0 ? 'active' : ''} anim-${selectedAnimation}`;
+                slideElement.style.background = slide.background;
+                
+                slideElement.innerHTML = `
+                    <div class="slide-content">
+                        <div class="slide-icon">${slide.icon}</div>
+                        <div class="slide-title">${slide.title}</div>
+                        <div class="slide-subtitle">${slide.subtitle}</div>
+                    </div>
+                `;
+                
+                container.appendChild(slideElement);
+            });
+
+            updateSlideCounter();
         }
 
-        // 슬라이드 표시 및 네비게이션
-        function showSlide(index) {
-            const slideElements = document.querySelectorAll('.slide');
-            slideElements.forEach((slide, i) => {
-                slide.classList.remove('active');
-                if (i === index) {
-                    slide.classList.add('active');
-                    // 선택된 애니메이션 클래스 추가
-                    slide.className = `slide active anim-${selectedAnimation}`;
-                }
-            });
+        // 슬라이드 네비게이션
+        function nextSlide() {
+            if (slides.length === 0) return;
             
-            currentSlide = index;
+            document.querySelectorAll('.slide')[currentSlide].classList.remove('active');
+            currentSlide = (currentSlide + 1) % slides.length;
+            const nextSlideElement = document.querySelectorAll('.slide')[currentSlide];
+            nextSlideElement.classList.add('active');
+            updateSlideCounter();
+        }
+
+        function prevSlide() {
+            if (slides.length === 0) return;
+            
+            document.querySelectorAll('.slide')[currentSlide].classList.remove('active');
+            currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+            const prevSlideElement = document.querySelectorAll('.slide')[currentSlide];
+            prevSlideElement.classList.add('active');
             updateSlideCounter();
         }
 
         function updateSlideCounter() {
             const counter = document.getElementById('slideCounter');
-            if (counter) {
-                counter.textContent = `${currentSlide + 1} / ${slides.length}`;
-            }
+            counter.textContent = `${currentSlide + 1} / ${slides.length}`;
         }
 
-        function prevSlide() {
-            if (isAutoPlaying) toggleAutoPlay();
-            const newIndex = currentSlide > 0 ? currentSlide - 1 : slides.length - 1;
-            showSlide(newIndex);
-        }
-
-        function nextSlide() {
-            if (isAutoPlaying) toggleAutoPlay();
-            const newIndex = currentSlide < slides.length - 1 ? currentSlide + 1 : 0;
-            showSlide(newIndex);
-        }
-
+        // 자동재생
         function toggleAutoPlay() {
-            const autoPlayBtn = document.getElementById('autoPlayBtn');
+            const btn = document.getElementById('autoPlayBtn');
             
             if (isAutoPlaying) {
                 clearInterval(autoPlayInterval);
                 isAutoPlaying = false;
-                autoPlayBtn.textContent = '▶️ 자동재생';
+                btn.textContent = '▶️ 자동재생';
             } else {
-                autoPlayInterval = setInterval(() => {
-                    const nextIndex = currentSlide < slides.length - 1 ? currentSlide + 1 : 0;
-                    showSlide(nextIndex);
-                }, slideTiming * 1000); // slideTiming 사용
+                autoPlayInterval = setInterval(nextSlide, slideTiming * 1000);
                 isAutoPlaying = true;
-                autoPlayBtn.textContent = '⏸️ 일시정지';
+                btn.textContent = '⏸️ 정지';
             }
         }
 
-        function restartSlideshow() {
-            if (isAutoPlaying) toggleAutoPlay();
-            showSlide(0);
+        // 전체화면
+        function toggleFullscreen() {
+            const container = document.getElementById('slideshowContainer');
+            
+            if (!document.fullscreenElement) {
+                container.requestFullscreen().catch(err => {
+                    console.log(`전체화면 모드 오류: ${err.message}`);
+                });
+            } else {
+                document.exitFullscreen();
+            }
         }
 
-        // 영상 녹화 시스템 (기존 코드 유지)
-        async function startOptimizedRecording() {
-            if (slides.length === 0) {
-                alert('❌ 먼저 슬라이드를 생성해주세요!');
+        // 슬라이드쇼 재시작
+        function restartSlideshow() {
+            currentSlide = 0;
+            document.querySelectorAll('.slide').forEach((slide, index) => {
+                slide.classList.remove('active');
+                if (index === 0) slide.classList.add('active');
+            });
+            updateSlideCounter();
+            
+            if (isAutoPlaying) {
+                clearInterval(autoPlayInterval);
+                autoPlayInterval = setInterval(nextSlide, slideTiming * 1000);
+            }
+        }
+
+        // 빠른 영상 녹화
+        async function startQuickRecording() {
+            if (isRecording) {
+                stopRecording();
                 return;
             }
 
             try {
-                await initializeRecording();
-                await startRecording();
+                // 화면 캡처 시작
+                recordingStream = await navigator.mediaDevices.getDisplayMedia({
+                    video: {
+                        mediaSource: 'screen',
+                        width: { ideal: 1080 },
+                        height: { ideal: 1920 },
+                        frameRate: { ideal: 30 }
+                    },
+                    audio: false
+                });
+
+                // MediaRecorder 설정
+                const options = {
+                    mimeType: 'video/webm;codecs=vp9',
+                    videoBitsPerSecond: 2500000 // 2.5 Mbps
+                };
+
+                if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+                    options.mimeType = 'video/webm;codecs=vp8';
+                }
+
+                mediaRecorder = new MediaRecorder(recordingStream, options);
+                recordedChunks = [];
+
+                // 녹화 이벤트 리스너
+                mediaRecorder.ondataavailable = function(event) {
+                    if (event.data.size > 0) {
+                        recordedChunks.push(event.data);
+                    }
+                };
+
+                mediaRecorder.onstop = function() {
+                    saveRecording();
+                };
+
+                // 녹화 시작
+                mediaRecorder.start(1000); // 1초마다 데이터 수집
+                isRecording = true;
+                recordingStartTime = Date.now();
+
+                // UI 업데이트
+                showRecordingStatus();
+                startRecordingTimer();
+
+                // 자동 슬라이드 진행
+                restartSlideshow();
+                if (!isAutoPlaying) {
+                    toggleAutoPlay();
+                }
+
+                // 전체 슬라이드 시간 계산 후 자동 종료
+                const totalTime = slides.length * slideTiming * 1000;
+                setTimeout(() => {
+                    if (isRecording) {
+                        stopRecording();
+                    }
+                }, totalTime + 1000); // 1초 여유
+
             } catch (error) {
-                console.error('녹화 오류:', error);
-                alert('❌ 녹화에 실패했습니다: ' + error.message);
+                console.error('녹화 시작 오류:', error);
+                alert('녹화를 시작할 수 없습니다. 화면 공유를 허용해주세요.');
             }
         }
 
-        async function initializeRecording() {
-            // 기존 녹화 초기화 코드
-            const canvas = document.createElement('canvas');
-            canvas.width = 1080;
-            canvas.height = 1920;
-            
-            // 녹화 시작 로직
-            showRecordingModal();
+        // 고급 녹화 모달 열기
+        function openAdvancedRecording() {
+            document.getElementById('recordingModal').style.display = 'flex';
         }
 
-        async function startRecording() {
-            // 실제 녹화 진행
-            for (let i = 0; i < slides.length; i++) {
-                showSlide(i);
-                await delay(slideTiming * 1000); // 설정된 타이밍 사용
-                updateRecordingProgress((i + 1) / slides.length * 100);
+        // 고급 녹화 모달 닫기
+        function closeRecordingModal() {
+            document.getElementById('recordingModal').style.display = 'none';
+        }
+
+        // 고급 영상 녹화
+        async function startAdvancedRecording() {
+            if (isRecording) {
+                stopRecording();
+                return;
             }
-            
-            hideRecordingModal();
-            showSuccessNotification('🎬 영상 녹화가 완료되었습니다!');
-        }
 
-        function showRecordingModal() {
-            const modal = document.createElement('div');
-            modal.id = 'recordingModal';
-            modal.style.cssText = `
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0,0,0,0.9);
-                z-index: 9999;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                backdrop-filter: blur(15px);
-            `;
-            
-            modal.innerHTML = `
-                <div style="background: linear-gradient(135deg, #ff4444, #ff6666); border-radius: 30px; padding: 50px; text-align: center; color: white; max-width: 500px;">
-                    <div style="font-size: 4em; margin-bottom: 20px;">🎬</div>
-                    <h2 style="margin-bottom: 20px; font-size: 2.5em;">영상 녹화 중</h2>
-                    <div id="recordingProgressBar" style="background: rgba(255,255,255,0.3); height: 20px; border-radius: 10px; overflow: hidden; margin: 20px 0;">
-                        <div id="recordingProgressFill" style="background: white; height: 100%; width: 0%; transition: width 0.5s ease;"></div>
-                    </div>
-                    <div id="recordingStatus">녹화 준비 중...</div>
-                    <div style="margin-top: 15px; font-size: 1.1em;">슬라이드 간격: ${slideTiming}초</div>
-                </div>
-            `;
-            
-            document.body.appendChild(modal);
-        }
+            // 설정 값 가져오기
+            const quality = document.getElementById('videoQuality').value;
+            const timing = parseFloat(document.getElementById('recordingTiming').value);
+            const aspectRatio = document.getElementById('videoAspectRatio').value;
+            const includeAudio = document.getElementById('includeAudio').value === 'true';
 
-        function updateRecordingProgress(percent) {
-            const progressFill = document.getElementById('recordingProgressFill');
-            const status = document.getElementById('recordingStatus');
+            // 해상도 설정
+            const resolutions = {
+                '720': { width: 1280, height: 720 },
+                '1080': { width: 1920, height: 1080 },
+                '1440': { width: 2560, height: 1440 },
+                '2160': { width: 3840, height: 2160 }
+            };
+
+            const resolution = resolutions[quality];
             
-            if (progressFill && status) {
-                progressFill.style.width = percent + '%';
-                status.textContent = `녹화 진행 중... ${Math.round(percent)}%`;
+            // 비율에 따른 해상도 조정
+            if (aspectRatio === '9:16') {
+                [resolution.width, resolution.height] = [resolution.height, resolution.width];
+            } else if (aspectRatio === '1:1') {
+                resolution.height = resolution.width;
+            } else if (aspectRatio === '4:5') {
+                resolution.height = Math.round(resolution.width * 1.25);
+            }
+
+            try {
+                // 화면 캡처 시작
+                recordingStream = await navigator.mediaDevices.getDisplayMedia({
+                    video: {
+                        mediaSource: 'screen',
+                        width: { ideal: resolution.width },
+                        height: { ideal: resolution.height },
+                        frameRate: { ideal: 30 }
+                    },
+                    audio: includeAudio
+                });
+
+                // MediaRecorder 설정
+                const bitrates = {
+                    '720': 1500000,   // 1.5 Mbps
+                    '1080': 2500000,  // 2.5 Mbps
+                    '1440': 4000000,  // 4 Mbps
+                    '2160': 8000000   // 8 Mbps
+                };
+
+                const options = {
+                    mimeType: 'video/webm;codecs=vp9',
+                    videoBitsPerSecond: bitrates[quality]
+                };
+
+                if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+                    options.mimeType = 'video/webm;codecs=vp8';
+                }
+
+                if (includeAudio) {
+                    options.audioBitsPerSecond = 128000; // 128 kbps
+                }
+
+                mediaRecorder = new MediaRecorder(recordingStream, options);
+                recordedChunks = [];
+
+                // 녹화 이벤트 리스너
+                mediaRecorder.ondataavailable = function(event) {
+                    if (event.data.size > 0) {
+                        recordedChunks.push(event.data);
+                    }
+                };
+
+                mediaRecorder.onstop = function() {
+                    saveRecording();
+                };
+
+                // 녹화 시작
+                mediaRecorder.start(1000);
+                isRecording = true;
+                recordingStartTime = Date.now();
+
+                // 슬라이드 타이밍 업데이트
+                slideTiming = timing;
+
+                // UI 업데이트
+                closeRecordingModal();
+                showRecordingStatus();
+                startRecordingTimer();
+                showRecordingProgress();
+
+                // 자동 슬라이드 진행
+                restartSlideshow();
+                if (!isAutoPlaying) {
+                    toggleAutoPlay();
+                }
+
+                // 전체 슬라이드 시간 계산 후 자동 종료
+                const totalTime = slides.length * timing * 1000;
+                setTimeout(() => {
+                    if (isRecording) {
+                        stopRecording();
+                    }
+                }, totalTime + 1000);
+
+                // 진행률 업데이트
+                updateRecordingProgress(totalTime);
+
+            } catch (error) {
+                console.error('고급 녹화 시작 오류:', error);
+                alert('녹화를 시작할 수 없습니다. 화면 공유를 허용해주세요.');
+                closeRecordingModal();
             }
         }
 
-        function hideRecordingModal() {
-            const modal = document.getElementById('recordingModal');
-            if (modal) {
-                modal.remove();
+        // 녹화 중지
+        function stopRecording() {
+            if (mediaRecorder && isRecording) {
+                mediaRecorder.stop();
+                recordingStream.getTracks().forEach(track => track.stop());
+                isRecording = false;
+                
+                hideRecordingStatus();
+                hideRecordingProgress();
+                
+                if (isAutoPlaying) {
+                    toggleAutoPlay();
+                }
             }
         }
 
-        // 슬라이드 다운로드
-        function downloadSlides() {
-            const slidesData = {
-                title: document.getElementById('titleInput').value,
-                content: document.getElementById('contentInput').value,
-                slides: slides,
-                template: selectedTemplate,
-                animation: selectedAnimation,
-                colorPreset: selectedColorPreset,
-                slideTiming: slideTiming,
-                generatedAt: new Date().toISOString(),
-                version: 'V2.1 Ultimate Edition'
+        // 녹화 상태 표시
+        function showRecordingStatus() {
+            document.getElementById('recordingStatus').style.display = 'block';
+        }
+
+        function hideRecordingStatus() {
+            document.getElementById('recordingStatus').style.display = 'none';
+        }
+
+        // 녹화 타이머
+        function startRecordingTimer() {
+            const timerElement = document.getElementById('recordingTimer');
+            
+            const updateTimer = () => {
+                if (!isRecording) return;
+                
+                const elapsed = Math.floor((Date.now() - recordingStartTime) / 1000);
+                const minutes = Math.floor(elapsed / 60).toString().padStart(2, '0');
+                const seconds = (elapsed % 60).toString().padStart(2, '0');
+                timerElement.textContent = `${minutes}:${seconds}`;
+                
+                setTimeout(updateTimer, 1000);
             };
             
-            const dataStr = JSON.stringify(slidesData, null, 2);
-            const blob = new Blob([dataStr], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `ultimate-slides-v2.1-${Date.now()}.json`;
-            a.click();
-            URL.revokeObjectURL(url);
-            
-            showSuccessNotification('📁 슬라이드 데이터가 다운로드되었습니다!');
+            updateTimer();
         }
 
-        // 결과 표시
-        function showResults() {
-            document.getElementById('resultSection').style.display = 'block';
-            setTimeout(() => {
-                document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth' });
-            }, 500);
+        // 녹화 진행률 표시
+        function showRecordingProgress() {
+            document.getElementById('recordingProgress').style.display = 'block';
+        }
+
+        function hideRecordingProgress() {
+            document.getElementById('recordingProgress').style.display = 'none';
+        }
+
+        function updateRecordingProgress(totalTime) {
+            const progressText = document.getElementById('progressText');
+            const progressFill = document.getElementById('progressFill');
+            
+            const updateProgress = () => {
+                if (!isRecording) return;
+                
+                const elapsed = Date.now() - recordingStartTime;
+                const progress = Math.min((elapsed / totalTime) * 100, 100);
+                
+                progressFill.style.width = `${progress}%`;
+                progressText.textContent = `녹화 진행중... ${Math.round(progress)}%`;
+                
+                if (progress < 100) {
+                    setTimeout(updateProgress, 100);
+                }
+            };
+            
+            updateProgress();
+        }
+
+        // 녹화 파일 저장
+        function saveRecording() {
+            if (recordedChunks.length === 0) {
+                alert('녹화된 데이터가 없습니다.');
+                return;
+            }
+
+            const blob = new Blob(recordedChunks, { type: 'video/webm' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `슬라이드_영상_${new Date().toISOString().slice(0, 19).replace(/[:.]/g, '-')}.webm`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            
+            URL.revokeObjectURL(url);
+            
+            // 성공 알림
+            showSuccessNotification('영상이 성공적으로 저장되었습니다! 🎉');
         }
 
         // 성공 알림 표시
         function showSuccessNotification(message) {
             const notification = document.createElement('div');
-            notification.className = 'success-notification';
-            notification.innerHTML = message;
+            notification.className = 'success-notification show';
+            notification.textContent = message;
             document.body.appendChild(notification);
             
-            setTimeout(() => notification.classList.add('show'), 100);
             setTimeout(() => {
                 notification.classList.remove('show');
-                setTimeout(() => notification.remove(), 500);
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 500);
             }, 3000);
         }
 
-        // 유틸리티 함수
-        function delay(ms) {
-            return new Promise(resolve => setTimeout(resolve, ms));
+        // 키보드 단축키
+        document.addEventListener('keydown', function(event) {
+            if (slides.length === 0) return;
+            
+            switch(event.key) {
+                case 'ArrowRight':
+                case ' ':
+                    event.preventDefault();
+                    nextSlide();
+                    break;
+                case 'ArrowLeft':
+                    event.preventDefault();
+                    prevSlide();
+                    break;
+                case 'Home':
+                    event.preventDefault();
+                    restartSlideshow();
+                    break;
+                case 'Escape':
+                    if (document.fullscreenElement) {
+                        document.exitFullscreen();
+                    }
+                    break;
+                case 'r':
+                case 'R':
+                    if (event.ctrlKey || event.metaKey) {
+                        event.preventDefault();
+                        startQuickRecording();
+                    }
+                    break;
+            }
+        });
+
+        // 스트림 종료 감지
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden && isRecording) {
+                // 페이지가 숨겨졌을 때 녹화 중지 (선택적)
+                console.log('페이지가 숨겨짐, 녹화 계속...');
+            }
+        });
+
+        // 브라우저 지원 확인
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
+            console.warn('이 브라우저는 화면 녹화를 지원하지 않습니다.');
+            // 녹화 버튼들을 숨기거나 비활성화할 수 있음
         }
 
-        // 전역 오류 처리
-        window.addEventListener('error', function(event) {
-            console.error('전역 오류:', event.error);
-        });
+        // 성능 최적화를 위한 Intersection Observer
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
 
-        window.addEventListener('unhandledrejection', function(event) {
-            console.error('처리되지 않은 Promise 거부:', event.reason);
-            event.preventDefault();
-        });
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
 
+        // 모든 섹션에 observer 적용
+        document.querySelectorAll('.section').forEach(section => {
+            observer.observe(section);
+        });
     </script>
 </body>
 </html>
