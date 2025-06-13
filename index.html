@@ -2231,7 +2231,7 @@
                         <div>📱 유튜브 쇼츠 최적화 (9:16)</div>
                         <div>🚀 바이럴 최적화 타이밍 (3초)</div>
                         <div>📋 메타데이터 자동 생성</div>
-                        <div>🎥 60fps 매끄러운 영상 녹화</div>
+                        <div>🎥 45초 고정 시간 영상 녹화</div>
                         <div>📁 슬라이드 다운로드</div>
                         <div>🎯 스마트 글자 크기 조절</div>
                         <div>📺 원클릭 유튜브 업로드</div>
@@ -2348,7 +2348,7 @@
                         <div>📐 스마트 글자 크기 조절</div>
                         <div>📱 유튜브 쇼츠 최적화 (9:16)</div>
                         <div>🚀 바이럴 최적화 타이밍</div>
-                        <div>🎬 60fps 매끄러운 영상 녹화</div>
+                        <div>🎬 45초 고정 시간 영상 녹화</div>
                     </div>
                 </div>
 
@@ -2976,25 +2976,27 @@ JSON 형식으로 응답해주세요:
             showSlide(0);
         }
 
-        // 🎬 완성된 프리미엄 슬라이드 영상 녹화 시스템 (60fps 부드러운 버전)
+        // 🚀 45초 고정 시간 매끄러운 영상 녹화 시스템
         let mediaRecorder = null;
         let recordedChunks = [];
         let isRecording = false;
         let recordingCanvas = null;
         let recordingContext = null;
         let canvasStream = null;
+        let recordingStartTime = 0;
+        let slideStartTime = 0;
 
-        // 영상 녹화 시작 (실제 프리미엄 슬라이드 캡처 - 60fps) - 안정성 개선
+        // 영상 녹화 시작 (45초 고정 시간)
         async function startRecording() {
             if (slides.length === 0) {
                 alert('❌ 먼저 슬라이드를 생성해주세요!');
                 return;
             }
 
-            console.log('🎬 녹화 시작 - 슬라이드 수:', slides.length);
+            console.log('🎬 45초 고정 시간 녹화 시작');
 
             try {
-                // 캔버스 설정 (9:16 비율, 고해상도)
+                // 캔버스 설정 (9:16 비율, 최적화된 해상도)
                 const width = 1080;
                 const height = 1920;
                 
@@ -3003,26 +3005,28 @@ JSON 형식으로 응답해주세요:
                 recordingCanvas.height = height;
                 recordingContext = recordingCanvas.getContext('2d');
                 
-                console.log('📐 캔버스 생성됨:', width, 'x', height);
+                // 고성능 설정
+                recordingContext.imageSmoothingEnabled = true;
+                recordingContext.imageSmoothingQuality = 'high';
                 
-                // 60fps 고품질 캔버스 스트림 생성
-                canvasStream = recordingCanvas.captureStream(60);
-                console.log('🎥 60fps 스트림 생성됨');
+                console.log('📐 캔버스 생성:', width, 'x', height);
                 
-                // MediaRecorder 설정 (더 높은 품질)
+                // 30fps 스트림 (60fps → 30fps로 성능 최적화)
+                canvasStream = recordingCanvas.captureStream(30);
+                console.log('🎥 30fps 최적화 스트림 생성');
+                
+                // MediaRecorder 설정
                 const options = {
                     mimeType: 'video/webm;codecs=vp9',
-                    videoBitsPerSecond: 15000000 // 15Mbps 초고화질
+                    videoBitsPerSecond: 8000000 // 8Mbps로 최적화
                 };
 
                 if (!MediaRecorder.isTypeSupported(options.mimeType)) {
-                    console.log('⚠️ VP9 미지원, VP8 사용');
                     options.mimeType = 'video/webm;codecs=vp8';
-                    options.videoBitsPerSecond = 12000000;
+                    options.videoBitsPerSecond = 6000000;
                     if (!MediaRecorder.isTypeSupported(options.mimeType)) {
-                        console.log('⚠️ VP8 미지원, 기본 WebM 사용');
                         options.mimeType = 'video/webm';
-                        options.videoBitsPerSecond = 10000000;
+                        options.videoBitsPerSecond = 5000000;
                     }
                 }
 
@@ -3035,40 +3039,214 @@ JSON 형식으로 응답해주세요:
                 mediaRecorder.ondataavailable = (event) => {
                     if (event.data.size > 0) {
                         recordedChunks.push(event.data);
-                        console.log('📦 데이터 청크 추가, 크기:', event.data.size, '총 청크:', recordedChunks.length);
                     }
                 };
 
                 mediaRecorder.onstop = () => {
-                    console.log('🔚 MediaRecorder 중지됨');
+                    console.log('🔚 45초 녹화 완료');
                     handleRecordingComplete();
                 };
 
                 mediaRecorder.onerror = (event) => {
                     console.error('❌ MediaRecorder 오류:', event.error);
-                    alert(`녹화 중 오류가 발생했습니다: ${event.error}`);
                 };
 
                 // 녹화 시작
-                mediaRecorder.start(50);
+                mediaRecorder.start(100);
                 isRecording = true;
-                console.log('▶️ 녹화 시작됨');
+                recordingStartTime = performance.now();
+                console.log('▶️ 45초 타이머 시작');
 
                 // UI 업데이트
                 updateRecordingUI(true);
 
-                // 부드러운 슬라이드쇼 시작
-                await startSmoothSlideshow();
+                // 45초 고정 시간 슬라이드쇼 시작
+                await startTimedSlideshow();
 
             } catch (error) {
                 console.error('❌ 녹화 시작 오류:', error);
-                alert(`❌ 녹화 시작에 실패했습니다: ${error.message}\n\n브라우저를 새로고침하고 다시 시도해주세요.`);
+                alert(`❌ 녹화 시작 실패: ${error.message}`);
                 
-                // 오류 발생 시 정리
                 isRecording = false;
                 updateRecordingUI(false);
                 hideRecordingProgress();
             }
+        }
+
+        // 45초 고정 시간 슬라이드쇼 (각 슬라이드 3초씩)
+        async function startTimedSlideshow() {
+            console.log('⏱️ 45초 타이머 슬라이드쇼 시작');
+            
+            showRecordingProgress();
+            
+            const TOTAL_DURATION = 45000; // 45초
+            const SLIDE_DURATION = 3000;  // 3초/슬라이드
+            const slideCount = slides.length;
+            
+            // 첫 번째 슬라이드부터 시작
+            let currentSlideIndex = 0;
+            showSlide(currentSlideIndex);
+            slideStartTime = performance.now();
+            
+            // 첫 번째 슬라이드 캡처
+            await captureSlideOptimized(currentSlideIndex);
+            
+            // 30fps 렌더링 루프 (33.33ms 간격)
+            const renderLoop = async () => {
+                if (!isRecording) return;
+                
+                const currentTime = performance.now();
+                const elapsedTotal = currentTime - recordingStartTime;
+                const elapsedSlide = currentTime - slideStartTime;
+                
+                // 45초 완료 체크
+                if (elapsedTotal >= TOTAL_DURATION) {
+                    console.log('⏰ 45초 완료 - 녹화 종료');
+                    stopRecording();
+                    return;
+                }
+                
+                // 슬라이드 전환 체크 (3초마다)
+                if (elapsedSlide >= SLIDE_DURATION) {
+                    currentSlideIndex = (currentSlideIndex + 1) % slideCount;
+                    console.log(`🔄 슬라이드 전환: ${currentSlideIndex + 1}/${slideCount}`);
+                    
+                    showSlide(currentSlideIndex);
+                    slideStartTime = currentTime;
+                    
+                    // 새 슬라이드 캡처
+                    await captureSlideOptimized(currentSlideIndex);
+                }
+                
+                // 진행 상황 업데이트
+                const progressPercent = (elapsedTotal / TOTAL_DURATION) * 100;
+                const currentSlideNum = Math.floor(elapsedTotal / SLIDE_DURATION) + 1;
+                updateTimedProgress(Math.min(currentSlideNum, slideCount), slideCount, 
+                                 slides[currentSlideIndex]?.title || '', progressPercent);
+                
+                // 캔버스 업데이트 (부드러운 파티클 효과)
+                drawTimedParticles(recordingContext, elapsedTotal);
+                
+                // 다음 프레임 스케줄
+                if (isRecording) {
+                    setTimeout(renderLoop, 33.33); // 30fps
+                }
+            };
+            
+            // 렌더링 루프 시작
+            renderLoop();
+            
+            // 45초 후 자동 종료 (안전장치)
+            setTimeout(() => {
+                if (isRecording) {
+                    console.log('⏰ 45초 안전장치 - 강제 종료');
+                    stopRecording();
+                }
+            }, TOTAL_DURATION + 1000);
+        }
+
+        // 최적화된 슬라이드 캡처 (빠른 처리)
+        async function captureSlideOptimized(slideIndex) {
+            if (!recordingCanvas || !recordingContext) return;
+
+            try {
+                const slideContainer = document.getElementById('slideshowContainer');
+                if (!slideContainer) return;
+
+                // 빠른 캡처를 위한 최적화된 설정
+                const canvas = await html2canvas(slideContainer, {
+                    width: 600,
+                    height: 1067,
+                    scale: 1.5, // 성능 최적화
+                    useCORS: true,
+                    allowTaint: true,
+                    backgroundColor: null,
+                    removeContainer: false,
+                    imageTimeout: 50, // 빠른 타임아웃
+                    logging: false,
+                    onclone: (clonedDoc) => {
+                        const style = clonedDoc.createElement('style');
+                        style.textContent = `
+                            * { 
+                                animation-duration: 0s !important; 
+                                transition-duration: 0s !important; 
+                            }
+                        `;
+                        clonedDoc.head.appendChild(style);
+                    }
+                });
+
+                // 캔버스에 그리기
+                const sourceWidth = canvas.width;
+                const sourceHeight = canvas.height;
+                const targetWidth = recordingCanvas.width;
+                const targetHeight = recordingCanvas.height;
+                
+                const scale = Math.min(targetWidth / sourceWidth, targetHeight / sourceHeight);
+                const scaledWidth = sourceWidth * scale;
+                const scaledHeight = sourceHeight * scale;
+                const x = (targetWidth - scaledWidth) / 2;
+                const y = (targetHeight - scaledHeight) / 2;
+                
+                // 배경 클리어
+                recordingContext.fillStyle = '#000000';
+                recordingContext.fillRect(0, 0, recordingCanvas.width, recordingCanvas.height);
+                
+                // 슬라이드 그리기
+                recordingContext.drawImage(canvas, x, y, scaledWidth, scaledHeight);
+
+            } catch (error) {
+                console.error('⚠️ 캡처 오류 (계속 진행):', error);
+                
+                // 오류 시 기본 슬라이드 정보 표시
+                const slideData = slides[slideIndex];
+                if (slideData && recordingContext) {
+                    recordingContext.fillStyle = '#1a1a2e';
+                    recordingContext.fillRect(0, 0, recordingCanvas.width, recordingCanvas.height);
+                    
+                    // 아이콘
+                    recordingContext.font = 'bold 120px Arial';
+                    recordingContext.fillStyle = '#ffffff';
+                    recordingContext.textAlign = 'center';
+                    recordingContext.fillText(slideData.icon || '🚀', 
+                                            recordingCanvas.width / 2, recordingCanvas.height / 2 - 100);
+                    
+                    // 제목
+                    recordingContext.font = 'bold 48px Arial';
+                    recordingContext.fillStyle = '#4ecdc4';
+                    recordingContext.fillText(slideData.title || 'Loading...', 
+                                            recordingCanvas.width / 2, recordingCanvas.height / 2 + 50);
+                }
+            }
+        }
+
+        // 시간 기반 부드러운 파티클 효과
+        function drawTimedParticles(ctx, elapsedTime) {
+            if (!ctx) return;
+            
+            ctx.save();
+            ctx.globalAlpha = 0.3;
+            
+            // 시간 기반 애니메이션
+            const time = elapsedTime * 0.001; // 초 단위
+            
+            // 부드럽게 움직이는 파티클들 (적은 수로 성능 최적화)
+            for (let i = 0; i < 10; i++) {
+                const angle = (time + i * 0.5) * 0.8;
+                const radius = 30 + Math.sin(time + i) * 20;
+                const x = ctx.canvas.width / 2 + Math.cos(angle) * radius;
+                const y = ctx.canvas.height / 2 + Math.sin(angle) * radius;
+                const size = 2 + Math.sin(time * 2 + i) * 1;
+                
+                const hue = (time * 30 + i * 36) % 360;
+                ctx.fillStyle = `hsla(${hue}, 60%, 50%, 0.6)`;
+                
+                ctx.beginPath();
+                ctx.arc(x, y, size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            
+            ctx.restore();
         }
 
         // 실제 프리미엄 슬라이드를 html2canvas로 캡처 (최적화된 버전)
