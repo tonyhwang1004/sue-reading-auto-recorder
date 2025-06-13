@@ -679,8 +679,132 @@
         .success-notification.show {
             transform: translateX(0);
         }
+                .template-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .template-card {
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .template-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .template-card:hover::before {
+            left: 100%;
+        }
+
+        .template-card.selected {
+            background: rgba(78, 205, 196, 0.2);
+            border-color: #4ecdc4;
+            box-shadow: 0 0 30px rgba(78, 205, 196, 0.4);
+            transform: translateY(-5px);
+        }
+
+        .template-card:hover {
+            transform: translateY(-8px);
+            border-color: #4ecdc4;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+
+        .template-icon {
+            font-size: 3.5em;
+            margin-bottom: 15px;
+            display: block;
+            filter: drop-shadow(0 0 15px currentColor);
+        }
+
+        .template-card h3 {
+            font-size: 1.4em;
+            margin-bottom: 10px;
+            color: #4ecdc4;
+            font-weight: 700;
+        }
+
+        .template-card p {
+            font-size: 0.95em;
+            opacity: 0.9;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        .template-preview {
+            margin-top: 15px;
+        }
+
+        .preview-colors {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .preview-colors span {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.3);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .template-features {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .template-features span {
+            background: rgba(255,255,255,0.2);
+            padding: 5px 10px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            border: 1px solid rgba(255,255,255,0.3);
+            backdrop-filter: blur(5px);
+        }
+
+        .template-card.selected .template-features span {
+            background: rgba(78, 205, 196, 0.3);
+            border-color: rgba(78, 205, 196, 0.5);
+        }
+
+        /* 반응형 디자인 */
+        @media (max-width: 768px) {
+            .template-selector {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .template-card {
+                padding: 20px;
+            }
+            
+            .template-icon {
+                font-size: 2.8em;
+            }
+        }
     </style>
-</head>
+    </head>
 <body>
     <!-- 떠다니는 요소들 -->
     <div class="floating-elements" id="floatingElements"></div>
@@ -725,6 +849,144 @@
                     <h3>스마트 모드</h3>
                     <p>API 없이도 자동으로 15장의 고품질 슬라이드 생성</p>
                     <p style="color: #ffa500; font-weight: bold;">⚠️ 데모용 (분석없음)</p>
+                </div>
+            </div>
+        </div>
+        <div class="section">
+            <h2>🎯 생성 모드 선택</h2>
+            <div class="mode-selector">
+                <div class="mode-card" id="apiMode" onclick="selectMode('api')">
+                    <span class="mode-icon">🤖</span>
+                    <h3>GPT 실제 분석</h3>
+                    <p>AI가 내용을 분석해서 적절한 15장 슬라이드 생성</p>
+                    <p style="color: #4ecdc4; font-weight: bold;">✅ 추천 (진짜 분석)</p>
+                </div>
+                <div class="mode-card selected" id="smartMode" onclick="selectMode('smart')">
+                    <span class="mode-icon">🧠</span>
+                    <h3>스마트 모드</h3>
+                    <p>API 없이도 자동으로 15장의 고품질 슬라이드 생성</p>
+                    <p style="color: #ffa500; font-weight: bold;">⚠️ 데모용 (분석없음)</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ✨ 여기에 템플릿 선택 HTML 코드를 붙여넣으세요! ✨ -->
+        
+        <!-- 템플릿 선택 -->
+        <div class="section">
+            <h2>🎨 슬라이드 템플릿 선택</h2>
+            <p style="text-align: center; margin-bottom: 25px; font-size: 1.1em; opacity: 0.9;">
+                콘텐츠에 맞는 전문 템플릿을 선택하세요
+            </p>
+            
+            <div class="template-selector">
+                <div class="template-card selected" id="businessTemplate" onclick="selectTemplate('business')">
+                    <span class="template-icon">💼</span>
+                    <h3>비즈니스</h3>
+                    <p>전문적이고 깔끔한 기업용 템플릿</p>
+                    <div class="template-preview">
+                        <div class="preview-colors">
+                            <span style="background: #2c3e50;"></span>
+                            <span style="background: #3498db;"></span>
+                            <span style="background: #ecf0f1;"></span>
+                        </div>
+                        <div class="template-features">
+                            <span>📊 차트 최적화</span>
+                            <span>💼 프로페셔널</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="template-card" id="educationTemplate" onclick="selectTemplate('education')">
+                    <span class="template-icon">📚</span>
+                    <h3>교육/강의</h3>
+                    <p>학습 내용에 최적화된 템플릿</p>
+                    <div class="template-preview">
+                        <div class="preview-colors">
+                            <span style="background: #27ae60;"></span>
+                            <span style="background: #f39c12;"></span>
+                            <span style="background: #e8f5e8;"></span>
+                        </div>
+                        <div class="template-features">
+                            <span>📖 읽기 친화적</span>
+                            <span>🎓 학습 중심</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="template-card" id="marketingTemplate" onclick="selectTemplate('marketing')">
+                    <span class="template-icon">📈</span>
+                    <h3>마케팅</h3>
+                    <p>눈에 띄는 홍보용 템플릿</p>
+                    <div class="template-preview">
+                        <div class="preview-colors">
+                            <span style="background: #e74c3c;"></span>
+                            <span style="background: #f39c12;"></span>
+                            <span style="background: #fff3cd;"></span>
+                        </div>
+                        <div class="template-features">
+                            <span>🚀 임팩트</span>
+                            <span>✨ 시선 집중</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="template-card" id="creativeTemplate" onclick="selectTemplate('creative')">
+                    <span class="template-icon">🎨</span>
+                    <h3>크리에이티브</h3>
+                    <p>창의적이고 독특한 디자인</p>
+                    <div class="template-preview">
+                        <div class="preview-colors">
+                            <span style="background: #9b59b6;"></span>
+                            <span style="background: #e91e63;"></span>
+                            <span style="background: #f8f9fa;"></span>
+                        </div>
+                        <div class="template-features">
+                            <span>🎭 창의적</span>
+                            <span>🌈 다채로운</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="template-card" id="techTemplate" onclick="selectTemplate('tech')">
+                    <span class="template-icon">⚡</span>
+                    <h3>테크/IT</h3>
+                    <p>기술 중심의 모던한 템플릿</p>
+                    <div class="template-preview">
+                        <div class="preview-colors">
+                            <span style="background: #0d1421;"></span>
+                            <span style="background: #00d4ff;"></span>
+                            <span style="background: #1a1a2e;"></span>
+                        </div>
+                        <div class="template-features">
+                            <span>💻 모던</span>
+                            <span>🔮 미래지향</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="template-card" id="minimalistTemplate" onclick="selectTemplate('minimalist')">
+                    <span class="template-icon">⭐</span>
+                    <h3>미니멀</h3>
+                    <p>깔끔하고 단순한 디자인</p>
+                    <div class="template-preview">
+                        <div class="preview-colors">
+                            <span style="background: #2c3e50;"></span>
+                            <span style="background: #ffffff;"></span>
+                            <span style="background: #f8f9fa;"></span>
+                        </div>
+                        <div class="template-features">
+                            <span>🎯 집중</span>
+                            <span>✨ 깔끔함</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="background: rgba(78,205,196,0.1); border: 2px solid rgba(78,205,196,0.3); border-radius: 15px; padding: 20px; margin: 25px 0; text-align: center;">
+                <h4 style="color: #4ecdc4; margin-bottom: 10px;">💡 선택된 템플릿</h4>
+                <div id="selectedTemplateInfo" style="font-size: 1.1em; font-weight: bold;">
+                    💼 비즈니스 템플릿 - 전문적이고 신뢰감 있는 디자인
                 </div>
             </div>
         </div>
@@ -903,6 +1165,98 @@
         let isAutoPlaying = false;
         let currentMode = 'api'; // 기본값을 API 모드로 변경
         let selectedGPTModel = 'gpt-4o'; // 기본값을 GPT-4o로 변경
+        let selectedTemplate = 'business';
+
+        // 템플릿 정의
+        const templateConfigs = {
+            business: {
+                name: '비즈니스',
+                description: '전문적이고 신뢰감 있는 디자인',
+                colors: ['#2c3e50', '#3498db', '#34495e', '#5dade2', '#85c1e9'],
+                icons: ['📊', '💼', '📈', '🎯', '⚡', '💡', '🏆', '📋', '🔍', '💰', '🤝', '✅', '📍', '🚀', '🎉'],
+                fontWeight: '700',
+                style: 'professional'
+            },
+            education: {
+                name: '교육/강의',
+                description: '학습에 최적화된 친화적 디자인',
+                colors: ['#27ae60', '#f39c12', '#2ecc71', '#f1c40f', '#58d68d'],
+                icons: ['📚', '🎓', '📖', '✏️', '🔬', '💡', '🧠', '📊', '🎯', '⭐', '📝', '🎪', '🔍', '💬', '🎉'],
+                fontWeight: '600',
+                style: 'friendly'
+            },
+            marketing: {
+                name: '마케팅',
+                description: '임팩트 있는 홍보용 디자인',
+                colors: ['#e74c3c', '#f39c12', '#e67e22', '#fd79a8', '#fab1a0'],
+                icons: ['🚀', '💥', '🔥', '⚡', '🎯', '📈', '💰', '🏆', '✨', '🎪', '🎭', '🌟', '💎', '🎁', '🎉'],
+                fontWeight: '900',
+                style: 'bold'
+            },
+            creative: {
+                name: '크리에이티브',
+                description: '창의적이고 독특한 아티스틱 디자인',
+                colors: ['#9b59b6', '#e91e63', '#ff6b6b', '#4ecdc4', '#f093fb'],
+                icons: ['🎨', '🎭', '🌈', '✨', '🎪', '🦄', '🌟', '💫', '🎼', '🎬', '🎯', '🔮', '💎', '🎁', '🎉'],
+                fontWeight: '800',
+                style: 'artistic'
+            },
+            tech: {
+                name: '테크/IT',
+                description: '미래지향적인 기술 중심 디자인',
+                colors: ['#0d1421', '#00d4ff', '#1a1a2e', '#16213e', '#0f3460'],
+                icons: ['💻', '⚡', '🔮', '🚀', '🤖', '💡', '🔬', '📊', '🎯', '⭐', '🔧', '💎', '🌐', '📡', '🎉'],
+                fontWeight: '700',
+                style: 'futuristic'
+            },
+            minimalist: {
+                name: '미니멀',
+                description: '깔끔하고 집중력을 높이는 단순한 디자인',
+                colors: ['#2c3e50', '#95a5a6', '#34495e', '#7f8c8d', '#bdc3c7'],
+                icons: ['⭐', '🎯', '💎', '✨', '🔍', '📍', '💡', '📊', '🏆', '✅', '⚡', '🎪', '📋', '🚀', '🎉'],
+                fontWeight: '600',
+                style: 'clean'
+            }
+        };
+
+        // 템플릿 선택 함수
+        function selectTemplate(templateType) {
+            selectedTemplate = templateType;
+            
+            // 모든 템플릿 카드에서 selected 클래스 제거
+            document.querySelectorAll('.template-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // 선택된 템플릿 카드에 selected 클래스 추가
+            document.getElementById(templateType + 'Template').classList.add('selected');
+            
+            // 선택된 템플릿 정보 업데이트
+            const config = templateConfigs[templateType];
+            const infoElement = document.getElementById('selectedTemplateInfo');
+            
+            if (infoElement && config) {
+                infoElement.innerHTML = `${config.icons[0]} ${config.name} 템플릿 - ${config.description}`;
+            }
+            
+            console.log('선택된 템플릿:', templateType, config);
+            
+            // 템플릿 변경 효과
+            showTemplateChangeEffect();
+        }
+
+        // 템플릿 변경 효과
+        function showTemplateChangeEffect() {
+            const infoElement = document.getElementById('selectedTemplateInfo');
+            if (infoElement) {
+                infoElement.style.transform = 'scale(1.05)';
+                infoElement.style.transition = 'all 0.3s ease';
+                
+                setTimeout(() => {
+                    infoElement.style.transform = 'scale(1)';
+                }, 300);
+            }
+        }
 
         // 녹화 상태 관리
         let recordingState = {
@@ -1281,125 +1635,102 @@ JSON 형식으로만 응답해주세요.`;
             throw new Error('GPT 분석 실패: ' + (lastError?.message || '알 수 없는 오류'));
         }
 
-        // 최적화된 스마트 모드 슬라이드 생성 (데모용)
-        function generateOptimizedSmartSlides(title, content) {
-            const colors = [
-                '#667eea', '#f093fb', '#4facfe', '#43e97b', '#fa709a',
-                '#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57',
-                '#ff9ff3', '#54a0ff', '#5f27cd', '#00d2d3', '#ff9f43'
-            ];
-            
-            const icons = ['🚀', '🏆', '🤖', '📚', '⚡', '💬', '🎯', '👑', '📖', '🧠', '📊', '🎁', '📍', '📅', '📞'];
-            
-            // 기본 데모 슬라이드 (실제 분석 없음)
-            return [
-                {
-                    slideNumber: 1,
-                    icon: '🚀',
-                    title: title,
-                    subtitle: '프레젠테이션 시작',
-                    color: colors[0]
-                },
-                {
-                    slideNumber: 2,
-                    icon: '🎯',
-                    title: '주요 목표',
-                    subtitle: '달성하고자 하는 목표',
-                    color: colors[1]
-                },
-                {
-                    slideNumber: 3,
-                    icon: '📊',
-                    title: '현황 분석',
-                    subtitle: '현재 상황과 배경',
-                    color: colors[2]
-                },
-                {
-                    slideNumber: 4,
-                    icon: '💡',
-                    title: '핵심 아이디어',
-                    subtitle: '창의적인 해결 방안',
-                    color: colors[3]
-                },
-                {
-                    slideNumber: 5,
-                    icon: '🔍',
-                    title: '세부 분석',
-                    subtitle: '구체적인 내용 검토',
-                    color: colors[4]
-                },
-                {
-                    slideNumber: 6,
-                    icon: '⚡',
-                    title: '빠른 실행',
-                    subtitle: '즉시 적용 가능한 방법',
-                    color: colors[5]
-                },
-                {
-                    slideNumber: 7,
-                    icon: '🎨',
-                    title: '창의적 접근',
-                    subtitle: '혁신적인 관점',
-                    color: colors[6]
-                },
-                {
-                    slideNumber: 8,
-                    icon: '🏆',
-                    title: '성공 요인',
-                    subtitle: '핵심 성공 포인트',
-                    color: colors[7]
-                },
-                {
-                    slideNumber: 9,
-                    icon: '📈',
-                    title: '성장 전략',
-                    subtitle: '지속 가능한 발전',
-                    color: colors[8]
-                },
-                {
-                    slideNumber: 10,
-                    icon: '🤝',
-                    title: '협력 방안',
-                    subtitle: '함께 만드는 성과',
-                    color: colors[9]
-                },
-                {
-                    slideNumber: 11,
-                    icon: '💰',
-                    title: '경제적 효과',
-                    subtitle: '비용 대비 효과',
-                    color: colors[10]
-                },
-                {
-                    slideNumber: 12,
-                    icon: '🌟',
-                    title: '특별한 가치',
-                    subtitle: '차별화된 장점',
-                    color: colors[11]
-                },
-                {
-                    slideNumber: 13,
-                    icon: '🔮',
-                    title: '미래 전망',
-                    subtitle: '앞으로의 계획',
-                    color: colors[12]
-                },
-                {
-                    slideNumber: 14,
-                    icon: '📝',
-                    title: '실행 계획',
-                    subtitle: '구체적인 다음 단계',
-                    color: colors[13]
-                },
-                {
-                    slideNumber: 15,
-                    icon: '🎉',
-                    title: '마무리',
-                    subtitle: '감사합니다!',
-                    color: colors[14]
-                }
-            ];
-        }
+       // 템플릿 기반 스마트 슬라이드 생성 (템플릿 적용)
+function generateOptimizedSmartSlides(title, content) {
+    const config = templateConfigs[selectedTemplate];
+    const colors = config.colors;
+    const icons = config.icons;
+    
+    console.log(`🎨 ${config.name} 템플릿으로 슬라이드 생성`);
+    
+    // 템플릿별 맞춤 슬라이드 구성
+    let slides = [];
+    
+    if (selectedTemplate === 'business') {
+        slides = [
+            { slideNumber: 1, icon: icons[0], title: title, subtitle: '비즈니스 프레젠테이션', color: colors[0] },
+            { slideNumber: 2, icon: icons[1], title: '핵심 목표', subtitle: '달성하고자 하는 비즈니스 목표', color: colors[1] },
+            { slideNumber: 3, icon: icons[2], title: '시장 현황', subtitle: '현재 시장 상황과 기회', color: colors[2] },
+            { slideNumber: 4, icon: icons[3], title: '전략적 접근', subtitle: '체계적인 해결방안', color: colors[3] },
+            { slideNumber: 5, icon: icons[4], title: '실행 계획', subtitle: '단계별 실행 전략', color: colors[4] }
+        ];
+    } else if (selectedTemplate === 'education') {
+        slides = [
+            { slideNumber: 1, icon: icons[0], title: title, subtitle: '학습 목표 설정', color: colors[0] },
+            { slideNumber: 2, icon: icons[1], title: '기본 개념', subtitle: '핵심 이론과 원리', color: colors[1] },
+            { slideNumber: 3, icon: icons[2], title: '실제 사례', subtitle: '구체적인 예시와 적용', color: colors[2] },
+            { slideNumber: 4, icon: icons[3], title: '실습 과제', subtitle: '직접 해보는 연습', color: colors[3] },
+            { slideNumber: 5, icon: icons[4], title: '평가와 피드백', subtitle: '학습 성과 확인', color: colors[4] }
+        ];
+    } else if (selectedTemplate === 'marketing') {
+        slides = [
+            { slideNumber: 1, icon: icons[0], title: title, subtitle: '혁신적인 솔루션', color: colors[0] },
+            { slideNumber: 2, icon: icons[1], title: '놀라운 혜택', subtitle: '당신이 얻게 될 가치', color: colors[1] },
+            { slideNumber: 3, icon: icons[2], title: '성공 스토리', subtitle: '실제 고객 성공 사례', color: colors[2] },
+            { slideNumber: 4, icon: icons[3], title: '특별 기회', subtitle: '지금만 누릴 수 있는 혜택', color: colors[3] },
+            { slideNumber: 5, icon: icons[4], title: '즉시 시작', subtitle: '바로 행동하세요!', color: colors[4] }
+        ];
+    } else if (selectedTemplate === 'creative') {
+        slides = [
+            { slideNumber: 1, icon: icons[0], title: title, subtitle: '창의적인 여정의 시작', color: colors[0] },
+            { slideNumber: 2, icon: icons[1], title: '상상력 발휘', subtitle: '무한한 가능성 탐구', color: colors[1] },
+            { slideNumber: 3, icon: icons[2], title: '독창적 아이디어', subtitle: '남다른 관점과 접근', color: colors[2] },
+            { slideNumber: 4, icon: icons[3], title: '예술적 표현', subtitle: '감성과 논리의 조화', color: colors[3] },
+            { slideNumber: 5, icon: icons[4], title: '영감의 완성', subtitle: '창작의 결실', color: colors[4] }
+        ];
+    } else if (selectedTemplate === 'tech') {
+        slides = [
+            { slideNumber: 1, icon: icons[0], title: title, subtitle: '기술 혁신의 시작', color: colors[0] },
+            { slideNumber: 2, icon: icons[1], title: '최신 기술', subtitle: '첨단 솔루션과 도구', color: colors[1] },
+            { slideNumber: 3, icon: icons[2], title: '시스템 설계', subtitle: '효율적인 아키텍처', color: colors[2] },
+            { slideNumber: 4, icon: icons[3], title: '성능 최적화', subtitle: '빠르고 안정적인 구현', color: colors[3] },
+            { slideNumber: 5, icon: icons[4], title: '미래 전망', subtitle: '기술 발전 방향', color: colors[4] }
+        ];
+    } else if (selectedTemplate === 'minimalist') {
+        slides = [
+            { slideNumber: 1, icon: icons[0], title: title, subtitle: '핵심에 집중', color: colors[0] },
+            { slideNumber: 2, icon: icons[1], title: '본질 파악', subtitle: '중요한 것만 남기기', color: colors[1] },
+            { slideNumber: 3, icon: icons[2], title: '단순한 해결', subtitle: '복잡함을 제거한 방법', color: colors[2] },
+            { slideNumber: 4, icon: icons[3], title: '명확한 결론', subtitle: '간결하고 확실한 답', color: colors[3] },
+            { slideNumber: 5, icon: icons[4], title: '실행', subtitle: '바로 적용 가능한 방안', color: colors[4] }
+        ];
+    } else {
+        // 기본 템플릿 구조
+        slides = [
+            { slideNumber: 1, icon: icons[0], title: title, subtitle: `${config.name} 프레젠테이션`, color: colors[0] },
+            { slideNumber: 2, icon: icons[1], title: '주요 포인트', subtitle: '핵심 내용 요약', color: colors[1] },
+            { slideNumber: 3, icon: icons[2], title: '세부 분석', subtitle: '자세한 내용 검토', color: colors[2] },
+            { slideNumber: 4, icon: icons[3], title: '실행 방안', subtitle: '구체적인 실행 계획', color: colors[3] },
+            { slideNumber: 5, icon: icons[4], title: '결론', subtitle: '최종 요약과 제안', color: colors[4] }
+        ];
+    }
+    
+    // 15장까지 확장
+    while (slides.length < 15) {
+        const baseSlides = slides.slice(1); // 첫 번째 제외
+        const newSlides = baseSlides.map((slide, index) => ({
+            ...slide,
+            slideNumber: slides.length + index + 1,
+            icon: icons[(slides.length + index) % icons.length],
+            color: colors[(slides.length + index) % colors.length],
+            title: `${slide.title} ${Math.floor((slides.length + index) / 5) + 1}`,
+            subtitle: slide.subtitle
+        }));
+        
+        slides.push(...newSlides);
+    }
+    
+    // 정확히 15장으로 자르기
+    slides = slides.slice(0, 15);
+    
+    // slideNumber 재정렬
+    slides.forEach((slide, index) => {
+        slide.slideNumber = index + 1;
+    });
+    
+    console.log(`✅ ${config.name} 템플릿 기반 ${slides.length}장 슬라이드 생성 완료`);
+    return slides;
+}
 
         // 최적화된 슬라이드 생성
         async function createOptimizedSlides(slideData) {
