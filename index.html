@@ -427,7 +427,7 @@
         }
 
         .btn-generate {
-            background: var(--secondary);
+            background: var(--secondary);배경 : var (-보조);
             color: white;
             font-size: 1.6em;
             padding: 25px 50px;
@@ -678,13 +678,13 @@
         }
 
         .progress-bar {
-            width: 100%;
+            width: 100%;너비 : 100%;width: 100%;너비 : 100%;
             height: 8px;
             background: rgba(255, 255, 255, 0.3);
             border-radius: 4px;
             margin-top: 10px;
             overflow: hidden;
-        }
+        }}}}
 
         .progress-fill {
             height: 100%;
@@ -926,6 +926,29 @@
                     <div class="template-card" id="template-vibrant" onclick="selectTemplate('vibrant')">
                         <div class="template-preview" style="background: linear-gradient(135deg, #FF6B6B, #4ECDC4);">
                             <span>🌈</span>
+                            <div class="template-card" id="template-nature" onclick="selectTemplate('nature')">
+                        <div class="template-preview" style="background: linear-gradient(135deg, #27AE60, #16A085);">
+                            <span>🌱</span>
+                        </div>
+                        <div class="template-name">자연</div>
+                        <div class="template-desc">자연스럽고 친환경적인 느낌</div>
+                    </div>
+
+                    <div class="template-card" id="template-dark" onclick="selectTemplate('dark')">
+                        <div class="template-preview" style="background: linear-gradient(135deg, #2C3E50, #1B2631);">
+                            <span>🌙</span>
+                        </div>
+                        <div class="template-name">다크</div>
+                        <div class="template-desc">모던하고 세련된 다크 테마</div>
+                    </div>
+
+                    <div class="template-card" id="template-retro" onclick="selectTemplate('retro')">
+                        <div class="template-preview" style="background: linear-gradient(135deg, #E67E22, #C0392B);">
+                            <span>📼</span>
+                        </div>
+                        <div class="template-name">레트로</div>
+                        <div class="template-desc">빈티지하고 감성적인 디자인</div>
+                    </div>
                         </div>
                         <div class="template-name">생동감</div>
                         <div class="template-desc">화려하고 활기찬 컬러</div>
@@ -1283,6 +1306,25 @@
                 colors: ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4'],
                 gradient: 'linear-gradient(135deg, #FF6B6B, #4ECDC4)',
                 icons: ['🌈', '🎉', '🎊', '✨', '🌟', '💫', '🔥', '⚡', '🌸', '🦋']
+            }
+            ,
+            nature: {
+                name: '자연',
+                colors: ['#27AE60', '#2ECC71', '#16A085', '#1ABC9C'],
+                gradient: 'linear-gradient(135deg, #27AE60, #16A085)',
+                icons: ['🌱', '🌿', '🌳', '🍃', '🌸', '🦋', '🌺', '🌻', '🌹', '🌾']
+            },
+            dark: {
+                name: '다크',
+                colors: ['#2C3E50', '#34495E', '#1B2631', '#283747'],
+                gradient: 'linear-gradient(135deg, #2C3E50, #1B2631)',
+                icons: ['🌙', '⭐', '✨', '🔮', '💫', '🌌', '🖤', '⚫', '🕳️', '🌚']
+            },
+            retro: {
+                name: '레트로',
+                colors: ['#E67E22', '#D35400', '#F39C12', '#E74C3C'],
+                gradient: 'linear-gradient(135deg, #E67E22, #C0392B)',
+                icons: ['📼', '📻', '☎️', '💿', '🎵', '🎸', '🎤', '🎺', '🎭', '🎪']
             }
         };
 
@@ -2133,7 +2175,7 @@
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
+                    entry.target.style.opacity = '1';Entry.Target.style.opacity = '1';Entry.Target.style.opacity = '1'; Entry.Target.style.opacity = '1';
                     entry.target.style.transform = 'translateY(0)';
                 }
             });
