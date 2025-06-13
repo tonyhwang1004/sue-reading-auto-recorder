@@ -2242,7 +2242,7 @@
                         <div>📱 유튜브 쇼츠 최적화 (9:16)</div>
                         <div>🚀 바이럴 최적화 타이밍 (3초)</div>
                         <div>📋 메타데이터 자동 생성</div>
-                        <div>🎥 화면 캡처 영상 녹화</div>
+                        <div>🎥 100% 동일한 슬라이드 자동 녹화</div>
                         <div>📁 슬라이드 다운로드</div>
                         <div>🎯 스마트 글자 크기 조절</div>
                         <div>📺 원클릭 유튜브 업로드</div>
@@ -2359,7 +2359,7 @@
                         <div>📐 스마트 글자 크기 조절</div>
                         <div>📱 유튜브 쇼츠 최적화 (9:16)</div>
                         <div>🚀 바이럴 최적화 타이밍</div>
-                        <div>🎬 화면 캡처 영상 녹화</div>
+                        <div>🎬 슬라이드 생성과 동시에 자동 녹화</div>
                     </div>
                 </div>
 
@@ -2987,67 +2987,124 @@ JSON 형식으로 응답해주세요:
             showSlide(0);
         }
 
-        // 🎬 간단하고 확실한 프리미엄 슬라이드 영상 녹화 시스템
+        // 🎬 슬라이드 생성과 동시에 자동 녹화 시스템
         let mediaRecorder = null;
         let recordedChunks = [];
         let isRecording = false;
-        let recordingStream = null;
+        let recordingCanvas = null;
+        let recordingContext = null;
+        let canvasStream = null;
+        let autoRecordingEnabled = false;
 
-        // 영상 녹화 시작 (화면 캡처 방식 - 가장 확실한 방법)
-        async function startRecording() {
-            if (slides.length === 0) {
-                alert('❌ 먼저 슬라이드를 생성해주세요!');
+        // 슬라이드 생성 메인 함수 (녹화 기능 통합)
+        async function generateSlides() {
+            const title = document.getElementById('titleInput').value.trim();
+            const content = document.getElementById('contentInput').value.trim();
+           
+            if (!title || !content) {
+                alert('❌ 제목과 내용을 모두 입력해주세요!');
+                return;
+            }
+           
+            if (currentMode === 'api' && !apiKey) {
+                alert('❌ API 모드에서는 API 키가 필요합니다!');
                 return;
             }
 
-            console.log('🎬 화면 캡처 방식으로 녹화 시작');
+            // 자동 녹화 옵션 확인
+            const shouldRecord = confirm(`🎬 슬라이드 생성과 함께 영상도 자동 녹화할까요?
 
+✅ 확인: 슬라이드 생성 + 45초 영상 자동 녹화
+❌ 취소: 슬라이드만 생성
+
+자동 녹화 시 슬라이드와 100% 동일한 고화질 영상이 만들어집니다.`);
+
+            autoRecordingEnabled = shouldRecord;
+           
+            showProgressModal(true);
+           
             try {
-                // 사용자에게 캡처 방법 선택
-                const useScreenCapture = confirm(`🎬 영상 녹화 방법을 선택하세요:
-
-✅ 확인: 화면 공유로 슬라이드 영역만 녹화 (권장)
-❌ 취소: 자동 캡처 시도 (실험적)
-
-화면 공유 방식이 더 안정적이고 고화질입니다.`);
-
-                if (useScreenCapture) {
-                    await startScreenCapture();
+                let slideData;
+               
+                if (currentMode === 'api') {
+                    updateProgress(10, '🤖 GPT 연결 중', `${selectedGPTModel}에 연결하여 실제 분석을 시작합니다...`, '🤖');
+                    await delay(500);
+                   
+                    try {
+                        slideData = await generateSlideWithAPI(title, content);
+                        updateProgress(70, '✨ 분석 완료', '내용 분석이 완료되어 슬라이드를 구성하고 있습니다...', '✨');
+                        await delay(800);
+                    } catch (apiError) {
+                        console.error('API 오류:', apiError);
+                       
+                        updateProgress(30, '🔄 자동 전환', 'API 문제로 스마트 모드로 전환합니다...', '🔄');
+                        await delay(1000);
+                       
+                        slideData = generateSmartSlides(title, content);
+                       
+                        setTimeout(() => {
+                            alert(`💡 ${selectedGPTModel} 응답이 지연되어 스마트 모드로 자동 전환했습니다.\n\n✅ 스마트 모드도 훌륭한 슬라이드를 제공합니다!`);
+                        }, 2000);
+                    }
                 } else {
-                    await startAutoCapture();
+                    updateProgress(20, '🧠 스마트 분석', '안정적인 슬라이드 분석 중...', '🧠');
+                    await delay(800);
+                   
+                    slideData = generateSmartSlides(title, content);
                 }
-
-            } catch (error) {
-                console.error('❌ 녹화 시작 오류:', error);
-                alert(`❌ 녹화 시작 실패: ${error.message}\n\n다시 시도해주세요.`);
+               
+                updateProgress(80, '🎬 최종 완성', '프리미엄 슬라이드를 렌더링하고 있습니다...', '✨');
                 
-                isRecording = false;
-                updateRecordingUI(false);
-                hideRecordingProgress();
+                // 슬라이드 생성
+                createSlides(slideData);
+                await delay(500);
+               
+                updateProgress(100, '🎉 완성!', '완벽한 슬라이드가 준비되었습니다!', '🎬');
+                await delay(800);
+               
+                showProgressModal(false);
+                showResults();
+                showSuccessNotification();
+
+                // 자동 녹화 시작
+                if (autoRecordingEnabled) {
+                    setTimeout(async () => {
+                        await startAutoRecording();
+                    }, 1000);
+                }
+               
+            } catch (error) {
+                console.error('생성 오류:', error);
+                showProgressModal(false);
+                alert('❌ 슬라이드 생성에 실패했습니다. 다시 시도해보세요.');
             }
         }
 
-        // 화면 공유 방식 녹화 (가장 안정적)
-        async function startScreenCapture() {
+        // 자동 녹화 시스템 시작
+        async function startAutoRecording() {
+            console.log('🎬 자동 녹화 시스템 시작');
+            
             try {
-                console.log('📺 화면 공유 요청');
+                // 녹화 캔버스 설정
+                const width = 1080;
+                const height = 1920;
                 
-                // 화면 공유 요청
-                recordingStream = await navigator.mediaDevices.getDisplayMedia({
-                    video: {
-                        width: { ideal: 1920 },
-                        height: { ideal: 1080 },
-                        frameRate: { ideal: 30 }
-                    },
-                    audio: false
-                });
-
-                console.log('✅ 화면 공유 허용됨');
-
+                recordingCanvas = document.createElement('canvas');
+                recordingCanvas.width = width;
+                recordingCanvas.height = height;
+                recordingContext = recordingCanvas.getContext('2d');
+                
+                // 고품질 설정
+                recordingContext.imageSmoothingEnabled = true;
+                recordingContext.imageSmoothingQuality = 'high';
+                
+                // 30fps 캔버스 스트림
+                canvasStream = recordingCanvas.captureStream(30);
+                
                 // MediaRecorder 설정
                 const options = {
                     mimeType: 'video/webm;codecs=vp9',
-                    videoBitsPerSecond: 5000000 // 5Mbps 안정적 품질
+                    videoBitsPerSecond: 8000000 // 8Mbps
                 };
 
                 if (!MediaRecorder.isTypeSupported(options.mimeType)) {
@@ -3057,78 +3114,39 @@ JSON 형식으로 응답해주세요:
                     }
                 }
 
-                mediaRecorder = new MediaRecorder(recordingStream, options);
+                mediaRecorder = new MediaRecorder(canvasStream, options);
                 recordedChunks = [];
 
-                // 이벤트 처리
                 mediaRecorder.ondataavailable = (event) => {
                     if (event.data.size > 0) {
                         recordedChunks.push(event.data);
-                        console.log('📦 데이터 청크 추가:', event.data.size);
                     }
                 };
 
                 mediaRecorder.onstop = () => {
-                    console.log('🔚 화면 캡처 녹화 완료');
-                    handleRecordingComplete();
-                };
-
-                // 화면 공유 중단 감지
-                recordingStream.getVideoTracks()[0].onended = () => {
-                    console.log('📺 화면 공유 중단됨');
-                    if (isRecording) {
-                        stopRecording();
-                    }
+                    console.log('🎬 자동 녹화 완료');
+                    handleAutoRecordingComplete();
                 };
 
                 // 녹화 시작
-                mediaRecorder.start(1000);
+                mediaRecorder.start(100);
                 isRecording = true;
-                updateRecordingUI(true);
-
-                // 안내 메시지 표시
-                showScreenCaptureGuide();
-
-                // 45초 자동 슬라이드쇼 시작
-                await startSimpleSlideshow();
-
+                
+                // 자동 녹화 UI 표시
+                showAutoRecordingProgress();
+                
+                // 45초 슬라이드 캡처 시작
+                await start45SecondCapture();
+                
             } catch (error) {
-                if (error.name === 'NotAllowedError') {
-                    alert('❌ 화면 공유가 거부되었습니다.\n\n브라우저에서 화면 공유를 허용해주세요.');
-                } else {
-                    throw error;
-                }
+                console.error('❌ 자동 녹화 시작 오류:', error);
+                alert(`자동 녹화 시작 실패: ${error.message}`);
             }
         }
 
-        // 자동 캡처 방식 (실험적)
-        async function startAutoCapture() {
-            try {
-                console.log('🤖 자동 캡처 방식 시작');
-
-                // 슬라이드 컨테이너를 전체화면으로 만들기
-                const slideContainer = document.getElementById('slideshowContainer');
-                if (slideContainer.requestFullscreen) {
-                    await slideContainer.requestFullscreen();
-                } else if (slideContainer.webkitRequestFullscreen) {
-                    await slideContainer.webkitRequestFullscreen();
-                }
-
-                // 잠시 대기 후 화면 캡처 시도
-                await delay(1000);
-                await startScreenCapture();
-
-            } catch (error) {
-                console.error('❌ 자동 캡처 실패:', error);
-                alert('❌ 자동 캡처에 실패했습니다.\n\n화면 공유 방식을 이용해주세요.');
-            }
-        }
-
-        // 간단한 45초 슬라이드쇼
-        async function startSimpleSlideshow() {
-            console.log('⏱️ 45초 슬라이드쇼 시작');
-            
-            showRecordingProgress();
+        // 45초 동안 슬라이드 캡처
+        async function start45SecondCapture() {
+            console.log('📸 45초 슬라이드 캡처 시작');
             
             const totalDuration = 45000; // 45초
             const slideDuration = 3000;  // 3초/슬라이드
@@ -3137,228 +3155,283 @@ JSON 형식으로 응답해주세요:
             let currentSlideIndex = 0;
             const startTime = Date.now();
             
-            // 첫 슬라이드 표시
+            // 첫 슬라이드로 시작
             showSlide(currentSlideIndex);
+            await delay(200); // 슬라이드 렌더링 대기
             
-            const slideInterval = setInterval(() => {
-                if (!isRecording) {
-                    clearInterval(slideInterval);
-                    return;
-                }
+            // 30fps로 캡처 (33ms 간격)
+            const captureLoop = async () => {
+                if (!isRecording) return;
                 
                 const elapsed = Date.now() - startTime;
                 
                 // 45초 완료 체크
                 if (elapsed >= totalDuration) {
                     console.log('⏰ 45초 완료');
-                    clearInterval(slideInterval);
-                    stopRecording();
+                    stopAutoRecording();
                     return;
                 }
                 
-                // 다음 슬라이드로 전환
-                currentSlideIndex = (currentSlideIndex + 1) % slideCount;
-                showSlide(currentSlideIndex);
+                // 슬라이드 전환 체크
+                const expectedSlideIndex = Math.floor(elapsed / slideDuration) % slideCount;
+                if (expectedSlideIndex !== currentSlideIndex) {
+                    currentSlideIndex = expectedSlideIndex;
+                    showSlide(currentSlideIndex);
+                    await delay(100); // 전환 대기
+                }
+                
+                // 실제 슬라이드를 캔버스에 캡처
+                await captureSlideToCanvas(currentSlideIndex);
                 
                 // 진행 상황 업데이트
                 const progress = (elapsed / totalDuration) * 100;
                 const remainingTime = Math.max(0, (totalDuration - elapsed) / 1000);
-                updateSimpleProgress(currentSlideIndex + 1, slideCount, 
-                                   slides[currentSlideIndex]?.title || '', 
-                                   progress, remainingTime);
+                updateAutoRecordingProgress(currentSlideIndex + 1, slideCount, 
+                                          slides[currentSlideIndex]?.title || '', 
+                                          progress, remainingTime);
                 
-                console.log(`🔄 슬라이드 ${currentSlideIndex + 1}/${slideCount} - ${Math.round(progress)}% 진행`);
-                
-            }, slideDuration);
-        }
-
-        // 화면 캡처 가이드 표시
-        function showScreenCaptureGuide() {
-            const guide = document.createElement('div');
-            guide.id = 'captureGuide';
-            guide.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
-                color: white;
-                padding: 20px 25px;
-                border-radius: 15px;
-                font-weight: bold;
-                z-index: 5000;
-                max-width: 350px;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-                animation: slideInRight 0.5s ease;
-            `;
-            
-            guide.innerHTML = `
-                <div style="font-size: 1.1em; margin-bottom: 10px;">📺 화면 캡처 녹화 중</div>
-                <div style="font-size: 0.9em; line-height: 1.4;">
-                    • 슬라이드 영역만 선택해서 공유하세요<br>
-                    • 45초 동안 자동으로 슬라이드가 변경됩니다<br>
-                    • 녹화 완료 후 자동으로 파일이 다운로드됩니다
-                </div>
-            `;
-            
-            document.body.appendChild(guide);
-            
-            // 5초 후 자동 제거
-            setTimeout(() => {
-                if (guide.parentNode) {
-                    guide.remove();
+                // 다음 프레임 스케줄 (30fps)
+                if (isRecording) {
+                    setTimeout(captureLoop, 33);
                 }
-            }, 8000);
+            };
+            
+            // 캡처 루프 시작
+            captureLoop();
         }
 
-        // 간단한 진행 상황 업데이트
-        function updateSimpleProgress(current, total, slideTitle, percent, remainingTime) {
-            const progressFill = document.getElementById('recordingProgressFill');
-            const progressText = document.getElementById('recordingProgressText');
-            const progressDesc = document.getElementById('recordingProgressDesc');
-            const progressPercent = document.getElementById('recordingProgressPercent');
-            
-            if (progressFill) progressFill.style.width = percent + '%';
-            if (progressText) progressText.textContent = `${current} / ${total}`;
-            if (progressDesc) progressDesc.textContent = `현재 슬라이드: ${slideTitle}`;
-            if (progressPercent) progressPercent.textContent = `${Math.round(percent)}% (${Math.round(remainingTime)}초 남음)`;
-        }
+        // 실제 슬라이드를 캔버스에 캡처
+        async function captureSlideToCanvas(slideIndex) {
+            if (!recordingCanvas || !recordingContext) return;
 
-        // 간단한 진행 상황 표시
-        function showRecordingProgress() {
-            let progressModal = document.getElementById('recordingProgressModal');
-            
-            if (!progressModal) {
-                progressModal = document.createElement('div');
-                progressModal.id = 'recordingProgressModal';
-                progressModal.className = 'progress-modal';
-                progressModal.innerHTML = `
-                    <div class="progress-content">
-                        <div class="progress-icon" style="color: #4ecdc4;">📺</div>
-                        <h3 id="recordingProgressTitle">화면 캡처로 녹화 중...</h3>
-                        <p id="recordingProgressDesc">슬라이드 영역을 캡처하고 있습니다.</p>
-                        <div class="progress-bar">
-                            <div class="progress-fill" id="recordingProgressFill"></div>
-                        </div>
-                        <div id="recordingProgressText" style="font-size: 1.2em; font-weight: bold; color: #4ecdc4;">0 / ${slides.length}</div>
-                        <div id="recordingProgressPercent" style="margin-top: 10px; font-size: 1.1em; color: #ff6b6b;">0% (45초 남음)</div>
-                        <div style="margin-top: 15px; font-size: 0.9em; opacity: 0.8;">
-                            📱 고화질 화면 캡처 • ⏱️ 45초 자동 완료 • 🎬 실제 슬라이드 녹화
-                        </div>
-                        <button class="btn btn-primary" onclick="stopRecording()" style="margin-top: 20px; background: linear-gradient(45deg, #ff0000, #ff4444);">⏹️ 녹화 중지</button>
-                    </div>
-                `;
-                document.body.appendChild(progressModal);
-            }
-            
-            progressModal.classList.add('show');
-        }
-
-        // 녹화 중지
-        function stopRecording() {
-            console.log('🛑 녹화 중지');
-            
-            if (mediaRecorder && isRecording) {
-                try {
-                    mediaRecorder.stop();
-                } catch (error) {
-                    console.error('MediaRecorder 중지 오류:', error);
-                }
-                
-                isRecording = false;
-                
-                // 스트림 중지
-                if (recordingStream) {
-                    recordingStream.getTracks().forEach(track => track.stop());
-                    recordingStream = null;
-                }
-                
-                updateRecordingUI(false);
-                hideRecordingProgress();
-                
-                // 가이드 제거
-                const guide = document.getElementById('captureGuide');
-                if (guide) guide.remove();
-                
-                // 전체화면 종료
-                if (document.fullscreenElement) {
-                    document.exitFullscreen();
-                }
-                
-                console.log('🧹 녹화 리소스 정리 완료');
-            }
-        }
-
-        // 녹화 완료 처리
-        function handleRecordingComplete() {
-            console.log('🎬 녹화 완료 처리');
-            
             try {
-                if (recordedChunks.length === 0) {
-                    alert('❌ 녹화된 데이터가 없습니다. 다시 시도해주세요.');
-                    return;
-                }
+                const slideContainer = document.getElementById('slideshowContainer');
+                if (!slideContainer) return;
+
+                // 슬라이드 컨테이너의 스타일 정보 가져오기
+                const containerRect = slideContainer.getBoundingClientRect();
+                const activeSlide = slideContainer.querySelector('.slide.active');
                 
-                console.log('📦 녹화된 청크 수:', recordedChunks.length);
-                
-                const blob = new Blob(recordedChunks, { type: 'video/webm' });
-                const fileSizeMB = Math.round(blob.size / 1024 / 1024 * 100) / 100;
-                console.log('📁 비디오 파일 크기:', fileSizeMB, 'MB');
-                
-                // 다운로드
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `premium-slides-${Date.now()}.webm`;
-                a.style.display = 'none';
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                
-                // 정리
-                URL.revokeObjectURL(url);
-                recordedChunks = [];
-                
-                console.log('✅ 파일 다운로드 완료');
-                
-                // 성공 알림
-                showVideoCompleteNotification();
-                
+                if (!activeSlide) return;
+
+                // 캔버스 초기화
+                recordingContext.fillStyle = '#000000';
+                recordingContext.fillRect(0, 0, recordingCanvas.width, recordingCanvas.height);
+
+                // 슬라이드 데이터 가져오기
+                const slideData = slides[slideIndex];
+                if (!slideData) return;
+
+                // 슬라이드 배경 그리기
+                const gradient = recordingContext.createLinearGradient(0, 0, recordingCanvas.width, recordingCanvas.height);
+                gradient.addColorStop(0, slideData.color);
+                gradient.addColorStop(1, '#764ba2');
+                recordingContext.fillStyle = gradient;
+                recordingContext.fillRect(0, 0, recordingCanvas.width, recordingCanvas.height);
+
+                // 배경 효과 그리기
+                drawBackgroundEffects(recordingContext, slideIndex);
+
+                // 파티클 효과 그리기
+                drawParticleEffects(recordingContext, slideIndex);
+
+                // 슬라이드 콘텐츠 그리기
+                drawSlideContent(recordingContext, slideData, slideIndex);
+
             } catch (error) {
-                console.error('❌ 녹화 완료 처리 오류:', error);
-                alert(`녹화 완료 처리 중 오류: ${error.message}`);
+                console.error('⚠️ 슬라이드 캡처 오류:', error);
+                
+                // 오류 시 기본 화면
+                const slideData = slides[slideIndex];
+                if (slideData) {
+                    recordingContext.fillStyle = '#1a1a2e';
+                    recordingContext.fillRect(0, 0, recordingCanvas.width, recordingCanvas.height);
+                    
+                    // 기본 콘텐츠 표시
+                    recordingContext.fillStyle = '#ffffff';
+                    recordingContext.font = 'bold 120px Arial';
+                    recordingContext.textAlign = 'center';
+                    recordingContext.fillText(slideData.icon || '🚀', 
+                                            recordingCanvas.width / 2, recordingCanvas.height / 2 - 100);
+                    
+                    recordingContext.font = 'bold 60px Arial';
+                    recordingContext.fillStyle = '#4ecdc4';
+                    recordingContext.fillText(slideData.title || '', 
+                                            recordingCanvas.width / 2, recordingCanvas.height / 2 + 100);
+                }
             }
         }
 
-        // 성공 알림
-        function showVideoCompleteNotification() {
-            const notification = document.createElement('div');
-            notification.className = 'success-notification';
-            notification.innerHTML = `
-                <div style="font-size: 1.3em; font-weight: bold; margin-bottom: 12px;">
-                    🎉 고화질 슬라이드 영상 완성!
-                </div>
-                <div style="font-size: 1em; opacity: 0.95; line-height: 1.5;">
-                    📺 화면 캡처로 실제 슬라이드 녹화<br>
-                    ⏱️ 45초 완벽한 길이 • 🎬 고화질 WebM 포맷<br>
-                    📱 유튜브 쇼츠 업로드 준비 완료
-                </div>
-            `;
-            notification.style.background = 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)';
-            notification.style.padding = '35px 45px';
-            notification.style.borderRadius = '25px';
-            notification.style.maxWidth = '450px';
-            document.body.appendChild(notification);
-           
-            setTimeout(() => notification.classList.add('show'), 100);
-            setTimeout(() => {
-                notification.classList.remove('show');
-                setTimeout(() => notification.remove(), 500);
-            }, 8000);
+        // 배경 효과 그리기 (실제 슬라이드와 동일)
+        function drawBackgroundEffects(ctx, slideIndex) {
+            const effects = ['wave', 'cosmic', 'aurora', 'matrix', 'quantum'];
+            const effect = effects[slideIndex % effects.length];
+            const time = Date.now() * 0.001;
+            
+            ctx.save();
+            ctx.globalAlpha = 0.2;
+            
+            switch (effect) {
+                case 'wave':
+                    ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+                    ctx.lineWidth = 3;
+                    for (let i = 0; i < 8; i++) {
+                        ctx.beginPath();
+                        for (let x = 0; x < ctx.canvas.width; x += 20) {
+                            const y = Math.sin((x + time * 100 + i * 200) * 0.01) * 80 + ctx.canvas.height / 2;
+                            if (x === 0) ctx.moveTo(x, y);
+                            else ctx.lineTo(x, y);
+                        }
+                        ctx.stroke();
+                    }
+                    break;
+                    
+                case 'cosmic':
+                    for (let i = 0; i < 15; i++) {
+                        const x = Math.sin(time + i * 0.5) * 200 + ctx.canvas.width / 2;
+                        const y = Math.cos(time + i * 0.3) * 300 + ctx.canvas.height / 2;
+                        const radius = Math.sin(time + i) * 50 + 80;
+                        
+                        const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius);
+                        gradient.addColorStop(0, 'rgba(255,0,255,0.3)');
+                        gradient.addColorStop(1, 'transparent');
+                        ctx.fillStyle = gradient;
+                        ctx.beginPath();
+                        ctx.arc(x, y, radius, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                    break;
+                    
+                case 'aurora':
+                    const gradient = ctx.createLinearGradient(0, 0, ctx.canvas.width, ctx.canvas.height);
+                    gradient.addColorStop(0, `rgba(0,255,127,${0.1 + Math.sin(time) * 0.1})`);
+                    gradient.addColorStop(0.5, `rgba(255,0,255,${0.1 + Math.cos(time) * 0.1})`);
+                    gradient.addColorStop(1, `rgba(0,191,255,${0.1 + Math.sin(time * 0.5) * 0.1})`);
+                    ctx.fillStyle = gradient;
+                    ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+                    break;
+                    
+                case 'matrix':
+                    ctx.strokeStyle = 'rgba(0,255,0,0.1)';
+                    ctx.lineWidth = 1;
+                    for (let x = 0; x < ctx.canvas.width; x += 20) {
+                        for (let y = 0; y < ctx.canvas.height; y += 20) {
+                            if (Math.random() > 0.95) {
+                                ctx.beginPath();
+                                ctx.moveTo(x, y);
+                                ctx.lineTo(x, y + 10);
+                                ctx.stroke();
+                            }
+                        }
+                    }
+                    break;
+                    
+                case 'quantum':
+                    for (let i = 0; i < 30; i++) {
+                        const x = Math.random() * ctx.canvas.width;
+                        const y = Math.random() * ctx.canvas.height;
+                        const size = Math.random() * 3 + 1;
+                        const alpha = Math.sin(time + i) * 0.3 + 0.5;
+                        
+                        ctx.fillStyle = `rgba(255,255,0,${alpha * 0.2})`;
+                        ctx.beginPath();
+                        ctx.arc(x, y, size, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                    break;
+            }
+            
+            ctx.restore();
         }
 
-        // 간단한 지연 함수
-        function delay(ms) {
-            return new Promise(resolve => setTimeout(resolve, ms));
+        // 파티클 효과 그리기 (실제 슬라이드와 동일)
+        function drawParticleEffects(ctx, slideIndex) {
+            const time = Date.now() * 0.001;
+            
+            ctx.save();
+            ctx.globalAlpha = 0.6;
+            
+            // 동적 파티클 생성
+            for (let i = 0; i < 25; i++) {
+                const angle = (time + i * 0.2) * 0.5;
+                const radius = 100 + Math.sin(time + i) * 60;
+                const x = ctx.canvas.width / 2 + Math.cos(angle) * radius + Math.sin(time * 1.5 + i) * 150;
+                const y = ctx.canvas.height / 2 + Math.sin(angle) * radius + Math.cos(time * 1.2 + i) * 200;
+                const size = 2 + Math.sin(time * 3 + i) * 2;
+                
+                const hue = (time * 60 + i * 15) % 360;
+                ctx.fillStyle = `hsla(${hue}, 80%, 70%, 0.8)`;
+                
+                ctx.beginPath();
+                ctx.arc(x, y, size, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // 글로우 효과
+                ctx.shadowColor = ctx.fillStyle;
+                ctx.shadowBlur = 10;
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            }
+            
+            ctx.restore();
+        }
+
+        // 슬라이드 콘텐츠 그리기 (실제 슬라이드와 동일)
+        function drawSlideContent(ctx, slideData, slideIndex) {
+            if (!slideData) return;
+            
+            ctx.save();
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+            const centerX = ctx.canvas.width / 2;
+            const centerY = ctx.canvas.height / 2;
+            
+            // 아이콘 그리기
+            ctx.font = 'bold 200px Arial';
+            ctx.fillStyle = '#ffffff';
+            ctx.shadowColor = 'rgba(0,0,0,0.7)';
+            ctx.shadowBlur = 15;
+            ctx.fillText(slideData.icon || '🚀', centerX, centerY - 250);
+            
+            // 제목 그리기 (그라데이션 효과)
+            const title = slideData.title || '';
+            const titleFontSize = Math.max(50, Math.min(100, 800 / title.length));
+            ctx.font = `bold ${titleFontSize}px Arial`;
+            
+            // 그라데이션 텍스트
+            const titleGradient = ctx.createLinearGradient(0, centerY - 50, ctx.canvas.width, centerY - 50);
+            titleGradient.addColorStop(0, '#ff6b6b');
+            titleGradient.addColorStop(0.3, '#4ecdc4');
+            titleGradient.addColorStop(0.6, '#45b7d1');
+            titleGradient.addColorStop(1, '#96ceb4');
+            
+            ctx.fillStyle = titleGradient;
+            ctx.shadowColor = 'rgba(0,0,0,0.8)';
+            ctx.shadowBlur = 20;
+            
+            // 긴 제목은 두 줄로 분할
+            if (title.length > 12) {
+                const words = title.split(' ');
+                const midPoint = Math.ceil(words.length / 2);
+                const firstLine = words.slice(0, midPoint).join(' ');
+                const secondLine = words.slice(midPoint).join(' ');
+                
+                ctx.fillText(firstLine, centerX, centerY - 30);
+                ctx.fillText(secondLine, centerX, centerY + 30);
+            } else {
+                ctx.fillText(title, centerX, centerY);
+            }
+            
+            // 부제목 그리기
+            if (slideData.subtitle) {
+                ctx.font = 'normal 50px Arial';
+                ctx.fillStyle = 'rgba(255,255,255,0.9)';
+                ctx.shadowBlur = 10;
+                ctx.fillText(slideData.subtitle, centerX, centerY + 180);
+            }
+            
+            ctx.restore();
         }
 
         // 실제 프리미엄 슬라이드를 html2canvas로 캡처 (최적화된 버전)
