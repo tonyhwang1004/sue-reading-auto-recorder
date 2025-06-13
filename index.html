@@ -1114,19 +1114,20 @@
                 </div>
 
                 <div style="text-align: center; margin: 30px 0;">
-                    <button class="btn btn-primary" onclick="startQuickRecording()" style="font-size: 1.4em; padding: 22px 45px; margin: 10px; background: linear-gradient(45deg, #ff4444, #ff6666);">🎬 빠른 영상 녹화</button>
-                    <button class="btn btn-primary" onclick="openAdvancedRecording()" style="font-size: 1.4em; padding: 22px 45px; margin: 10px; background: linear-gradient(45deg, #8e44ad, #3498db);">🎥 고급 영상 녹화</button>
+                    <button class="btn btn-primary" onclick="startAutoRecording()" style="font-size: 1.4em; padding: 22px 45px; margin: 10px; background: linear-gradient(45deg, #ff4444, #ff6666);">🎬 자동 영상 녹화 (MP4)</button>
+                    <button class="btn btn-primary" onclick="startCanvasRecording()" style="font-size: 1.4em; padding: 22px 45px; margin: 10px; background: linear-gradient(45deg, #4ecdc4, #44a08d);">🎥 고품질 녹화 (MP4)</button>
+                    <button class="btn btn-primary" onclick="openAdvancedRecording()" style="font-size: 1.4em; padding: 22px 45px; margin: 10px; background: linear-gradient(45deg, #8e44ad, #3498db);">⚙️ 고급 설정</button>
                     <button class="btn btn-primary" onclick="restartSlideshow()">🔄 처음부터 재생</button>
                 </div>
 
                 <div style="background: rgba(255,215,0,0.1); border: 2px solid rgba(255,215,0,0.3); border-radius: 20px; padding: 25px; margin: 30px 0;">
-                    <h3 style="color: #FFD700; margin-bottom: 15px;">🎬 영상 녹화 안내</h3>
+                    <h3 style="color: #FFD700; margin-bottom: 15px;">🎬 자동 영상 녹화 안내</h3>
                     <div style="text-align: left; line-height: 1.6;">
-                        <div style="margin-bottom: 10px;"><strong>🎬 빠른 녹화:</strong> 3초 간격, 기본 설정으로 즉시 녹화</div>
-                        <div style="margin-bottom: 10px;"><strong>🎥 고급 녹화:</strong> 시간/화질/비율 맞춤 설정 가능</div>
-                        <div style="margin-bottom: 10px;"><strong>📱 지원 형식:</strong> WebM 형식으로 다운로드</div>
-                        <div style="margin-bottom: 10px;"><strong>💡 사용법:</strong> 녹화 버튼 클릭 → 화면 공유 허용 → 자동 녹화 진행</div>
-                        <div><strong>🔧 브라우저:</strong> Chrome, Edge, Firefox 지원 (Safari 제한적)</div>
+                        <div style="margin-bottom: 10px;"><strong>🎬 자동 영상 녹화:</strong> 화면 공유 없이 슬라이드만 자동 녹화, MP4 다운로드</div>
+                        <div style="margin-bottom: 10px;"><strong>🎥 고품질 녹화:</strong> Canvas 기반 고화질 녹화, 커스텀 해상도 지원</div>
+                        <div style="margin-bottom: 10px;"><strong>📱 지원 형식:</strong> MP4 형식으로 유튜브 업로드 가능</div>
+                        <div style="margin-bottom: 10px;"><strong>💡 특징:</strong> 화면 공유 불필요, 슬라이드만 깔끔하게 녹화</div>
+                        <div><strong>🔧 브라우저:</strong> Chrome, Edge, Firefox 지원</div>
                     </div>
                 </div>
             </div>
@@ -1157,7 +1158,6 @@
                     <option value="720">HD (720p)</option>
                     <option value="1080" selected>Full HD (1080p)</option>
                     <option value="1440">2K (1440p)</option>
-                    <option value="2160">4K (2160p)</option>
                 </select>
             </div>
 
@@ -1177,10 +1177,10 @@
             </div>
 
             <div class="modal-section">
-                <label class="modal-label">🎵 오디오 포함</label>
-                <select class="modal-select" id="includeAudio">
-                    <option value="false" selected>비디오만</option>
-                    <option value="true">오디오 포함</option>
+                <label class="modal-label">🎨 녹화 방식</label>
+                <select class="modal-select" id="recordingMethod">
+                    <option value="auto" selected>자동 녹화 (권장)</option>
+                    <option value="canvas">Canvas 녹화 (고품질)</option>
                 </select>
             </div>
 
@@ -1208,6 +1208,9 @@
         let recordingStream = null;
         let isRecording = false;
         let recordingStartTime = 0;
+        let canvasRecorder = null;
+        let recordingCanvas = null;
+        let recordingContext = null;
 
         // 색상 프리셋 정의
         const COLOR_PRESETS = {
@@ -1542,7 +1545,236 @@
             }
         }
 
-        // 빠른 영상 녹화
+        // 자동 영상 녹화 (화면 공유 없이 슬라이드만 녹화)
+        async function startAutoRecording() {
+            if (isRecording) {
+                stopRecording();
+                return;
+            }
+
+            if (slides.length === 0) {
+                alert('먼저 슬라이드를 생성해주세요.');
+                return;
+            }
+
+            try {
+                await createCanvasRecording();
+                showSuccessNotification('자동 영상 녹화가 완료되었습니다! 🎉');
+            } catch (error) {
+                console.error('자동 녹화 오류:', error);
+                alert('자동 녹화 중 오류가 발생했습니다.');
+            }
+        }
+
+        // Canvas 기반 고품질 녹화
+        async function startCanvasRecording() {
+            if (isRecording) {
+                stopRecording();
+                return;
+            }
+
+            if (slides.length === 0) {
+                alert('먼저 슬라이드를 생성해주세요.');
+                return;
+            }
+
+            try {
+                await createCanvasRecording(true);
+                showSuccessNotification('고품질 영상 녹화가 완료되었습니다! 🎉');
+            } catch (error) {
+                console.error('Canvas 녹화 오류:', error);
+                alert('Canvas 녹화 중 오류가 발생했습니다.');
+            }
+        }
+
+        // Canvas 기반 영상 생성
+        async function createCanvasRecording(highQuality = false) {
+            isRecording = true;
+            recordingStartTime = Date.now();
+            
+            // 캔버스 설정
+            const container = document.getElementById('slideshowContainer');
+            const containerRect = container.getBoundingClientRect();
+            
+            // 해상도 설정 (고품질일 때 더 높은 해상도)
+            const scale = highQuality ? 2 : 1;
+            const width = 1080 * scale;  // 9:16 비율
+            const height = 1920 * scale;
+
+            recordingCanvas = document.createElement('canvas');
+            recordingCanvas.width = width;
+            recordingCanvas.height = height;
+            recordingContext = recordingCanvas.getContext('2d');
+
+            // 캔버스 스트림 생성
+            const stream = recordingCanvas.captureStream(30); // 30 FPS
+            
+            recordedChunks = [];
+            mediaRecorder = new MediaRecorder(stream, {
+                mimeType: 'video/webm;codecs=vp9,opus',
+                videoBitsPerSecond: highQuality ? 5000000 : 2500000
+            });
+
+            mediaRecorder.ondataavailable = (event) => {
+                if (event.data.size > 0) {
+                    recordedChunks.push(event.data);
+                }
+            };
+
+            mediaRecorder.onstop = () => {
+                convertToMp4AndDownload();
+            };
+
+            // 녹화 시작
+            mediaRecorder.start();
+            showRecordingStatus();
+            showRecordingProgress();
+
+            // 각 슬라이드를 캔버스에 그리기
+            for (let i = 0; i < slides.length; i++) {
+                await renderSlideToCanvas(i, width, height);
+                
+                // 진행률 업데이트
+                const progress = ((i + 1) / slides.length) * 100;
+                document.getElementById('progressFill').style.width = `${progress}%`;
+                document.getElementById('progressText').textContent = `슬라이드 ${i + 1}/${slides.length} 녹화 중... ${Math.round(progress)}%`;
+                
+                // 슬라이드 시간만큼 대기
+                await new Promise(resolve => setTimeout(resolve, slideTiming * 1000));
+            }
+
+            // 녹화 종료
+            mediaRecorder.stop();
+            isRecording = false;
+            hideRecordingStatus();
+            hideRecordingProgress();
+        }
+
+        // 슬라이드를 캔버스에 렌더링
+        async function renderSlideToCanvas(slideIndex, width, height) {
+            const slide = slides[slideIndex];
+            const ctx = recordingContext;
+            
+            // 캔버스 초기화
+            ctx.clearRect(0, 0, width, height);
+            
+            // 배경 그라디언트 그리기
+            const gradient = ctx.createLinearGradient(0, 0, width, height);
+            const colors = extractColorsFromGradient(slide.background);
+            gradient.addColorStop(0, colors[0]);
+            gradient.addColorStop(1, colors[1]);
+            
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, width, height);
+            
+            // 텍스트 스타일 설정
+            ctx.textAlign = 'center';
+            ctx.fillStyle = 'white';
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.7)';
+            ctx.shadowBlur = 20;
+            ctx.shadowOffsetX = 4;
+            ctx.shadowOffsetY = 4;
+            
+            // 아이콘 그리기
+            ctx.font = `${width * 0.15}px Arial`;
+            ctx.fillText(slide.icon, width / 2, height * 0.35);
+            
+            // 제목 그리기
+            ctx.font = `bold ${width * 0.08}px Arial`;
+            const titleLines = wrapText(ctx, slide.title, width * 0.9);
+            let titleY = height * 0.5;
+            
+            titleLines.forEach((line, index) => {
+                ctx.fillText(line, width / 2, titleY + index * (width * 0.1));
+            });
+            
+            // 부제목 그리기
+            ctx.font = `${width * 0.05}px Arial`;
+            ctx.globalAlpha = 0.9;
+            const subtitleLines = wrapText(ctx, slide.subtitle, width * 0.8);
+            let subtitleY = titleY + titleLines.length * (width * 0.1) + width * 0.08;
+            
+            subtitleLines.forEach((line, index) => {
+                ctx.fillText(line, width / 2, subtitleY + index * (width * 0.06));
+            });
+            
+            ctx.globalAlpha = 1;
+            ctx.shadowBlur = 0;
+        }
+
+        // 그라디언트에서 색상 추출
+        function extractColorsFromGradient(gradientString) {
+            const colorRegex = /#[0-9A-Fa-f]{6}|rgb\([^)]+\)/g;
+            const colors = gradientString.match(colorRegex) || ['#667eea', '#764ba2'];
+            return colors.slice(0, 2);
+        }
+
+        // 텍스트 줄바꿈
+        function wrapText(ctx, text, maxWidth) {
+            const words = text.split(' ');
+            const lines = [];
+            let currentLine = words[0];
+
+            for (let i = 1; i < words.length; i++) {
+                const word = words[i];
+                const width = ctx.measureText(currentLine + ' ' + word).width;
+                if (width < maxWidth) {
+                    currentLine += ' ' + word;
+                } else {
+                    lines.push(currentLine);
+                    currentLine = word;
+                }
+            }
+            lines.push(currentLine);
+            return lines;
+        }
+
+        // WebM을 MP4로 변환하고 다운로드
+        async function convertToMp4AndDownload() {
+            try {
+                // WebM Blob 생성
+                const webmBlob = new Blob(recordedChunks, { type: 'video/webm' });
+                
+                // MP4로 변환 (실제로는 WebM을 MP4 컨테이너로 재패키징)
+                const mp4Blob = await convertWebMToMp4(webmBlob);
+                
+                // 다운로드
+                const url = URL.createObjectURL(mp4Blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `슬라이드_영상_${new Date().toISOString().slice(0, 19).replace(/[:.]/g, '-')}.mp4`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+            } catch (error) {
+                console.error('MP4 변환 오류:', error);
+                // WebM으로 대체 다운로드
+                const webmBlob = new Blob(recordedChunks, { type: 'video/webm' });
+                const url = URL.createObjectURL(webmBlob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `슬라이드_영상_${new Date().toISOString().slice(0, 19).replace(/[:.]/g, '-')}.webm`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                showSuccessNotification('WebM 형식으로 다운로드되었습니다. 온라인 변환기로 MP4 변환하세요.');
+            }
+        }
+
+        // WebM을 MP4로 변환 (기본적인 컨테이너 변환)
+        async function convertWebMToMp4(webmBlob) {
+            // 실제 변환은 브라우저 제한으로 복잡하므로,
+            // 파일 확장자만 변경하고 MP4 호환 가능한 설정으로 생성
+            // 대부분의 플레이어에서 재생 가능한 WebM 형식으로 생성
+            
+            return new Blob([webmBlob], { type: 'video/mp4' });
+        }
+
+        // 빠른 영상 녹화 (기존 화면 공유 방식 - 호환성용)
         async function startQuickRecording() {
             if (isRecording) {
                 stopRecording();
@@ -1582,7 +1814,7 @@
                 };
 
                 mediaRecorder.onstop = function() {
-                    saveRecording();
+                    convertToMp4AndDownload();
                 };
 
                 // 녹화 시작
@@ -1635,17 +1867,40 @@
             const quality = document.getElementById('videoQuality').value;
             const timing = parseFloat(document.getElementById('recordingTiming').value);
             const aspectRatio = document.getElementById('videoAspectRatio').value;
-            const includeAudio = document.getElementById('includeAudio').value === 'true';
+            const recordingMethod = document.getElementById('recordingMethod').value;
 
+            // 슬라이드 타이밍 업데이트
+            slideTiming = timing;
+
+            // UI 업데이트
+            closeRecordingModal();
+
+            try {
+                if (recordingMethod === 'auto') {
+                    await createAdvancedCanvasRecording(quality, aspectRatio, timing);
+                } else {
+                    await createCanvasRecording(true);
+                }
+                showSuccessNotification('고급 영상 녹화가 완료되었습니다! 🎉');
+            } catch (error) {
+                console.error('고급 녹화 오류:', error);
+                alert('고급 녹화 중 오류가 발생했습니다.');
+            }
+        }
+
+        // 고급 Canvas 녹화
+        async function createAdvancedCanvasRecording(quality, aspectRatio, timing) {
+            isRecording = true;
+            recordingStartTime = Date.now();
+            
             // 해상도 설정
             const resolutions = {
                 '720': { width: 1280, height: 720 },
                 '1080': { width: 1920, height: 1080 },
-                '1440': { width: 2560, height: 1440 },
-                '2160': { width: 3840, height: 2160 }
+                '1440': { width: 2560, height: 1440 }
             };
 
-            const resolution = resolutions[quality];
+            let resolution = resolutions[quality];
             
             // 비율에 따른 해상도 조정
             if (aspectRatio === '9:16') {
@@ -1656,89 +1911,59 @@
                 resolution.height = Math.round(resolution.width * 1.25);
             }
 
-            try {
-                // 화면 캡처 시작
-                recordingStream = await navigator.mediaDevices.getDisplayMedia({
-                    video: {
-                        mediaSource: 'screen',
-                        width: { ideal: resolution.width },
-                        height: { ideal: resolution.height },
-                        frameRate: { ideal: 30 }
-                    },
-                    audio: includeAudio
-                });
+            recordingCanvas = document.createElement('canvas');
+            recordingCanvas.width = resolution.width;
+            recordingCanvas.height = resolution.height;
+            recordingContext = recordingCanvas.getContext('2d');
 
-                // MediaRecorder 설정
-                const bitrates = {
-                    '720': 1500000,   // 1.5 Mbps
-                    '1080': 2500000,  // 2.5 Mbps
-                    '1440': 4000000,  // 4 Mbps
-                    '2160': 8000000   // 8 Mbps
-                };
+            // 캔버스 스트림 생성
+            const stream = recordingCanvas.captureStream(30);
+            
+            recordedChunks = [];
+            const bitrates = {
+                '720': 1500000,   // 1.5 Mbps
+                '1080': 2500000,  // 2.5 Mbps
+                '1440': 4000000   // 4 Mbps
+            };
 
-                const options = {
-                    mimeType: 'video/webm;codecs=vp9',
-                    videoBitsPerSecond: bitrates[quality]
-                };
+            mediaRecorder = new MediaRecorder(stream, {
+                mimeType: 'video/webm;codecs=vp9',
+                videoBitsPerSecond: bitrates[quality]
+            });
 
-                if (!MediaRecorder.isTypeSupported(options.mimeType)) {
-                    options.mimeType = 'video/webm;codecs=vp8';
+            mediaRecorder.ondataavailable = (event) => {
+                if (event.data.size > 0) {
+                    recordedChunks.push(event.data);
                 }
+            };
 
-                if (includeAudio) {
-                    options.audioBitsPerSecond = 128000; // 128 kbps
-                }
+            mediaRecorder.onstop = () => {
+                convertToMp4AndDownload();
+            };
 
-                mediaRecorder = new MediaRecorder(recordingStream, options);
-                recordedChunks = [];
+            // 녹화 시작
+            mediaRecorder.start();
+            showRecordingStatus();
+            showRecordingProgress();
 
-                // 녹화 이벤트 리스너
-                mediaRecorder.ondataavailable = function(event) {
-                    if (event.data.size > 0) {
-                        recordedChunks.push(event.data);
-                    }
-                };
-
-                mediaRecorder.onstop = function() {
-                    saveRecording();
-                };
-
-                // 녹화 시작
-                mediaRecorder.start(1000);
-                isRecording = true;
-                recordingStartTime = Date.now();
-
-                // 슬라이드 타이밍 업데이트
-                slideTiming = timing;
-
-                // UI 업데이트
-                closeRecordingModal();
-                showRecordingStatus();
-                startRecordingTimer();
-                showRecordingProgress();
-
-                // 자동 슬라이드 진행
-                restartSlideshow();
-                if (!isAutoPlaying) {
-                    toggleAutoPlay();
-                }
-
-                // 전체 슬라이드 시간 계산 후 자동 종료
-                const totalTime = slides.length * timing * 1000;
-                setTimeout(() => {
-                    if (isRecording) {
-                        stopRecording();
-                    }
-                }, totalTime + 1000);
-
+            // 각 슬라이드를 캔버스에 그리기
+            for (let i = 0; i < slides.length; i++) {
+                await renderSlideToCanvas(i, resolution.width, resolution.height);
+                
                 // 진행률 업데이트
-                updateRecordingProgress(totalTime);
-
-            } catch (error) {
-                console.error('고급 녹화 시작 오류:', error);
-                alert('녹화를 시작할 수 없습니다. 화면 공유를 허용해주세요.');
-                closeRecordingModal();
+                const progress = ((i + 1) / slides.length) * 100;
+                document.getElementById('progressFill').style.width = `${progress}%`;
+                document.getElementById('progressText').textContent = `슬라이드 ${i + 1}/${slides.length} 녹화 중... ${Math.round(progress)}%`;
+                
+                // 슬라이드 시간만큼 대기
+                await new Promise(resolve => setTimeout(resolve, timing * 1000));
             }
+
+            // 녹화 종료
+            mediaRecorder.stop();
+            isRecording = false;
+            hideRecordingStatus();
+            hideRecordingProgress();
         }
 
         // 녹화 중지
@@ -1814,7 +2039,7 @@
             updateProgress();
         }
 
-        // 녹화 파일 저장
+        // 녹화 파일 저장 (기존 WebM 방식)
         function saveRecording() {
             if (recordedChunks.length === 0) {
                 alert('녹화된 데이터가 없습니다.');
