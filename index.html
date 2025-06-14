@@ -1796,6 +1796,53 @@
                     <button class="btn btn-primary" onclick="copyOptimizedMetadata()" style="background: linear-gradient(45deg, #4ecdc4, #44a08d);">📋 업로드 정보 복사</button>
                 </div>
 
+                <div style="background: rgba(0,255,100,0.1); border: 2px solid rgba(0,255,100,0.3); border-radius: 20px; padding: 25px; margin: 30px 0;">
+                    <h3 style="color: #00ff88; margin-bottom: 15px;">🔊 시스템 오디오 캡처 가이드</h3>
+                    <div style="text-align: left; line-height: 1.6;">
+                        <h4 style="color: #00ff88; margin-bottom: 10px;">✅ 최고 품질 방법 (시스템 오디오):</h4>
+                        <div style="margin-left: 20px; margin-bottom: 15px;">
+                            <p><strong>1단계:</strong> 🎬 완벽한 영상 녹화 클릭</p>
+                            <p><strong>2단계:</strong> 화면 공유 팝업에서 <strong>"시스템 오디오 공유"</strong> 체크</p>
+                            <p><strong>3단계:</strong> 아무 창이나 선택 (브라우저 창 추천)</p>
+                            <p><strong>4단계:</strong> 완벽한 음질로 녹화 시작! 🎵</p>
+                        </div>
+                        
+                        <h4 style="color: #00ff88; margin-bottom: 10px;">🎤 대체 방법 (마이크):</h4>
+                        <div style="margin-left: 20px; margin-bottom: 15px;">
+                            <p>• 시스템 오디오 실패 시 자동으로 마이크 사용</p>
+                            <p>• 스피커 볼륨 조절로 음질 최적화</p>
+                            <p>• 조용한 환경에서 녹화</p>
+                        </div>
+                        
+                        <h4 style="color: #00ff88; margin-bottom: 10px;">🎯 결과:</h4>
+                        <div style="margin-left: 20px;">
+                            <p>✅ <strong>컴퓨터에서 나오는 음악이 직접 녹화</strong></p>
+                            <p>✅ <strong>외부 잡음 없이 깨끗한 음질</strong></p>
+                            <p>✅ <strong>비트 반응 효과와 완벽 동기화</strong></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: rgba(255,165,0,0.1); border: 2px solid rgba(255,165,0,0.3); border-radius: 20px; padding: 25px; margin: 30px 0;">
+                    <h3 style="color: #ffa500; margin-bottom: 15px;">🎵 음악 포함 녹화 안내</h3>
+                    <div style="text-align: left; line-height: 1.6;">
+                        <h4 style="color: #ffa500; margin-bottom: 10px;">🔊 브라우저별 시스템 오디오 지원:</h4>
+                        <div style="margin-left: 20px; margin-bottom: 15px;">
+                            <p>✅ <strong>Chrome:</strong> 완벽 지원 (권장)</p>
+                            <p>✅ <strong>Edge:</strong> 완벽 지원</p>
+                            <p>⚠️ <strong>Firefox:</strong> 제한적 지원</p>
+                            <p>❌ <strong>Safari:</strong> 미지원 (마이크 사용)</p>
+                        </div>
+                        
+                        <h4 style="color: #ffa500; margin-bottom: 10px;">🛠️ 문제 해결:</h4>
+                        <div style="margin-left: 20px;">
+                            <p>• 시스템 오디오 체크박스가 안 보이면 → 마이크 방법 사용</p>
+                            <p>• 권한 거부 시 → 브라우저 설정에서 권한 허용</p>
+                            <p>• Chrome 최신 버전 사용 권장</p>
+                        </div>
+                    </div>
+                </div>
+
                 <div style="background: rgba(255,68,68,0.1); border: 2px solid rgba(255,68,68,0.3); border-radius: 20px; padding: 25px; margin: 30px 0;">
                     <h3 style="color: #ff4444; margin-bottom: 15px;">🚀 완벽한 영상 녹화 시스템</h3>
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; text-align: left;">
@@ -1805,9 +1852,11 @@
                         <div>🌊 모든 애니메이션 캡처</div>
                         <div>⚡ 안정적인 60fps</div>
                         <div>💾 고품질 WebM/MP4 저장</div>
+                        <div>🎤 마이크 오디오 포함 (선택)</div>
+                        <div>🎵 비트 반응 효과 완벽 캡처</div>
                     </div>
                     <p style="margin-top: 15px; font-size: 1.2em; color: #ff6666;">
-                        🔥 <strong>절대 실패하지 않는 완벽한 영상 생성!</strong>
+                        🔥 <strong>시각 효과는 100% 완벽하게 녹화됩니다!</strong>
                     </p>
                 </div>
             </div>
@@ -3569,27 +3618,65 @@ JSON 형식으로만 응답해주세요.`;
         // 비디오 스트림 (캔버스)
         const videoStream = canvas.captureStream(30);
         
-        // 오디오 스트림 시도 (마이크)
+        // 시스템 오디오 캡처 시도
         let audioStream = null;
+        let audioMethod = 'none';
+        
         try {
-            console.log('🎤 마이크 권한 요청 중...');
-            audioStream = await navigator.mediaDevices.getUserMedia({ 
+            console.log('🔊 시스템 오디오 캡처 시도 중...');
+            
+            // 방법 1: 화면 공유로 시스템 오디오 캡처
+            const displayStream = await navigator.mediaDevices.getDisplayMedia({
+                video: false,
                 audio: {
                     echoCancellation: false,
                     noiseSuppression: false,
-                    autoGainControl: false
-                } 
+                    autoGainControl: false,
+                    suppressLocalAudioPlayback: false
+                }
             });
-            console.log('✅ 마이크 접근 허용됨');
             
-            // 안내 메시지 표시
-            setTimeout(() => {
-                alert('🎵 음성이 포함된 녹화를 위해:\n\n1. 스피커 볼륨을 적당히 올려주세요\n2. 녹화 시작 후 조용히 해주세요\n3. 음악이 마이크를 통해 녹음됩니다');
-            }, 1000);
+            const audioTracks = displayStream.getAudioTracks();
+            if (audioTracks.length > 0) {
+                audioStream = new MediaStream(audioTracks);
+                audioMethod = 'system';
+                console.log('✅ 시스템 오디오 캡처 성공!');
+                
+                setTimeout(() => {
+                    alert('🎵 완벽! 시스템 오디오가 포함됩니다!\n\n✅ 컴퓨터에서 나오는 음악이 직접 녹화됩니다\n✅ 최고 음질로 녹음됩니다\n✅ 외부 잡음 없이 깨끗합니다');
+                }, 500);
+            } else {
+                throw new Error('오디오 트랙 없음');
+            }
             
         } catch (error) {
-            console.warn('⚠️ 마이크 접근 실패, 무음 녹화:', error);
-            alert('⚠️ 마이크 권한이 없어 무음 영상으로 녹화됩니다.\n\n🎵 음악을 포함하려면:\n1. 브라우저에서 마이크 권한 허용\n2. 스피커 볼륨을 올려 마이크가 음악을 감지하도록 설정');
+            console.log('⚠️ 시스템 오디오 실패, 마이크 시도:', error.message);
+            
+            try {
+                // 방법 2: 마이크로 대체
+                console.log('🎤 마이크 권한 요청 중...');
+                audioStream = await navigator.mediaDevices.getUserMedia({ 
+                    audio: {
+                        echoCancellation: false,
+                        noiseSuppression: false,
+                        autoGainControl: false
+                    } 
+                });
+                audioMethod = 'microphone';
+                console.log('✅ 마이크 접근 허용됨');
+                
+                setTimeout(() => {
+                    alert('🎤 마이크를 통한 녹음이 설정되었습니다!\n\n📢 더 좋은 음질을 위해:\n1. 스피커 볼륨을 적당히 올려주세요\n2. 조용한 환경에서 녹화해주세요\n3. 마이크와 스피커 거리를 적절히 조절해주세요');
+                }, 500);
+                
+            } catch (micError) {
+                console.warn('⚠️ 마이크도 실패, 무음 녹화:', micError);
+                audioMethod = 'none';
+                
+                setTimeout(() => {
+                    alert('⚠️ 오디오 권한이 없어 무음 영상으로 녹화됩니다.\n\n🎵 음악을 포함하려면:\n\n【시스템 오디오 방법】\n1. 녹화 시 화면공유 선택\n2. "시스템 오디오 공유" 체크\n3. 아무 창이나 선택\n\n【마이크 방법】\n1. 마이크 권한 허용\n2. 스피커 볼륨 조절');
+                }, 500);
+            }
         }
         
         // 스트림 결합
@@ -3603,22 +3690,14 @@ JSON 형식으로만 응답해주세요.`;
             combinedStream = videoStream;
         }
         
+        // 녹화 옵션 설정
         let options;
         if (format === 'mp4') {
             options = {
-                mimeType: 'video/mp4;codecs=avc1.42E01E',
+                mimeType: 'video/webm;codecs=vp8,opus',
                 videoBitsPerSecond: 8000000,
                 audioBitsPerSecond: audioStream ? 128000 : undefined
             };
-            
-            if (!MediaRecorder.isTypeSupported(options.mimeType)) {
-                options = {
-                    mimeType: 'video/webm;codecs=vp8,opus',
-                    videoBitsPerSecond: 8000000,
-                    audioBitsPerSecond: audioStream ? 128000 : undefined
-                };
-                recordingState.needsConversion = true;
-            }
         } else {
             options = {
                 mimeType: 'video/webm;codecs=vp8,opus',
@@ -3632,6 +3711,7 @@ JSON 형식으로만 응답해주세요.`;
         }
 
         recordingState.mediaRecorder = new MediaRecorder(combinedStream, options);
+        recordingState.audioMethod = audioMethod;
         
         recordingState.mediaRecorder.ondataavailable = (event) => {
             if (event.data && event.data.size > 0) {
