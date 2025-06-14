@@ -1783,6 +1783,414 @@
         let slides = [];
         let currentSlide = 0;
         let autoPlayInterval = null;
+<script>
+    // 전역 변수
+    let apiKey = '';
+    let slides = [];
+    let currentSlide = 0;
+    let autoPlayInterval = null;
+    
+    // ⭐ 새로운 변수들 추가 ⭐
+    let currentEditingImage = null;
+    let selectedImageMode = 'background';
+    let imageOpacity = 80;
+
+    // ⭐ 새로운 함수들 추가 ⭐
+    
+    // 이미지 편집 모달 열기
+    function openImageEditor(image) {
+        currentEditingImage = image;
+        const modal = document.getElementById('imageEditModal');
+        const canvas = document.getElementById('editCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        if (!modal || !canvas || !ctx) return;
+        
+        modal.classList.add('show');
+        
+        // 이미지 로드 및 캔버스에 그리기
+        const img = new Image();
+        img.onload = function() {
+            // 캔버스 크기 조정
+            const maxWidth = 400;
+            const maxHeight = 400;
+            const scale = Math.min(maxWidth / img.width, maxHeight / img.height);
+            
+            canvas.width = img.width * scale;
+            canvas.height = img.height * scale;
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            
+            // 편집 컨트롤 초기화
+            resetImageEditControls();
+        };
+        img.src = image.src;
+    }
+
+    // 이미지 편집 컨트롤 초기화
+    function resetImageEditControls() {
+        document.getElementById('brightness').value = 0;
+        document.getElementById('contrast').value = 0;
+        document.getElementById('saturation').value = 0;
+        document.getElementById('hue').value = 0;
+        
+        document.getElementById('brightnessValue').textContent = '0';
+        document.getElementById('contrastValue').textContent = '0';
+        document.getElementById('saturationValue').textContent = '0';
+        document.getElementById('hueValue').textContent = '0';
+        
+        // 필터 버튼 초기화
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        document.querySelector('.filter-btn').classList.add('active');
+        
+        // 슬라이더 이벤트 리스너 추가
+        ['brightness', 'contrast', 'saturation', 'hue'].forEach(control => {
+            const slider = document.getElementById(control);
+            const valueDisplay = document.getElementById(control + 'Value');
+            
+            slider.addEventListener('input', function() {
+                valueDisplay.textContent = this.value;
+                applyImageAdjustments();
+            });
+        });
+    }
+
+    // 이미지 조정 적용
+    function applyImageAdjustments() {
+        if (!currentEditingImage) return;
+        
+        const canvas = document.getElementById('editCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        const brightness = parseInt(document.getElementById('brightness').value);
+        const contrast = parseInt(document.getElementById('contrast').value);
+        const saturation = parseInt(document.getElementById('saturation').value);
+        const hue = parseInt(document.getElementById('hue').value);
+        
+        // 원본 이미지 다시 로드
+        const img = new Image();
+        img.onload = function() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // 필터 적용
+            ctx.filter = `
+                brightness(${100 + brightness}%) 
+                contrast(${100 + contrast}%) 
+                saturate(${100 + saturation}%) 
+                hue-rotate(${hue}deg)
+            `;
+            
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            ctx.filter = 'none';
+        };
+        img.src = currentEditingImage.src;
+    }
+
+    // 선택된 모드에 따라 이미지 적용
+    function applyImagesBasedOnMode() {
+        const slideElements = document.querySelectorAll('.slide');
+        
+        slideElements.forEach((slideElement, index) => {
+            // 기존 이미지 제거
+            const existingBg = slideElement.querySelector('.slide-background-image');
+            const existingOverlay = slideElement.querySelector('.slide-overlay-image');
+            const existingCorner = slideElement.querySelector('.slide-corner-image');
+            
+            if (existingBg) existingBg.remove();
+            if (existingOverlay) existingOverlay.remove();
+            if (existingCorner) existingCorner.remove();
+            
+            if (uploadedImages.length === 0) return;
+            
+            // 이미지 선택 (순환)
+            const imageIndex = index % uploadedImages.length;
+            const image = uploadedImages[imageIndex];
+            
+            if (selectedImageMode === 'background') {
+                applyBackgroundImage(slideElement, image);
+            } else if (selectedImageMode === 'overlay') {
+                applyOverlayImage(slideElement, image);
+            } else if (selectedImageMode === 'corner') {
+                applyCornerImage(slideElement, image);
+            }
+        });
+    }
+
+    // 배경 이미지 적용
+    function applyBackgroundImage(slideElement, image) {
+        const bgImage = document.createElement('div');
+        bgImage.className = 'slide-background-image';
+        bgImage.style.cssText = `
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('${image.src}');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: ${imageOpacity / 100};
+            z-index: 1;
+            border-radius: inherit;
+        `;
+        
+        // 어두운 오버레이 추가 (텍스트 가독성 향상)
+        const overlay = document.createElement('div');
+        overlay.style.cssText = `
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                135deg, 
+                rgba(0,0,0,0.3) 0%, 
+                rgba(0,0,0,0.1) 50%, 
+                rgba(0,0,0,0.3) 100%
+            );
+            z-index: 2;
+        `;
+        
+        bgImage.appendChild(overlay);
+        slideElement.insertBefore(bgImage, slideElement.firstChild);
+        
+        // 컨텐츠 z-index 조정
+        const slideContent = slideElement.querySelector('.slide-content');
+        if (slideContent) {
+            slideContent.style.zIndex = '10';
+            slideContent.style.position = 'relative';
+        }
+    }
+
+    // 오버레이 이미지 적용
+    function applyOverlayImage(slideElement, image) {
+        const overlayImage = document.createElement('div');
+        overlayImage.className = 'slide-overlay-image';
+        overlayImage.style.cssText = `
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 60%;
+            height: 60%;
+            background-image: url('${image.src}');
+            background-size: contain;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: ${imageOpacity / 100};
+            transform: translate(-50%, -50%);
+            z-index: 2;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border: 2px solid rgba(255,255,255,0.2);
+        `;
+        
+        slideElement.appendChild(overlayImage);
+        
+        // 컨텐츠 z-index 조정
+        const slideContent = slideElement.querySelector('.slide-content');
+        if (slideContent) {
+            slideContent.style.zIndex = '10';
+            slideContent.style.position = 'relative';
+            slideContent.style.textShadow = '2px 2px 8px rgba(0,0,0,0.8)';
+        }
+    }
+
+    // 모서리 이미지 적용
+    function applyCornerImage(slideElement, image) {
+        const cornerImage = document.createElement('div');
+        cornerImage.className = 'slide-corner-image';
+        cornerImage.style.cssText = `
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 120px;
+            height: 120px;
+            background-image: url('${image.src}');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: ${imageOpacity / 100};
+            z-index: 5;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            border: 3px solid rgba(255,255,255,0.3);
+        `;
+        
+        slideElement.appendChild(cornerImage);
+    }
+
+    // 슬라이드 디스플레이 새로고침
+    function refreshSlideDisplay() {
+        if (slides.length > 0) {
+            showSlide(currentSlide);
+        }
+    }
+
+    // 녹화용 이미지 미리 로드 함수
+    async function preloadImagesForRecording() {
+        const promises = uploadedImages.map(image => {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.crossOrigin = 'anonymous';
+                img.onload = () => {
+                    // 로드된 이미지를 캐시에 저장
+                    image.loadedImage = img;
+                    console.log(`✅ 이미지 로드됨: ${image.name}`);
+                    resolve();
+                };
+                img.onerror = () => {
+                    console.warn(`❌ 이미지 로드 실패: ${image.name}`);
+                    resolve();
+                };
+                img.src = image.src;
+                
+                // 타임아웃 설정
+                setTimeout(() => {
+                    console.warn(`⏰ 이미지 로드 타임아웃: ${image.name}`);
+                    resolve();
+                }, 10000);
+            });
+        });
+        
+        await Promise.all(promises);
+    }
+
+    // 실제 이미지 렌더링 로직
+    function renderImageToCanvas(ctx, img, canvasWidth, canvasHeight, slideIndex) {
+        ctx.save();
+        
+        if (selectedImageMode === 'background') {
+            // 배경 이미지 모드
+            console.log(`🖼️ 배경 이미지 렌더링: 슬라이드 ${slideIndex + 1}`);
+            
+            ctx.globalAlpha = imageOpacity / 100;
+            ctx.drawImage(img, 0, 0, canvasWidth, canvasHeight);
+            
+            // 텍스트 가독성을 위한 오버레이
+            ctx.globalAlpha = 0.5;
+            const overlayGradient = ctx.createLinearGradient(0, 0, canvasWidth, canvasHeight);
+            overlayGradient.addColorStop(0, 'rgba(0,0,0,0.5)');
+            overlayGradient.addColorStop(0.5, 'rgba(0,0,0,0.2)');
+            overlayGradient.addColorStop(1, 'rgba(0,0,0,0.5)');
+            ctx.fillStyle = overlayGradient;
+            ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+            
+        } else if (selectedImageMode === 'overlay') {
+            // 오버레이 이미지 모드  
+            console.log(`🎨 오버레이 이미지 렌더링: 슬라이드 ${slideIndex + 1}`);
+            
+            const maxSize = Math.min(canvasWidth, canvasHeight) * 0.6;
+            const aspectRatio = img.width / img.height;
+            
+            let drawWidth, drawHeight;
+            if (aspectRatio > 1) {
+                drawWidth = maxSize;
+                drawHeight = maxSize / aspectRatio;
+            } else {
+                drawWidth = maxSize * aspectRatio;
+                drawHeight = maxSize;
+            }
+            
+            const drawX = (canvasWidth - drawWidth) / 2;
+            const drawY = (canvasHeight - drawHeight) / 2;
+            
+            // 둥근 배경
+            ctx.globalAlpha = 0.3;
+            ctx.fillStyle = 'rgba(255,255,255,0.1)';
+            ctx.beginPath();
+            ctx.roundRect(drawX - 20, drawY - 20, drawWidth + 40, drawHeight + 40, 20);
+            ctx.fill();
+            
+            // 이미지 그리기
+            ctx.globalAlpha = imageOpacity / 100;
+            ctx.drawImage(img, drawX, drawY, drawWidth, drawHeight);
+            
+        } else if (selectedImageMode === 'corner') {
+            // 모서리 이미지 모드
+            console.log(`📍 모서리 이미지 렌더링: 슬라이드 ${slideIndex + 1}`);
+            
+            const size = Math.min(canvasWidth, canvasHeight) * 0.15;
+            const x = canvasWidth - size - 40;
+            const y = 40;
+            
+            // 반투명 배경
+            ctx.globalAlpha = 0.8;
+            ctx.fillStyle = 'rgba(255,255,255,0.2)';
+            ctx.beginPath();
+            ctx.roundRect(x - 10, y - 10, size + 20, size + 20, 15);
+            ctx.fill();
+            
+            // 이미지 그리기
+            ctx.globalAlpha = imageOpacity / 100;
+            ctx.beginPath();
+            ctx.roundRect(x, y, size, size, 10);
+            ctx.clip();
+            ctx.drawImage(img, x, y, size, size);
+        }
+        
+        ctx.restore();
+        console.log(`✅ 이미지 렌더링 완료: 슬라이드 ${slideIndex + 1}`);
+    }
+
+    // 슬라이드 이미지 렌더링 (녹화용) - 최종 최적화 버전
+    async function renderSlideImageOptimized(ctx, canvasWidth, canvasHeight, slideIndex) {
+        return new Promise((resolve) => {
+            if (uploadedImages.length === 0) {
+                resolve();
+                return;
+            }
+            
+            const imageIndex = slideIndex % uploadedImages.length;
+            const image = uploadedImages[imageIndex];
+            
+            // 캐시된 이미지가 있으면 사용, 없으면 새로 로드
+            if (image.loadedImage) {
+                try {
+                    renderImageToCanvas(ctx, image.loadedImage, canvasWidth, canvasHeight, slideIndex);
+                    resolve();
+                } catch (error) {
+                    console.error('캐시된 이미지 렌더링 오류:', error);
+                    resolve();
+                }
+            } else {
+                // 캐시된 이미지가 없는 경우 즉시 로드
+                const img = new Image();
+                img.crossOrigin = 'anonymous';
+                
+                img.onload = function() {
+                    try {
+                        image.loadedImage = img; // 캐시에 저장
+                        renderImageToCanvas(ctx, img, canvasWidth, canvasHeight, slideIndex);
+                        resolve();
+                    } catch (error) {
+                        console.error('새 이미지 렌더링 오류:', error);
+                        resolve();
+                    }
+                };
+                
+                img.onerror = function() {
+                    console.warn('이미지 로드 실패:', image.name);
+                    resolve();
+                };
+                
+                img.src = image.src;
+                
+                // 타임아웃
+                setTimeout(() => {
+                    console.warn('이미지 로드 타임아웃:', image.name);
+                    resolve();
+                }, 3000);
+            }
+        });
+    }
+
+    // ⭐ 새 함수들 끝 ⭐
+    
+    // 기존 함수들 계속...
         let isAutoPlaying = false;
         let currentMode = 'smart';
         let selectedGPTModel = 'gpt-4o';
@@ -2073,31 +2481,35 @@
         }
 
         // 이미지 미리보기 업데이트
-        function updateImagePreview() {
-            const container = document.getElementById('imagePreviewContainer');
-            const grid = document.getElementById('imagePreviewGrid');
+        // 이미지 미리보기 업데이트
+function updateImagePreview() {
+    const container = document.getElementById('imagePreviewContainer');
+    const grid = document.getElementById('imagePreviewGrid');
+    
+    if (!container || !grid) return;
+    
+    if (uploadedImages.length > 0) {
+        container.style.display = 'block';
+        grid.innerHTML = '';
+        
+        uploadedImages.forEach(image => {
+            const item = document.createElement('div');
+            item.className = 'image-preview-item';
+            item.innerHTML = `
+                <img src="${image.src}" alt="${image.name}">
+                <div class="image-preview-overlay">${image.name}</div>
+                <button class="image-remove-btn" onclick="removeImage('${image.id}')">×</button>
+            `;
             
-            if (!container || !grid) return;
+            // 이미지 클릭시 편집 모달 열기
+            item.addEventListener('click', () => openImageEditor(image));
             
-            if (uploadedImages.length > 0) {
-                container.style.display = 'block';
-                grid.innerHTML = '';
-                
-                uploadedImages.forEach(image => {
-                    const item = document.createElement('div');
-                    item.className = 'image-preview-item';
-                    item.innerHTML = `
-                        <img src="${image.src}" alt="${image.name}">
-                        <div class="image-preview-overlay">${image.name}</div>
-                        <button class="image-remove-btn" onclick="removeImage('${image.id}')">×</button>
-                    `;
-                    
-                    grid.appendChild(item);
-                });
-            } else {
-                container.style.display = 'none';
-            }
-        }
+            grid.appendChild(item);
+        });
+    } else {
+        container.style.display = 'none';
+    }
+}
 
         // 이미지 제거
         function removeImage(imageId) {
@@ -2117,28 +2529,35 @@
             if (modeCard) modeCard.classList.add('selected');
         }
 
-        // 슬라이드에 이미지 적용
-        function applyImagesToSlides() {
-            if (uploadedImages.length === 0) {
-                alert('먼저 이미지를 업로드해주세요.');
-                return;
-            }
-            
-            if (slides.length === 0) {
-                alert('먼저 슬라이드를 생성해주세요.');
-                return;
-            }
-            
-            console.log(`${uploadedImages.length}개 이미지를 ${selectedImageMode} 모드로 적용, 투명도: ${imageOpacity}%`);
-            showSuccessNotification('🎨 이미지가 모든 슬라이드에 적용되었습니다!');
-        }
+       // 슬라이드에 이미지 적용
+function applyImagesToSlides() {
+    if (uploadedImages.length === 0) {
+        alert('먼저 이미지를 업로드해주세요.');
+        return;
+    }
+    
+    if (slides.length === 0) {
+        alert('먼저 슬라이드를 생성해주세요.');
+        return;
+    }
+    
+    console.log(`${uploadedImages.length}개 이미지를 ${selectedImageMode} 모드로 적용, 투명도: ${imageOpacity}%`);
+    
+    // 이미지를 슬라이드에 적용
+    applyImagesBasedOnMode();
+    
+    // 슬라이드 재렌더링
+    refreshSlideDisplay();
+    
+    showSuccessNotification('🎨 이미지가 모든 슬라이드에 적용되었습니다!');
+}
 
         // 이미지 보정 관련 함수들
         function closeImageEditor() {
-            const modal = document.getElementById('imageEditModal');
-            if (modal) modal.classList.remove('show');
-        }
-
+    const modal = document.getElementById('imageEditModal');
+    if (modal) modal.classList.remove('show');
+    currentEditingImage = null;
+}
         function applyFilter(filterType) {
             console.log('필터 적용:', filterType);
             
@@ -2150,13 +2569,38 @@
         }
 
         function resetImageEdit() {
-            console.log('이미지 보정 초기화');
-        }
-
-        function saveImageEdit() {
-            console.log('이미지 보정 저장');
-            closeImageEditor();
-        }
+    console.log('이미지 보정 초기화');
+    
+    // 모든 슬라이더 초기화
+    document.getElementById('brightness').value = 0;
+    document.getElementById('contrast').value = 0;
+    document.getElementById('saturation').value = 0;
+    document.getElementById('hue').value = 0;
+    
+    document.getElementById('brightnessValue').textContent = '0';
+    document.getElementById('contrastValue').textContent = '0';
+    document.getElementById('saturationValue').textContent = '0';
+    document.getElementById('hueValue').textContent = '0';
+    
+    // 원본 필터로 되돌리기
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    document.querySelector('.filter-btn').classList.add('active');
+    
+    // 원본 이미지 다시 로드
+    if (currentEditingImage) {
+        const canvas = document.getElementById('editCanvas');
+        const ctx = canvas.getContext('2d');
+        const img = new Image();
+        img.onload = function() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.filter = 'none';
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        };
+        img.src = currentEditingImage.src;
+    }
+}
 
         // API 설정
         function setupAPI() {
