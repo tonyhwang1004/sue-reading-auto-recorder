@@ -1633,6 +1633,11 @@
                     <button class="btn btn-primary" onclick="downloadSlides()">📁 슬라이드 다운로드</button>
                     <button class="btn btn-primary" onclick="restartSlideshow()">🔄 처음부터 재생</button>
                     <button class="btn btn-primary" onclick="copyOptimizedMetadata()" style="background: linear-gradient(45deg, #4ecdc4, #44a08d);">📋 업로드 정보 복사</button>
+      
+    
+    
+      
+    
                 </div>
 
                 <div style="background: rgba(255,68,68,0.1); border: 2px solid rgba(255,68,68,0.3); border-radius: 20px; padding: 25px; margin: 30px 0;">
@@ -1676,7 +1681,81 @@
         let currentMode = 'api'; // 기본값을 API 모드로 변경
         let selectedGPTModel = 'gpt-4o'; // 기본값을 GPT-4o로 변경
         let selectedTemplate = 'business';
-        let selectedTemplate = 'business';
+        // 누락된 기본 함수들
+        function selectMode(mode) {
+            currentMode = mode;
+            
+            document.querySelectorAll('.mode-selector .mode-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            document.getElementById(mode + 'Mode').classList.add('selected');
+            
+            const apiSection = document.getElementById('apiSection');
+            
+            if (mode === 'api') {
+                apiSection.style.display = 'block';
+            } else {
+                apiSection.style.display = 'none';
+            }
+            
+            updateGenerateButton();
+        }
+
+        function selectGPTModel(model) {
+            selectedGPTModel = model;
+            
+            document.querySelectorAll('#gptModelSelection .mode-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            if (model === 'gpt-4o') {
+                document.getElementById('gpt4oMode').classList.add('selected');
+            } else {
+                document.getElementById('gpt35Mode').classList.add('selected');
+            }
+            
+            console.log('선택된 GPT 모델:', selectedGPTModel);
+        }
+
+        function setupAPI() {
+            const keyInput = document.getElementById('apiKey');
+            const key = keyInput.value.trim();
+            
+            if (!key) {
+                showStatus('❌ API 키를 입력해주세요.', 'error', 'apiStatus');
+                return;
+            }
+            
+            if (!key.startsWith('sk-') || key.length < 40) {
+                showStatus('❌ 올바른 API 키 형식이 아닙니다.', 'error', 'apiStatus');
+                return;
+            }
+            
+            apiKey = key;
+            document.getElementById('apiSection').classList.add('connected');
+            showStatus('✅ API 연결 성공!', 'success', 'apiStatus');
+            updateGenerateButton();
+        }
+
+        function generateSlides() {
+            const title = document.getElementById('titleInput').value.trim();
+            const content = document.getElementById('contentInput').value.trim();
+            
+            if (!title || !content) {
+                alert('❌ 제목과 내용을 모두 입력해주세요!');
+                return;
+            }
+            
+            showProgressModal(true);
+            
+            setTimeout(() => {
+                const slideData = generateOptimizedSmartSlides(title, content);
+                createOptimizedSlides(slideData);
+                showProgressModal(false);
+                showResults();
+                showSuccessNotification();
+            }, 1500);
+        }
 
         // ✨ 여기에 이미지 JavaScript 코드를 붙여넣으세요! ✨
         
