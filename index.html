@@ -1738,6 +1738,56 @@
                     </div>
                 </div>
 
+                <!-- 음악 설정 섹션 추가 -->
+                <div style="background: rgba(138,43,226,0.1); border: 2px solid rgba(138,43,226,0.3); border-radius: 20px; padding: 25px; margin: 30px 0;">
+                    <h3 style="color: #8a2be2; margin-bottom: 15px;">🎵 배경 음악 설정</h3>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                        <div class="music-option-card selected" onclick="selectMusicStyle('ambient')" style="background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.3); border-radius: 15px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.3s ease;">
+                            <span style="font-size: 2.5em; display: block; margin-bottom: 10px;">🌙</span>
+                            <h4 style="color: #8a2be2; margin-bottom: 10px;">엠비언트</h4>
+                            <p style="font-size: 0.9em; opacity: 0.8;">차분하고 몽환적인 분위기</p>
+                        </div>
+                        
+                        <div class="music-option-card" onclick="selectMusicStyle('upbeat')" style="background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.3); border-radius: 15px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.3s ease;">
+                            <span style="font-size: 2.5em; display: block; margin-bottom: 10px;">⚡</span>
+                            <h4 style="color: #8a2be2; margin-bottom: 10px;">업비트</h4>
+                            <p style="font-size: 0.9em; opacity: 0.8;">활기차고 에너지 넘치는</p>
+                        </div>
+                        
+                        <div class="music-option-card" onclick="selectMusicStyle('corporate')" style="background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.3); border-radius: 15px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.3s ease;">
+                            <span style="font-size: 2.5em; display: block; margin-bottom: 10px;">💼</span>
+                            <h4 style="color: #8a2be2; margin-bottom: 10px;">비즈니스</h4>
+                            <p style="font-size: 0.9em; opacity: 0.8;">전문적이고 신뢰감 있는</p>
+                        </div>
+                        
+                        <div class="music-option-card" onclick="selectMusicStyle('none')" style="background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.3); border-radius: 15px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.3s ease;">
+                            <span style="font-size: 2.5em; display: block; margin-bottom: 10px;">🔇</span>
+                            <h4 style="color: #8a2be2; margin-bottom: 10px;">음악 없음</h4>
+                            <p style="font-size: 0.9em; opacity: 0.8;">조용한 프레젠테이션</p>
+                        </div>
+                    </div>
+                    
+                    <div style="margin: 15px 0;">
+                        <label style="color: #8a2be2; font-weight: bold; margin-right: 15px;">🎵 비트 반응 강도:</label>
+                        <input type="range" id="reactionIntensity" min="0" max="100" value="50" style="width: 200px; margin-right: 10px;">
+                        <span id="reactionValue" style="color: white; font-weight: bold;">50%</span>
+                    </div>
+                    
+                    <div style="margin: 15px 0;">
+                        <label style="color: #8a2be2; font-weight: bold; margin-right: 15px;">
+                            <input type="checkbox" id="enableBeatReaction" checked style="margin-right: 10px;">
+                            🎨 비트 반응 효과 활성화
+                        </label>
+                    </div>
+                    
+                    <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+                        <button class="btn btn-primary" onclick="generateBackgroundMusic()" style="background: linear-gradient(45deg, #8a2be2, #da70d6);">🎵 음악 생성</button>
+                        <button class="btn btn-primary" onclick="previewMusic()" style="background: linear-gradient(45deg, #32cd32, #98fb98);">▶️ 미리듣기</button>
+                        <button class="btn btn-primary" onclick="stopMusic()" style="background: linear-gradient(45deg, #ff6347, #ffa07a);">⏹️ 정지</button>
+                    </div>
+                </div>
+
                 <div style="text-align: center; margin: 30px 0;">
                     <button class="btn btn-primary recording-button" onclick="startOptimizedRecording()" style="font-size: 1.4em; padding: 22px 45px; margin: 10px; background: linear-gradient(45deg, #ff4444, #ff6666);">🎬 완벽한 영상 녹화</button>
                     <button class="btn btn-primary" onclick="openYouTubeUpload()" style="font-size: 1.4em; padding: 22px 45px; margin: 10px; background: linear-gradient(45deg, #ff0000, #ff4444);">📺 유튜브에 바로 업로드</button>
@@ -1792,6 +1842,14 @@
     let currentEditingImage = null;
     let selectedImageMode = 'background';
     let imageOpacity = 80;
+    let selectedMusicStyle = 'ambient';
+    let backgroundMusic = null;
+    let musicSynth = null;
+    let musicLoop = null;
+    let audioAnalyser = null;
+    let audioDataArray = null;
+    let beatReactionEnabled = true;
+    let visualReactionIntensity = 0.5;
 
     // 녹화 상태 관리 - 완전한 녹화 시스템 추가!
     let recordingState = {
@@ -1864,6 +1922,7 @@
         createFloatingElements();
         updateGenerateButton();
         initializeImageUpload();
+        initializeMusicControls();
         
         // 입력 필드 이벤트
         const titleInput = document.getElementById('titleInput');
@@ -1890,6 +1949,27 @@
             }
         });
     });
+
+    // 음악 컨트롤 초기화
+    function initializeMusicControls() {
+        const reactionSlider = document.getElementById('reactionIntensity');
+        const reactionValue = document.getElementById('reactionValue');
+        const enableBeatReaction = document.getElementById('enableBeatReaction');
+        
+        if (reactionSlider && reactionValue) {
+            reactionSlider.addEventListener('input', function(e) {
+                visualReactionIntensity = parseInt(e.target.value) / 100;
+                reactionValue.textContent = e.target.value + '%';
+            });
+        }
+        
+        if (enableBeatReaction) {
+            enableBeatReaction.addEventListener('change', function(e) {
+                beatReactionEnabled = e.target.checked;
+                console.log('비트 반응 효과:', beatReactionEnabled ? '활성화' : '비활성화');
+            });
+        }
+    }
 
     // 떠다니는 요소 생성
     function createFloatingElements() {
@@ -3047,6 +3127,325 @@ JSON 형식으로만 응답해주세요.`;
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
+    // 음악 스타일 선택
+    function selectMusicStyle(style) {
+        selectedMusicStyle = style;
+        
+        document.querySelectorAll('.music-option-card').forEach(card => {
+            card.classList.remove('selected');
+            card.style.background = 'rgba(255,255,255,0.1)';
+            card.style.borderColor = 'rgba(255,255,255,0.3)';
+        });
+        
+        const selectedCard = document.querySelector(`.music-option-card[onclick="selectMusicStyle('${style}')"]`);
+        if (selectedCard) {
+            selectedCard.classList.add('selected');
+            selectedCard.style.background = 'rgba(138,43,226,0.2)';
+            selectedCard.style.borderColor = '#8a2be2';
+        }
+        
+        console.log('선택된 음악 스타일:', style);
+    }
+
+    // 배경 음악 생성
+    async function generateBackgroundMusic() {
+        if (selectedMusicStyle === 'none') {
+            alert('🔇 음악 없음이 선택되었습니다.');
+            return;
+        }
+        
+        try {
+            // Tone.js 초기화
+            if (!window.Tone) {
+                alert('🎵 음악 기능을 로딩 중입니다...');
+                await loadToneJS();
+            }
+            
+            await Tone.start();
+            
+            // 기존 음악 정지
+            if (musicLoop) {
+                musicLoop.stop();
+                musicLoop.dispose();
+            }
+            if (musicSynth) {
+                musicSynth.dispose();
+            }
+            
+            // 음악 스타일에 따른 설정
+            const musicConfig = getMusicConfig(selectedMusicStyle);
+            
+            // 신디사이저 생성
+            musicSynth = new Tone.PolySynth(Tone.Synth, {
+                oscillator: musicConfig.oscillator,
+                envelope: musicConfig.envelope
+            }).toDestination();
+            
+            // 리버브 효과 추가
+            const reverb = new Tone.Reverb(2).toDestination();
+            musicSynth.connect(reverb);
+            
+            // 오디오 분석기 설정 (비트 반응용)
+            setupAudioAnalyser();
+            
+            // 코드 진행 생성
+            const chords = generateChordProgression(selectedMusicStyle);
+            
+            // 음악 루프 시작
+            let chordIndex = 0;
+            musicLoop = new Tone.Loop((time) => {
+                const chord = chords[chordIndex % chords.length];
+                musicSynth.triggerAttackRelease(chord, "2n", time);
+                chordIndex++;
+            }, "2n");
+            
+            musicLoop.start();
+            Tone.Transport.start();
+            
+            // 비트 반응 애니메이션 시작
+            if (beatReactionEnabled) {
+                startBeatReactionAnimation();
+            }
+            
+            showSuccessNotification(`🎵 ${getMusicStyleName(selectedMusicStyle)} 음악이 생성되었습니다!`);
+            
+        } catch (error) {
+            console.error('음악 생성 오류:', error);
+            alert('❌ 음악 생성에 실패했습니다.');
+        }
+    }
+
+    // 오디오 분석기 설정
+    function setupAudioAnalyser() {
+        try {
+            // Tone.js의 마스터 출력에 분석기 연결
+            audioAnalyser = new Tone.Analyser('fft', 1024);
+            Tone.getDestination().connect(audioAnalyser);
+            
+            // 주파수 데이터 배열 초기화
+            audioDataArray = new Uint8Array(audioAnalyser.size);
+            
+            console.log('🎵 오디오 분석기 설정 완료');
+        } catch (error) {
+            console.error('오디오 분석기 설정 오류:', error);
+        }
+    }
+
+    // 비트 반응 애니메이션 시작
+    function startBeatReactionAnimation() {
+        function animateToMusic() {
+            if (!audioAnalyser || !beatReactionEnabled) {
+                requestAnimationFrame(animateToMusic);
+                return;
+            }
+            
+            // 주파수 데이터 가져오기
+            const frequencyData = audioAnalyser.getValue();
+            
+            // 평균 음량 계산
+            let sum = 0;
+            for (let i = 0; i < frequencyData.length; i++) {
+                // Tone.js는 dB 값을 반환하므로 변환 필요
+                const value = Math.max(0, (frequencyData[i] + 100) / 100); // -100dB ~ 0dB를 0~1로 변환
+                sum += value;
+            }
+            const averageVolume = sum / frequencyData.length;
+            
+            // 저음, 중음, 고음 영역별 분석
+            const bassRange = frequencyData.slice(0, 10);
+            const midRange = frequencyData.slice(10, 50);
+            const trebleRange = frequencyData.slice(50, 100);
+            
+            const bassLevel = getAverageLevel(bassRange);
+            const midLevel = getAverageLevel(midRange);
+            const trebleLevel = getAverageLevel(trebleRange);
+            
+            // 슬라이드 요소들에 비트 반응 적용
+            applyBeatReactionToSlides(averageVolume, bassLevel, midLevel, trebleLevel);
+            
+            requestAnimationFrame(animateToMusic);
+        }
+        
+        animateToMusic();
+    }
+
+    // 평균 레벨 계산
+    function getAverageLevel(dataArray) {
+        let sum = 0;
+        for (let i = 0; i < dataArray.length; i++) {
+            sum += Math.max(0, (dataArray[i] + 100) / 100);
+        }
+        return sum / dataArray.length;
+    }
+
+    // 슬라이드에 비트 반응 효과 적용
+    function applyBeatReactionToSlides(volume, bass, mid, treble) {
+        const activeSlide = document.querySelector('.slide.active');
+        if (!activeSlide) return;
+        
+        const intensity = visualReactionIntensity;
+        
+        // 배경 이미지 비트 반응
+        const bgImage = activeSlide.querySelector('.slide-background-image');
+        if (bgImage) {
+            // 음량에 따른 크기 변화
+            const scaleValue = 1 + (volume * intensity * 0.1);
+            bgImage.style.transform = `scale(${scaleValue})`;
+            
+            // 저음에 따른 색상 필터
+            const hueRotation = bass * intensity * 30;
+            const brightness = 100 + (mid * intensity * 20);
+            const saturation = 100 + (treble * intensity * 30);
+            
+            bgImage.style.filter = `hue-rotate(${hueRotation}deg) brightness(${brightness}%) saturate(${saturation}%)`;
+        }
+        
+        // 오버레이 이미지 비트 반응
+        const overlayImage = activeSlide.querySelector('.slide-overlay-image');
+        if (overlayImage) {
+            // 펄스 효과
+            const pulseScale = 1 + (volume * intensity * 0.15);
+            overlayImage.style.transform = `translate(-50%, -50%) scale(${pulseScale})`;
+            
+            // 회전 효과 (고음에 반응)
+            const rotation = treble * intensity * 10;
+            overlayImage.style.transform += ` rotate(${rotation}deg)`;
+        }
+        
+        // 모서리 이미지 비트 반응
+        const cornerImage = activeSlide.querySelector('.slide-corner-image');
+        if (cornerImage) {
+            // 바운스 효과
+            const bounceY = -volume * intensity * 20;
+            cornerImage.style.transform = `translateY(${bounceY}px)`;
+            
+            // 색상 변화
+            const shadowColor = `rgba(${255 * bass * intensity}, ${255 * mid * intensity}, ${255 * treble * intensity}, 0.8)`;
+            cornerImage.style.boxShadow = `0 5px 15px ${shadowColor}`;
+        }
+        
+        // 파티클 시스템 비트 반응
+        const particles = activeSlide.querySelectorAll('.particle');
+        particles.forEach((particle, index) => {
+            const freq = index % 3 === 0 ? bass : (index % 3 === 1 ? mid : treble);
+            const particleScale = 1 + (freq * intensity * 0.3);
+            particle.style.transform += ` scale(${particleScale})`;
+            
+            // 색상 변화
+            const alpha = 0.7 + (freq * intensity * 0.3);
+            particle.style.background = `rgba(255, 255, 255, ${alpha})`;
+        });
+        
+        // 텍스트 글로우 효과
+        const slideContent = activeSlide.querySelector('.slide-content');
+        if (slideContent) {
+            const glowIntensity = volume * intensity * 20;
+            slideContent.style.textShadow = `0 0 ${glowIntensity}px rgba(255, 255, 255, 0.8)`;
+        }
+    }
+
+    // Tone.js 라이브러리 로드
+    async function loadToneJS() {
+        return new Promise((resolve, reject) => {
+            if (window.Tone) {
+                resolve();
+                return;
+            }
+            
+            const script = document.createElement('script');
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js';
+            script.onload = resolve;
+            script.onerror = reject;
+            document.head.appendChild(script);
+        });
+    }
+
+    // 음악 설정 가져오기
+    function getMusicConfig(style) {
+        const configs = {
+            ambient: {
+                oscillator: { type: "sine" },
+                envelope: { attack: 2, decay: 1, sustain: 0.5, release: 3 }
+            },
+            upbeat: {
+                oscillator: { type: "sawtooth" },
+                envelope: { attack: 0.1, decay: 0.2, sustain: 0.8, release: 0.5 }
+            },
+            corporate: {
+                oscillator: { type: "triangle" },
+                envelope: { attack: 0.5, decay: 0.5, sustain: 0.7, release: 1 }
+            }
+        };
+        
+        return configs[style] || configs.ambient;
+    }
+
+    // 코드 진행 생성
+    function generateChordProgression(style) {
+        const progressions = {
+            ambient: [
+                ["C4", "E4", "G4"], // C major
+                ["A3", "C4", "E4"], // A minor
+                ["F3", "A3", "C4"], // F major
+                ["G3", "B3", "D4"]  // G major
+            ],
+            upbeat: [
+                ["C4", "E4", "G4"], // C major
+                ["G3", "B3", "D4"], // G major
+                ["A3", "C4", "E4"], // A minor
+                ["F3", "A3", "C4"]  // F major
+            ],
+            corporate: [
+                ["C4", "E4", "G4"], // C major
+                ["F3", "A3", "C4"], // F major
+                ["G3", "B3", "D4"], // G major
+                ["C4", "E4", "G4"]  // C major
+            ]
+        };
+        
+        return progressions[style] || progressions.ambient;
+    }
+
+    // 음악 스타일 이름 가져오기
+    function getMusicStyleName(style) {
+        const names = {
+            ambient: '엠비언트',
+            upbeat: '업비트',
+            corporate: '비즈니스'
+        };
+        return names[style] || '엠비언트';
+    }
+
+    // 음악 미리듣기
+    async function previewMusic() {
+        if (selectedMusicStyle === 'none') {
+            alert('🔇 음악 없음이 선택되었습니다.');
+            return;
+        }
+        
+        if (!musicLoop || !Tone.Transport.state === 'started') {
+            await generateBackgroundMusic();
+        } else {
+            if (Tone.Transport.state === 'paused') {
+                Tone.Transport.start();
+                showSuccessNotification('🎵 음악 재생을 시작했습니다!');
+            } else {
+                showSuccessNotification('🎵 음악이 이미 재생 중입니다!');
+            }
+        }
+    }
+
+    // 음악 정지
+    function stopMusic() {
+        if (Tone && Tone.Transport) {
+            Tone.Transport.stop();
+            if (musicLoop) {
+                musicLoop.stop();
+            }
+            showSuccessNotification('🔇 음악이 정지되었습니다.');
+        }
+    }
+
     // 텍스트 줄바꿈 함수
     function wrapTextOptimized(ctx, text, maxWidth) {
         const words = text.split(' ');
@@ -3331,23 +3730,47 @@ JSON 형식으로만 응답해주세요.`;
                 await renderSlideImageOptimized(ctx, canvas.width, canvas.height, currentSlide);
             }
 
-            // 4. 텍스트 렌더링
+            // 4. 텍스트 렌더링 (비트 반응 효과 포함)
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillStyle = 'white';
             
-            // 텍스트 그림자 (가독성 향상)
-            ctx.shadowColor = 'rgba(0,0,0,0.9)';
-            ctx.shadowBlur = 25;
-            ctx.shadowOffsetX = 3;
-            ctx.shadowOffsetY = 3;
+            // 비트 반응 효과 계산
+            let beatIntensity = 0;
+            if (beatReactionEnabled && audioAnalyser) {
+                const frequencyData = audioAnalyser.getValue();
+                let sum = 0;
+                for (let i = 0; i < Math.min(frequencyData.length, 50); i++) {
+                    sum += Math.max(0, (frequencyData[i] + 100) / 100);
+                }
+                beatIntensity = (sum / 50) * visualReactionIntensity;
+            }
+            
+            // 텍스트 그림자 (가독성 향상 + 비트 반응)
+            const shadowBlur = 25 + (beatIntensity * 20);
+            const shadowOffsetX = 3 + (beatIntensity * 2);
+            const shadowOffsetY = 3 + (beatIntensity * 2);
+            
+            ctx.shadowColor = `rgba(0,0,0,${0.9 + beatIntensity * 0.1})`;
+            ctx.shadowBlur = shadowBlur;
+            ctx.shadowOffsetX = shadowOffsetX;
+            ctx.shadowOffsetY = shadowOffsetY;
 
-            // 아이콘
-            ctx.font = `bold ${canvas.height * 0.12}px Arial, sans-serif`;
+            // 아이콘 (비트 반응으로 크기 변화)
+            const iconSize = canvas.height * 0.12 * (1 + beatIntensity * 0.2);
+            ctx.font = `bold ${iconSize}px Arial, sans-serif`;
             ctx.fillText(slide.icon, canvas.width / 2, canvas.height * 0.25);
 
-            // 제목
-            ctx.font = `900 ${canvas.height * 0.08}px Arial, sans-serif`;
+            // 제목 (비트 반응으로 글로우 효과)
+            const titleSize = canvas.height * 0.08 * (1 + beatIntensity * 0.1);
+            ctx.font = `900 ${titleSize}px Arial, sans-serif`;
+            
+            // 비트 반응 글로우 효과
+            if (beatIntensity > 0.1) {
+                ctx.shadowColor = `rgba(255,255,255,${beatIntensity * 0.5})`;
+                ctx.shadowBlur = beatIntensity * 30;
+            }
+            
             ctx.fillStyle = 'white';
             
             const titleY = canvas.height * 0.45;
@@ -3359,8 +3782,9 @@ JSON 형식으로만 응답해주세요.`;
 
             // 부제목
             if (slide.subtitle && slide.subtitle.trim()) {
-                ctx.font = `600 ${canvas.height * 0.05}px Arial, sans-serif`;
-                ctx.fillStyle = 'rgba(255,255,255,0.95)';
+                const subtitleSize = canvas.height * 0.05 * (1 + beatIntensity * 0.05);
+                ctx.font = `600 ${subtitleSize}px Arial, sans-serif`;
+                ctx.fillStyle = `rgba(255,255,255,${0.95 + beatIntensity * 0.05})`;
                 
                 const subtitleY = canvas.height * 0.7;
                 const safeSubtitle = String(slide.subtitle || '').replace(/[{}()]/g, '');
@@ -3514,18 +3938,56 @@ JSON 형식으로만 응답해주세요.`;
     function renderOptimizedParticles(ctx, width, height) {
         const time = Date.now() * 0.001;
         
+        // 비트 반응 강도 계산
+        let beatEffect = 0;
+        if (beatReactionEnabled && audioAnalyser) {
+            const frequencyData = audioAnalyser.getValue();
+            let sum = 0;
+            for (let i = 0; i < Math.min(frequencyData.length, 20); i++) {
+                sum += Math.max(0, (frequencyData[i] + 100) / 100);
+            }
+            beatEffect = (sum / 20) * visualReactionIntensity;
+        }
+        
         for (let i = 0; i < 20; i++) {
             const x = (Math.sin(time * 0.5 + i * 0.5) * 0.3 + 0.5) * width;
             const y = (Math.cos(time * 0.7 + i * 0.8) * 0.3 + 0.5) * height;
-            const size = Math.sin(time * 2 + i) * 4 + 6;
-            const opacity = Math.sin(time * 1.5 + i) * 0.3 + 0.4;
+            
+            // 비트에 반응하는 크기와 투명도
+            const baseSize = Math.sin(time * 2 + i) * 4 + 6;
+            const size = baseSize * (1 + beatEffect * 0.5);
+            const baseOpacity = Math.sin(time * 1.5 + i) * 0.3 + 0.4;
+            const opacity = Math.min(1, baseOpacity + beatEffect * 0.3);
+            
+            // 비트에 반응하는 색상
+            const hue = (i * 20 + beatEffect * 60) % 360;
+            const saturation = 50 + beatEffect * 50;
+            const lightness = 80 + beatEffect * 20;
             
             ctx.save();
             ctx.globalAlpha = opacity;
-            ctx.fillStyle = 'rgba(255,255,255,0.8)';
+            
+            if (beatEffect > 0.1) {
+                // 비트가 강할 때 HSL 색상 사용
+                ctx.fillStyle = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+            } else {
+                // 기본 흰색
+                ctx.fillStyle = 'rgba(255,255,255,0.8)';
+            }
+            
             ctx.beginPath();
             ctx.arc(x, y, size, 0, Math.PI * 2);
             ctx.fill();
+            
+            // 비트 반응 글로우 효과
+            if (beatEffect > 0.2) {
+                ctx.shadowColor = ctx.fillStyle;
+                ctx.shadowBlur = beatEffect * 20;
+                ctx.beginPath();
+                ctx.arc(x, y, size * 0.5, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            
             ctx.restore();
         }
     }
