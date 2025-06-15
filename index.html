@@ -2706,6 +2706,11 @@
                     updateProgress(70, '✨ 분석 완료', '내용 분석이 완료되어 슬라이드를 구성하고 있습니다...', '✨');
                     await delay(800);
                 } catch (apiError) {
+      
+    
+    
+      
+    
                     console.error('API 오류:', apiError);
                     
                     updateProgress(30, '🔄 자동 전환', 'API 문제로 스마트 모드로 전환합니다...', '🔄');
@@ -2761,7 +2766,7 @@
 
     // 실제 GPT 분석을 통한 슬라이드 생성
     async function generateSlideWithRealAnalysis(title, content) {
-       const prompt = `당신은 프레젠테이션 전문가입니다. 다음 내용을 깊이 있게 분석하여 정확히 15장의 효과적이고 상세한 슬라이드를 구성해주세요.
+     const prompt = `당신은 프레젠테이션 전문가입니다. 다음 내용을 깊이 있게 분석하여 정확히 15장의 효과적이고 상세한 슬라이드를 구성해주세요.
 
 제목: ${title}
 내용: ${content}
@@ -2897,7 +2902,7 @@ JSON 형식으로만 응답해주세요.`;
                     
                     const result = JSON.parse(jsonText);
                     
-                   if (result.slides && Array.isArray(result.slides) && result.slides.length > 0) {
+          if (result.slides && Array.isArray(result.slides) && result.slides.length > 0) {
     console.log('✅ GPT 실제 분석 완료:', result.slides.length, '장의 슬라이드');
     
     // 15장 맞추기
@@ -3090,7 +3095,7 @@ JSON 형식으로만 응답해주세요.`;
         titleDiv.className = 'slide-title';
         titleDiv.textContent = slide.title || '';
         
-        const subtitleDiv = document.createElement('div');
+const subtitleDiv = document.createElement('div');
 if (slide.subtitle && slide.subtitle.trim()) {
     subtitleDiv.className = 'slide-subtitle';
     subtitleDiv.textContent = slide.subtitle;
@@ -3121,9 +3126,29 @@ if (slide.description && slide.description.trim() && slide.description !== slide
     `;
 }
 
+// 상세 설명이 있는 경우 추가 (선택적으로 표시)
+const descriptionDiv = document.createElement('div');
+if (slide.description && slide.description.trim() && slide.description !== slide.subtitle) {
+    descriptionDiv.className = 'slide-description';
+    descriptionDiv.textContent = slide.description;
+    descriptionDiv.style.cssText = `
+        font-size: 0.9em;
+        opacity: 0.85;
+        margin-top: 20px;
+        line-height: 1.4;
+        max-width: 85%;
+        margin-left: auto;
+        margin-right: auto;
+        text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+    `;
+}
+
 slideContent.appendChild(iconDiv);
 slideContent.appendChild(titleDiv);
 slideContent.appendChild(subtitleDiv);
+if (descriptionDiv.textContent) {
+    slideContent.appendChild(descriptionDiv);
+}
 if (descriptionDiv.textContent) {
     slideContent.appendChild(descriptionDiv);
 }
@@ -3999,8 +4024,35 @@ slideDiv.appendChild(slideContent);
 
             // 제목 (비트 반응으로 글로우 효과)
            // 제목 (비트 반응으로 글로우 효과)
-const titleSize = canvas.height * 0.075 * (1 + beatIntensity * 0.1);
-ctx.font = `900 ${titleSize}px Arial, sans-serif`;
+// 부제목
+if (slide.subtitle && slide.subtitle.trim()) {
+    const subtitleSize = canvas.height * 0.045 * (1 + beatIntensity * 0.05);
+    ctx.font = `600 ${subtitleSize}px Arial, sans-serif`;
+    ctx.fillStyle = `rgba(255,255,255,${0.95 + beatIntensity * 0.05})`;
+    
+    const subtitleY = canvas.height * 0.68;
+    const safeSubtitle = String(slide.subtitle || '').replace(/[{}()]/g, '');
+    const subtitleLines = wrapTextOptimized(ctx, safeSubtitle, canvas.width * 0.92);
+    subtitleLines.forEach((line, i) => {
+        ctx.fillText(line, canvas.width / 2, subtitleY + (i * canvas.height * 0.055));
+    });
+}
+            // 상세 설명 (있는 경우)
+if (slide.description && slide.description.trim() && slide.description !== slide.subtitle) {
+    const descSize = canvas.height * 0.032 * (1 + beatIntensity * 0.03);
+    ctx.font = `500 ${descSize}px Arial, sans-serif`;
+    ctx.fillStyle = `rgba(255,255,255,${0.85 + beatIntensity * 0.05})`;
+    
+    const descY = canvas.height * 0.85;
+    const safeDesc = String(slide.description || '').replace(/[{}()]/g, '');
+    const descLines = wrapTextOptimized(ctx, safeDesc, canvas.width * 0.9);
+    
+    // 최대 2줄만 표시
+    const maxDescLines = Math.min(descLines.length, 2);
+    for (let i = 0; i < maxDescLines; i++) {
+        ctx.fillText(descLines[i], canvas.width / 2, descY + (i * canvas.height * 0.04));
+    }
+}
 
 // 비트 반응 글로우 효과
 if (beatIntensity > 0.1) {
