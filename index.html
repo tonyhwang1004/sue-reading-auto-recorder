@@ -3,6 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      
+    
+    
+      
+    
     <title>🎬 완벽한 슬라이드 영상 생성기 Ultimate</title>
     <style>
         * {
@@ -1250,6 +1255,245 @@
         .success-notification.show {
             transform: translateX(0);
         }
+        /* 그리드 모드 스타일 */
+        .grid-slide-item {
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .grid-slide-item:hover {
+            transform: translateY(-5px);
+            border-color: #4ecdc4;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+
+        .grid-slide-item.current {
+            border-color: #4ecdc4;
+            box-shadow: 0 0 25px rgba(78,205,196,0.4);
+            background: rgba(78,205,196,0.1);
+        }
+
+        .grid-slide-preview {
+            width: 100%;
+            height: 150px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .grid-slide-icon {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            filter: drop-shadow(0 0 10px currentColor);
+        }
+
+        .grid-slide-title {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 8px;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+            word-break: break-word;
+            line-height: 1.2;
+        }
+
+        .grid-slide-subtitle {
+            font-size: 0.9em;
+            color: rgba(255,255,255,0.8);
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+            word-break: break-word;
+            line-height: 1.3;
+        }
+
+        .grid-slide-number {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(78,205,196,0.8);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-weight: bold;
+            font-size: 0.8em;
+        }
+
+        /* 목록 모드 스타일 */
+        .list-slide-item {
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .list-slide-item:hover {
+            border-color: #4ecdc4;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .list-slide-item.current {
+            border-color: #4ecdc4;
+            box-shadow: 0 0 20px rgba(78,205,196,0.3);
+            background: rgba(78,205,196,0.1);
+        }
+
+        .list-slide-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .list-slide-number {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .list-slide-icon {
+            font-size: 2em;
+            margin-right: 15px;
+            filter: drop-shadow(0 0 10px currentColor);
+        }
+
+        .list-slide-titles {
+            flex: 1;
+        }
+
+        .list-slide-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #4ecdc4;
+            margin-bottom: 5px;
+            text-shadow: 0 0 10px rgba(78,205,196,0.5);
+        }
+
+        .list-slide-subtitle {
+            font-size: 1em;
+            color: rgba(255,255,255,0.9);
+            line-height: 1.4;
+        }
+
+        .list-slide-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .list-slide-btn {
+            padding: 8px 15px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+        }
+
+        .list-slide-btn:hover {
+            background: rgba(255,255,255,0.3);
+            border-color: #4ecdc4;
+        }
+
+        /* 보기 모드 버튼 스타일 */
+        .view-mode-btn.active {
+            background: rgba(78,205,196,0.3) !important;
+            border-color: #4ecdc4 !important;
+            color: #4ecdc4 !important;
+        }
+
+        .view-mode-btn:hover {
+            background: rgba(255,255,255,0.2) !important;
+            border-color: #4ecdc4 !important;
+        }
+
+        /* 슬라이드 편집 모달 */
+        .slide-edit-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 10000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(15px);
+        }
+
+        .slide-edit-modal.show {
+            display: flex;
+        }
+
+        .slide-edit-content {
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 25px;
+            backdrop-filter: blur(25px);
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            color: white;
+            padding: 30px;
+        }
+
+        .edit-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(255,255,255,0.2);
+        }
+
+        .edit-modal-header h3 {
+            color: #4ecdc4;
+            margin: 0;
+            font-size: 1.8em;
+        }
+
+        .edit-modal-close {
+            background: rgba(255,68,68,0.8);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            cursor: pointer;
+            font-size: 1.2em;
+            transition: all 0.3s ease;
+        }
+
+        .edit-modal-close:hover {
+            background: #ff4444;
+            transform: scale(1.1);
+        }
     </style>
 </head>
 <body>
@@ -1711,21 +1955,260 @@
         </div>
 
         <!-- 슬라이드쇼 결과 -->
+        <!-- 슬라이드쇼 결과 -->
+<div id="resultSection" style="display: none;">
+    <div class="section success-animation">
+        <h2>🎉 완성된 프리미엄 슬라이드</h2>
+        
+        <!-- 슬라이드 보기 옵션 -->
+        <div style="background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.3); border-radius: 20px; padding: 25px; margin: 25px 0;">
+            <h3 style="color: #4ecdc4; margin-bottom: 20px; text-align: center;">👁️ 슬라이드 보기 옵션</h3>
+            
+            <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; margin-bottom: 20px;">
+                <button class="view-mode-btn active" onclick="setViewMode('player')" style="padding: 12px 25px; background: rgba(78,205,196,0.3); color: #4ecdc4; border: 2px solid #4ecdc4; border-radius: 15px; cursor: pointer; font-weight: bold; transition: all 0.3s ease;">
+                    🎬 플레이어 모드
+                </button>
+                <button class="view-mode-btn" onclick="setViewMode('grid')" style="padding: 12px 25px; background: rgba(255,255,255,0.1); color: white; border: 2px solid rgba(255,255,255,0.3); border-radius: 15px; cursor: pointer; font-weight: bold; transition: all 0.3s ease;">
+                    📋 전체 보기
+                </button>
+                <button class="view-mode-btn" onclick="setViewMode('list')" style="padding: 12px 25px; background: rgba(255,255,255,0.1); color: white; border: 2px solid rgba(255,255,255,0.3); border-radius: 15px; cursor: pointer; font-weight: bold; transition: all 0.3s ease;">
+                    📝 목록 보기
+                </button>
+            </div>
+            
+            <div style="display: flex; justify-content: center; gap: 10px; align-items: center;">
+                <label style="color: white; font-weight: bold;">🔍 확대/축소:</label>
+                <button onclick="changeSlideSize(-0.1)" style="padding: 8px 15px; background: rgba(255,255,255,0.2); color: white; border: none; border-radius: 10px; cursor: pointer;">➖</button>
+                <span id="slideSizeIndicator" style="color: #4ecdc4; font-weight: bold; min-width: 60px; text-align: center;">100%</span>
+                <button onclick="changeSlideSize(0.1)" style="padding: 8px 15px; background: rgba(255,255,255,0.2); color: white; border: none; border-radius: 10px; cursor: pointer;">➕</button>
+            </div>
+        </div>
+        
+        <!-- 플레이어 모드 -->
+        <div id="playerMode" class="view-mode">
+            <div class="slideshow-container" id="slideshowContainer" style="transform: scale(1); transition: transform 0.3s ease;">
+                <!-- 슬라이드들이 여기에 동적으로 생성됩니다 -->
+            </div>
+
+            <div class="slide-navigation">
+                <button class="nav-btn" onclick="prevSlide()">⬅️ 이전</button>
+                <span class="slide-counter" id="slideCounter">1 / 15</span>
+                <button class="nav-btn" onclick="nextSlide()">다음 ➡️</button>
+                <button class="nav-btn" onclick="toggleAutoPlay()" id="autoPlayBtn">▶️ 자동재생</button>
+                <button class="nav-btn" onclick="toggleSlideDetails()" id="detailsBtn">📝 상세보기</button>
+            </div>
+            
+            <!-- 슬라이드 상세 정보 -->
+            <div id="slideDetails" style="display: none; background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.3); border-radius: 20px; padding: 25px; margin: 25px 0;">
+                <h4 style="color: #4ecdc4; margin-bottom: 15px;">📋 현재 슬라이드 정보</h4>
+                <div id="slideDetailContent" style="color: white; line-height: 1.6;"></div>
+                <button onclick="editCurrentSlide()" style="margin-top: 15px; padding: 10px 20px; background: linear-gradient(45deg, #667eea, #764ba2); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold;">✏️ 편집</button>
+            </div>
+        </div>
+        
+<!-- 슬라이드쇼 결과 -->
         <div id="resultSection" style="display: none;">
             <div class="section success-animation">
                 <h2>🎉 완성된 프리미엄 슬라이드</h2>
                 
-                <div class="slideshow-container" id="slideshowContainer">
-                    <!-- 슬라이드들이 여기에 동적으로 생성됩니다 -->
+                <!-- 슬라이드 보기 옵션 -->
+                <div style="background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.3); border-radius: 20px; padding: 25px; margin: 25px 0;">
+                    <h3 style="color: #4ecdc4; margin-bottom: 20px; text-align: center;">👁️ 슬라이드 보기 옵션</h3>
+                    
+                    <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; margin-bottom: 20px;">
+                        <button class="view-mode-btn active" onclick="setViewMode('player')" style="padding: 12px 25px; background: rgba(78,205,196,0.3); color: #4ecdc4; border: 2px solid #4ecdc4; border-radius: 15px; cursor: pointer; font-weight: bold; transition: all 0.3s ease;">
+                            🎬 플레이어 모드
+                        </button>
+                        <button class="view-mode-btn" onclick="setViewMode('grid')" style="padding: 12px 25px; background: rgba(255,255,255,0.1); color: white; border: 2px solid rgba(255,255,255,0.3); border-radius: 15px; cursor: pointer; font-weight: bold; transition: all 0.3s ease;">
+                            📋 전체 보기
+                        </button>
+                        <button class="view-mode-btn" onclick="setViewMode('list')" style="padding: 12px 25px; background: rgba(255,255,255,0.1); color: white; border: 2px solid rgba(255,255,255,0.3); border-radius: 15px; cursor: pointer; font-weight: bold; transition: all 0.3s ease;">
+                            📝 목록 보기
+                        </button>
+                    </div>
+                    
+                    <div style="display: flex; justify-content: center; gap: 10px; align-items: center;">
+                        <label style="color: white; font-weight: bold;">🔍 확대/축소:</label>
+                        <button onclick="changeSlideSize(-0.1)" style="padding: 8px 15px; background: rgba(255,255,255,0.2); color: white; border: none; border-radius: 10px; cursor: pointer;">➖</button>
+                        <span id="slideSizeIndicator" style="color: #4ecdc4; font-weight: bold; min-width: 60px; text-align: center;">100%</span>
+                        <button onclick="changeSlideSize(0.1)" style="padding: 8px 15px; background: rgba(255,255,255,0.2); color: white; border: none; border-radius: 10px; cursor: pointer;">➕</button>
+                    </div>
+                </div>
+                
+                <!-- 플레이어 모드 -->
+                <div id="playerMode" class="view-mode">
+                    <div class="slideshow-container" id="slideshowContainer" style="transform: scale(1); transition: transform 0.3s ease;">
+                        <!-- 슬라이드들이 여기에 동적으로 생성됩니다 -->
+                    </div>
+
+                    <div class="slide-navigation">
+                        <button class="nav-btn" onclick="prevSlide()">⬅️ 이전</button>
+                        <span class="slide-counter" id="slideCounter">1 / 15</span>
+                        <button class="nav-btn" onclick="nextSlide()">다음 ➡️</button>
+                        <button class="nav-btn" onclick="toggleAutoPlay()" id="autoPlayBtn">▶️ 자동재생</button>
+                        <button class="nav-btn" onclick="toggleSlideDetails()" id="detailsBtn">📝 상세보기</button>
+                    </div>
+                    
+                    <!-- 슬라이드 상세 정보 -->
+                    <div id="slideDetails" style="display: none; background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.3); border-radius: 20px; padding: 25px; margin: 25px 0;">
+                        <h4 style="color: #4ecdc4; margin-bottom: 15px;">📋 현재 슬라이드 정보</h4>
+                        <div id="slideDetailContent" style="color: white; line-height: 1.6;"></div>
+                        <button onclick="editCurrentSlide()" style="margin-top: 15px; padding: 10px 20px; background: linear-gradient(45deg, #667eea, #764ba2); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold;">✏️ 편집</button>
+                    </div>
+                </div>
+                
+                <!-- 그리드 모드 -->
+                <div id="gridMode" class="view-mode" style="display: none;">
+                    <div id="slideGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin: 30px 0;">
+                        <!-- 그리드 슬라이드들이 여기에 생성됩니다 -->
+                    </div>
+                </div>
+                
+                <!-- 목록 모드 -->
+                <div id="listMode" class="view-mode" style="display: none;">
+                    <div id="slideList" style="margin: 30px 0;">
+                        <!-- 목록 슬라이드들이 여기에 생성됩니다 -->
+                    </div>
                 </div>
 
-                <div class="slide-navigation">
-                    <button class="nav-btn" onclick="prevSlide()">⬅️ 이전</button>
-                    <span class="slide-counter" id="slideCounter">1 / 15</span>
-                    <button class="nav-btn" onclick="nextSlide()">다음 ➡️</button>
-                    <button class="nav-btn" onclick="toggleAutoPlay()" id="autoPlayBtn">▶️ 자동재생</button>
+                <div style="background: rgba(0,255,100,0.1); border: 2px solid rgba(0,255,100,0.3); border-radius: 20px; padding: 25px; margin: 30px 0;">
+                    <h3 style="color: #00ff88; margin-bottom: 15px;">✨ 슬라이드 특징</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; text-align: left;">
+                        <div>✅ 총 15장의 프리미엄 슬라이드</div>
+                        <div>🎨 최적화된 파티클 애니메이션</div>
+                        <div>📱 유튜브 쇼츠 최적화 (9:16)</div>
+                        <div>⚡ 부드러운 전환 효과</div>
+                        <div>🎬 안정적인 자동재생</div>
+                        <div>📁 100% 완성 보장</div>
+                    </div>
                 </div>
 
+                <!-- 음악 설정 섹션 추가 -->
+                <div style="background: rgba(138,43,226,0.1); border: 2px solid rgba(138,43,226,0.3); border-radius: 20px; padding: 25px; margin: 30px 0;">
+                    <h3 style="color: #8a2be2; margin-bottom: 15px;">🎵 배경 음악 설정</h3>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                        <div class="music-option-card selected" onclick="selectMusicStyle('ambient')" style="background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.3); border-radius: 15px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.3s ease;">
+                            <span style="font-size: 2.5em; display: block; margin-bottom: 10px;">🌙</span>
+                            <h4 style="color: #8a2be2; margin-bottom: 10px;">엠비언트</h4>
+                            <p style="font-size: 0.9em; opacity: 0.8;">차분하고 몽환적인 분위기</p>
+                        </div>
+                        
+                        <div class="music-option-card" onclick="selectMusicStyle('upbeat')" style="background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.3); border-radius: 15px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.3s ease;">
+                            <span style="font-size: 2.5em; display: block; margin-bottom: 10px;">⚡</span>
+                            <h4 style="color: #8a2be2; margin-bottom: 10px;">업비트</h4>
+                            <p style="font-size: 0.9em; opacity: 0.8;">활기차고 에너지 넘치는</p>
+                        </div>
+                        
+                        <div class="music-option-card" onclick="selectMusicStyle('corporate')" style="background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.3); border-radius: 15px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.3s ease;">
+                            <span style="font-size: 2.5em; display: block; margin-bottom: 10px;">💼</span>
+                            <h4 style="color: #8a2be2; margin-bottom: 10px;">비즈니스</h4>
+                            <p style="font-size: 0.9em; opacity: 0.8;">전문적이고 신뢰감 있는</p>
+                        </div>
+                        
+                        <div class="music-option-card" onclick="selectMusicStyle('none')" style="background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.3); border-radius: 15px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.3s ease;">
+                            <span style="font-size: 2.5em; display: block; margin-bottom: 10px;">🔇</span>
+                            <h4 style="color: #8a2be2; margin-bottom: 10px;">음악 없음</h4>
+                            <p style="font-size: 0.9em; opacity: 0.8;">조용한 프레젠테이션</p>
+                        </div>
+                    </div>
+                    
+                    <div style="margin: 15px 0;">
+                        <label style="color: #8a2be2; font-weight: bold; margin-right: 15px;">🎵 비트 반응 강도:</label>
+                        <input type="range" id="reactionIntensity" min="0" max="100" value="50" style="width: 200px; margin-right: 10px;">
+                        <span id="reactionValue" style="color: white; font-weight: bold;">50%</span>
+                    </div>
+                    
+                    <div style="margin: 15px 0;">
+                        <label style="color: #8a2be2; font-weight: bold; margin-right: 15px;">
+                            <input type="checkbox" id="enableBeatReaction" checked style="margin-right: 10px;">
+                            🎨 비트 반응 효과 활성화
+                        </label>
+                    </div>
+                    
+                    <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+                        <button class="btn btn-primary" onclick="generateBackgroundMusic()" style="background: linear-gradient(45deg, #8a2be2, #da70d6);">🎵 음악 생성</button>
+                        <button class="btn btn-primary" onclick="previewMusic()" style="background: linear-gradient(45deg, #32cd32, #98fb98);">▶️ 미리듣기</button>
+                        <button class="btn btn-primary" onclick="stopMusic()" style="background: linear-gradient(45deg, #ff6347, #ffa07a);">⏹️ 정지</button>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin: 30px 0;">
+                    <button class="btn btn-primary recording-button" onclick="startOptimizedRecording()" style="font-size: 1.4em; padding: 22px 45px; margin: 10px; background: linear-gradient(45deg, #ff4444, #ff6666);">🎬 완벽한 영상 녹화</button>
+                    <button class="btn btn-primary" onclick="openYouTubeUpload()" style="font-size: 1.4em; padding: 22px 45px; margin: 10px; background: linear-gradient(45deg, #ff0000, #ff4444);">📺 유튜브에 바로 업로드</button>
+                    <button class="btn btn-primary" onclick="downloadSlides()">📁 슬라이드 다운로드</button>
+                    <button class="btn btn-primary" onclick="restartSlideshow()">🔄 처음부터 재생</button>
+                    <button class="btn btn-primary" onclick="copyOptimizedMetadata()" style="background: linear-gradient(45deg, #4ecdc4, #44a08d);">📋 업로드 정보 복사</button>
+                </div>
+
+                <div style="background: rgba(0,255,100,0.1); border: 2px solid rgba(0,255,100,0.3); border-radius: 20px; padding: 25px; margin: 30px 0;">
+                    <h3 style="color: #00ff88; margin-bottom: 15px;">🔊 시스템 오디오 캡처 가이드</h3>
+                    <div style="text-align: left; line-height: 1.6;">
+                        <h4 style="color: #00ff88; margin-bottom: 10px;">✅ 최고 품질 방법 (시스템 오디오):</h4>
+                        <div style="margin-left: 20px; margin-bottom: 15px;">
+                            <p><strong>1단계:</strong> 🎬 완벽한 영상 녹화 클릭</p>
+                            <p><strong>2단계:</strong> 화면 공유 팝업에서 <strong>"시스템 오디오 공유"</strong> 체크</p>
+                            <p><strong>3단계:</strong> 아무 창이나 선택 (브라우저 창 추천)</p>
+                            <p><strong>4단계:</strong> 완벽한 음질로 녹화 시작! 🎵</p>
+                        </div>
+                        
+                        <h4 style="color: #00ff88; margin-bottom: 10px;">🎤 대체 방법 (마이크):</h4>
+                        <div style="margin-left: 20px; margin-bottom: 15px;">
+                            <p>• 시스템 오디오 실패 시 자동으로 마이크 사용</p>
+                            <p>• 스피커 볼륨 조절로 음질 최적화</p>
+                            <p>• 조용한 환경에서 녹화</p>
+                        </div>
+                        
+                        <h4 style="color: #00ff88; margin-bottom: 10px;">🎯 결과:</h4>
+                        <div style="margin-left: 20px;">
+                            <p>✅ <strong>컴퓨터에서 나오는 음악이 직접 녹화</strong></p>
+                            <p>✅ <strong>외부 잡음 없이 깨끗한 음질</strong></p>
+                            <p>✅ <strong>비트 반응 효과와 완벽 동기화</strong></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: rgba(255,165,0,0.1); border: 2px solid rgba(255,165,0,0.3); border-radius: 20px; padding: 25px; margin: 30px 0;">
+                    <h3 style="color: #ffa500; margin-bottom: 15px;">🎵 음악 포함 녹화 안내</h3>
+                    <div style="text-align: left; line-height: 1.6;">
+                        <h4 style="color: #ffa500; margin-bottom: 10px;">🔊 브라우저별 시스템 오디오 지원:</h4>
+                        <div style="margin-left: 20px; margin-bottom: 15px;">
+                            <p>✅ <strong>Chrome:</strong> 완벽 지원 (권장)</p>
+                            <p>✅ <strong>Edge:</strong> 완벽 지원</p>
+                            <p>⚠️ <strong>Firefox:</strong> 제한적 지원</p>
+                            <p>❌ <strong>Safari:</strong> 미지원 (마이크 사용)</p>
+                        </div>
+                        
+                        <h4 style="color: #ffa500; margin-bottom: 10px;">🛠️ 문제 해결:</h4>
+                        <div style="margin-left: 20px;">
+                            <p>• 시스템 오디오 체크박스가 안 보이면 → 마이크 방법 사용</p>
+                            <p>• 권한 거부 시 → 브라우저 설정에서 권한 허용</p>
+                            <p>• Chrome 최신 버전 사용 권장</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: rgba(255,68,68,0.1); border: 2px solid rgba(255,68,68,0.3); border-radius: 20px; padding: 25px; margin: 30px 0;">
+                    <h3 style="color: #ff4444; margin-bottom: 15px;">🚀 완벽한 영상 녹화 시스템</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; text-align: left;">
+                        <div>✅ 100% 완성 보장 (중단 없음)</div>
+                        <div>🎯 최적화된 메모리 관리</div>
+                        <div>📱 완벽한 45초 타이밍</div>
+                        <div>🌊 모든 애니메이션 캡처</div>
+                        <div>⚡ 안정적인 60fps</div>
+                        <div>💾 고품질 WebM/MP4 저장</div>
+                        <div>🎤 마이크 오디오 포함 (선택)</div>
+                        <div>🎵 비트 반응 효과 완벽 캡처</div>
+                    </div>
+                    <p style="margin-top: 15px; font-size: 1.2em; color: #ff6666;">
+                        🔥 <strong>시각 효과는 100% 완벽하게 녹화됩니다!</strong>
+                    </p>
+                </div>
+            </div>
+        </div>
+                <!-- 목록 슬라이드들이 여기에 생성됩니다 -->
+            </div>
+        </div>
                 <div style="background: rgba(0,255,100,0.1); border: 2px solid rgba(0,255,100,0.3); border-radius: 20px; padding: 25px; margin: 30px 0;">
                     <h3 style="color: #00ff88; margin-bottom: 15px;">✨ 슬라이드 특징</h3>
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; text-align: left;">
