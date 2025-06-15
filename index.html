@@ -958,6 +958,11 @@
             font-weight: 900;
             margin-bottom: 15px;
             text-shadow: 2px 2px 8px rgba(0,0,0,0.7);
+      
+    
+    
+      
+    
             line-height: 1.1;
             background: linear-gradient(45deg, #fff, #4ecdc4);
             -webkit-background-clip: text;
@@ -966,13 +971,28 @@
         }
 
         .slide-subtitle {
-            font-size: 1.3em;
-            opacity: 0.95;
-            margin-bottom: 20px;
-            text-shadow: 1px 1px 4px rgba(0,0,0,0.7);
-            line-height: 1.3;
-            word-wrap: break-word;
-        }
+    font-size: 1.3em;
+    opacity: 0.95;
+    margin-bottom: 20px;
+    text-shadow: 1px 1px 4px rgba(0,0,0,0.7);
+    line-height: 1.3;
+    word-wrap: break-word;
+    max-width: 95%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.slide-description {
+    font-size: 0.9em;
+    opacity: 0.85;
+    margin-top: 20px;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+    line-height: 1.4;
+    max-width: 85%;
+    margin-left: auto;
+    margin-right: auto;
+    word-wrap: break-word;
+}
 
         /* 네비게이션 */
         .slide-navigation {
@@ -2741,20 +2761,68 @@
 
     // 실제 GPT 분석을 통한 슬라이드 생성
     async function generateSlideWithRealAnalysis(title, content) {
-        const prompt = `당신은 프레젠테이션 전문가입니다. 다음 내용을 분석하여 정확히 15장의 효과적인 슬라이드를 구성해주세요.
+       const prompt = `당신은 프레젠테이션 전문가입니다. 다음 내용을 깊이 있게 분석하여 정확히 15장의 효과적이고 상세한 슬라이드를 구성해주세요.
 
 제목: ${title}
 내용: ${content}
 
 요구사항:
-1. 내용을 꼼꼼히 분석하여 핵심 포인트들을 추출하세요
-2. 논리적인 순서로 15장의 슬라이드를 구성하세요
-3. 각 슬라이드는 하나의 명확한 메시지를 전달해야 합니다
-4. 제목과 부제목은 간결하고 임팩트 있게 작성하세요
-5. 적절한 이모지를 각 슬라이드에 배정하세요
-6. 다양한 색상 코드를 사용하세요 (헥사코드)
+1. 내용을 꼼꼼히 분석하여 핵심 포인트들을 추출하고 체계적으로 구성하세요
+2. 논리적인 순서로 15장의 슬라이드를 구성하세요 (인트로 -> 본문 -> 결론 구조)
+3. 각 슬라이드는 하나의 명확한 메시지를 전달해야 하며, 구체적인 내용을 포함해야 합니다
+4. 제목은 임팩트 있고 간결하게, 부제목은 상세하고 구체적으로 작성하세요
+5. 부제목에는 핵심 포인트, 설명, 예시, 수치 등을 포함해주세요
+6. 적절한 이모지를 각 슬라이드에 배정하세요
+7. 다양한 색상 코드를 사용하세요 (헥사코드)
+8. 각 슬라이드에 상세 설명(description)을 추가해주세요
+
+슬라이드 구성 가이드라인:
+- 1-2장: 제목/인트로
+- 3-4장: 문제/현황 정의
+- 5-8장: 주요 내용/해결방안 (가장 중요한 부분)
+- 9-12장: 세부 내용/사례/데이터
+- 13-14장: 실행방안/next steps
+- 15장: 결론/요약
 
 반드시 다음 JSON 형식으로만 응답해주세요:
+{
+  "slides": [
+    {
+      "slideNumber": 1,
+      "icon": "🚀",
+      "title": "슬라이드 제목",
+      "subtitle": "구체적이고 상세한 부제목 - 핵심 포인트와 설명 포함",
+      "description": "이 슬라이드의 상세한 설명과 전달하고자 하는 메시지",
+      "color": "#667eea"
+    }
+  ]
+}
+
+부제목 예시:
+- "현재 시장에서 60% 성장률을 보이는 핵심 동향과 3가지 주요 기회"
+- "기존 방식의 한계점 분석 - 비용 증가와 효율성 저하 문제"
+- "데이터 기반 솔루션으로 40% 비용 절감과 2배 속도 향상 달성"
+
+JSON 형식으로만 응답해주세요.`;
+{
+  "slides": [
+    {
+      "slideNumber": 1,
+      "icon": "🚀",
+      "title": "슬라이드 제목",
+      "subtitle": "구체적이고 상세한 부제목 - 핵심 포인트와 설명 포함",
+      "description": "이 슬라이드의 상세한 설명과 전달하고자 하는 메시지",
+      "color": "#667eea"
+    }
+  ]
+}
+
+부제목 예시:
+- "현재 시장에서 60% 성장률을 보이는 핵심 동향과 3가지 주요 기회"
+- "기존 방식의 한계점 분석 - 비용 증가와 효율성 저하 문제"
+- "데이터 기반 솔루션으로 40% 비용 절감과 2배 속도 향상 달성"
+
+JSON 형식으로만 응답해주세요.`;
 {
   "slides": [
     {
@@ -2768,6 +2836,11 @@
 }
 
 JSON 형식으로만 응답해주세요.`;
+      
+    
+    
+      
+    
 
         const maxRetries = 3;
         let lastError = null;
@@ -2824,28 +2897,43 @@ JSON 형식으로만 응답해주세요.`;
                     
                     const result = JSON.parse(jsonText);
                     
-                    if (result.slides && Array.isArray(result.slides) && result.slides.length > 0) {
-                        console.log('✅ GPT 실제 분석 완료:', result.slides.length, '장의 슬라이드');
-                        
-                        while (result.slides.length < 15) {
-                            result.slides.push({
-                                slideNumber: result.slides.length + 1,
-                                icon: '📝',
-                                title: '추가 정보',
-                                subtitle: '더 자세한 내용',
-                                color: '#' + Math.floor(Math.random()*16777215).toString(16)
-                            });
-                        }
-                        
-                        if (result.slides.length > 15) {
-                            result.slides = result.slides.slice(0, 15);
-                        }
-                        
-                        result.slides.forEach((slide, index) => {
-                            slide.slideNumber = index + 1;
-                        });
-                        
-                        return result.slides;
+                   if (result.slides && Array.isArray(result.slides) && result.slides.length > 0) {
+    console.log('✅ GPT 실제 분석 완료:', result.slides.length, '장의 슬라이드');
+    
+    // 15장 맞추기
+    while (result.slides.length < 15) {
+        const lastSlide = result.slides[result.slides.length - 1];
+        result.slides.push({
+            slideNumber: result.slides.length + 1,
+            icon: '📋',
+            title: '추가 인사이트',
+            subtitle: '더 깊이 있는 분석과 상세 내용',
+            description: '주요 내용을 보완하는 추가적인 분석과 인사이트',
+            color: '#' + Math.floor(Math.random()*16777215).toString(16)
+        });
+    }
+    
+    if (result.slides.length > 15) {
+        result.slides = result.slides.slice(0, 15);
+    }
+    
+    // 슬라이드 번호 재정렬
+    result.slides.forEach((slide, index) => {
+        slide.slideNumber = index + 1;
+        // description이 없는 경우 기본값 추가
+        if (!slide.description) {
+            slide.description = slide.subtitle || slide.title || '중요한 내용';
+        }
+    });
+    
+    console.log('📊 상세 슬라이드 정보:', result.slides.map(s => ({
+        number: s.slideNumber,
+        title: s.title,
+        hasSubtitle: !!s.subtitle,
+        hasDescription: !!s.description
+    })));
+    
+    return result.slides;
                     } else {
                         throw new Error('슬라이드 데이터가 올바르지 않습니다.');
                     }
@@ -3003,18 +3091,44 @@ JSON 형식으로만 응답해주세요.`;
         titleDiv.textContent = slide.title || '';
         
         const subtitleDiv = document.createElement('div');
-        if (slide.subtitle && slide.subtitle.trim()) {
-            subtitleDiv.className = 'slide-subtitle';
-            subtitleDiv.textContent = slide.subtitle;
-        } else {
-            subtitleDiv.style.marginBottom = '40px';
-        }
-        
-        slideContent.appendChild(iconDiv);
-        slideContent.appendChild(titleDiv);
-        slideContent.appendChild(subtitleDiv);
-        slideDiv.appendChild(particleSystem);
-        slideDiv.appendChild(slideContent);
+if (slide.subtitle && slide.subtitle.trim()) {
+    subtitleDiv.className = 'slide-subtitle';
+    subtitleDiv.textContent = slide.subtitle;
+    
+    // 긴 부제목의 경우 폰트 크기 조정
+    if (slide.subtitle.length > 60) {
+        subtitleDiv.style.fontSize = '1.1em';
+        subtitleDiv.style.lineHeight = '1.4';
+    }
+} else {
+    subtitleDiv.style.marginBottom = '40px';
+}
+
+// 상세 설명이 있는 경우 추가 (선택적으로 표시)
+const descriptionDiv = document.createElement('div');
+if (slide.description && slide.description.trim() && slide.description !== slide.subtitle) {
+    descriptionDiv.className = 'slide-description';
+    descriptionDiv.textContent = slide.description;
+    descriptionDiv.style.cssText = `
+        font-size: 0.9em;
+        opacity: 0.85;
+        margin-top: 20px;
+        line-height: 1.4;
+        max-width: 85%;
+        margin-left: auto;
+        margin-right: auto;
+        text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+    `;
+}
+
+slideContent.appendChild(iconDiv);
+slideContent.appendChild(titleDiv);
+slideContent.appendChild(subtitleDiv);
+if (descriptionDiv.textContent) {
+    slideContent.appendChild(descriptionDiv);
+}
+slideDiv.appendChild(particleSystem);
+slideDiv.appendChild(slideContent);
         
         addParticleEffect(particleSystem);
         
@@ -3884,37 +3998,55 @@ JSON 형식으로만 응답해주세요.`;
             ctx.fillText(slide.icon, canvas.width / 2, canvas.height * 0.25);
 
             // 제목 (비트 반응으로 글로우 효과)
-            const titleSize = canvas.height * 0.08 * (1 + beatIntensity * 0.1);
-            ctx.font = `900 ${titleSize}px Arial, sans-serif`;
-            
-            // 비트 반응 글로우 효과
-            if (beatIntensity > 0.1) {
-                ctx.shadowColor = `rgba(255,255,255,${beatIntensity * 0.5})`;
-                ctx.shadowBlur = beatIntensity * 30;
-            }
-            
-            ctx.fillStyle = 'white';
-            
-            const titleY = canvas.height * 0.45;
-            const safeTitle = String(slide.title || '').replace(/[{}()]/g, '');
-            const titleLines = wrapTextOptimized(ctx, safeTitle, canvas.width * 0.9);
-            titleLines.forEach((line, i) => {
-                ctx.fillText(line, canvas.width / 2, titleY + (i * canvas.height * 0.09));
-            });
+           // 제목 (비트 반응으로 글로우 효과)
+const titleSize = canvas.height * 0.075 * (1 + beatIntensity * 0.1);
+ctx.font = `900 ${titleSize}px Arial, sans-serif`;
 
-            // 부제목
-            if (slide.subtitle && slide.subtitle.trim()) {
-                const subtitleSize = canvas.height * 0.05 * (1 + beatIntensity * 0.05);
-                ctx.font = `600 ${subtitleSize}px Arial, sans-serif`;
-                ctx.fillStyle = `rgba(255,255,255,${0.95 + beatIntensity * 0.05})`;
-                
-                const subtitleY = canvas.height * 0.7;
-                const safeSubtitle = String(slide.subtitle || '').replace(/[{}()]/g, '');
-                const subtitleLines = wrapTextOptimized(ctx, safeSubtitle, canvas.width * 0.9);
-                subtitleLines.forEach((line, i) => {
-                    ctx.fillText(line, canvas.width / 2, subtitleY + (i * canvas.height * 0.06));
-                });
-            }
+// 비트 반응 글로우 효과
+if (beatIntensity > 0.1) {
+    ctx.shadowColor = `rgba(255,255,255,${beatIntensity * 0.5})`;
+    ctx.shadowBlur = beatIntensity * 30;
+}
+
+ctx.fillStyle = 'white';
+
+const titleY = canvas.height * 0.42;
+const safeTitle = String(slide.title || '').replace(/[{}()]/g, '');
+const titleLines = wrapTextOptimized(ctx, safeTitle, canvas.width * 0.9);
+titleLines.forEach((line, i) => {
+    ctx.fillText(line, canvas.width / 2, titleY + (i * canvas.height * 0.085));
+});
+
+// 부제목
+if (slide.subtitle && slide.subtitle.trim()) {
+    const subtitleSize = canvas.height * 0.045 * (1 + beatIntensity * 0.05);
+    ctx.font = `600 ${subtitleSize}px Arial, sans-serif`;
+    ctx.fillStyle = `rgba(255,255,255,${0.95 + beatIntensity * 0.05})`;
+    
+    const subtitleY = canvas.height * 0.68;
+    const safeSubtitle = String(slide.subtitle || '').replace(/[{}()]/g, '');
+    const subtitleLines = wrapTextOptimized(ctx, safeSubtitle, canvas.width * 0.92);
+    subtitleLines.forEach((line, i) => {
+        ctx.fillText(line, canvas.width / 2, subtitleY + (i * canvas.height * 0.055));
+    });
+}
+
+// 상세 설명 (있는 경우)
+if (slide.description && slide.description.trim() && slide.description !== slide.subtitle) {
+    const descSize = canvas.height * 0.032 * (1 + beatIntensity * 0.03);
+    ctx.font = `500 ${descSize}px Arial, sans-serif`;
+    ctx.fillStyle = `rgba(255,255,255,${0.85 + beatIntensity * 0.05})`;
+    
+    const descY = canvas.height * 0.85;
+    const safeDesc = String(slide.description || '').replace(/[{}()]/g, '');
+    const descLines = wrapTextOptimized(ctx, safeDesc, canvas.width * 0.9);
+    
+    // 최대 2줄만 표시
+    const maxDescLines = Math.min(descLines.length, 2);
+    for (let i = 0; i < maxDescLines; i++) {
+        ctx.fillText(descLines[i], canvas.width / 2, descY + (i * canvas.height * 0.04));
+    }
+}
 
             // 5. 모서리 이미지 (가장 위에)
             if (uploadedImages.length > 0 && selectedImageMode === 'corner') {
