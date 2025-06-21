@@ -1,4 +1,40 @@
-<!DOCTYPE html>
+<!-- 유튜브 업로드 가이드 섹션 -->
+        <div class="section" id="uploadGuideSection" style="background: rgba(255, 8, 68, 0.1); border: 3px solid rgba(255, 8, 68, 0.4);">
+            <h2 class="section-title">📤 유튜브 쇼츠 업로드 가이드</h2>
+            <div style="text-align: center; margin: 30px 0;">
+                <div style="background: rgba(0, 0, 0, 0.3); border-radius: 15px; padding: 25px; margin: 20px 0;">
+                    <h3 style="color: #ff0844; margin-bottom: 20px;">🎬 완벽한 업로드 3단계</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin: 20px 0;">
+                        <div style="text-align: center;">
+                            <div style="font-size: 3em; margin-bottom: 10px;">📥</div>
+                            <h4 style="color: #feca57;">1단계</h4>
+                            <p>MP4 다운로드</p>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 3em; margin-bottom: 10px;">🚀</div>
+                            <h4 style="color: #feca57;">2단계</h4>
+                            <p>업로드 화면 열기</p>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 3em; margin-bottom: 10px;">📱</div>
+                            <h4 style="color: #feca57;">3단계</h4>
+                            <p>드래그 업로드</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="background: rgba(255, 255, 255, 0.1); border-radius: 15px; padding: 20px; margin: 20px 0;">
+                    <h4 style="color: #4ecdc4; margin-bottom: 15px;">💡 업로드 팁</h4>
+                    <ul style="text-align: left; max-width: 600px; margin: 0 auto; line-height: 1.8;">
+                        <li>📱 제목에 #Shorts 해시태그 포함 필수</li>
+                        <li>🎯 썸네일은 중간 프레임 자동 선택</li>
+                        <li>🏷️ "쇼츠" 탭에서 설정 확인</li>
+                        <li>📊 공개 설정을 "공개"로 변경</li>
+                        <li>🔔 구독자에게 알림 발송 체크</li>
+                    </ul>
+                </div>
+            </div>
+        </div><!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
@@ -166,8 +202,8 @@ ${description}`;
                                 content: additionalPrompt
                             }
                         ],
-                        temperature: 0.8,
-                        max_tokens: 2000
+                        temperature: 0.9,
+                        max_tokens: 3000
                     })
                 });
 
@@ -802,9 +838,9 @@ ${description}`;
                 <button class="btn btn-shorts" onclick="generateShortsMP4()">
                     🎬 MP4 쇼츠 생성
                 </button>
-                <button class="btn btn-primary" onclick="uploadToYouTube()">
-                    📤 유튜브에 업로드
-                </button>
+                <a href="https://studio.youtube.com/channel/UCW1vhW_QNXN1AqdnJCJHOEg/videos/upload" target="_blank" class="btn btn-primary" style="text-decoration: none; display: inline-block;">
+                    🚀 유튜브 업로드 화면
+                </a>
                 <button class="btn btn-primary" onclick="stopPreview()">
                     ⏹️ 정지
                 </button>
@@ -820,16 +856,17 @@ ${description}`;
             <button class="download-btn" id="downloadBtn" onclick="downloadShorts()">
                 📥 MP4 다운로드
             </button>
-            <button class="download-btn" onclick="uploadToYouTube()" style="background: rgba(255, 8, 68, 0.2); margin-left: 20px;">
-                🚀 유튜브 쇼츠 업로드
-            </button>
+            <a href="https://studio.youtube.com/channel/UCW1vhW_QNXN1AqdnJCJHOEg/videos/upload" target="_blank" class="download-btn" style="text-decoration: none; display: inline-block; background: rgba(255, 8, 68, 0.8); margin-left: 20px; border: 2px solid #ff0844;">
+                🚀 유튜브 업로드 화면 열기
+            </a>
             <div style="margin-top: 30px; opacity: 0.9;">
                 <p><strong>✅ 유튜브 쇼츠 완벽 최적화</strong></p>
                 <p>• 정확히 15장 슬라이드 보장</p>
                 <p>• 완벽한 9:16 비율 (1080×1920)</p>
-                <p>• 유튜브 직접 업로드 지원</p>
+                <p>• 유튜브 업로드 화면 직접 연결</p>
                 <p>• 모든 플랫폼 호환 MP4</p>
-                <p>• #Shorts 해시태그 자동 포함</p>
+                <p>• #Shorts 해시태그 최적화</p>
+                <p>• 클릭 한 번으로 업로드 화면 이동</p>
             </div>
         </div>
     </div>
@@ -1089,7 +1126,7 @@ duration: 각 슬라이드 노출 시간 (초)`;
                         messages: [
                             {
                                 role: "system",
-                                content: "당신은 유튜브 쇼츠 제작 전문가입니다. 모바일 환경에서 시청자의 주의를 끌고 끝까지 보게 만드는 콘텐츠를 만듭니다. 반드시 유효한 JSON 형식으로만 응답하세요."
+                                content: "당신은 유튜브 쇼츠 제작 전문가입니다. 반드시 정확히 15개의 슬라이드를 생성해야 합니다. 이것은 매우 중요한 요구사항입니다. 15개 미만은 절대 불가능합니다. 모바일 환경에서 시청자의 주의를 끌고 끝까지 보게 만드는 콘텐츠를 만듭니다. 반드시 유효한 JSON 형식으로만 응답하세요."
                             },
                             {
                                 role: "user",
