@@ -1506,40 +1506,104 @@
             console.log('선택된 생성 모드:', selectedGenerationMode);
         }
 
-        // ===== 완벽한 OpenAI API 연결 시스템 =====
+        // ===== 실시간 API 키 검증 시스템 =====
+        function initializeAPIKeyValidation() {
+            const keyInput = document.getElementById('openaiKey');
+            if (!keyInput) return;
+            
+            // 실시간 키 검증
+            keyInput.addEventListener('input', function() {
+                const key = this.value.trim();
+                validateAPIKeyFormat(key);
+            });
+            
+            // 붙여넣기 감지
+            keyInput.addEventListener('paste', function() {
+                setTimeout(() => {
+                    const key = this.value.trim();
+                    validateAPIKeyFormat(key);
+                }, 100);
+            });
+        }
+
+        function validateAPIKeyFormat(key) {
+            const statusElement = document.getElementById('openaiStatus');
+            const connectButton = document.querySelector('button[onclick="connectOpenAI()"]');
+            
+            if (!key) {
+                showStatus('📝 API 키를 입력해주세요', 'warning', 'openaiStatus');
+                if (connectButton) connectButton.disabled = true;
+                return false;
+            }
+            
+            if (!key.startsWith('sk-')) {
+                showStatus('❌ API 키는 "sk-"로 시작해야 합니다', 'error', 'openaiStatus');
+                if (connectButton) connectButton.disabled = true;
+                return false;
+            }
+            
+            if (key.length < 40) {
+                showStatus('❌ API 키가 너무 짧습니다 (최소 40자)', 'error', 'openaiStatus');
+                if (connectButton) connectButton.disabled = true;
+                return false;
+            }
+            
+            if (key.length > 200) {
+                showStatus('❌ API 키가 너무 깁니다', 'error', 'openaiStatus');
+                if (connectButton) connectButton.disabled = true;
+                return false;
+            }
+            
+            // 형식이 올바른 경우
+            showStatus('✅ API 키 형식이 올바릅니다. 연결 버튼을 클릭하세요!', 'success', 'openaiStatus');
+            if (connectButton) {
+                connectButton.disabled = false;
+                connectButton.style.background = 'linear-gradient(45deg, #43e97b, #38f9d7)';
+                connectButton.style.animation = 'pulse 2s infinite';
+            }
+            return true;
+        }
+
+        // ===== 개선된 OpenAI API 연결 시스템 =====
         async function connectOpenAI() {
             const keyInput = document.getElementById('openaiKey');
+            const connectButton = document.querySelector('button[onclick="connectOpenAI()"]');
+            
             if (!keyInput) {
-                console.error('API 키 입력 필드를 찾을 수 없습니다.');
+                console.error('❌ API 키 입력 필드를 찾을 수 없습니다.');
+                alert('❌ 시스템 오류: API 키 입력 필드를 찾을 수 없습니다.');
                 return;
             }
             
             const key = keyInput.value.trim();
-            console.log('API 키 입력 확인:', key ? '입력됨' : '비어있음');
+            console.log('🔑 API 키 연결 시도 시작');
+            console.log('키 길이:', key.length);
+            console.log('키 시작 부분:', key.substring(0, 10) + '...');
             
-            // 입력 검증
-            if (!key) {
-                showStatus('❌ API 키를 입력해주세요.', 'error', 'openaiStatus');
+            // 버튼 상태 변경
+            if (connectButton) {
+                connectButton.disabled = true;
+                connectButton.textContent = '🔗 연결 중...';
+                connectButton.style.background = 'linear-gradient(45deg, #feca57, #ff9ff3)';
+            }
+            
+            // 최종 형식 검증
+            if (!validateAPIKeyFormat(key)) {
+                if (connectButton) {
+                    connectButton.disabled = false;
+                    connectButton.textContent = '🔗 OpenAI 연결';
+                    connectButton.style.background = 'linear-gradient(45deg, #4facfe, #00f2fe)';
+                }
                 return;
             }
             
-            if (!key.startsWith('sk-')) {
-                showStatus('❌ API 키는 "sk-"로 시작해야 합니다.', 'error', 'openaiStatus');
-                return;
-            }
-            
-            if (key.length < 40) {
-                showStatus('❌ API 키가 너무 짧습니다. 올바른 키를 입력해주세요.', 'error', 'openaiStatus');
-                return;
-            }
-            
-            showStatus('🔗 OpenAI API 연결 확인 중...', 'warning', 'openaiStatus');
+            showStatus('🔗 OpenAI API 연결 테스트 중...', 'warning', 'openaiStatus');
             
             try {
-                console.log('OpenAI API 연결 테스트 시작');
+                console.log('🌐 API 연결 테스트 시작');
                 
-                // 실제 API 연결 테스트
-                const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                // 간단한 연결 테스트
+                const testResponse = await fetch('https://api.openai.com/v1/chat/completions', {
                     method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${key}`,
@@ -1550,7 +1614,7 @@
                         messages: [
                             {
                                 role: 'user',
-                                content: '연결 테스트입니다. "연결 성공"이라고 답해주세요.'
+                                content: '안녕하세요! 연결 테스트입니다. "연결 성공"이라고 짧게 답해주세요.'
                             }
                         ],
                         max_tokens: 10,
@@ -1558,91 +1622,258 @@
                     })
                 });
                 
-                console.log('API 응답 상태:', response.status);
+                console.log('📡 API 응답 상태:', testResponse.status);
                 
-                if (response.ok) {
-                    const data = await response.json();
-                    console.log('API 응답 데이터:', data);
+                if (testResponse.ok) {
+                    const data = await testResponse.json();
+                    console.log('✅ API 연결 성공!');
+                    console.log('응답 데이터:', data);
                     
-                    // 연결 성공 처리
+                    // 전역 변수에 저장
                     openaiApiKey = key;
                     
-                    // UI 업데이트
-                    document.getElementById('openaiCard').classList.add('connected');
+                    // 연결 성공 UI 업데이트
+                    updateConnectionSuccessUI();
                     
-                    const gptStatus = document.getElementById('gptStatus');
-                    if (gptStatus) {
-                        gptStatus.innerHTML = `
-                            <div style="font-size: 2em; margin-bottom: 10px;">✅</div>
-                            <div>GPT-4 연결 완료</div>
-                        `;
-                        gptStatus.style.background = 'rgba(67,233,123,0.2)';
-                        gptStatus.style.borderColor = 'rgba(67,233,123,0.5)';
-                    }
+                    // 성공 메시지
+                    showStatus('🎉 OpenAI API 연결 완료! GPT-4와 DALL-E 3 사용 가능합니다.', 'success', 'openaiStatus');
                     
-                    const dalleStatus = document.getElementById('dalleConnectionStatus');
-                    if (dalleStatus) {
-                        dalleStatus.innerHTML = `
-                            <div style="font-size: 2em; margin-bottom: 10px;">✅</div>
-                            <div>DALL-E 3 연결 완료</div>
-                        `;
-                        dalleStatus.style.background = 'rgba(67,233,123,0.2)';
-                        dalleStatus.style.borderColor = 'rgba(67,233,123,0.5)';
-                    }
-                    
-                    showStatus('✅ OpenAI API 연결 성공! GPT-4와 DALL-E 3 사용 가능합니다.', 'success', 'openaiStatus');
+                    // 생성 버튼 활성화
                     updateGenerateButton();
                     
-                    console.log('✅ OpenAI API 연결 완료');
+                    // 성공 알림
+                    showSuccessNotification('🎉 OpenAI API 연결 성공! 이제 완벽한 콘텐츠를 만들 수 있습니다!');
                     
                 } else {
-                    // 에러 응답 처리
-                    const errorData = await response.json().catch(() => ({}));
-                    console.error('API 연결 실패:', response.status, errorData);
+                    // 실패 처리
+                    const errorData = await testResponse.json().catch(() => ({}));
+                    console.error('❌ API 연결 실패:', testResponse.status, errorData);
                     
-                    let errorMessage = '❌ API 연결 실패: ';
-                    
-                    switch (response.status) {
-                        case 401:
-                            errorMessage += 'API 키가 유효하지 않습니다. 올바른 키를 입력해주세요.';
-                            break;
-                        case 429:
-                            errorMessage += '요청 한도를 초과했습니다. 잠시 후 다시 시도해주세요.';
-                            break;
-                        case 500:
-                        case 502:
-                        case 503:
-                            errorMessage += 'OpenAI 서버에 일시적인 문제가 있습니다. 잠시 후 다시 시도해주세요.';
-                            break;
-                        default:
-                            errorMessage += `서버 오류 (${response.status}). 잠시 후 다시 시도해주세요.`;
-                    }
-                    
-                    if (errorData.error && errorData.error.message) {
-                        errorMessage += ` 상세: ${errorData.error.message}`;
-                    }
-                    
-                    showStatus(errorMessage, 'error', 'openaiStatus');
+                    handleAPIConnectionError(testResponse.status, errorData);
                 }
                 
             } catch (error) {
-                console.error('네트워크 오류:', error);
-                
-                let errorMessage = '❌ 연결 오류: ';
-                
-                if (error.name === 'TypeError' && error.message.includes('fetch')) {
-                    errorMessage += '인터넷 연결을 확인해주세요.';
-                } else if (error.message.includes('CORS')) {
-                    errorMessage += 'CORS 오류입니다. 브라우저를 새로고침 해주세요.';
-                } else if (error.message.includes('timeout')) {
-                    errorMessage += '연결 시간이 초과되었습니다. 다시 시도해주세요.';
-                } else {
-                    errorMessage += '네트워크 오류가 발생했습니다. 인터넷 연결을 확인해주세요.';
+                console.error('🌐 네트워크 오류:', error);
+                handleNetworkError(error);
+            } finally {
+                // 버튼 상태 복원
+                if (connectButton) {
+                    connectButton.disabled = false;
+                    connectButton.textContent = '🔗 OpenAI 연결';
+                    if (openaiApiKey) {
+                        connectButton.textContent = '✅ 연결 완료';
+                        connectButton.style.background = 'linear-gradient(45deg, #43e97b, #38f9d7)';
+                    } else {
+                        connectButton.style.background = 'linear-gradient(45deg, #4facfe, #00f2fe)';
+                    }
                 }
-                
-                showStatus(errorMessage, 'error', 'openaiStatus');
             }
         }
+
+        // ===== 연결 성공 UI 업데이트 =====
+        function updateConnectionSuccessUI() {
+            console.log('🎨 연결 성공 UI 업데이트 시작');
+            
+            // OpenAI 카드 연결 상태 표시
+            const openaiCard = document.getElementById('openaiCard');
+            if (openaiCard) {
+                openaiCard.classList.add('connected');
+                openaiCard.style.borderColor = '#43e97b';
+                openaiCard.style.background = 'rgba(67,233,123,0.1)';
+                openaiCard.style.boxShadow = '0 0 30px rgba(67,233,123,0.3)';
+            }
+            
+            // GPT 상태 업데이트
+            const gptStatus = document.getElementById('gptStatus');
+            if (gptStatus) {
+                gptStatus.innerHTML = `
+                    <div style="font-size: 2em; margin-bottom: 10px; animation: bounce 2s infinite;">✅</div>
+                    <div style="font-weight: bold; color: #43e97b;">GPT-4 연결 완료</div>
+                    <div style="font-size: 0.9em; opacity: 0.8; margin-top: 5px;">API 정상 작동</div>
+                `;
+                gptStatus.style.background = 'rgba(67,233,123,0.2)';
+                gptStatus.style.borderColor = 'rgba(67,233,123,0.5)';
+                gptStatus.style.transform = 'scale(1.02)';
+            }
+            
+            // DALL-E 상태 업데이트
+            const dalleStatus = document.getElementById('dalleConnectionStatus');
+            if (dalleStatus) {
+                dalleStatus.innerHTML = `
+                    <div style="font-size: 2em; margin-bottom: 10px; animation: bounce 2s infinite;">✅</div>
+                    <div style="font-weight: bold; color: #43e97b;">DALL-E 3 연결 완료</div>
+                    <div style="font-size: 0.9em; opacity: 0.8; margin-top: 5px;">이미지 생성 준비됨</div>
+                `;
+                dalleStatus.style.background = 'rgba(67,233,123,0.2)';
+                dalleStatus.style.borderColor = 'rgba(67,233,123,0.5)';
+                dalleStatus.style.transform = 'scale(1.02)';
+            }
+            
+            console.log('✅ 연결 성공 UI 업데이트 완료');
+        }
+
+        // ===== API 연결 오류 처리 =====
+        function handleAPIConnectionError(status, errorData) {
+            let errorMessage = '❌ API 연결 실패: ';
+            let suggestion = '';
+            
+            switch (status) {
+                case 401:
+                    errorMessage += 'API 키가 유효하지 않습니다.';
+                    suggestion = '💡 해결방법: OpenAI 웹사이트에서 새로운 API 키를 생성해주세요.';
+                    break;
+                case 403:
+                    errorMessage += 'API 접근이 거부되었습니다.';
+                    suggestion = '💡 해결방법: 계정 상태를 확인하거나 결제 정보를 업데이트해주세요.';
+                    break;
+                case 429:
+                    errorMessage += '요청 한도를 초과했습니다.';
+                    suggestion = '💡 해결방법: 잠시 후 다시 시도하거나 플랜을 업그레이드해주세요.';
+                    break;
+                case 500:
+                case 502:
+                case 503:
+                    errorMessage += 'OpenAI 서버에 일시적인 문제가 있습니다.';
+                    suggestion = '💡 해결방법: 1-2분 후 다시 시도해주세요.';
+                    break;
+                default:
+                    errorMessage += `알 수 없는 오류 (상태 코드: ${status})`;
+                    suggestion = '💡 해결방법: 인터넷 연결을 확인하고 다시 시도해주세요.';
+            }
+            
+            if (errorData.error && errorData.error.message) {
+                errorMessage += `\n상세 오류: ${errorData.error.message}`;
+            }
+            
+            showStatus(errorMessage, 'error', 'openaiStatus');
+            
+            // 추가 도움말 표시
+            setTimeout(() => {
+                const statusElement = document.getElementById('openaiStatus');
+                if (statusElement) {
+                    statusElement.innerHTML += `<br><small style="opacity: 0.8;">${suggestion}</small>`;
+                }
+            }, 1000);
+        }
+
+        // ===== 네트워크 오류 처리 =====
+        function handleNetworkError(error) {
+            let errorMessage = '🌐 네트워크 연결 오류: ';
+            let suggestion = '';
+            
+            if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                errorMessage += '인터넷 연결을 확인해주세요.';
+                suggestion = '💡 해결방법: Wi-Fi 또는 데이터 연결 상태를 확인해주세요.';
+            } else if (error.message.includes('CORS')) {
+                errorMessage += 'CORS 정책 오류입니다.';
+                suggestion = '💡 해결방법: 페이지를 새로고침하거나 다른 브라우저를 사용해보세요.';
+            } else if (error.message.includes('timeout')) {
+                errorMessage += '연결 시간이 초과되었습니다.';
+                suggestion = '💡 해결방법: 네트워크 상태를 확인하고 다시 시도해주세요.';
+            } else {
+                errorMessage += '알 수 없는 네트워크 오류입니다.';
+                suggestion = '💡 해결방법: 브라우저를 새로고침하고 다시 시도해주세요.';
+            }
+            
+            showStatus(errorMessage, 'error', 'openaiStatus');
+            
+            // 추가 도움말 표시
+            setTimeout(() => {
+                const statusElement = document.getElementById('openaiStatus');
+                if (statusElement) {
+                    statusElement.innerHTML += `<br><small style="opacity: 0.8;">${suggestion}</small>`;
+                }
+            }, 1000);
+        }
+
+        // ===== DALL-E 3 테스트 개선 =====
+        async function testDALLE() {
+            if (!openaiApiKey) {
+                showStatus('❌ 먼저 OpenAI API를 연결해주세요.', 'error', 'dalleStatus');
+                return;
+            }
+            
+            const testButton = document.querySelector('button[onclick="testDALLE()"]');
+            if (testButton) {
+                testButton.disabled = true;
+                testButton.textContent = '🎨 테스트 중...';
+            }
+            
+            showStatus('🎨 DALL-E 3 테스트 이미지 생성 중...', 'warning', 'dalleStatus');
+            
+            try {
+                const testPrompt = 'A beautiful modern YouTube studio with neon lights, high-tech equipment, vibrant colors, professional setup, digital art style';
+                const imageUrl = await generateImageWithDALLE(testPrompt, 'hd', '1024x1024', 'vivid');
+                
+                if (imageUrl) {
+                    showStatus('✅ DALL-E 3 연결 성공!', 'success', 'dalleStatus');
+                    
+                    // 테스트 이미지 표시
+                    const dalleCard = document.getElementById('dalleCard');
+                    if (dalleCard) {
+                        // 기존 테스트 이미지 제거
+                        const existingImage = dalleCard.querySelector('.dalle-test-image');
+                        if (existingImage) existingImage.remove();
+                        
+                        const testImageDiv = document.createElement('div');
+                        testImageDiv.className = 'dalle-test-image';
+                        testImageDiv.innerHTML = `
+                            <div style="margin-top: 20px; text-align: center; padding: 15px; background: rgba(67,233,123,0.1); border-radius: 15px; border: 2px solid rgba(67,233,123,0.3);">
+                                <h4 style="color: #43e97b; margin-bottom: 15px;">🎨 테스트 이미지 생성 완료!</h4>
+                                <img src="${imageUrl}" style="max-width: 200px; max-height: 200px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); cursor: pointer;" onclick="window.open('${imageUrl}', '_blank')">
+                                <p style="margin-top: 10px; font-size: 0.9em; opacity: 0.8;">클릭하면 크게 볼 수 있습니다</p>
+                            </div>
+                        `;
+                        dalleCard.appendChild(testImageDiv);
+                    }
+                    
+                    showSuccessNotification('🎨 DALL-E 3 테스트 성공! 완벽한 이미지를 생성할 수 있습니다!');
+                    
+                } else {
+                    throw new Error('이미지 URL을 받지 못했습니다.');
+                }
+                
+            } catch (error) {
+                console.error('DALL-E 3 테스트 오류:', error);
+                showStatus('❌ DALL-E 3 테스트 실패: ' + error.message, 'error', 'dalleStatus');
+            } finally {
+                if (testButton) {
+                    testButton.disabled = false;
+                    testButton.textContent = '🎨 DALL-E 3 테스트';
+                }
+            }
+        }
+
+        // ===== 개선된 초기화 시스템 =====
+        function initializeEnhancedAPISystem() {
+            console.log('🚀 향상된 API 시스템 초기화');
+            
+            // API 키 실시간 검증 초기화
+            initializeAPIKeyValidation();
+            
+            // 기존 연결 상태 확인
+            if (openaiApiKey) {
+                console.log('🔄 기존 API 키 발견, 연결 상태 확인 중...');
+                updateConnectionSuccessUI();
+                updateGenerateButton();
+            }
+            
+            console.log('✅ 향상된 API 시스템 초기화 완료');
+        }
+
+        // ===== 기존 초기화에 추가 =====
+        document.addEventListener('DOMContentLoaded', function() {
+            // 기존 초기화 함수들...
+            initializeParticles();
+            initializeEventListeners();
+            updateGenerateButton();
+            loadSavedSettings();
+            
+            // 새로운 API 시스템 초기화 추가
+            initializeEnhancedAPISystem();
+            
+            console.log('✅ 전체 시스템 초기화 완료');
+        });
 
         // ===== 향상된 OpenAI API 호출 시스템 =====
         async function callOpenAI(prompt, model = null, maxTokens = 2000, temperature = 0.7) {
@@ -4531,7 +4762,7 @@ Format: Vertical 9:16, mobile-optimized, vibrant colors.`;
         function setupAutoSave() {
             setInterval(() => {
                 if (generatedSlides.length > 0) {
-                    try {노력하다 {
+                    try {
                         const autoSaveData = {
                             slides: generatedSlides,
                             images: generatedImages.filter(img => img.url), // URL만 저장
