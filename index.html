@@ -1002,7 +1002,7 @@
                         </div>
                     </div>
                     
-                    <button class="btn btn-primary" onclick="connectOpenAI()">🔗 OpenAI 연결</button>
+                    <button class="btn btn-primary" id="connectOpenAIBtn">🔗 OpenAI 연결</button>
                     <div class="status-message" id="openaiStatus"></div>
                 </div>
 
@@ -1039,7 +1039,7 @@
                         </div>
                     </div>
                     
-                    <button class="btn btn-secondary" onclick="testDALLE()">🎨 DALL-E 3 테스트</button>
+                    <button class="btn btn-secondary" id="testDALLEBtn">🎨 DALL-E 3 테스트</button>
                     <div class="status-message" id="dalleStatus"></div>
                 </div>
             </div>
@@ -1373,8 +1373,48 @@
             console.log('✅ 초기화 완료');
         });
 
-        // 이벤트 리스너 초기화
+        // ===== 이벤트 리스너 초기화 (수정됨) =====
         function initializeEventListeners() {
+            console.log('🎯 이벤트 리스너 초기화 시작');
+            
+            // API 연결 버튼 이벤트
+            const connectBtn = document.getElementById('connectOpenAIBtn');
+            if (connectBtn) {
+                console.log('✅ OpenAI 연결 버튼 찾음');
+                connectBtn.addEventListener('click', function() {
+                    console.log('🔗 OpenAI 연결 버튼 클릭됨!');
+                    connectOpenAI();
+                });
+            } else {
+                console.error('❌ OpenAI 연결 버튼을 찾을 수 없음');
+            }
+            
+            // DALL-E 테스트 버튼 이벤트
+            const testBtn = document.getElementById('testDALLEBtn');
+            if (testBtn) {
+                console.log('✅ DALL-E 테스트 버튼 찾음');
+                testBtn.addEventListener('click', function() {
+                    console.log('🎨 DALL-E 테스트 버튼 클릭됨!');
+                    testDALLE();
+                });
+            } else {
+                console.error('❌ DALL-E 테스트 버튼을 찾을 수 없음');
+            }
+            
+            // 생성 버튼 이벤트
+            const generateBtn = document.getElementById('generateButton');
+            if (generateBtn) {
+                console.log('✅ 생성 버튼 찾음');
+                generateBtn.addEventListener('click', function() {
+                    console.log('🚀 생성 버튼 클릭됨!');
+                    if (!generateBtn.disabled) {
+                        finalizedStartAutoGeneration();
+                    }
+                });
+            } else {
+                console.error('❌ 생성 버튼을 찾을 수 없음');
+            }
+            
             // 키보드 단축키
             document.addEventListener('keydown', function(e) {
                 if (generatedSlides.length > 0) {
@@ -1391,6 +1431,14 @@
                         toggleAutoPlay();
                     }
                 }
+                
+                // Ctrl+Enter로 생성 시작
+                if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                    e.preventDefault();
+                    if (generateBtn && !generateBtn.disabled) {
+                        finalizedStartAutoGeneration();
+                    }
+                }
             });
             
             // 입력 필드 변화 감지
@@ -1399,6 +1447,7 @@
                 const element = document.getElementById(id);
                 if (element) {
                     element.addEventListener('input', updateGenerateButton);
+                    console.log(`✅ ${id} 입력 필드 이벤트 연결됨`);
                 }
             });
             
@@ -1411,8 +1460,125 @@
                         generationConfig[id] = this.value;
                         saveSettings();
                     });
+                    console.log(`✅ ${id} 선택 필드 이벤트 연결됨`);
                 }
             });
+            
+            console.log('✅ 모든 이벤트 리스너 초기화 완료');
+        }
+
+        // ===== API 키 실시간 검증 시스템 (강화됨) =====
+        function initializeAPIKeyValidation() {
+            console.log('🔑 API 키 검증 시스템 초기화');
+            
+            const keyInput = document.getElementById('openaiKey');
+            const connectBtn = document.getElementById('connectOpenAIBtn');
+            
+            if (!keyInput) {
+                console.error('❌ API 키 입력 필드를 찾을 수 없음');
+                return;
+            }
+            
+            if (!connectBtn) {
+                console.error('❌ 연결 버튼을 찾을 수 없음');
+                return;
+            }
+            
+            console.log('✅ API 키 입력 필드와 연결 버튼 찾음');
+            
+            // 초기 상태 설정
+            connectBtn.disabled = true;
+            showStatus('📝 API 키를 입력해주세요', 'warning', 'openaiStatus');
+            
+            // 실시간 키 검증
+            keyInput.addEventListener('input', function() {
+                const key = this.value.trim();
+                console.log('⌨️ API 키 입력 감지:', key ? '입력됨' : '비어있음');
+                validateAPIKeyFormat(key);
+            });
+            
+            // 붙여넣기 감지
+            keyInput.addEventListener('paste', function() {
+                setTimeout(() => {
+                    const key = this.value.trim();
+                    console.log('📋 API 키 붙여넣기 감지:', key ? '입력됨' : '비어있음');
+                    validateAPIKeyFormat(key);
+                }, 100);
+            });
+            
+            console.log('✅ API 키 검증 시스템 초기화 완료');
+        }
+
+        function validateAPIKeyFormat(key) {
+            const connectBtn = document.getElementById('connectOpenAIBtn');
+            
+            if (!key) {
+                showStatus('📝 API 키를 입력해주세요', 'warning', 'openaiStatus');
+                if (connectBtn) {
+                    connectBtn.disabled = true;
+                    connectBtn.style.background = 'rgba(255,255,255,0.3)';
+                    connectBtn.style.animation = 'none';
+                }
+                return false;
+            }
+            
+            if (!key.startsWith('sk-')) {
+                showStatus('❌ API 키는 "sk-"로 시작해야 합니다', 'error', 'openaiStatus');
+                if (connectBtn) {
+                    connectBtn.disabled = true;
+                    connectBtn.style.background = 'rgba(255,0,0,0.3)';
+                    connectBtn.style.animation = 'none';
+                }
+                return false;
+            }
+            
+            if (key.length < 40) {
+                showStatus('❌ API 키가 너무 짧습니다 (최소 40자)', 'error', 'openaiStatus');
+                if (connectBtn) {
+                    connectBtn.disabled = true;
+                    connectBtn.style.background = 'rgba(255,165,0,0.3)';
+                    connectBtn.style.animation = 'none';
+                }
+                return false;
+            }
+            
+            if (key.length > 200) {
+                showStatus('❌ API 키가 너무 깁니다', 'error', 'openaiStatus');
+                if (connectBtn) {
+                    connectBtn.disabled = true;
+                    connectBtn.style.background = 'rgba(255,0,0,0.3)';
+                    connectBtn.style.animation = 'none';
+                }
+                return false;
+            }
+            
+            // 형식이 올바른 경우
+            showStatus('✅ API 키 형식이 올바릅니다. 연결 버튼을 클릭하세요!', 'success', 'openaiStatus');
+            if (connectBtn) {
+                connectBtn.disabled = false;
+                connectBtn.style.background = 'linear-gradient(45deg, #43e97b, #38f9d7)';
+                connectBtn.style.animation = 'pulse 2s infinite';
+                console.log('✅ 연결 버튼 활성화됨');
+            }
+            return true;
+        }
+
+        // ===== 디버깅용 버튼 클릭 테스트 =====
+        function testButtonClick() {
+            console.log('🧪 버튼 클릭 테스트 함수 호출됨');
+            alert('버튼이 정상적으로 클릭되었습니다!');
+        }
+
+        // ===== 강제 연결 테스트 함수 =====
+        function forceTestConnection() {
+            console.log('🔧 강제 연결 테스트 시작');
+            const keyInput = document.getElementById('openaiKey');
+            if (keyInput && keyInput.value.trim()) {
+                connectOpenAI();
+            } else {
+                console.log('❌ API 키가 입력되지 않음');
+                alert('먼저 API 키를 입력해주세요!');
+            }
         }
 
         // 저장된 설정 로드
