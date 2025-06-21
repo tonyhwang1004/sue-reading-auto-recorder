@@ -4934,7 +4934,7 @@ Format: Vertical 9:16, mobile-optimized, vibrant colors.`;
                             images: generatedImages.filter(img => img.url), // URL만 저장
                             timestamp: new Date().toISOString()
                         };
-                        localStorage.setItem('autoSave_content', JSON.stringify(autoSaveData));
+                        localStorage.setItem('autoSave_content', JSON.stringify(autoSaveData));LocalStorage.setitem ( 'Autosave_Content', json.stringify (AutoSaveData));
                     } catch (error) {
                         console.warn('자동 저장 실패:', error);
                     }
