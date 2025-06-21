@@ -814,10 +814,66 @@
                     </div>
                 </div>
 
+                <!-- 커스텀 이미지 설정 -->
+                <div id="customImageSettings" style="display: none; margin: 25px 0;">
+                    <div class="input-group">
+                        <label class="input-label">🎨 이미지 설명</label>
+                        <textarea class="input-field" id="imagePrompt" 
+                                  placeholder="생성하고 싶은 이미지를 상세히 설명해주세요... (예: 미래적인 도시 풍경, 따뜻한 색감, 4K 고해상도)"
+                                  rows="3"></textarea>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 20px 0;">
+                        <div>
+                            <label class="input-label">🎭 스타일</label>
+                            <select class="input-field" id="imageStyle" style="height: auto; padding: 12px;">
+                                <option value="realistic">사실적</option>
+                                <option value="artistic">예술적</option>
+                                <option value="cartoon">만화풍</option>
+                                <option value="minimalist">미니멀</option>
+                                <option value="futuristic">미래지향적</option>
+                                <option value="vintage">빈티지</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="input-label">🌈 색조</label>
+                            <select class="input-field" id="imageColorTone" style="height: auto; padding: 12px;">
+                                <option value="vibrant">생동감 있는</option>
+                                <option value="warm">따뜻한</option>
+                                <option value="cool">시원한</option>
+                                <option value="monochrome">단색</option>
+                                <option value="pastel">파스텔</option>
+                                <option value="dark">어두운</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 이미지 생성 버튼 -->
+                <div style="text-align: center; margin: 25px 0;">
+                    <button class="btn btn-ai" onclick="generateAIImages()" id="generateImagesBtn">🎨 AI 이미지 생성</button>
+                    <button class="btn btn-primary" onclick="testImageGeneration()" style="margin-left: 10px;">🧪 테스트 생성</button>
+                </div>
+                
+                <!-- 생성된 이미지 미리보기 -->
+                <div id="generatedImagesContainer" style="display: none;">
+                    <h4 style="color: #43e97b; margin: 25px 0 15px 0;">🖼️ AI 생성 이미지</h4>
+                    <div id="generatedImagesGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin: 25px 0;"></div>
+                    
+                    <div style="text-align: center; margin: 20px 0;">
+                        <button class="btn btn-ai" onclick="regenerateImages()">🔄 다시 생성</button>
+                        <button class="btn btn-primary" onclick="applyGeneratedImages()">✅ 슬라이드에 적용</button>
+                        <button class="btn btn-primary" onclick="downloadAllImages()">💾 모든 이미지 다운로드</button>
+                    </div>
+                </div>
+
                 <!-- AI 이미지 생성 진행 상황 -->
                 <div id="imageGenerationProgress" class="ai-progress">
                     <div class="ai-progress-icon">🎨</div>
                     <div class="ai-progress-text">AI가 완벽한 이미지를 생성하고 있습니다...</div>
+                    <div style="margin-top: 15px;">
+                        <div id="imageProgressDetails" style="font-size: 1em; opacity: 0.8;"></div>
+                    </div>
                 </div>
             </div>
         </div>
