@@ -967,10 +967,7 @@ duration: 각 슬라이드 노출 시간 (초)`;
                 ctx.fillText(line, width / 2, subtitleY + (i * height * 0.04));
             });
             
-            // 슬라이드 번호 (작게)
-            ctx.font = `${height * 0.025}px Arial`;
-            ctx.fillStyle = 'rgba(255,255,255,0.6)';
-            ctx.fillText(`${slideIndex + 1} / ${shortsSlides.length}`, width / 2, height * 0.95);
+            // 슬라이드 번호 제거됨
             
             // 타입별 특별 효과
             if (slide.type === 'hook') {
