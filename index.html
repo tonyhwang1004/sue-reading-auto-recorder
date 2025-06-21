@@ -11,7 +11,7 @@
             box-sizing: border-box;
         }
 
-        // 유튜브 쇼츠 업로드 화면으로 이동
+        // 유튜브 스튜디오 직접 업로드 화면으로 이동
         function uploadToYouTube() {
             if (!videoBlob) {
                 alert('❌ 먼저 MP4 쇼츠를 생성해주세요!');
@@ -33,73 +33,70 @@ ${topic}에 대한 핵심 내용을 15장의 슬라이드로 정리했습니다!
 
 좋아요와 구독 부탁드립니다! 🙏`;
 
-            // 로컬 스토리지에 메타데이터 저장 (업로드 페이지에서 사용)
-            const uploadData = {
-                title: title.substring(0, 100),
-                description: description,
-                timestamp: Date.now()
-            };
-            
-            try {
-                localStorage.setItem('youtubeUploadData', JSON.stringify(uploadData));
-            } catch (e) {
-                console.log('로컬 스토리지 저장 실패, 메타데이터 클립보드로 복사');
-            }
-
             // 클립보드에 메타데이터 복사
-            const clipboardText = `제목: ${uploadData.title}
+            const clipboardText = `제목: ${title}
 
 설명:
 ${description}`;
 
             navigator.clipboard.writeText(clipboardText).then(() => {
-                console.log('메타데이터가 클립보드에 복사됨');
+                console.log('✅ 메타데이터가 클립보드에 복사됨');
             }).catch(err => {
-                console.log('클립보드 복사 실패:', err);
+                console.log('⚠️ 클립보드 복사 실패:', err);
             });
 
             // 확인 대화상자
-            const confirmed = confirm(`🚀 유튜브 스튜디오로 이동합니다!
+            const confirmed = confirm(`🚀 유튜브 스튜디오 업로드 화면으로 이동합니다!
 
-📋 준비된 정보:
-• 제목: ${uploadData.title}
-• 설명: AI 생성 설명문 (클립보드 복사됨)
-• 파일: MP4 쇼츠 영상 (다운로드됨)
+📋 자동 준비된 내용:
+• 제목: ${title}
+• 설명: AI 최적화 설명문
+• 해시태그: #Shorts 포함
+• 파일: MP4 쇼츠 영상
 
-✅ 진행 순서:
-1. MP4 파일이 자동 다운로드됩니다
-2. 유튜브 스튜디오가 새 창에서 열립니다
-3. 파일을 업로드하고 복사된 정보를 붙여넣으세요
+✅ 업로드 순서:
+1. MP4 파일 자동 다운로드
+2. 유튜브 스튜디오 업로드 화면 열기
+3. 파일 드래그 업로드
+4. 제목/설명 붙여넣기 (클립보드 복사됨)
 
-계속하시겠습니까?`);
+지금 시작하시겠습니까?`);
 
             if (confirmed) {
                 // 1. MP4 파일 자동 다운로드
                 downloadShorts();
                 
-                // 2. 유튜브 스튜디오 업로드 페이지로 이동
+                // 2. 유튜브 스튜디오 업로드 화면 직접 열기
                 setTimeout(() => {
-                    window.open('https://studio.youtube.com/channel/UC/videos/upload?d=ud', '_blank');
+                    // 업로드 창 직접 열기 (create 파라미터 사용)
+                    window.open('https://studio.youtube.com/channel/UCW1vhW_QNXN1AqdnJCJHOEg/videos/upload?d=ud', '_blank');
                 }, 1000);
 
-                // 3. 안내 메시지 표시
+                // 3. 상세 업로드 가이드
                 setTimeout(() => {
-                    alert(`📱 유튜브 쇼츠 업로드 가이드
+                    alert(`📱 유튜브 쇼츠 업로드 완료 가이드
 
-🎬 업로드 단계:
-1. ✅ MP4 파일 다운로드 완료
-2. ✅ 유튜브 스튜디오 열림
-3. 📤 파일을 드래그하여 업로드
-4. 📋 제목/설명 붙여넣기 (Ctrl+V)
-5. 🏷️ "쇼츠" 탭에서 설정 확인
-6. 🚀 게시하기!
+🎬 업로드 화면에서 진행하세요:
 
-💡 팁:
-• 썸네일: 자동 생성된 것 중 선택
-• 공개 설정: 공개 (Public)
-• 카테고리: 엔터테인먼트
-• #Shorts 해시태그가 자동 포함됨`);
-                }, 2000);
+1️⃣ 파일 업로드
+   • 다운로드된 MP4 파일을 드래그하여 업로드
+   • 또는 "파일 선택" 버튼 클릭
+
+2️⃣ 제목/설명 입력
+   • Ctrl+V로 복사된 내용 붙여넣기
+   • 제목: "${title}"
+   • 설명: AI 최적화 설명문 자동 포함
+
+3️⃣ 쇼츠 설정 확인
+   • "Shorts" 탭이 자동 선택되었는지 확인
+   • 썸네일: 자동 생성된 것 중 선택
+   • 공개 설정: "공개" 선택
+
+4️⃣ 게시하기
+   • "게시" 버튼 클릭하여 완료
+
+💡 팁: #Shorts 해시태그가 포함되어 쇼츠로 자동 인식됩니다!`);
+                }, 2500);
             }
         }
 
