@@ -813,7 +813,7 @@
 ${content}
 
 유튜브 쇼츠 최적화 요구사항:
-- 슬라이드 개수: 6-10개 (총 15-30초 길이)
+- 슬라이드 개수: 12-15개 (총 30-45초 길이)
 - 첫 슬라이드: 강력한 Hook (시선 집중)
 - 각 슬라이드: 2-3초 안에 이해 가능한 간단한 메시지
 - 마지막 슬라이드: CTA (구독, 좋아요 유도)
@@ -909,7 +909,7 @@ duration: 각 슬라이드 노출 시간 (초)`;
             }
         }
 
-        // Canvas에 슬라이드 렌더링
+        // Canvas에 환상적인 배경 효과와 슬라이드 렌더링
         async function renderSlideToCanvas(slideIndex) {
             if (!ctx || !shortsSlides[slideIndex]) return;
             
@@ -920,17 +920,194 @@ duration: 각 슬라이드 노출 시간 (초)`;
             // 배경 클리어
             ctx.clearRect(0, 0, width, height);
             
-            // 배경색
+            // 1. 환상적인 그라데이션 배경
             const bgColor = slide.backgroundColor || '#667eea';
-            ctx.fillStyle = bgColor;
-            ctx.fillRect(0, 0, width, height);
-            
-            // 그라데이션 오버레이 (깊이감 추가)
-            const gradient = ctx.createLinearGradient(0, 0, 0, height);
-            gradient.addColorStop(0, 'rgba(0,0,0,0.1)');
-            gradient.addColorStop(1, 'rgba(0,0,0,0.3)');
+            const gradient = ctx.createRadialGradient(width/2, height/2, 0, width/2, height/2, Math.max(width, height));
+            gradient.addColorStop(0, bgColor);
+            gradient.addColorStop(0.7, adjustBrightness(bgColor, -20));
+            gradient.addColorStop(1, adjustBrightness(bgColor, -40));
             ctx.fillStyle = gradient;
             ctx.fillRect(0, 0, width, height);
+            
+            // 2. 동적 패턴 오버레이
+            drawAnimatedPattern(slideIndex);
+            
+            // 3. 글로우 효과
+            drawGlowEffects(slideIndex);
+            
+            // 4. 텍스트 렌더링
+            renderSlideText(slide, slideIndex);
+        }
+
+        // 밝기 조절 함수
+        function adjustBrightness(hex, amount) {
+            const num = parseInt(hex.replace("#", ""), 16);
+            const amt = Math.round(2.55 * amount);
+            const R = (num >> 16) + amt;
+            const G = (num >> 8 & 0x00FF) + amt;
+            const B = (num & 0x0000FF) + amt;
+            return "#" + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
+                (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
+                (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
+        }
+
+        // 환상적인 애니메이션 패턴
+        function drawAnimatedPattern(slideIndex) {
+            const width = canvas.width;
+            const height = canvas.height;
+            const time = Date.now() * 0.001;
+            
+            ctx.globalAlpha = 0.15;
+            
+            // 패턴 타입별 다른 효과
+            const patternType = slideIndex % 5;
+            
+            switch(patternType) {
+                case 0: // 회전하는 원들
+                    for (let i = 0; i < 8; i++) {
+                        const angle = (time + i * 0.5) * 0.5;
+                        const x = width/2 + Math.cos(angle) * (width * 0.3);
+                        const y = height/2 + Math.sin(angle) * (height * 0.2);
+                        const radius = 50 + Math.sin(time + i) * 20;
+                        
+                        const circleGradient = ctx.createRadialGradient(x, y, 0, x, y, radius);
+                        circleGradient.addColorStop(0, 'rgba(255,255,255,0.3)');
+                        circleGradient.addColorStop(1, 'rgba(255,255,255,0)');
+                        
+                        ctx.fillStyle = circleGradient;
+                        ctx.beginPath();
+                        ctx.arc(x, y, radius, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                    break;
+                    
+                case 1: // 웨이브 라인들
+                    ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+                    ctx.lineWidth = 3;
+                    for (let i = 0; i < 6; i++) {
+                        ctx.beginPath();
+                        for (let x = 0; x <= width; x += 10) {
+                            const y = height/2 + Math.sin((x + time * 100 + i * 50) * 0.01) * (100 + i * 20);
+                            if (x === 0) ctx.moveTo(x, y);
+                            else ctx.lineTo(x, y);
+                        }
+                        ctx.stroke();
+                    }
+                    break;
+                    
+                case 2: // 육각형 그리드
+                    const hexSize = 60;
+                    for (let row = 0; row < height / hexSize + 2; row++) {
+                        for (let col = 0; col < width / hexSize + 2; col++) {
+                            const x = col * hexSize * 0.75 - hexSize;
+                            const y = row * hexSize - (col % 2) * hexSize * 0.5 - hexSize;
+                            const alpha = Math.sin(time + row * 0.5 + col * 0.3) * 0.1 + 0.1;
+                            
+                            ctx.strokeStyle = `rgba(255,255,255,${alpha})`;
+                            ctx.lineWidth = 2;
+                            drawHexagon(x, y, hexSize * 0.4);
+                        }
+                    }
+                    break;
+                    
+                case 3: // 파티클 효과
+                    for (let i = 0; i < 30; i++) {
+                        const x = (Math.sin(time * 0.5 + i * 0.2) * width * 0.3) + width/2;
+                        const y = (Math.cos(time * 0.3 + i * 0.15) * height * 0.3) + height/2;
+                        const size = Math.sin(time + i) * 3 + 5;
+                        
+                        const particleGradient = ctx.createRadialGradient(x, y, 0, x, y, size);
+                        particleGradient.addColorStop(0, 'rgba(255,255,255,0.6)');
+                        particleGradient.addColorStop(1, 'rgba(255,255,255,0)');
+                        
+                        ctx.fillStyle = particleGradient;
+                        ctx.beginPath();
+                        ctx.arc(x, y, size, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                    break;
+                    
+                case 4: // 기하학적 삼각형
+                    for (let i = 0; i < 12; i++) {
+                        const angle = (time + i * 0.5) * 0.3;
+                        const x = width/2 + Math.cos(angle) * (width * 0.25);
+                        const y = height/2 + Math.sin(angle) * (height * 0.25);
+                        const size = 40 + Math.sin(time * 2 + i) * 15;
+                        
+                        ctx.strokeStyle = `rgba(255,255,255,0.2)`;
+                        ctx.lineWidth = 2;
+                        drawTriangle(x, y, size, angle);
+                    }
+                    break;
+            }
+            
+            ctx.globalAlpha = 1;
+        }
+
+        // 육각형 그리기
+        function drawHexagon(x, y, size) {
+            ctx.beginPath();
+            for (let i = 0; i < 6; i++) {
+                const angle = (i * Math.PI) / 3;
+                const px = x + Math.cos(angle) * size;
+                const py = y + Math.sin(angle) * size;
+                if (i === 0) ctx.moveTo(px, py);
+                else ctx.lineTo(px, py);
+            }
+            ctx.closePath();
+            ctx.stroke();
+        }
+
+        // 삼각형 그리기
+        function drawTriangle(x, y, size, rotation) {
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.rotate(rotation);
+            ctx.beginPath();
+            ctx.moveTo(0, -size);
+            ctx.lineTo(-size * 0.866, size * 0.5);
+            ctx.lineTo(size * 0.866, size * 0.5);
+            ctx.closePath();
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        // 글로우 효과
+        function drawGlowEffects(slideIndex) {
+            const width = canvas.width;
+            const height = canvas.height;
+            const time = Date.now() * 0.001;
+            
+            ctx.globalAlpha = 0.1;
+            
+            // 코너 글로우
+            const corners = [
+                {x: 0, y: 0},
+                {x: width, y: 0},
+                {x: 0, y: height},
+                {x: width, y: height}
+            ];
+            
+            corners.forEach((corner, i) => {
+                const intensity = Math.sin(time + i * 1.5) * 0.5 + 0.5;
+                const glowGradient = ctx.createRadialGradient(
+                    corner.x, corner.y, 0,
+                    corner.x, corner.y, Math.min(width, height) * 0.5
+                );
+                glowGradient.addColorStop(0, `rgba(255,255,255,${intensity * 0.3})`);
+                glowGradient.addColorStop(1, 'rgba(255,255,255,0)');
+                
+                ctx.fillStyle = glowGradient;
+                ctx.fillRect(0, 0, width, height);
+            });
+            
+            ctx.globalAlpha = 1;
+        }
+
+        // 텍스트 렌더링 (분리된 함수)
+        function renderSlideText(slide, slideIndex) {
+            const width = canvas.width;
+            const height = canvas.height;
             
             // 텍스트 색상
             const textColor = slide.textColor || '#ffffff';
@@ -938,15 +1115,23 @@ duration: 각 슬라이드 노출 시간 (초)`;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             
-            // 그림자 효과
-            ctx.shadowColor = 'rgba(0,0,0,0.8)';
-            ctx.shadowBlur = 20;
-            ctx.shadowOffsetX = 3;
-            ctx.shadowOffsetY = 3;
+            // 강화된 그림자 효과
+            ctx.shadowColor = 'rgba(0,0,0,0.9)';
+            ctx.shadowBlur = 25;
+            ctx.shadowOffsetX = 4;
+            ctx.shadowOffsetY = 4;
             
-            // 아이콘 (더 크게)
+            // 아이콘 (더 크고 글로우 효과)
             ctx.font = `${height * 0.12}px Arial`;
+            
+            // 아이콘 글로우 효과
+            ctx.shadowColor = 'rgba(255,255,255,0.8)';
+            ctx.shadowBlur = 30;
             ctx.fillText(slide.icon || '📱', width / 2, height * 0.25);
+            
+            // 그림자 리셋
+            ctx.shadowColor = 'rgba(0,0,0,0.9)';
+            ctx.shadowBlur = 25;
             
             // 제목 (유튜브 쇼츠용 큰 텍스트)
             ctx.font = `bold ${height * 0.06}px Arial Black`;
@@ -967,25 +1152,48 @@ duration: 각 슬라이드 노출 시간 (초)`;
                 ctx.fillText(line, width / 2, subtitleY + (i * height * 0.04));
             });
             
-            // 슬라이드 번호 제거됨
-            
             // 타입별 특별 효과
             if (slide.type === 'hook') {
-                // Hook 슬라이드에 테두리 효과
-                ctx.strokeStyle = '#ffff00';
-                ctx.lineWidth = 8;
+                // Hook 슬라이드에 펄싱 테두리 효과
+                const time = Date.now() * 0.005;
+                const pulseIntensity = Math.sin(time) * 0.5 + 0.5;
+                
+                ctx.strokeStyle = `rgba(255, 255, 0, ${pulseIntensity})`;
+                ctx.lineWidth = 8 + pulseIntensity * 4;
                 ctx.strokeRect(20, 20, width - 40, height - 40);
+                
+                // 내부 글로우
+                ctx.strokeStyle = `rgba(255, 255, 255, ${pulseIntensity * 0.3})`;
+                ctx.lineWidth = 2;
+                ctx.strokeRect(30, 30, width - 60, height - 60);
+                
             } else if (slide.type === 'cta') {
-                // CTA 슬라이드에 버튼 효과
+                // CTA 슬라이드에 애니메이션 버튼
                 const buttonY = height * 0.85;
                 const buttonWidth = width * 0.7;
                 const buttonHeight = height * 0.08;
+                const time = Date.now() * 0.003;
+                const pulse = Math.sin(time) * 0.2 + 1;
                 
-                ctx.fillStyle = '#ff0844';
-                ctx.fillRect((width - buttonWidth) / 2, buttonY - buttonHeight / 2, buttonWidth, buttonHeight);
+                // 버튼 글로우
+                const buttonGradient = ctx.createRadialGradient(
+                    width/2, buttonY, 0,
+                    width/2, buttonY, buttonWidth * 0.7
+                );
+                buttonGradient.addColorStop(0, '#ff0844');
+                buttonGradient.addColorStop(1, '#ff6b95');
+                
+                ctx.fillStyle = buttonGradient;
+                ctx.fillRect(
+                    (width - buttonWidth * pulse) / 2, 
+                    buttonY - (buttonHeight * pulse) / 2, 
+                    buttonWidth * pulse, 
+                    buttonHeight * pulse
+                );
                 
                 ctx.fillStyle = '#ffffff';
                 ctx.font = `bold ${height * 0.03}px Arial`;
+                ctx.shadowBlur = 15;
                 ctx.fillText('구독 & 좋아요!', width / 2, buttonY);
             }
             
