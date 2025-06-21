@@ -11,93 +11,14 @@
             box-sizing: border-box;
         }
 
-        // 유튜브 쇼츠 직접 업로드
-        async function uploadToYouTube() {
+        // 유튜브 쇼츠 업로드 화면으로 이동
+        function uploadToYouTube() {
             if (!videoBlob) {
                 alert('❌ 먼저 MP4 쇼츠를 생성해주세요!');
                 return;
             }
 
-            try {
-                showProgressModal(true);
-                updateProgress(10, '🔐 유튜브 인증', '유튜브 API 인증을 진행합니다.');
-
-                // Google API 클라이언트 로드
-                if (!window.gapi) {
-                    await loadGoogleAPI();
-                }
-
-                updateProgress(30, '🔑 OAuth 인증', '구글 계정으로 로그인하세요.');
-
-                // OAuth 인증 시작
-                await authenticateYouTube();
-
-                updateProgress(60, '📤 업로드 준비', '쇼츠 영상을 업로드 준비 중입니다.');
-
-                // 쇼츠 메타데이터 생성
-                const metadata = generateShortsMetadata();
-
-                updateProgress(80, '🚀 업로드 중', '유튜브 쇼츠로 업로드하고 있습니다.');
-
-                // 실제 업로드 수행
-                const uploadResult = await performYouTubeUpload(metadata);
-
-                updateProgress(100, '🎉 업로드 완료!', '유튜브 쇼츠 업로드가 완료되었습니다.');
-
-                await delay(1500);
-                showProgressModal(false);
-
-                // 업로드 완료 알림
-                showUploadSuccess(uploadResult);
-
-            } catch (error) {
-                console.error('유튜브 업로드 오류:', error);
-                showProgressModal(false);
-                
-                if (error.message.includes('authentication')) {
-                    showYouTubeAuthGuide();
-                } else {
-                    alert(`❌ 유튜브 업로드 실패: ${error.message}\n\n수동 업로드를 진행하세요.`);
-                }
-            }
-        }
-
-        // Google API 로드
-        async function loadGoogleAPI() {
-            return new Promise((resolve, reject) => {
-                const script = document.createElement('script');
-                script.src = 'https://apis.google.com/js/api.js';
-                script.onload = () => {
-                    window.gapi.load('client:auth2', resolve);
-                };
-                script.onerror = reject;
-                document.head.appendChild(script);
-            });
-        }
-
-        // 유튜브 OAuth 인증
-        async function authenticateYouTube() {
-            const CLIENT_ID = 'YOUR_YOUTUBE_CLIENT_ID'; // 실제 클라이언트 ID 필요
-            const DISCOVERY_DOC = 'https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest';
-            const SCOPES = 'https://www.googleapis.com/auth/youtube.upload';
-
-            await window.gapi.client.init({
-                clientId: CLIENT_ID,
-                discoveryDocs: [DISCOVERY_DOC],
-                scope: SCOPES
-            });
-
-            const authInstance = window.gapi.auth2.getAuthInstance();
-            
-            if (!authInstance.isSignedIn.get()) {
-                await authInstance.signIn();
-            }
-
-            return authInstance.currentUser.get().getAuthResponse().access_token;
-        }
-
-        // 쇼츠 메타데이터 생성
-        function generateShortsMetadata() {
+            // 메타데이터 생성
             const topicInput = document.getElementById('topicInput');
             const topic = topicInput?.value.trim() || '유튜브 쇼츠';
             
@@ -106,94 +27,80 @@
 
 ${topic}에 대한 핵심 내용을 15장의 슬라이드로 정리했습니다!
 
-📱 모바일 최적화
-✨ 고품질 비주얼
-🚀 완전 자동 생성
+📱 모바일 최적화 ✨ 고품질 비주얼 🚀 완전 자동 생성
 
 #유튜브쇼츠 #AI생성 #${topic.replace(/\s/g, '')} #인공지능 #자동화 #콘텐츠제작
 
 좋아요와 구독 부탁드립니다! 🙏`;
 
-            const tags = [
-                'shorts',
-                'AI',
-                '인공지능',
-                '자동생성',
-                topic.replace(/\s/g, ''),
-                '유튜브쇼츠',
-                'AI콘텐츠'
-            ];
-
-            return {
-                snippet: {
-                    title: title.substring(0, 100), // 유튜브 제목 제한
-                    description: description,
-                    tags: tags,
-                    categoryId: '22', // People & Blogs
-                    defaultLanguage: 'ko',
-                    defaultAudioLanguage: 'ko'
-                },
-                status: {
-                    privacyStatus: 'public',
-                    selfDeclaredMadeForKids: false
-                }
+            // 로컬 스토리지에 메타데이터 저장 (업로드 페이지에서 사용)
+            const uploadData = {
+                title: title.substring(0, 100),
+                description: description,
+                timestamp: Date.now()
             };
-        }
-
-        // 실제 유튜브 업로드 수행
-        async function performYouTubeUpload(metadata) {
-            // 브라우저 제한으로 실제 파일 업로드는 시뮬레이션
-            // 실제 구현시 YouTube Data API v3 사용 필요
             
-            const formData = new FormData();
-            formData.append('video', videoBlob, 'youtube-shorts.mp4');
-            formData.append('snippet', JSON.stringify(metadata.snippet));
-            formData.append('status', JSON.stringify(metadata.status));
+            try {
+                localStorage.setItem('youtubeUploadData', JSON.stringify(uploadData));
+            } catch (e) {
+                console.log('로컬 스토리지 저장 실패, 메타데이터 클립보드로 복사');
+            }
 
-            // 시뮬레이션된 응답
-            await delay(3000); // 업로드 시뮬레이션
-            
-            return {
-                id: 'simulated_video_id_' + Date.now(),
-                url: 'https://youtube.com/shorts/simulated_video_id',
-                title: metadata.snippet.title
-            };
-        }
+            // 클립보드에 메타데이터 복사
+            const clipboardText = `제목: ${uploadData.title}
 
-        // 업로드 성공 알림
-        function showUploadSuccess(result) {
-            alert(`🎉 유튜브 쇼츠 업로드 완료!
+설명:
+${description}`;
 
-📺 업로드 정보:
-• 제목: ${result.title}
-• 비디오 ID: ${result.id}
-• 상태: 공개
-• 형식: 유튜브 쇼츠 (#Shorts)
+            navigator.clipboard.writeText(clipboardText).then(() => {
+                console.log('메타데이터가 클립보드에 복사됨');
+            }).catch(err => {
+                console.log('클립보드 복사 실패:', err);
+            });
 
-🔗 바로 확인하기:
-${result.url}
+            // 확인 대화상자
+            const confirmed = confirm(`🚀 유튜브 스튜디오로 이동합니다!
 
-📱 모바일에서 확인하면 쇼츠로 표시됩니다!
-좋아요와 구독 유도를 잊지 마세요! 🚀`);
-        }
+📋 준비된 정보:
+• 제목: ${uploadData.title}
+• 설명: AI 생성 설명문 (클립보드 복사됨)
+• 파일: MP4 쇼츠 영상 (다운로드됨)
 
-        // 유튜브 인증 가이드 표시
-        function showYouTubeAuthGuide() {
-            alert(`🔐 유튜브 업로드 인증 필요
+✅ 진행 순서:
+1. MP4 파일이 자동 다운로드됩니다
+2. 유튜브 스튜디오가 새 창에서 열립니다
+3. 파일을 업로드하고 복사된 정보를 붙여넣으세요
 
-자동 업로드를 위해 다음 단계가 필요합니다:
+계속하시겠습니까?`);
 
-1️⃣ Google Cloud Console에서 YouTube Data API v3 활성화
-2️⃣ OAuth 2.0 클라이언트 ID 생성
-3️⃣ 승인된 JavaScript 원본에 도메인 추가
-4️⃣ 클라이언트 ID를 코드에 설정
+            if (confirmed) {
+                // 1. MP4 파일 자동 다운로드
+                downloadShorts();
+                
+                // 2. 유튜브 스튜디오 업로드 페이지로 이동
+                setTimeout(() => {
+                    window.open('https://studio.youtube.com/channel/UC/videos/upload?d=ud', '_blank');
+                }, 1000);
 
-📋 대안 방법:
-• MP4 파일을 다운로드하여 수동 업로드
-• YouTube Studio에서 직접 업로드
-• 모바일 앱에서 업로드
+                // 3. 안내 메시지 표시
+                setTimeout(() => {
+                    alert(`📱 유튜브 쇼츠 업로드 가이드
 
-🚀 지금은 다운로드 후 수동 업로드를 권장합니다!`);
+🎬 업로드 단계:
+1. ✅ MP4 파일 다운로드 완료
+2. ✅ 유튜브 스튜디오 열림
+3. 📤 파일을 드래그하여 업로드
+4. 📋 제목/설명 붙여넣기 (Ctrl+V)
+5. 🏷️ "쇼츠" 탭에서 설정 확인
+6. 🚀 게시하기!
+
+💡 팁:
+• 썸네일: 자동 생성된 것 중 선택
+• 공개 설정: 공개 (Public)
+• 카테고리: 엔터테인먼트
+• #Shorts 해시태그가 자동 포함됨`);
+                }, 2000);
+            }
         }
 
         // 15장 슬라이드 보장 함수
@@ -204,40 +111,42 @@ ${result.url}
             
             if (neededSlides <= 0) return existingSlides;
             
-            console.log(`추가 슬라이드 ${neededSlides}개 생성 중...`);
+            console.log(`🔧 추가 슬라이드 ${neededSlides}개 생성 중...`);
             
-            const additionalPrompt = `기존 슬라이드에 추가로 ${neededSlides}개의 슬라이드를 더 만들어주세요.
+            const additionalPrompt = `현재 ${currentCount}개의 슬라이드가 있습니다. 추가로 정확히 ${neededSlides}개의 슬라이드를 더 만들어서 총 15개를 완성해주세요.
 
 주제: ${topic}
 기존 내용: ${content}
 
-기존 슬라이드 개수: ${currentCount}개
-추가 필요: ${neededSlides}개
-총 목표: 15개
+현재 슬라이드: ${currentCount}개
+추가 필요: ${neededSlides}개  
+최종 목표: 정확히 15개
 
-추가 슬라이드 아이디어:
-- 상세 설명 슬라이드
-- 예시나 사례 소개  
-- 팁이나 노하우 공유
-- 결과나 효과 강조
-- 추가적인 가치 제안
-- 실행 방법 안내
-- 주의사항이나 팁
-- 성공 사례 소개
+추가 슬라이드 생성 가이드:
+- 주제의 다양한 측면 탐구
+- 실용적인 팁과 방법론
+- 구체적인 예시와 사례
+- 단계별 실행 방법
+- 주의사항과 포인트
+- 추가적인 혜택과 가치
+- 성공을 위한 마인드셋
+- 다음 단계 안내
 
-다음 JSON 형식으로 ${neededSlides}개 슬라이드만 응답해주세요:
+중요: 반드시 정확히 ${neededSlides}개의 슬라이드만 JSON 배열로 생성해주세요.
+
 {
   "slides": [
     {
       "id": ${currentCount + 1},
       "icon": "💡",
       "title": "추가 제목",
-      "subtitle": "추가 부제목",
+      "subtitle": "추가 부제목", 
       "type": "content",
       "backgroundColor": "#4ecdc4",
       "textColor": "#ffffff",
       "duration": 3
     }
+    // ${neededSlides}개 정확히 생성
   ]
 }`;
 
@@ -281,8 +190,15 @@ ${result.url}
                             });
                             
                             const allSlides = [...existingSlides, ...additionalSlides];
-                            console.log(`총 ${allSlides.length}개 슬라이드 생성 완료`);
-                            return allSlides.slice(0, 15);
+                            console.log(`✅ 추가 생성 완료: ${additionalSlides.length}개, 총 ${allSlides.length}개`);
+                            
+                            // 정확히 15개 보장
+                            if (allSlides.length >= 15) {
+                                return allSlides.slice(0, 15);
+                            } else {
+                                // 아직 부족하면 기본 슬라이드로 채우기
+                                return fillWithDefaultSlides(allSlides, 15 - allSlides.length);
+                            }
                         }
                     }
                 }
@@ -296,14 +212,21 @@ ${result.url}
             }
         }
 
-        // 기본 슬라이드로 채우기
+        // 기본 슬라이드로 채우기 (강화된 버전)
         function fillWithDefaultSlides(existingSlides, neededCount) {
+            console.log(`🔧 기본 슬라이드 ${neededCount}개로 15개 완성 중...`);
+            
             const defaultSlides = [
                 { icon: "💡", title: "핵심 포인트", subtitle: "가장 중요한 것을 기억하세요", type: "highlight", backgroundColor: "#ff6b6b", textColor: "#ffffff", duration: 3 },
                 { icon: "🎯", title: "실행 방법", subtitle: "지금 바로 시작해보세요", type: "content", backgroundColor: "#4ecdc4", textColor: "#ffffff", duration: 3 },
                 { icon: "⭐", title: "성공의 비결", subtitle: "이것만 기억하면 됩니다", type: "highlight", backgroundColor: "#feca57", textColor: "#000000", duration: 3 },
                 { icon: "🚀", title: "다음 단계", subtitle: "한 단계 더 발전하는 방법", type: "content", backgroundColor: "#667eea", textColor: "#ffffff", duration: 3 },
-                { icon: "💪", title: "지금 시작하세요", subtitle: "미루지 말고 바로 실행!", type: "cta", backgroundColor: "#ff0844", textColor: "#ffffff", duration: 3 }
+                { icon: "💪", title: "실천 가이드", subtitle: "구체적인 실행 방법", type: "content", backgroundColor: "#96ceb4", textColor: "#000000", duration: 3 },
+                { icon: "🔥", title: "동기부여", subtitle: "포기하지 말고 계속하세요", type: "highlight", backgroundColor: "#ff9ff3", textColor: "#ffffff", duration: 3 },
+                { icon: "📈", title: "성장 전략", subtitle: "지속적인 발전을 위해", type: "content", backgroundColor: "#74b9ff", textColor: "#ffffff", duration: 3 },
+                { icon: "🎉", title: "마무리", subtitle: "수고하셨습니다!", type: "content", backgroundColor: "#fd79a8", textColor: "#ffffff", duration: 3 },
+                { icon: "👍", title: "좋아요", subtitle: "도움이 되셨다면 좋아요!", type: "cta", backgroundColor: "#ff0844", textColor: "#ffffff", duration: 3 },
+                { icon: "🔔", title: "구독하기", subtitle: "더 많은 콘텐츠를 받아보세요", type: "cta", backgroundColor: "#00b894", textColor: "#ffffff", duration: 3 }
             ];
             
             const additionalSlides = [];
@@ -315,7 +238,10 @@ ${result.url}
                 });
             }
             
-            return [...existingSlides, ...additionalSlides];
+            const finalSlides = [...existingSlides, ...additionalSlides];
+            console.log(`✅ 15개 슬라이드 완성: 원본 ${existingSlides.length}개 + 추가 ${additionalSlides.length}개`);
+            
+            return finalSlides.slice(0, 15); // 정확히 15개만 반환
         }
 
         :root {
